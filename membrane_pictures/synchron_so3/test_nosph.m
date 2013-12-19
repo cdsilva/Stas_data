@@ -30,21 +30,45 @@ angle_proj = pi/2;
 % store images in 3d array
 image_set = zeros(npixels+2*shift_max, npixels+2*shift_max, m);
 
+R_exact = zeros(3*m, 3);
+n = npixels + 2 * shift_max;
+
 figure;
 for i=1:m
     
     im_tmp = zeros(npixels+2*shift_max);
     im_tmp(shift_max+1:shift_max+npixels, shift_max+1:shift_max+npixels) = double(im1);
     
+    rand_angle = 180*rand;
+    
     im_tmp = imrotate(im_tmp, 180*rand, 'crop');
     
-    trans = randi([-shift_max, shift_max], 1, 2)
+    trans = randi([-shift_max, shift_max], 1, 2);
     im_tmp = circshift(im_tmp, trans);
     
     image_set(:,:,i) = im_tmp;
     
     subplot(subplot_dim1, subplot_dim2, i);
     imshow(uint8(im_tmp))
+    
+    alpha = rand_angle * pi / 180;
+    beta = trans(1) / n * angle_proj;
+    gamma = trans(2) / n * angle_proj;
+    Rx = [1 0 0;
+        0 cos(alpha) -sin(alpha);
+        0 sin(alpha) cos(alpha)];
+    
+    
+    Ry = [cos(beta) 0 sin(beta);
+        0 1 0;
+        -sin(beta) 0 cos(beta)];
+    
+    Rz = [cos(gamma) -sin(gamma) 0;
+        sin(gamma) cos(gamma) 0;
+        0  0 1];
+    
+    
+    R_exact(3*i-2:3*i,:) = Rz * Ry * Rx;
 end
 
 % %store image
@@ -103,7 +127,8 @@ for i=1:m
     image_tmp = image_set(:,:,i);
     
     %R_all = (R_opt(1:3, 1:3)'*R_opt(3*i-2:3*i,:))';
-    R_all = R_opt(3*i-2:3*i,:)';
+    %R_all = R_opt(3*i-2:3*i,:)';
+    R_all = R_exact(3*i-2:3*i,:)';
     
     alpha = atan2(R_all(3,2), R_all(3,3));
     gamma = atan2(R_all(2,1), R_all(1,1));
