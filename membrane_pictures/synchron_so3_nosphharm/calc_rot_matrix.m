@@ -1,4 +1,4 @@
-function R = rot_matrix(alpha, beta, gamma)
+function R = calc_rot_matrix(alpha, beta, gamma)
 
 Rx = [1 0 0;
     0 cos(alpha) -sin(alpha);
