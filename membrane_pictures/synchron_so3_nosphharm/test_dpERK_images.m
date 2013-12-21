@@ -73,7 +73,7 @@ for i=1:m
     image_set_aligned(:,:,i) = image_tmp;
     
     subplot(subplot_dim1, subplot_dim2, i);
-    imshow(uint8(image_tmp),'InitialMagnification', 'fit')
+    imshow(uint8(image_tmp(buffer_size+1:buffer_size+npixels,buffer_size+1:buffer_size+npixels)),'InitialMagnification', 'fit')
 end
 
 %%
@@ -111,5 +111,5 @@ figure;
 for i=1:m
     
     subplot(subplot_dim1, subplot_dim2, i);
-    imshow(uint8(image_set_aligned(:,:,idx(i))),'InitialMagnification', 'fit')
+    imshow(uint8(image_set_aligned(buffer_size+1:buffer_size+npixels,buffer_size+1:buffer_size+npixels,idx(i))),'InitialMagnification', 'fit')
 end
