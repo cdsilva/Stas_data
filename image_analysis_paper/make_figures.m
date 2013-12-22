@@ -7,7 +7,7 @@ set(0,'DefaultAxesFontSize',20)
 
 res = '-r300';
 fmt = '-djpeg';
-print_figures = false;
+print_figures = true;
 
 dpERK_data = '../membrane_lengths/oct16.mat';
 dpERK_image_dir = '../membrane_pictures/membrane2/dpERK_staining';
@@ -195,8 +195,6 @@ close all
 %% raw dpERK images-- synchronization
 
 make_2d_alignment_figures;
-
-return
 
 %% raw membrane pictures-- synchronization
 

@@ -1,23 +1,29 @@
 addpath('../membrane_pictures/synchron_so3_nosphharm')
 
 %% load in images
+
 % amont of border or buffer to add around the images
-buffer_size = 50;
+buffer_size = 20;
 
 %size of "portion" of sphere on which to project
 angle_proj = pi/4;
 
 % total number of pixels
-n2 = npixels+2*buffer_size;
+npixels2 = npixels+2*buffer_size;
 
 % dimension of rotations
 dim = 3;
 
-image_set_buffered = zeros(n2, n2, m);
+% store images in 3d array
+image_set_buffered = zeros(npixels2, npixels2, m);
 
-image_channel = 2;
+%% load in images
 
-image_set_buffered(buffer_size+1:buffer_size+npixels, buffer_size+1:buffer_size+npixels, :) = image_set_membrane;    
+for i=1:m
+    %store image
+    im1 = image_set_membrane(:,:,i);
+    image_set_buffered(buffer_size+1:buffer_size+npixels,buffer_size+1:buffer_size+npixels,i) = im1;
+end  
 
 %% compute pairwise alignments
 tic

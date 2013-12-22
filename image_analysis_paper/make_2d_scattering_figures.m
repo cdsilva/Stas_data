@@ -1,7 +1,6 @@
-if exist('C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2') ~= 2
-    addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
+    %addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
+    addpath '../../../MATLAB/scatnet-0.2';
     addpath_scatnet
-end
 
 %% compute scattering coefficients
 % set scattering transform parameters
