@@ -3,7 +3,7 @@ addpath('../membrane_pictures/synchron_so3_nosphharm')
 %% parameters
 
 % amont of border or buffer to add around the images
-buffer_size = 50;
+buffer_size = 20;
 
 %size of "portion" of sphere on which to project
 angle_proj = pi/4;
@@ -20,7 +20,6 @@ image_set_buffered = zeros(npixels2, npixels2, m);
 %% load in images
 
 for i=1:m
-
     %store image
     im1 = image_set(:,:,i);
     image_set_buffered(buffer_size+1:buffer_size+npixels,buffer_size+1:buffer_size+npixels,i) = im1;
