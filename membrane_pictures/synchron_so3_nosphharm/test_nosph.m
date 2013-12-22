@@ -19,7 +19,7 @@ im1 = imresize(im1, [npixels npixels]);
 im1 = im1(:,:,image_channel);
 
 % number of samples
-m = 10;
+m = 20;
 
 %set image plotting parameters
 subplot_dim1 = ceil(sqrt(m));
@@ -28,10 +28,10 @@ subplot_dim2 = ceil(m / subplot_dim1);
 % maximum shift allowed in images
 shift_max = 5;
 
-buffer_size = 40;
+buffer_size = 50;
 
 %size of "portion" of sphere on which to project
-angle_proj = pi/2;
+angle_proj = pi/4;
 
 % total number of pixels
 n = npixels+2*buffer_size;

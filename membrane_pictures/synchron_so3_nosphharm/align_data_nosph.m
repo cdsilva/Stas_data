@@ -9,12 +9,12 @@ R = zeros(dim*m);
 angles = zeros(m, m, 3);
 W = inf(m);
 
-nrot = 15;
+nrot = 20;
 theta = linspace(0, 2*pi, nrot+1);
 theta = theta(1:end-1);
-
+    
 nshift = 11;
-shift_max = 20;
+shift_max = 10;
 if mod(nshift, 2) ~= 1 || mod(shift_max, (nshift-1)/2) ~= 0
     disp('nshift is not valid')
     return
