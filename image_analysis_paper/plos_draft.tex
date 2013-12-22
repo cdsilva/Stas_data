@@ -312,9 +312,27 @@ In our setup, we assume that the data is inherently one-dimensional, and that pr
 \subsection*{Diffusion Maps}
 Unlike PCA, diffusion maps (DMAPS) is a nonlinear dimensionality reduction technique. 
 %
-DMAPS
+DMAPS aims to uncover the parameterization of data sampled from a nonlinear manifold.
+%
+The {\em essential} requirement for DMAPS is an appropriate distance metric $d(x_i, x_j)$ for comparing data points. 
+%
+This can be the standard Euclidean distance, or a more complex metric for other data sets.
 
-\subsection*{Angular Synchronization in $SO(2)$}
+We then calculate the matrix $W \in \mathbb{R}^{n \times n}$, where 
+\begin{equation}
+W_{ij} = \exp \left( -\frac{d^2(x_i, x)j)}{\epsilon} \right)
+\end{equation}
+and $\epsilon$ is a characteristic distance between data points.
+%
+In practice, we choose $\epsilon$ to be the median of the pairwise distances between data points.
+%
+We then compute the diagonal matrix $D$, where $D_{ii} = \sum_{j=1}^{n} W_{ij}$, and the matrix $A = D^{-1} W$. 
+%
+We then compute the eigenvectors $\phi_1, \phi_2, \dots, \phi_n$ and 
+
+\subsection*{Angular Synchronization}
+
+\subsection*{Vector Diffusion Maps} 
 
 \subsection*{Scattering Transform}
 
