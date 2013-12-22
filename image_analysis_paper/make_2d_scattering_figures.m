@@ -3,39 +3,7 @@ if exist('C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2') ~= 2
     addpath_scatnet
 end
 
-% pictures are in image channel 2
-image_channel = 2;
-% number of pixels (subsample images)
-npixels = 100;
-
-%set image plotting parameters
-subplot_dim1 = ceil(sqrt(m));
-subplot_dim2 = ceil(m / subplot_dim1);
-
-% store images in 3d array
-image_set = zeros(npixels, npixels, m);
-
-% load in images
-figure;
-for i=1:m
-    % read image
-    im1 = imread(sprintf('%s/emb%02d.tif', dpERK_image_dir, i));
-
-    % resize image
-    im1 = imresize(im1, [npixels npixels]);
-
-    % extract relevent color from image
-    im1 = im1(:,:,image_channel);
-
-    % plot image
-    subplot(subplot_dim1,subplot_dim2,i)
-    imshow(im1)
-
-    %store image
-    im1 = double(im1);
-    image_set(:,:,i) = im1;
-end
-
+%% compute scattering coefficients
 % set scattering transform parameters
 filt_opt = struct();
 filt_rot_opt = struct();
@@ -64,8 +32,7 @@ for i=1:m
     sx_all(i,:) = mean(mean(format_scat(Sx),2),3)';
 end
 
-% dmaps
-
+%% dmaps
 W = squareform(pdist(sx_all)).^2;
 eps = median(W(:));
 [V, D] = dmaps(W, eps, 10);
@@ -85,7 +52,7 @@ end
 [~, I] = sort(V(:,2));
 if print_figures
     figure;
-    for i=1:m
+    for i=im_save_idx
         %subplot(subplot_dim1,subplot_dim2,i)
 
         imshow(uint8(image_set(:,:,I(i))), 'InitialMagnification', 'fit')

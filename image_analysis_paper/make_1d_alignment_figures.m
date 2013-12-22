@@ -1,16 +1,5 @@
 addpath ../membrane_pictures/synchron_SO2
 
-dpERK_unaligned = dpERK;
-
-%% scramble data alignments
-rng(12345);
-
-rand_offsets = zeros(m,1);
-for i=1:m
-    rand_offsets(i) = randi(n);
-    dpERK_unaligned(i,:) = circshift(dpERK_unaligned(i,:),[0 rand_offsets(i)]);
-end
-
 %% plot scrambled data
 figure;
 imagesc(dpERK_unaligned)

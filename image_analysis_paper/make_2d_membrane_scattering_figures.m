@@ -1,37 +1,4 @@
 
-% pictures are in image channel 2
-image_channel = 2;
-% number of pixels (subsample images)
-npixels = 100;
-
-%set image plotting parameters
-subplot_dim1 = ceil(sqrt(m));
-subplot_dim2 = ceil(m / subplot_dim1);
-
-% store images in 3d array
-image_set = zeros(npixels, npixels, m);
-
-% load in images
-figure;
-for i=1:m
-    % read image
-    im1 = imread(sprintf('%s/emb%02d.tif', dpERK_membrane_dir, i));
-
-    % resize image
-    im1 = imresize(im1, [npixels npixels]);
-
-    % extract relevent color from image
-    im1 = im1(:,:,image_channel);
-
-    % plot image
-    subplot(subplot_dim1,subplot_dim2,i)
-    imshow(im1)
-
-    %store image
-    im1 = double(im1);
-    image_set(:,:,i) = im1;
-end
-
 % set scattering transform parameters
 filt_opt = struct();
 filt_rot_opt = struct();
@@ -42,7 +9,7 @@ scat_opt = struct();
 scat_opt.oversampling = 10;
 
 % compute scattering transform of first image
-x = image_set(:,:,1);
+x = image_set_membrane(:,:,1);
 % define wavelet transforms
 Wop = wavelet_factory_3d(size(x), filt_opt, filt_rot_opt, scat_opt);
 Sx = scat(x, Wop);
@@ -53,7 +20,7 @@ sx_all = zeros(m, size(Sx_mat, 1));
 
 % compute scattering invariants for each image
 for i=1:m
-    x = image_set(:,:,i);
+    x = image_set_membrane(:,:,i);
     
     Sx = scat(x, Wop);
 
@@ -92,10 +59,10 @@ end
 [~, I] = sort(V(:,idx));
 if print_figures
     figure;
-    for i=1:m
+    for i=im_save_idx
         %subplot(subplot_dim1,subplot_dim2,i)
 
-        imshow(uint8(image_set(:,:,I(i))), 'InitialMagnification', 'fit')
+        imshow(uint8(image_set_membrane(:,:,I(i))), 'InitialMagnification', 'fit')
         %imshow(imadjust(uint8(image_set(:,:,I(i)))), 'InitialMagnification', 'fit')
         % make green colormap
         cm_green = gray;

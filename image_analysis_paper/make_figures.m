@@ -19,6 +19,64 @@ dpERK = dpERK_raw;
 
 [m, n] = size(dpERK);
 
+% scramble data alignments
+dpERK_unaligned = zeros(size(dpERK));
+rng(12345);
+rand_offsets = zeros(m,1);
+for i=1:m
+    rand_offsets(i) = randi(n);
+    dpERK_unaligned(i,:) = circshift(dpERK(i,:),[0 rand_offsets(i)]);
+end
+
+%% load images
+
+npixels = 100;
+
+%set image plotting parameters
+subplot_dim1 = ceil(sqrt(m));
+subplot_dim2 = ceil(m / subplot_dim1);
+
+image_set = zeros(npixels, npixels, m);
+image_set_membrane = zeros(npixels, npixels, m);
+
+image_channel = 2;
+membrane_channel = 2;
+
+% image indices to plot
+im_save_idx = [1,9,17,25,30,34,38,43,49];
+
+figure;
+for i=1:m
+    % read image
+    im1 = imread(sprintf('%s/emb%02d.tif', dpERK_image_dir, i));
+
+    % resize image
+    im1 = imresize(im1, [npixels npixels]);
+
+    % extract relevent color from image
+    im1 = im1(:,:,image_channel);
+
+    %store image
+    im1 = double(im1);
+    image_set(:, :, i) = im1;
+    
+    % read image
+    im1 = imread(sprintf('%s/emb%02d.tif', dpERK_membrane_dir, i));
+
+    % resize image
+    im1 = imresize(im1, [npixels npixels]);
+
+    % extract relevent color from image
+    im1 = im1(:,:,membrane_channel);
+
+    % adjust image
+    im1 = imadjust(im1);
+    
+    %store image
+    im1 = double(im1);
+    image_set_membrane(:, :, i) = im1;
+end
+
 %% plot images
 
 image_idx = 44;
@@ -129,6 +187,10 @@ make_1d_alignment_figures;
 %% raw dpERK images-- synchronization
 
 make_2d_alignment_figures;
+
+%% raw membrane pictures-- synchronization
+
+make_2d_membrane_alignment_figures;
 
 %% raw dpERK images
 

@@ -13,7 +13,11 @@ n2 = npixels+2*buffer_size;
 % dimension of rotations
 dim = 3;
 
-image_set_buffered(buffer_size+1:buffer_size+npixels, buffer_size+1:buffer_size+npixels, :) = image_set;    
+image_set_buffered = zeros(n2, n2, m);
+
+image_channel = 2;
+
+image_set_buffered(buffer_size+1:buffer_size+npixels, buffer_size+1:buffer_size+npixels, :) = image_set_membrane;    
 
 %% compute pairwise alignments
 tic
@@ -23,7 +27,7 @@ toc
 %% angular synchronization
 R_opt = ang_synch(R, dim);
 
-image_set_aligned = zeros(size(image_set));
+image_set_aligned = zeros(size(image_set_membrane));
 
 figure;
 for i=1:m
@@ -62,13 +66,13 @@ plot(L(:,1), V(:,2),'.')
 xlabel('membrane thickness')
 ylabel('\phi_2')
 if print_figures
-    print('angsynch_2d_time_corr',fmt, res)
+    print('angsynch_membrane_2d_time_corr',fmt, res)
 end
 
 [~, I] = sort(V(:,2));
 if print_figures
     figure;
-    for i=im_save_idx
+    for i=1:m  
         imshow(uint8(image_set_aligned(:,:,I(i))), 'InitialMagnification', 'fit')
         % make green colormap
         cm_green = gray;
@@ -76,7 +80,7 @@ if print_figures
         cm_green(:,3) = 0;
         colormap(cm_green)
         axis off
-        print(sprintf('dpERK_angsynch_%d',i),fmt,res)
+        print(sprintf('membrane_angsynch_%d',i),fmt,res)
         clf
     end
 end
@@ -88,7 +92,7 @@ neigs = 6;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
-image_set_aligned_vdm = zeros(size(image_set));
+image_set_aligned_vdm = zeros(size(image_set_membrane));
 
 figure;
 for i=1:m
@@ -115,7 +119,7 @@ for i=1:n_embed
     title(sprintf('i = %d, j = %d', embed_idx(1,i), embed_idx(2,i)))
 end
     
-coord_idx = 7;
+coord_idx = 5;
 if corr(embed_coord(:,coord_idx), L(:,1)) < 0
     embed_coord(:,coord_idx) = -embed_coord(:,coord_idx);
 end
@@ -125,13 +129,13 @@ plot(L(:,1),embed_coord(:,coord_idx),'.')
 xlabel('membrane thickness')
 ylabel(sprintf('\\langle \\phi_%d, \\phi_%d \\rangle', embed_idx(1, coord_idx), embed_idx(2, coord_idx)))
 if print_figures
-    print('vdm_2d_time_corr',fmt, res)
+    print('vdm_membrane_2d_time_corr',fmt, res)
 end
 
 [~, I] = sort(embed_coord(:,coord_idx));
 if print_figures
     figure;
-    for i=im_save_idx 
+    for i=im_save_idx
         imshow(uint8(image_set_aligned_vdm(:,:,I(i))), 'InitialMagnification', 'fit')
         % make green colormap
         cm_green = gray;
@@ -139,7 +143,7 @@ if print_figures
         cm_green(:,3) = 0;
         colormap(cm_green)
         axis off
-        print(sprintf('dpERK_vdm_%d',i),fmt,res)
+        print(sprintf('membrane_vdm_%d',i),fmt,res)
         clf
     end
 end
