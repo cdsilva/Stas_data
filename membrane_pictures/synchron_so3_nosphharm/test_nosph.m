@@ -19,7 +19,7 @@ im1 = imresize(im1, [npixels npixels]);
 im1 = im1(:,:,image_channel);
 
 % number of samples
-m = 20;
+m = 10;
 
 %set image plotting parameters
 subplot_dim1 = ceil(sqrt(m));

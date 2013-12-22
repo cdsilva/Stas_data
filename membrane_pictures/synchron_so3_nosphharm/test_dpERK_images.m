@@ -1,5 +1,5 @@
 clear all
-close all
+%close all
 
 %% parameters
 dpERK_data = '../../membrane_lengths/oct16.mat';
@@ -22,7 +22,7 @@ subplot_dim2 = ceil(m / subplot_dim1);
 buffer_size = 50;
 
 %size of "portion" of sphere on which to project
-angle_proj = pi/2;
+angle_proj = pi/4;
 
 % total number of pixels
 n = npixels+2*buffer_size;
