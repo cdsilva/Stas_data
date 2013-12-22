@@ -209,7 +209,7 @@ $\ast$ E-mail: yannis@princeton.edu
 \caption{{\bf Ordering spatially unaligned dpERK concentration profiles using vector diffusion maps.} (a) Concentration profiles of dpERK for many embryos. Each row represents a different embryo fixed at a slightly different developmental time. The circluar profiles have not been ``opened'' at the same point; rather, each profile was opened at a random point around the embryo. We are allowed to shift the (linear) profiles left and right.
 (b) Concentration profiles of dpERK aligned and ordered using vector diffusion maps.
 (c) Correlation between the VDM embedding coordinate and the membrane thickness.}
-\label{fig:angsynch_ordering}
+\label{fig:vdm_ordering}
 \end{figure}
 
 \subsection*{Two-dimensional dpERK images aligned and ordered using vector diffusion maps}
@@ -229,7 +229,7 @@ $\ast$ E-mail: yannis@princeton.edu
 \caption{{\bf Ordering two-dimensional fluorescent images of dpERK.}
 (a) Correlation between the VDM embedding coordinate and the membrane thickness. 
 (b) Some representative fluorescent images, aligned  and ordered using the VDM embedding coordinate. }
-\label{fig:scattrans_dpERK_ordering}
+\label{fig:vdm_image_ordering}
 \end{figure}
 
 \subsection*{Two-dimensional dpERK images ordered using diffusion maps and the scattering transform}
@@ -283,8 +283,36 @@ $\ast$ E-mail: yannis@princeton.edu
 \subsection*{Experimental Setup}
 
 \subsection*{Principal Component Analysis}
+Principal component analysis, or PCA, has been the workhorse dimensionality reduction technique for the past century.
+%
+PCA finds the optimal planes or hyperplanes on which to project the data in order to maximize the variance of the projected data.
+
+We assume we have a data set consisting of $n$ $d$-dimensional observations, $X \in \mathbb{R}^{n \times d}$, where $X_{ij}$ denotes the $j^{th}$ dimension of the $i^{th}$ observation. 
+%
+PCA first begins by mean-centering the data set to produce the matrix $\hat{X}$, where
+\begin{equation}
+\hat{X}_{ij} = X_{ij} - \frac{1}{n} \sum_{k=1}^n X_{kj}.
+\end{equation}
+%
+The empirical covariance of the data set, $C \in mathbb{R}^{d \times d}$ can be computed as
+\begin{equation}
+C = X^T X.
+\end{equation}
+%
+The principal components of the data set $X$ are then given by the eigenvectors $\psi_1, \dots, \psi_d$ of $C$.
+%
+Furthermore, the eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_d$ measure the variance of the data capatured by the corresponding eigenvector. 
+%
+Therefore, we choose to order the eigenvectors such that $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_d$.
+%
+Then, the first few eigenvectors capture a significant portion of the variance in our data set, and projection onto these first few principal components will retain many features of the data set while reducing the dimenstionality.
+%
+In our setup, we assume that the data is inherently one-dimensional, and that projection onto $\psi_1$ will uncover the correct time ordering of the data.
 
 \subsection*{Diffusion Maps}
+Unlike PCA, diffusion maps (DMAPS) is a nonlinear dimensionality reduction technique. 
+%
+DMAPS
 
 \subsection*{Angular Synchronization in $SO(2)$}
 
