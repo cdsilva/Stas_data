@@ -7,7 +7,7 @@ set(0,'DefaultAxesFontSize',20)
 
 res = '-r300';
 fmt = '-djpeg';
-print_figures = true;
+print_figures = false;
 
 dpERK_data = '../membrane_lengths/oct16.mat';
 dpERK_image_dir = '../membrane_pictures/membrane2/dpERK_staining';
@@ -172,21 +172,31 @@ if print_figures
     print('data_ordered_membrane',fmt,res)
 end
 
+close all
+
 %% PCA
 
 make_pca_figures;
+
+close all
 
 %% DMAPS
 
 make_dmaps_figures;
 
+close all
+
 %% alignment
 
 make_1d_alignment_figures;
 
+close all
+
 %% raw dpERK images-- synchronization
 
 make_2d_alignment_figures;
+
+return
 
 %% raw membrane pictures-- synchronization
 
