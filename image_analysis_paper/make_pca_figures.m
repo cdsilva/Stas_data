@@ -27,7 +27,7 @@ end
 figure;
 plot(V_PCA(:,1))
 xlabel('position')
-ylabel('\phi_1')
+ylabel('$\psi_1$','interpreter','latex')
 if print_figures
     print('PCA_mode',fmt,res)
 end
@@ -36,7 +36,7 @@ end
 figure;
 plot(L(:,1),coeff(:,1),'.')
 xlabel('membrane thickness')
-ylabel('\langle x_1, \phi_1 \rangle')
+ylabel('$\langle x_i, \psi_1 \rangle$','interpreter','latex')
 if print_figures
     print('PCA_time_corr',fmt,res)
 end
@@ -44,8 +44,8 @@ end
 %% plot first two PCA coefficients
 figure;
 scatter(coeff(:,1),coeff(:,2),200,'b','.')
-xlabel('a_{i,1}')
-ylabel('a_{i,2}')
+xlabel('$\langle x_i, \psi_1 \rangle$','interpreter','latex')
+ylabel('$\langle x_i, \psi_2 \rangle$','interpreter','latex')
 axis equal
 if print_figures
     print('coeff_12_new', fmt, res)

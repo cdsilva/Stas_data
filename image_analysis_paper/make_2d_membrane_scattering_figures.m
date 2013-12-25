@@ -51,7 +51,7 @@ end
 figure;
 plot(L(:,1), V(:,idx),'.')
 xlabel('membrane thickness')
-ylabel(sprintf('\\phi_%d',idx))
+ylabel(sprintf('$\\phi_%d$',idx),'interpreter','latex')
 if print_figures
     print('DMAPS_membrane_scat_time_corr',fmt,res)
 end

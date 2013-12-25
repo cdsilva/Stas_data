@@ -64,7 +64,7 @@ end
 figure;
 plot(L(:,1), V_dmaps(:,2), '.')
 xlabel('membrane thickness')
-ylabel('\phi_2')
+ylabel('$\phi_2$','interpreter','latex')
 if print_figures
     print('angsynch_time_corr',fmt, res)
 end
@@ -124,7 +124,7 @@ end
 figure;
 plot(L(:,1), embed_coord(:, coord_idx), '.')
 xlabel('membrane thickness')
-ylabel(sprintf('\\langle \\phi_%d, \\phi_%d \\rangle', embed_idx(1, coord_idx), embed_idx(2, coord_idx)))
+ylabel(sprintf('$\\langle \\phi_%d, \\phi_%d \\rangle$', embed_idx(1, coord_idx), embed_idx(2, coord_idx)),'interpreter','latex')
 if print_figures
     print('VDM_time_corr',fmt, res)
 end

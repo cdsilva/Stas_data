@@ -25,7 +25,7 @@ end
 figure;
 plot(L(:,1),V_dmaps(:,2),'.')
 xlabel('membrane thickness')
-ylabel('\phi_2')
+ylabel('$\phi_2$','interpreter','latex')
 if print_figures
     print('DMAPS_time_corr',fmt,res)
 end

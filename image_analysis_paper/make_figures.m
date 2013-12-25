@@ -196,15 +196,23 @@ close all
 
 make_2d_alignment_figures;
 
+close all
+
 %% raw membrane pictures-- synchronization
 
 make_2d_membrane_alignment_figures;
+
+close all
 
 %% raw dpERK images
 
 make_2d_scattering_figures;
 
+close all
+
 %% membrane images
 
 make_2d_membrane_scattering_figures;
     
+close all
+

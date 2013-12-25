@@ -1,6 +1,6 @@
-    %addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
-    addpath '../../../MATLAB/scatnet-0.2';
-    addpath_scatnet
+%addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
+addpath '../../../MATLAB/scatnet-0.2';
+addpath_scatnet
 
 %% compute scattering coefficients
 % set scattering transform parameters
@@ -43,7 +43,7 @@ end
 figure;
 plot(L(:,1), V(:,2),'.')
 xlabel('membrane thickness')
-ylabel('\phi_2')
+ylabel('$\phi_2$','interpreter','latex')
 if print_figures
     print('DMAPS_scat_time_corr',fmt,res)
 end
