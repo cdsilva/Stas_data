@@ -330,11 +330,44 @@ We then compute the diagonal matrix $D$, where $D_{ii} = \sum_{j=1}^{n} W_{ij}$,
 %
 We then compute the eigenvectors $\phi_1, \phi_2, \dots, \phi_n$ and eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_n$ and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_n|$. 
 %
-
+Because the matrix $A$ is similar to the symmetric matrix $D^{-1/2} W D^{-1/2}$, $A$ is guaranteed to have real eigenvalues and real, orthoganol eigenvectors. 
+%
+The eigenvectors $\phi_1, \phi_2, \dots, \phi_n$ give the embedding coordinates, such that $\phi_j(i)$ gives the $j^{th}$ embedding coordinate of the $i^{th}$ data point. 
+%
+Because the matrix $A$ is row-stochastic, $\lambda_1=1$ and $\phi_1$ is a constant vector.
+%
+The next few eigenvectors give the ``meaningful'' embedding coordinates for the data. 
 
 \subsection*{Angular Synchronization}
 
+Angular synchronization aims to align data points under some synchronization group, assuming we have estimates of the pairwise alignments to align pairs of data points. 
+
+Assume we have data points $x_1, \dots, x_n$ that we wish to align under some symmetry group (typically $SO(2)$ or $SO(3)$, the space of two-dimensional or three-dimensional rotations, respectively).
+%
+Let $R_{ij}$ denote the rotation that aligns $x_i$ to $x_j$. 
+%
+We seek to find the rotations $R_1, R_2, \dots, R_n$ such that $R_i^T R_j$ is most consistent (in some sense) with $R_{ij}$, for every pair $i, j$. 
+%
+We therefore define the objective function 
+\begin{equation} \label{eqn:angsynch_obj}
+\min_{R_1, \dots, R_n \in SO(2)} \sum_{i=1}^{n} \sum_{j=1}^{n} R_i^T R_{ij} R_j.
+\end{equation}
+%
+The solution to \eqref{eqn:angsynch_obj} is not easily computed.
+%
+However, if we relax the problem and allow $R_1, \dots, R_n \in \mathbb{R}^2$, then the solution is given by the top eigenvectors of the matrix $H$, where DEFINE H. 
+
+We then project the eigenvector solution back onto the space of $SO(2)$ by $\hat{R}_i = U V^T$, where $U$ and $V$ are the left and right singular vectors of ADDMORE DEF.
+
 \subsection*{Vector Diffusion Maps} 
+
+Angular synchronization assumes that the data points are all replicate measurements of the same underlying data point, simply corrupted with rotations and some noise.
+%
+However, in our systems, there is an underlying symmerty group {\em as well as} a dynamical process at work, so the data points are not identical modulo symmetries and noise.
+
+Vector diffusion maps couples the symmetry-factoring of angular synchronization with the uncovering of dynamics of diffusion maps. 
+%
+
 
 \subsection*{Scattering Transform}
 
