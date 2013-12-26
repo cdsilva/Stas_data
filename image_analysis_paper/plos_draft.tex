@@ -89,12 +89,17 @@ $\ast$ E-mail: yannis@princeton.edu
 % Please keep the abstract between 250 and 300 words
 \section*{Abstract}
 
+High-throughput techniques have allowed for a dramatic increase in the amount of data that can be collected in a single biological experiment.
+%
+However, in systems where one is interested in studying the dynamics of a single organism, high-throughput techniques often 
+
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLoS ONE authors please skip this step.
 % Author Summary not valid for PLoS ONE submissions.
 \section*{Author Summary}
 
 \section*{Introduction}
+
 
 \begin{figure}[H]
 \begin{center}
@@ -131,6 +136,17 @@ $\ast$ E-mail: yannis@princeton.edu
 \section*{Results}
 
 \subsection*{dpERK concentration profiles ordered using Principal Component Analysis}
+
+We first used Principal Components Analysis (PCA) to automatically order the one-dimensional concentration profiles in time. 
+%
+We computed the first principal component, $\psi_1$ from the data set, and ordered the data by the projection coefficients onto $\psi_1$. 
+%
+The results are shown in Figure \ref{fig:PCA_ordering}.
+%
+There is a strong correlation between the first projection coefficient, $\langle x_i, \psi_1 \rangle$, and the membrane thickness.
+%
+Therefore, we can conclude that BLAH BLAH.
+
 \begin{figure}[H]
 \begin{subfigure}{0.3\textwidth}
 \includegraphics[width=\textwidth]{data_unordered}
@@ -139,6 +155,7 @@ $\ast$ E-mail: yannis@princeton.edu
 \begin{subfigure}{0.3\textwidth}
 \includegraphics[width=\textwidth]{data_ordered_PCA}
 \caption{}
+\label{subfig:PCA_ordering_image}
 \end{subfigure}
 \begin{subfigure}{0.3\textwidth}
 \includegraphics[width=\textwidth]{PCA_time_corr}
@@ -150,7 +167,34 @@ $\ast$ E-mail: yannis@princeton.edu
 \label{fig:PCA_ordering}
 \end{figure}
 
+We would like to note that, because the embryos can be oriented with either the anterior or posterior end facing up in the microfluidic device, the directionality of the concentration profiles (clockwise versus counterclockwise around the ring, or right to left versus left to right for the linear profiles) is not meaningful. 
+%
+Therefore, we could also do the PCA analysis with an expanded data set, where we include each concentration profile as well as its mirror image.
+%
+We performed this analysis, but it did not change the results significantly, since most data points are nearly symmetric with respect to left-right reflections.
+
 \subsection*{dpERK concentration profiles ordered using Diffusion Maps}
+
+Although PCA was rather successful in ordering the concentration profiles, there are some errors or inconsistencies in the orderings.
+%
+Perhaps the most obvious error is the scrambling of the secondary *ADD NAME* peaks located at the far left and right edges of the concentration profiles.
+%
+It is known that these peaks arise later in the development of {\em Drosophila}, and so any profiles which express these secondary peaks should come later in the ordering.
+%
+However, one can see in Figure \ref{subfig:PCA_ordering_image} that these secondary peaks are scrambled when the data is ordered using PCA.
+%
+We can gain insight into this ``scrambling'' by looking at the projection of the data onto the first two principal components, shown in Figure \ref{...}.
+%
+The data falls onto a one-dimensional {\em nonlinear} curve in this two-dimensional space, implying that nonlinear dimensionality reduction techniques may be more approproate, as it will order the data along the curve, and not simply along the first principal axis.
+
+We choose to use diffusion maps (DMAPS) as our nonlinear dimensionality reduction technique.
+%
+We compute the diffusion maps embedding for our data set, and order the data using the first (nontrivial) diffusion maps coordinate $\phi_2$. 
+%
+The results are shown in Figure \ref{fig:DMAPS_ordering}.
+%
+The secondary peaks are now nicely clustered at the end of the developmental trajectory.
+
 \begin{figure}[H]
 \begin{subfigure}{0.3\textwidth}
 \includegraphics[width=\textwidth]{data_unordered}
@@ -171,6 +215,30 @@ $\ast$ E-mail: yannis@princeton.edu
 \end{figure}
 
 \subsection*{dpERK concentration profiles aligned using angular synchronization}
+
+As we have shown, we can order the concentration profiles using PCA or DMAPS.
+%
+However, ordering the profiles first requires that we factor out the relevant symmetries in the problem.
+%
+For the linear concentration profiles that we extract from the fluorescent images, there is a shift invarance that we must consider.
+%
+In the previous analyses, we have assumed that the profiles have been prealigned using the location of the dorsal peak.
+%
+However, without some {\em a priori} knowledge of the system, we would first need to align the concentration profiles before doing our analysis.
+
+The most common and perhaps intuitive technique for alignment are template-based methods \cite{...}, where one chooses are representative data point as a ``template'', and then shifts or rotates each data point to be optimally aligned with this template.
+%
+Although these methods are simple, they require knowledge of an appropriate template function and can suffer when the data set is noisy.
+
+Angular synchronization \cite{...} is a relatively new technique that is more robust than template-based methods in the presence of noise.
+%
+We used angular synchronization to factor out the shifts in the concentration profiles measured from the fluorescent images.
+%
+Following the synchronization procedure (which yields the optimal shift for each data point so that all points are optimally aligned), we then used DMAPS to order the aligned concentration profiles.
+%
+The results are shown in Figure \ref{fig:angsynch_ordering}.
+%
+One can see that the results are visually consistent with the DMAPS results shown in Figure \ref{fig:DMAPS_ordering}. 
 
 \begin{figure}[H]
 \begin{subfigure}{0.3\textwidth}
@@ -193,6 +261,14 @@ $\ast$ E-mail: yannis@princeton.edu
 
 \subsection*{dpERK concentration profiles aligned and ordered using vector diffusion maps}
 
+We then applied vector diffusion maps (VDM) to the unaligned data set.
+%
+VDM is similar to angular synchronization, but it is intended for data sets that contain both underlying symmetries and dynamics.
+%
+The results of aligning {\em and} ordering the data using VDM are shown in Figure \ref{fig:vdm_ordering}.
+%
+The results are similar to those from angular syncrhonization (Figure \ref{fig:angsynch_ordering}), but we now obtain the alignments and ordering in one computation.
+
 \begin{figure}[H]
 \begin{subfigure}{0.3\textwidth}
 \includegraphics[width=\textwidth]{data_unaligned_unordered}
@@ -213,6 +289,7 @@ $\ast$ E-mail: yannis@princeton.edu
 \end{figure}
 
 \subsection*{Two-dimensional dpERK images aligned and ordered using vector diffusion maps}
+
 
 \begin{figure}[H]
 \centering
@@ -365,11 +442,26 @@ Angular synchronization assumes that the data points are all replicate measureme
 %
 However, in our systems, there is an underlying symmerty group {\em as well as} a dynamical process at work, so the data points are not identical modulo symmetries and noise.
 
-Vector diffusion maps couples the symmetry-factoring of angular synchronization with the uncovering of dynamics of diffusion maps. 
+Vector diffusion maps (VDM) couples the symmetry-factoring of angular synchronization with the uncovering of dynamics of diffusion maps. 
 %
-
+We construct the matrix $A$ as in diffusion maps, and the matrix $H$ as in angular synchronization.
+%
+We then construct the matrix $S$, where the $(i,j)$ block of $S$ is the $A_{ij} H_{ij}$ where $A_{ij}$ is the $(i,j)$ entry of $A$, and $H_{ij}$ is the $(i,j)$ block of $H$. 
+%
+ADD INFO ABOUT SEPARATING COORDINATES AND ROTATIONS
 
 \subsection*{Scattering Transform}
+Angular syncrhonization and VDM both align symmetry-invariant data points {\em before} computing the diffusion maps embedding.
+%
+An alternative is to construct features that are {\em invariant} to the underlying symmetry group, and then perform DMAPS or other analysis on these features.
+
+We choose to use the scattering transform to construct these features.
+%
+The scattering transform is a specific formulation of a wavelet transform.
+%
+It is constructed to be invariant to rotations and translations.
+%
+
 
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
