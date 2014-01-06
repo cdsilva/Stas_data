@@ -92,6 +92,7 @@ im1_DI(:,:,1) = im1_DI(:,:,3);
 im1_DI(:,:,2) = 0;
 
 im1_membrane = imread(sprintf('%s/emb%02d.tif',dpERK_membrane_dir, image_idx));
+im1_membrane(:,:,2) = imadjust(im1_membrane(:,:,membrane_channel));
 
 figure;
 imshow(im1_dpERK)
@@ -164,7 +165,7 @@ end
 % plot data
 figure;
 imagesc(dpERK_sort)
-ylabel('data point (ordered using membrane thickness)')
+ylabel('data point (ordered using membrane thickness)','fontsize',16)
 xlabel('position')
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])

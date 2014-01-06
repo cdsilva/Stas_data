@@ -29,3 +29,5 @@ ylabel('$\phi_2$','interpreter','latex')
 if print_figures
     print('DMAPS_time_corr',fmt,res)
 end
+
+fprintf('DMAPS Spearman coeff: %2.4f \n', corr(L(:,1), V_dmaps(:,2), 'type','spearman'));

@@ -1,5 +1,5 @@
-%addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
-addpath '../../../MATLAB/scatnet-0.2';
+addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
+%addpath '../../../MATLAB/scatnet-0.2';
 addpath_scatnet
 
 %% compute scattering coefficients
@@ -47,6 +47,8 @@ ylabel('$\phi_2$','interpreter','latex')
 if print_figures
     print('DMAPS_scat_time_corr',fmt,res)
 end
+fprintf('Scattering transform Spearman coeff: %2.4f \n', corr(L(:,1),V(:,2), 'type','spearman'));
+
 
 [~, I] = sort(V(:,2));
 if print_figures

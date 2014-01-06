@@ -56,6 +56,9 @@ if print_figures
     print('DMAPS_membrane_scat_time_corr',fmt,res)
 end
 
+fprintf('Scattering transform (membrane) Spearman coeff: %2.4f \n', corr(L(:,1), V(:,idx), 'type','spearman'));
+
+
 [~, I] = sort(V(:,idx));
 if print_figures
     figure;

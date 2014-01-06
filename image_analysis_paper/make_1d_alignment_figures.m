@@ -68,6 +68,9 @@ ylabel('$\phi_2$','interpreter','latex')
 if print_figures
     print('angsynch_time_corr',fmt, res)
 end
+
+fprintf('Angular synchronization Spearman coeff: %2.4f \n', corr(L(:,1),V_dmaps(:,2), 'type','spearman'));
+
     
 %% VDM
 eps = median(W(:));
@@ -128,4 +131,7 @@ ylabel(sprintf('$\\langle \\phi_%d, \\phi_%d \\rangle$', embed_idx(1, coord_idx)
 if print_figures
     print('VDM_time_corr',fmt, res)
 end
+
+fprintf('VDM (1-D) Spearman coeff: %2.4f \n', corr(L(:,1),embed_coord(:, coord_idx), 'type','spearman'));
+
 rmpath ../membrane_pictures/synchron_SO2

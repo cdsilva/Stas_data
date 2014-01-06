@@ -139,6 +139,9 @@ if print_figures
     print('vdm_2d_time_corr',fmt, res)
 end
 
+fprintf('VDM (2-D) Spearman coeff: %2.4f \n', corr(L(:,1),embed_coord(:,coord_idx), 'type','spearman'));
+
+
 [~, I] = sort(embed_coord(:,coord_idx));
 if print_figures
     figure;

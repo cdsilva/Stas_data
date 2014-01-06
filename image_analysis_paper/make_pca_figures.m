@@ -40,6 +40,7 @@ ylabel('$\langle x_i, \psi_1 \rangle$','interpreter','latex')
 if print_figures
     print('PCA_time_corr',fmt,res)
 end
+fprintf('PCA Spearman coeff: %2.4f \n', corr(L(:,1),coeff(:,1), 'type','spearman'));
 
 %% plot first two PCA coefficients
 figure;
