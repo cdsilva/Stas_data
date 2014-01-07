@@ -1,5 +1,8 @@
 %% PCA
+tic
 [V_PCA, D_PCA] = PCA(dpERK, 5);
+
+toc
 
 %% mean - center
 mean_data = mean(dpERK, 1);

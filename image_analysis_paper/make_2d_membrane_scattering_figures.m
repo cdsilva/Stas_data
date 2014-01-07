@@ -1,3 +1,4 @@
+tic
 
 % set scattering transform parameters
 filt_opt = struct();
@@ -33,13 +34,14 @@ W = squareform(pdist(sx_all)).^2;
 eps = median(W(:));
 [V, D] = dmaps(W, eps, 20);
 
+toc
 for i=3:20;
     figure;
     plot(V(:,2),V(:,i),'.')
 end
 
 for i=2:20
-    corr(V(:,i),L(:,1))
+    corr(V(:,i),L(:,1));
 end
 
 idx = 8;

@@ -12,11 +12,13 @@ if print_figures
 end
 
 %% calculate pairwise alignments
+tic
 [H, W, theta] = align_data(dpERK_unaligned);
 
 %% angular synchronization
 R_opt = ang_synch(H, 2);
 
+toc
 dpERK_aligned = zeros(size(dpERK_unaligned));
 R_est = R_opt(1:2, 1:2);
 theta_est = atan2(R_est(2,1),R_est(1,1));
@@ -73,10 +75,15 @@ fprintf('Angular synchronization Spearman coeff: %2.4f \n', corr(L(:,1),V_dmaps(
 
     
 %% VDM
+% calculate pairwise alignments
+tic
+[H, W, theta] = align_data(dpERK_unaligned);
+
 eps = median(W(:));
 neigs = 6;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(H, W, eps, neigs);
+toc
 
 data2 = zeros(size(dpERK_unaligned));
 R_est = R_opt(1:2,1:2);

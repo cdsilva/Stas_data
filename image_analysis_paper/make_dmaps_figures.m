@@ -1,7 +1,9 @@
 %% distance matrix
+tic
 W = squareform(pdist(dpERK));
 eps = median(W(:));
 [V_dmaps, D_dmaps] = dmaps(W, eps, 10);
+toc
 
 %% flip sign if necessary
 if corr(V_dmaps(:,2), L(:,1)) < 0

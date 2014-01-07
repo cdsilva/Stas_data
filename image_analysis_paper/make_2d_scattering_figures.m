@@ -22,6 +22,7 @@ Sx_mat = format_scat(Sx);
 % store scattering invariants (one row per image)
 sx_all = zeros(m, size(Sx_mat, 1));
 
+tic
 % compute scattering invariants for each image
 for i=1:m
     x = image_set(:,:,i);
@@ -35,6 +36,7 @@ end
 W = squareform(pdist(sx_all)).^2;
 eps = median(W(:));
 [V, D] = dmaps(W, eps, 10);
+toc
 
 if corr(V(:,2), L(:,1)) < 0
     V(:,2) = -V(:,2);

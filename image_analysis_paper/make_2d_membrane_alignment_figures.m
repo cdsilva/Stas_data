@@ -28,7 +28,7 @@ end
 %% compute pairwise alignments
 tic
 [R, W, angles] = align_data_nosph(image_set_buffered, angle_proj);
-toc
+
         
 %% angular synchronization
 % R_opt = ang_synch(R, dim);
@@ -98,6 +98,7 @@ neigs = 5;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
+toc
 image_set_aligned_vdm = zeros(size(image_set_membrane));
 
 figure;
