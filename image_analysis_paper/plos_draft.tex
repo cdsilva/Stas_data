@@ -97,6 +97,41 @@ $\ast$ E-mail: yannis@princeton.edu
 
 \section*{Introduction}
 
+The issue of rotation invariance arises in many applications, most commonly image registration and image alignment.
+%
+In settings such as face recognition, medical imaging, and computer vision, objects from different frames or timepoints must be aligned or ``registered'' before further analysis can be done.
+%
+For example, often medical images (such as MRI scans) are collected over multiple days, and doctors would like to study development of a condition (such as the growth of a tumor).
+%
+However, on each day, the patient and/or sensors may be in slightly different locations; therefore, the images must be aligned before the doctor can look at how the tumor is growing and evolving.
+
+Several different techniques have been developed to solve the image registration problem. 
+%
+Most of these techniques are ``template-based'' techniques, where one selects a prototypical image or ``template'', and then aligns the remaining images to this template \cite{...}.
+%
+Such techniques can suffer if a good template is not know {\em a priori}; when the images are noisy, selecting one image from the data set at random can yield a noisy template and result in many mis-alignments. 
+
+In addition, most existing techniques rely on feature extraction algorithms, and these features are often problem-specific.
+%
+For example, (ADD INFO ABOUT FACES).
+
+We are interested in analyzing data collected from developing {\em Drosophila} embryos during nuclear cycle 14 (NC14) (CHECK).
+%
+(ADD MORE ABOUT WHY THIS IS IMPORTANT).
+
+Currently, data is collected using a high-throughput microfluidic device \cite{chung2010microfluidic}; we can therefore image hundreds of embryos in one experiment.
+%
+Each embryo is stained for the membrane proteins, dpERK, and DI. 
+%
+We image the cross-section of each embryo.
+%
+We then use image analysis software to extract the circular dpERK concentration profile from the fluorescent image.
+%
+We use the expression of DI to find the dorsal midline of the embryo, and ``unzip'' the circular profile at the dorsal midline to obtain a one-dimensional, linear dpERK concentration profile.
+%
+We then measure the membrane thickness of them embryo; the thickness of the membrane is known to be monotonic in time during NC14 \cite{...}. 
+%
+We then order the concentration profiles for each embryo by the thickness of the membrane to obtain a ``reconstruction'' of the dynamics of dpERK.
 
 \begin{figure}[H]
 \begin{center}
@@ -134,6 +169,14 @@ $\ast$ E-mail: yannis@princeton.edu
 (d) Concentration profiles of dpERK for many embryos from (c), now ordered by the thickness of the membrane. The membrane thickness is known to be one-to-one with time.}
 \label{fig:background}
 \end{figure}
+
+Here,  we will discuss alternative methodologies to reconstruct the dpERK dynamics from fluorescent images. 
+%
+We will use various data mining techniques to {\em automatically} order the dpERK concentration profiles in time.
+%
+We will not only focus on the linear concentration profiles extracted from the images, but also work directly with the two-dimensional dpERK fluorescent images. 
+%
+Finally, we will look at ordering the two-dimensional membrane images in time; these are much more feature-rich than the dpERK images, and prove to be more challenging.
 
 % Results and Discussion can be combined.
 \section*{Results}
@@ -409,6 +452,8 @@ The work here is intended to provide an overview of the different techniques ava
 		\hline 	
 		Scattering transform + DMAPS on two-dimensional profiles & 0.9011  & $86$ seconds &  $\mathcal{O}(n)$ to compute the scattering transform for each data point \\
 		\hline
+		Scattering transform + DMAPS on two-dimensional membrane images & 0.8403  & $300$ seconds &  $\mathcal{O}(n)$ to compute the scattering transform for each data point \\
+		\hline
 	\end{tabular}
 \end{table}
 % You may title this section "Methods" or "Models".
@@ -549,6 +594,10 @@ This transform is applied to the signal itself, as well as to the residual, in o
 % 
 Furthermore, the scattering transform can be shown to be a contractive operator; therefore, noise and small deformations in the signal are not amplified in the transformation.
 
+\subsection*{Edge detection}
+For the membrane images, we are only interested in the location of the edges of the membrane (not other features, such as the intensity of the fluorescent stain).
+%
+We therefore preprocess the 
 
 \subsection*{Spearman's $\rho$}
 
