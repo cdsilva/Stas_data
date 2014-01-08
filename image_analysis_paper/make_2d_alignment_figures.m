@@ -5,6 +5,9 @@ addpath('../membrane_pictures/synchron_so3_nosphharm')
 % amont of border or buffer to add around the images
 buffer_size = 20;
 
+% maximum shift in pixels
+shift_max = 10;
+
 %size of "portion" of sphere on which to project
 angle_proj = pi/4;
 
@@ -27,7 +30,7 @@ end
 
 %% compute pairwise alignments
 tic
-[R, W, angles] = align_data_nosph(image_set_buffered, angle_proj);
+[R, W, angles] = align_data_nosph(image_set_buffered, angle_proj, shift_max);
 
         
 %% angular synchronization
@@ -132,8 +135,12 @@ if corr(embed_coord(:,coord_idx), L(:,1)) < 0
     embed_coord(:,coord_idx) = -embed_coord(:,coord_idx);
 end
 
+[~, I] = sort(embed_coord(:,coord_idx));
+
 figure;
 plot(L(:,1),embed_coord(:,coord_idx),'.')
+hold on
+plot(L(I(im_save_idx),1), embed_coord(I(im_save_idx),coord_idx), '.r')
 xlabel('membrane thickness')
 ylabel(sprintf('$\\langle \\phi_%d, \\phi_%d \\rangle$', embed_idx(1, coord_idx), embed_idx(2, coord_idx)),'interpreter','latex')
 if print_figures
@@ -143,7 +150,7 @@ end
 fprintf('VDM (2-D) Spearman coeff: %2.4f \n', corr(L(:,1),embed_coord(:,coord_idx), 'type','spearman'));
 
 
-[~, I] = sort(embed_coord(:,coord_idx));
+
 if print_figures
     figure;
     for i=im_save_idx 

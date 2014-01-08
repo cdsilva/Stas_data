@@ -31,13 +31,15 @@ end
 %% load images
 
 npixels = 100;
+npixels_mem = 200;
 
 %set image plotting parameters
 subplot_dim1 = ceil(sqrt(m));
 subplot_dim2 = ceil(m / subplot_dim1);
 
 image_set = zeros(npixels, npixels, m);
-image_set_membrane = zeros(npixels, npixels, m);
+image_set_membrane = zeros(npixels_mem, npixels_mem, m);
+image_set_membrane_raw = zeros(npixels_mem, npixels_mem, m);
 
 image_channel = 2;
 membrane_channel = 2;
@@ -64,13 +66,19 @@ for i=1:m
     im1 = imread(sprintf('%s/emb%02d.tif', dpERK_membrane_dir, i));
 
     % resize image
-    im1 = imresize(im1, [npixels npixels]);
+    im1 = imresize(im1, [npixels_mem npixels_mem]);
 
     % extract relevent color from image
     im1 = im1(:,:,membrane_channel);
 
     % adjust image
     im1 = imadjust(im1);
+    image_set_membrane_raw(:, :, i) = im1;
+    
+    % edge detection
+    %[im1, thres] = edge(im1, 'canny');
+    im1 = edge(im1, 'log');
+    %im1 = im2bw(im1, graythresh(im1));
     
     %store image
     im1 = double(im1);
@@ -201,7 +209,7 @@ close all
 
 %% raw membrane pictures-- synchronization
 
-make_2d_membrane_alignment_figures;
+%make_2d_membrane_alignment_figures;
 
 close all
 

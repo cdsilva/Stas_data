@@ -1,3 +1,5 @@
+close all
+
 tic
 
 % set scattering transform parameters
@@ -21,8 +23,10 @@ sx_all = zeros(m, size(Sx_mat, 1));
 
 % compute scattering invariants for each image
 for i=1:m
+    i
+    %[~, thres] = edge(uint8(image_set_membrane(:,:,i)), 'log');
+    %x = edge(uint8(image_set_membrane(:,:,i)), 'log');
     x = image_set_membrane(:,:,i);
-    
     Sx = scat(x, Wop);
 
     sx_all(i,:) = mean(mean(format_scat(Sx),2),3)';
@@ -35,23 +39,28 @@ eps = median(W(:));
 [V, D] = dmaps(W, eps, 20);
 
 toc
-for i=3:20;
-    figure;
-    plot(V(:,2),V(:,i),'.')
-end
+% for i=3:20;
+%     figure;
+%     plot(V(:,2),V(:,i),'.')
+% end
+% 
+% for i=2:20
+%     corr(V(:,i),L(:,1));
+% end
 
-for i=2:20
-    corr(V(:,i),L(:,1));
-end
-
-idx = 8;
+%idx = 8;
+[~, idx] = max(abs(corr(V, L(:,1))));
 
 if corr(V(:,idx), L(:,1)) < 0
     V(:,idx) = -V(:,idx);
 end
 
+[~, I] = sort(V(:,idx));
+
 figure;
 plot(L(:,1), V(:,idx),'.')
+hold on
+plot(L(I(im_save_idx),1), V(I(im_save_idx), idx), '.r')
 xlabel('membrane thickness')
 ylabel(sprintf('$\\phi_%d$',idx),'interpreter','latex')
 if print_figures
@@ -60,14 +69,17 @@ end
 
 fprintf('Scattering transform (membrane) Spearman coeff: %2.4f \n', corr(L(:,1), V(:,idx), 'type','spearman'));
 
-
-[~, I] = sort(V(:,idx));
 if print_figures
     figure;
     for i=im_save_idx
-        %subplot(subplot_dim1,subplot_dim2,i)
 
-        imshow(uint8(image_set_membrane(:,:,I(i))), 'InitialMagnification', 'fit')
+        imshow(logical(image_set_membrane(:,:,I(i))), 'InitialMagnification', 'fit')
+
+        axis off
+        print(sprintf('membrane_scat_%d',i),fmt,res)
+        clf
+        
+        imshow(image_set_membrane_raw(:,:,I(i)), 'InitialMagnification', 'fit')
         %imshow(imadjust(uint8(image_set(:,:,I(i)))), 'InitialMagnification', 'fit')
         % make green colormap
         cm_green = gray;
@@ -75,7 +87,7 @@ if print_figures
         cm_green(:,3) = 0;
         colormap(cm_green)
         axis off
-        print(sprintf('membrane_scat_%d',i),fmt,res)
+        print(sprintf('membrane_scat_raw_%d',i),fmt,res)
         clf
     end
 end

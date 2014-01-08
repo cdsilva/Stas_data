@@ -42,8 +42,12 @@ if corr(V(:,2), L(:,1)) < 0
     V(:,2) = -V(:,2);
 end
 
+[~, I] = sort(V(:,2));
+
 figure;
 plot(L(:,1), V(:,2),'.')
+hold on
+plot(L(I(im_save_idx),1), V(I(im_save_idx), 2), '.r')
 xlabel('membrane thickness')
 ylabel('$\phi_2$','interpreter','latex')
 if print_figures
@@ -51,8 +55,6 @@ if print_figures
 end
 fprintf('Scattering transform Spearman coeff: %2.4f \n', corr(L(:,1),V(:,2), 'type','spearman'));
 
-
-[~, I] = sort(V(:,2));
 if print_figures
     figure;
     for i=im_save_idx

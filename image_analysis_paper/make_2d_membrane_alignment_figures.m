@@ -3,13 +3,16 @@ addpath('../membrane_pictures/synchron_so3_nosphharm')
 %% load in images
 
 % amont of border or buffer to add around the images
-buffer_size = 20;
+buffer_size = 40;
+
+% maximum shift in pixels
+shift_max = 20;
 
 %size of "portion" of sphere on which to project
 angle_proj = pi/4;
 
 % total number of pixels
-npixels2 = npixels+2*buffer_size;
+npixels2 = npixels_mem+2*buffer_size;
 
 % dimension of rotations
 dim = 3;
@@ -22,12 +25,12 @@ image_set_buffered = zeros(npixels2, npixels2, m);
 for i=1:m
     %store image
     im1 = image_set_membrane(:,:,i);
-    image_set_buffered(buffer_size+1:buffer_size+npixels,buffer_size+1:buffer_size+npixels,i) = im1;
+    image_set_buffered(buffer_size+1:buffer_size+npixels_mem,buffer_size+1:buffer_size+npixels_mem,i) = im1;
 end  
 
 %% compute pairwise alignments
 tic
-[R, W, angles] = align_data_nosph(image_set_buffered, angle_proj);
+[R, W, angles] = align_data_nosph(image_set_buffered, angle_proj, 20);
 
         
 %% angular synchronization
@@ -109,7 +112,7 @@ for i=1:m
     
     [alpha, beta, gamma] = calc_angles(R_all);    
     image_tmp = shift_image(image_tmp, alpha, beta, gamma, angle_proj);
-    image_set_aligned_vdm(:,:,i) = image_tmp(buffer_size+1:buffer_size+npixels,buffer_size+1:buffer_size+npixels);
+    image_set_aligned_vdm(:,:,i) = image_tmp(buffer_size+1:buffer_size+npixels_mem,buffer_size+1:buffer_size+npixels_mem);
     
     subplot(subplot_dim1, subplot_dim2, i);
     imshow(uint8(image_set_aligned_vdm(:,:,i)),'InitialMagnification', 'fit')
@@ -131,8 +134,12 @@ if corr(embed_coord(:,coord_idx), L(:,1)) < 0
     embed_coord(:,coord_idx) = -embed_coord(:,coord_idx);
 end
 
+[~, I] = sort(embed_coord(:,coord_idx));
+
 figure;
 plot(L(:,1),embed_coord(:,coord_idx),'.')
+hold on
+plot(L(I(im_save_idx),1), embed_coord(I(im_save_idx), coord_idx), '.r')
 xlabel('membrane thickness')
 ylabel(sprintf('$\\langle \\phi_%d, \\phi_%d \\rangle$', embed_idx(1, coord_idx), embed_idx(2, coord_idx)),'interpreter','latex')
 if print_figures
@@ -142,7 +149,7 @@ end
 fprintf('VDM (membrane) Spearman coeff: %2.4f \n', corr(L(:,1),embed_coord(:,coord_idx), 'type','spearman'));
 
 
-[~, I] = sort(embed_coord(:,coord_idx));
+
 if print_figures
     figure;
     for i=im_save_idx
