@@ -97,23 +97,27 @@ $\ast$ E-mail: yannis@princeton.edu
 
 \section*{Introduction}
 
-The issue of rotation invariance arises in many applications, most commonly image registration and image alignment.
+The issue of rotation invariance arises in many applications, such as medical imaging \cite{hajnal2010medical}, face recognition \cite{rowley1998rotation}, digit recognition \cite{simard1992efficient}, and texture classification \cite{greenspan1994rotation}.
 %
-In settings such as face recognition, medical imaging, and computer vision, objects from different frames or timepoints must be aligned or ``registered'' before further analysis can be done.
+In these settings, objects from different frames or timepoints must be aligned or ``registered'' before further analysis can be done.
 %
-For example, often medical images (such as MRI scans) are collected over multiple days, and doctors would like to study development of a condition (such as the growth of a tumor).
+%For example, often medical images (such as MRI scans) are collected over multiple days, and doctors would like to study development of a condition (such as the growth of a tumor).
 %
-However, on each day, the patient and/or sensors may be in slightly different locations; therefore, the images must be aligned before the doctor can look at how the tumor is growing and evolving.
-
+%However, on each day, the patient and/or sensors may be in slightly different locations; therefore, the images must be aligned before the doctor can look at how the tumor is growing and evolving.
+%
 Several different techniques have been developed to solve the image registration problem. 
 %
-Most of these techniques are ``template-based'' techniques, where one selects a prototypical image or ``template'', and then aligns the remaining images to this template \cite{...}.
+``Template-based'' techniques, where one selects a prototypical image or ``template'', and then aligns the remaining images to this template \cite{ahuja2007template}.
 %
 Such techniques can suffer if a good template is not know {\em a priori}; when the images are noisy, selecting one image from the data set at random can yield a noisy template and result in many mis-alignments. 
-
-In addition, most existing techniques rely on feature extraction algorithms, and these features are often problem-specific.
 %
-For example, (ADD INFO ABOUT FACES).
+Other techniques focus on constructing ``features'' that are rotation-invariant \cite{flusser2000independence, lowe1999object, sadler1992shift, ojala2002multiresolution}, and then using these features (rather than the images themselves) in further analyses and computations.
+%
+However, such features are often problem-dependent, and developing rotation-invariant features that are stable to noise and deformations is still an active area of research.
+%
+One can also construct algorithms that are invariant to rotations of the images \cite{hilai1004recognition, zhao2013fourier}.
+%
+However, 
 
 We are interested in analyzing data collected from developing {\em Drosophila} embryos during nuclear cycle 14 (NC14) (CHECK).
 %
@@ -125,11 +129,11 @@ Each embryo is stained for the membrane proteins, dpERK, and DI.
 %
 We image the cross-section of each embryo.
 %
-We then use image analysis software to extract the circular dpERK concentration profile from the fluorescent image.
+We then use image analysis software (ADD HOW THIS IS DONE IN THE APPENDIX) to extract the circular dpERK concentration profile from the fluorescent image.
 %
 We use the expression of DI to find the dorsal midline of the embryo, and ``unzip'' the circular profile at the dorsal midline to obtain a one-dimensional, linear dpERK concentration profile.
 %
-We then measure the membrane thickness of them embryo; the thickness of the membrane is known to be monotonic in time during NC14 \cite{...}. 
+We measure the membrane thickness of them embryo; the thickness of the membrane is known to be monotonic in time during NC14 \cite{...}. 
 %
 We then order the concentration profiles for each embryo by the thickness of the membrane to obtain a ``reconstruction'' of the dynamics of dpERK.
 
@@ -269,17 +273,19 @@ As we have shown, we can order the concentration profiles using PCA or DMAPS.
 %
 However, ordering the profiles first requires that we factor out the relevant symmetries in the problem.
 %
-For the linear concentration profiles that we extract from the fluorescent images, there is a shift invarance that we must consider (because the profiles in fact lie on a ring).
+The developmental dynamics are invariant to the oritentation of the embryo in the microfluidic device; therefore, to obtain meaningful results from our analysis, we must first align the embryo snapshots.
 %
-In the previous analyses, we have assumed that the profiles have been prealigned using the location of the dorsal peak.
+Rotation of the embryo cross-sections correspond to translation (with periodic boundary conditions) of the linear profiles we have been considering.
 %
-However, without some {\em a priori} knowledge of the system (i.e. knowing that dorsal is expressed at one position), we would need to align the concentration profiles before doing our analysis.
+In the previous analyses, we have assumed that the profiles have been prealigned using the location of the dorsal protein peak.
+%
+However, without some {\em a priori} knowledge of the system (i.e. knowing that dorsal is expressed at one position along the perimeter of the embryo), we would need to align the concentration profiles before doing our analysis.
 
-The most common and perhaps intuitive techniques for alignment are template-based methods \cite{ahuja2007template}, where one chooses are representative data point as a ``template'', and then shifts or rotates each data point to be optimally aligned with this template.
+The most common and perhaps intuitive techniques for alignment are template-based methods \cite{ahuja2007template}, where one chooses are representative data point or shape as a ``template'', and then shifts or rotates each data point to be optimally aligned with this template.
 %
 Although these methods are simple, they require knowledge of an appropriate template function and can suffer when the data set is noisy.
-
-Angular synchronization \cite{singer2011angular} is a relatively new technique that is more robust than template-based methods in the presence of noise.
+%
+Angular synchronization \cite{singer2011angular} is a relatively new technique that is often more robust than template-based methods in the presence of noise.
 %
 We used angular synchronization to factor out the shifts in the concentration profiles measured from the fluorescent images.
 %
@@ -462,6 +468,14 @@ The work here is intended to provide an overview of the different techniques ava
 \section*{Materials and Methods}
 
 \subsection*{Experimental Setup}
+
+\subsection*{Image Preprocessing}
+The dpERK images we collect from the confocal microscope are subsampled to $100 \times 100$ pixels; the membrane images are subsampled to $200 \times 200$ pixels (due to the finer features in the membrane pictures). 
+
+Because we are only interested in the membrane thickness, we run a simple edge detection algorithm on the membrane images.
+%
+We use a Laplacian of Gaussians filter \cite{...}, as implemented in the Matlab Image processing toolbox \cite{...}.
+
 
 \subsection*{Principal Component Analysis}
 Principal component analysis (PCA) has been the workhorse dimensionality reduction technique for the past century.
