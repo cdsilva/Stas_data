@@ -1,4 +1,4 @@
-function [R, W, angles] = align_data_nosph(images, angle_proj)
+function [R, W, angles] = align_data_nosph(images, angle_proj, shift_max)
 
 dim = 3;
 
@@ -14,7 +14,6 @@ theta = linspace(0, 2*pi, nrot+1);
 theta = theta(1:end-1);
     
 nshift = 11;
-shift_max = 10;
 if mod(nshift, 2) ~= 1 || mod(shift_max, (nshift-1)/2) ~= 0
     disp('nshift is not valid')
     return
