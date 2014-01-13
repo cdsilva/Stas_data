@@ -54,3 +54,5 @@ axis equal
 if print_figures
     print('coeff_12_new', fmt, res)
 end
+
+save('pca_figures_figures.mat')

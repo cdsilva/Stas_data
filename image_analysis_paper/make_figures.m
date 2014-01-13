@@ -45,7 +45,7 @@ image_channel = 2;
 membrane_channel = 2;
 
 % image indices to plot
-im_save_idx = [1,9,17,25,30,34,38,43,49];
+im_save_idx = [1,19,25,30,35,40,45,49];
 
 figure;
 for i=1:m
@@ -103,19 +103,25 @@ im1_membrane = imread(sprintf('%s/emb%02d.tif',dpERK_membrane_dir, image_idx));
 im1_membrane(:,:,2) = imadjust(im1_membrane(:,:,membrane_channel));
 
 figure;
+set(gcf, 'paperposition',[0 0 8 8])
 imshow(im1_dpERK)
+set(gca,'position',[0 0 1 1],'units','normalized')
 if print_figures
     print('drosophila_dpERK', fmt, res)
 end
 
 figure;
+set(gcf, 'paperposition',[0 0 8 8])
 imshow(im1_DI)
+set(gca,'position',[0 0 1 1],'units','normalized')
 if print_figures
     print('drosophila_DI', fmt, res)
 end
 
 figure;
+set(gcf, 'paperposition',[0 0 8 8])
 imshow(im1_membrane)
+set(gca,'position',[0 0 1 1],'units','normalized')
 if print_figures
     print('drosophila_membrane', fmt, res)
 end

@@ -18,7 +18,7 @@ tic
 %% angular synchronization
 R_opt = ang_synch(H, 2);
 
-toc
+runtime_angsynch = toc
 dpERK_aligned = zeros(size(dpERK_unaligned));
 R_est = R_opt(1:2, 1:2);
 theta_est = atan2(R_est(2,1),R_est(1,1));
@@ -83,7 +83,7 @@ eps = median(W(:));
 neigs = 6;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(H, W, eps, neigs);
-toc
+runtime_vdm = toc
 
 data2 = zeros(size(dpERK_unaligned));
 R_est = R_opt(1:2,1:2);
@@ -140,5 +140,7 @@ if print_figures
 end
 
 fprintf('VDM (1-D) Spearman coeff: %2.4f \n', corr(L(:,1),embed_coord(:, coord_idx), 'type','spearman'));
+
+save('1d_alignment_figures.mat');
 
 rmpath ../membrane_pictures/synchron_SO2

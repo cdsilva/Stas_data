@@ -101,7 +101,7 @@ neigs = 5;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
-toc
+runtime = toc
 image_set_aligned_vdm = zeros(size(image_set_membrane));
 
 figure;
@@ -139,7 +139,7 @@ end
 figure;
 plot(L(:,1),embed_coord(:,coord_idx),'.')
 hold on
-plot(L(I(im_save_idx),1), embed_coord(I(im_save_idx), coord_idx), '.r')
+plot(L(I(im_save_idx),1), embed_coord(I(im_save_idx), coord_idx), 'o')
 xlabel('membrane thickness')
 ylabel(sprintf('$\\langle \\phi_%d, \\phi_%d \\rangle$', embed_idx(1, coord_idx), embed_idx(2, coord_idx)),'interpreter','latex')
 if print_figures
@@ -153,7 +153,9 @@ fprintf('VDM (membrane) Spearman coeff: %2.4f \n', corr(L(:,1),embed_coord(:,coo
 if print_figures
     figure;
     for i=im_save_idx
+        set(gcf, 'paperposition',[0 0 8 8])
         imshow(uint8(image_set_aligned_vdm(:,:,I(i))), 'InitialMagnification', 'fit')
+        set(gca,'position',[0 0 1 1],'units','normalized')
         % make green colormap
         cm_green = gray;
         cm_green(:,1) = 0;
@@ -164,6 +166,8 @@ if print_figures
         clf
     end
 end
+
+save('2d_membrane_alignment_figures.mat');
 
 %%
 rmpath('../membrane_pictures/synchron_so3_nosphharm')

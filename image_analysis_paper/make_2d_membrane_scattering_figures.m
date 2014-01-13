@@ -1,5 +1,6 @@
 close all
 
+%% do computations
 tic
 
 % set scattering transform parameters
@@ -23,7 +24,6 @@ sx_all = zeros(m, size(Sx_mat, 1));
 
 % compute scattering invariants for each image
 for i=1:m
-    i
     %[~, thres] = edge(uint8(image_set_membrane(:,:,i)), 'log');
     %x = edge(uint8(image_set_membrane(:,:,i)), 'log');
     x = image_set_membrane(:,:,i);
@@ -38,7 +38,8 @@ W = squareform(pdist(sx_all)).^2;
 eps = median(W(:));
 [V, D] = dmaps(W, eps, 20);
 
-toc
+runtime = toc
+
 % for i=3:20;
 %     figure;
 %     plot(V(:,2),V(:,i),'.')
@@ -57,10 +58,11 @@ end
 
 [~, I] = sort(V(:,idx));
 
+%% make plots
 figure;
 plot(L(:,1), V(:,idx),'.')
 hold on
-plot(L(I(im_save_idx),1), V(I(im_save_idx), idx), '.r')
+plot(L(I(im_save_idx),1), V(I(im_save_idx), idx), 'o')
 xlabel('membrane thickness')
 ylabel(sprintf('$\\phi_%d$',idx),'interpreter','latex')
 if print_figures
@@ -68,18 +70,21 @@ if print_figures
 end
 
 fprintf('Scattering transform (membrane) Spearman coeff: %2.4f \n', corr(L(:,1), V(:,idx), 'type','spearman'));
-%%
+
 if print_figures
     figure;
     for i=im_save_idx
-
+        set(gcf, 'paperposition',[0 0 8 8])
         imshow(logical(image_set_membrane(:,:,I(i))), 'InitialMagnification', 'fit')
+        set(gca,'position',[0 0 1 1],'units','normalized')
 
         axis off
         print(sprintf('membrane_scat_%d',i),fmt,res)
         clf
         
         imshow(uint8(image_set_membrane_raw(:,:,I(i))), 'InitialMagnification', 'fit')
+        set(gca,'position',[0 0 1 1],'units','normalized')
+
         %imshow(imadjust(uint8(image_set(:,:,I(i)))), 'InitialMagnification', 'fit')
         % make green colormap
         cm_green = gray;
@@ -91,3 +96,5 @@ if print_figures
         clf
     end
 end
+
+save('2d_membrane_scattering_figures.mat');

@@ -33,3 +33,5 @@ if print_figures
 end
 
 fprintf('DMAPS Spearman coeff: %2.4f \n', corr(L(:,1), V_dmaps(:,2), 'type','spearman'));
+
+save('dmaps_figures.mat');

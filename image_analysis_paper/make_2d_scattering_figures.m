@@ -47,7 +47,7 @@ end
 figure;
 plot(L(:,1), V(:,2),'.')
 hold on
-plot(L(I(im_save_idx),1), V(I(im_save_idx), 2), '.r')
+plot(L(I(im_save_idx),1), V(I(im_save_idx), 2), 'o')
 xlabel('membrane thickness')
 ylabel('$\phi_2$','interpreter','latex')
 if print_figures
@@ -59,8 +59,9 @@ if print_figures
     figure;
     for i=im_save_idx
         %subplot(subplot_dim1,subplot_dim2,i)
-
+        set(gcf, 'paperposition',[0 0 8 8])
         imshow(uint8(image_set(:,:,I(i))), 'InitialMagnification', 'fit')
+        set(gca,'position',[0 0 1 1],'units','normalized')
         % make green colormap
         cm_green = gray;
         cm_green(:,1) = 0;
@@ -71,3 +72,5 @@ if print_figures
         clf
     end
 end
+
+save('2d_scattering_figures.mat')
