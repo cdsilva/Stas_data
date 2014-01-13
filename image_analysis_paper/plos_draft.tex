@@ -62,6 +62,8 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{pgffor}
+\usepackage{hyperref}
+
 %% END MACROS SECTION
 
 \begin{document}
@@ -69,7 +71,7 @@
 % Title must be 150 characters or less
 \begin{flushleft}
 {\Large
-\textbf{Image Analysis for {\em Drosophila} Embryogenesis}
+\textbf{Rotation-Invariant Image Analysis for Reconstructing Dynamics in {\em Drosophila} Embryogenesis}
 }
 % Insert Author names, affiliations and corresponding author email.
 \\
@@ -97,9 +99,9 @@ $\ast$ E-mail: yannis@princeton.edu
 
 \section*{Introduction}
 
-The issue of rotation invariance arises in many applications, such as medical imaging \cite{hajnal2010medical}, face recognition \cite{rowley1998rotation}, digit recognition \cite{simard1992efficient}, and texture classification \cite{greenspan1994rotation}.
+The issue of rotation invariance arises in many applications, including medical imaging \cite{hajnal2010medical}, face recognition \cite{rowley1998rotation}, digit recognition \cite{simard1992efficient}, and texture classification \cite{greenspan1994rotation}.
 %
-In these settings, objects from different frames or timepoints must be aligned or ``registered'' before further analysis can be done.
+In these settings, objects from different frames or timepoints must be aligned or ``registered'' prior to further analysis.
 %
 %For example, often medical images (such as MRI scans) are collected over multiple days, and doctors would like to study development of a condition (such as the growth of a tumor).
 %
@@ -107,37 +109,38 @@ In these settings, objects from different frames or timepoints must be aligned o
 %
 Several different techniques have been developed to solve the image registration problem. 
 %
-``Template-based'' techniques are relatively common, where one selects a prototypical image or ``template'', and then aligns the remaining images to this template \cite{ahuja2007template}.
+``Template-based'' techniques, where one selects a prototypical image or ``template'' and then aligns the remaining images to this template, are relatively common \cite{ahuja2007template}.
 %
-Such techniques can suffer if a good template is not know {\em a priori}; when the images are noisy, selecting one image from the data set at random can yield a noisy template and result in many mis-alignments. 
+Such techniques can suffer if a good template is not know {\em a priori}; if the images are noisy, selecting one image from the data set at random can yield a noisy template and result in many mis-alignments. 
 %
 Other techniques focus on constructing ``features'' that are rotation-invariant \cite{flusser2000independence, lowe1999object, sadler1992shift, ojala2002multiresolution}, so that one can use these features (rather than the images themselves) in further analyses and computations.
 %
-However, constructing rotation-invariant features that still retain the important information in the images is difficult and often problem-dependent, and developing rotation-invariant features that are stable to noise and deformations is still an active area of research \cite{mallat2012group, sifre2013rotation}.
+However, developing rotation-invariant features that still retain the important information in the images is difficult and often problem-dependent, and constructing features that are stable to noise and deformations is still an active area of research \cite{mallat2012group, sifre2013rotation}.
 %
-One can also construct algorithms that are invariant to rotations of the images \cite{hilai1994recognition, zhao2013fourier}.
+One can also construct algorithms that consider all possible image rotations in the analysis \cite{hilai1994recognition, zhao2013fourier}.
 %
-ADD WHY THIS IS BAD.
+%TODO: why do these methods fail?
 
-We are interested in analyzing data collected from developing {\em Drosophila} embryos during nuclear cycle 14 (NC14) (CHECK).
+We are interested in analyzing images of developing {\em Drosophila} embryos during nuclear cycle 14 (NC14).
+%TODO: check that NC14 is correct
 %
-(ADD MORE ABOUT WHY THIS IS IMPORTANT).
-
-Currently, data is collected using a high-throughput microfluidic device \cite{chung2010microfluidic}; we can therefore image hundreds of embryos in one experiment.
+More specifically, we would like to order the images {\em in time} so that we can reconstruct the developmental dynamics from snapshots. 
 %
-Each embryo is stained for the membrane proteins, dpERK, and DI. 
+% TODO: add motivation about why we are interested in this
 %
-We image the cross-section of each embryo.
+Currently, data is collected using a high-throughput microfluidic device \cite{chung2010microfluidic}, so we can image hundreds of embryos in one experiment.
 %
-We then use image analysis software (ADD HOW THIS IS DONE IN THE APPENDIX) to extract the circular dpERK concentration profile from the fluorescent image.
+Each embryo is stained for the membrane proteins, dpERK, and DI, and we collect fluorescent images of the cross-section of each embryo using a confocal microscope.
+%
+We then use image analysis software to extract the dpERK concentration profile around the circumfrence of the embryo from the fluorescent image.
 %
 We use the expression of DI to find the dorsal midline of the embryo, and ``unzip'' the circular profile at the dorsal midline to obtain a one-dimensional, linear dpERK concentration profile.
 %
-We measure the membrane thickness of them embryo; the thickness of the membrane is known to be monotonic in time during NC14 \cite{...}. 
+We also measure the membrane thickness of the embryo; the thickness of the membrane is known to be monotonic in time during NC14 \cite{lim2013kinetics, lecuit2002slam}. 
 %
-We then order the concentration profiles for each embryo by the thickness of the membrane to obtain a ``reconstruction'' of the dynamics of dpERK.
+We then order the dpERK concentration profiles for each embryo by the thickness of the membrane to obtain a ``trajectory'' of the dpERK dynamics.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 \begin{center}
 \begin{subfigure}{\textwidth}
 \centering
@@ -147,14 +150,16 @@ We then order the concentration profiles for each embryo by the thickness of the
 \end{subfigure}
 \begin{subfigure}{0.55\textwidth}
 \includegraphics[width=0.8\textwidth]{drosophila_schematic}\\
-\includegraphics[width=0.3\textwidth]{drosophila_membrane}
-\includegraphics[width=0.3\textwidth]{drosophila_dpERK}
-\includegraphics[width=0.3\textwidth]{drosophila_DI}
+\includegraphics[width=0.25\textwidth]{drosophila_membrane}
+\hfill
+\includegraphics[width=0.25\textwidth]{drosophila_dpERK}
+\hfill
+\includegraphics[width=0.25\textwidth]{drosophila_DI}
 \caption{}
 \end{subfigure}
 \begin{subfigure}{0.35\textwidth}
 \centering
-\includegraphics[width=0.6\textwidth]{circle_profile}\\
+\includegraphics[width=0.7\textwidth]{circle_profile}\\
 \includegraphics[width=\textwidth, trim=0mm 300mm 0mm 200mm, clip]{line_profile}
 \caption{}
 \end{subfigure}\\
@@ -176,7 +181,9 @@ We then order the concentration profiles for each embryo by the thickness of the
 
 Here,  we will discuss alternative methodologies to reconstruct the dpERK dynamics from fluorescent images. 
 %
-We will use various data mining techniques to {\em automatically} order the dpERK concentration profiles in time.
+We will use various dimensionality techniques to {\em automatically} order the dpERK concentration profiles in time.
+%
+We assume that the data is approximately one-dimensional, and that this one dimension parameterizes time, so that reducing the data to one-dimension and ordering it along this dimension will (approximately) order it in time. 
 %
 We will not only focus on the linear concentration profiles extracted from the images, but also work directly with the two-dimensional dpERK fluorescent images. 
 %
@@ -187,15 +194,16 @@ Finally, we will look at ordering the two-dimensional membrane images in time; t
 
 \subsection*{dpERK concentration profiles ordered using principal component analysis}
 
-We first used Principal Components Analysis (PCA) to automatically order the one-dimensional concentration profiles in time. 
+We first used principal components analysis (PCA) to automatically order the one-dimensional concentration profiles in time. 
 %
-We computed the first principal component, $\psi_1$, from the data set, and ordered the data by the projection coefficients onto $\psi_1$. 
+We computed the first principal component, $\psi_1$, from the data set, and ordered the data by the projection coefficients onto $\psi_1$.
 %
 The results are shown in Figure \ref{fig:PCA_ordering}.
 %
-There is a strong correlation between the first projection coefficient, $\langle x_i, \psi_1 \rangle$, and the membrane thickness.
+There is a strong correlation between the first projection coefficient, $\langle x_i, \psi_1 \rangle$, and the membrane thickness;
+the Spearman correlation between the first projection coefficient and the membrane thickness is 0.9244.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 \begin{subfigure}{0.3\textwidth}
 \includegraphics[width=\textwidth]{data_unordered}
 \caption{}
@@ -216,9 +224,9 @@ There is a strong correlation between the first projection coefficient, $\langle
 \label{fig:PCA_ordering}
 \end{figure}
 
-We would like to note that, because the embryos can be oriented with either the anterior or posterior end facing up in the microfluidic device (see Figure \ref{subfig:imaging_device}), the directionality of the concentration profiles (clockwise versus counterclockwise around the ring, or right-to-left versus left-to-right for the linear profiles) is not meaningful. 
+We would like to note that, because the embryos can be oriented with either the anterior or posterior facing up in the microfluidic device (see Figure \ref{subfig:imaging_device}), the directionality of the concentration profiles (clockwise versus counterclockwise around the ring, or right-to-left versus left-to-right for the linear profiles) is not meaningful. 
 %
-Therefore, we could also do PCA with an expanded data set where we also include the mirror image of each concentration profile.
+Therefore, we could do PCA with an expanded data set where we also include the mirror image of each concentration profile.
 %
 Symmetries in PCA have been studied extensively in previous work \cite{holmes1998turbulence}; it was shown that when mirror images are also included in the data set, the first PCA mode captures the symmetric portion of the variability, and the second mode captures the anti-symmetric portion.
 %
@@ -228,14 +236,15 @@ We found that including the mirror images of each data point did not change our 
 
 Although PCA was rather successful in ordering the concentration profiles, there are some inconsistencies in the orderings.
 %
-Perhaps the most obvious feature to note is the scrambling of the secondary *ADD NAME* peaks located at the far left and right edges of the concentration profiles.
+Perhaps the most obvious feature to note is the scrambling of the secondary peaks located at the far left and right edges of the concentration profiles.
+%TODO: add name of secondary peaks
 %
-It is known that these peaks arise later in the development of {\em Drosophila};
+It is known that these peaks arise later in the development of {\em Drosophila} \cite{...};
 however, one can see in Figure \ref{subfig:PCA_ordering_image} that these secondary peaks are scrambled when the data is ordered using PCA.
 %
 We can gain insight into this ``scrambling'' by looking at the projection of the data onto the first two principal components, shown in Figure \ref{subfig:PCA_12}.
 %
-The data falls onto a one-dimensional {\em nonlinear} curve in this two-dimensional space, implying that nonlinear dimensionality reduction techniques may be more approproate, as they can order the data along the curve, and not simply along the first principal axis.
+The data falls onto a one-dimensional {\em nonlinear} curve in this two-dimensional space, implying that nonlinear dimensionality reduction techniques may be more appropriate.
 
 We chose to use diffusion maps (DMAPS) as our nonlinear dimensionality reduction technique.
 %
@@ -243,11 +252,11 @@ We computed the diffusion maps embedding for our data set, using the Euclidean d
 %
 We then ordered the data using the first (nontrivial) diffusion maps coordinate $\phi_2$. 
 %
-The results are shown in Figure \ref{fig:DMAPS_ordering}.
+The results are shown in Figure \ref{fig:DMAPS_ordering}; the Spearman correlation between $\phi_2$ and the membrane thickness is 0.9209.
 %
 The secondary peaks are now nicely clustered towards the end of the developmental trajectory.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 \begin{subfigure}{0.3\textwidth}
 \includegraphics[width=\textwidth]{coeff_12_new}
 \caption{}
@@ -269,21 +278,22 @@ The secondary peaks are now nicely clustered towards the end of the developmenta
 
 \subsection*{dpERK concentration profiles aligned using angular synchronization}
 
-As we have shown, we can order the concentration profiles using PCA or DMAPS.
+We have demonstrated that we can order the concentration profiles using PCA or DMAPS.
 %
 However, ordering the profiles first requires that we factor out the relevant symmetries in the problem.
 %
-The developmental dynamics are invariant to the oritentation of the embryo in the microfluidic device; therefore, to obtain meaningful results from our analysis, we must first align the embryo snapshots.
+The developmental dynamics are invariant to the orientation of the embryo in the microfluidic device; therefore, to obtain meaningful results from our analysis, we must first align the embryo snapshots.
 %
-Rotation of the embryo cross-sections correspond to translation (with periodic boundary conditions) of the linear profiles we have been considering.
+Rotations of the embryo cross-sections correspond to translations (with periodic boundary conditions) of the linear profiles we have been studying.
 %
 In the previous analyses, we have assumed that the profiles have been prealigned using the location of the dorsal protein peak.
 %
-However, without some {\em a priori} knowledge of the system (i.e. knowing that dorsal is expressed at one position along the perimeter of the embryo), we would need to align the concentration profiles before doing our analysis.
+However, without some {\em a priori} knowledge of the system (e.g. without knowing that dorsal is expressed at one position along the perimeter of the embryo), we would need to align the concentration profiles before doing our analysis.
+%TODO: add when this might be relevant, e.g. when there is no Dorsal
 
 The most common and perhaps intuitive techniques for alignment are template-based methods \cite{ahuja2007template}, where one chooses are representative data point or shape as a ``template'', and then shifts or rotates each data point to be optimally aligned with this template.
 %
-Although these methods are simple, they require knowledge of an appropriate template function and can suffer when the data set is noisy.
+Although these methods are simple, they require knowledge of an appropriate template function and can suffer when the data set is noisy \cite{sonday2013noisy}.
 %
 Angular synchronization \cite{singer2011angular} is a relatively new technique that is often more robust than template-based methods in the presence of noise.
 %
@@ -293,9 +303,9 @@ After aligning the data points using angular synchronization, we used DMAPS to o
 %
 The results are shown in Figure \ref{fig:angsynch_ordering}.
 %
-One can see that the results are visually consistent with the results shown in Figure \ref{fig:DMAPS_ordering}. 
+One can see that the results are visually consistent with the results shown in Figure \ref{fig:DMAPS_ordering}; the Spearman correlation between $\phi_2$ and the membrane length is 0.9164. 
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 \begin{subfigure}{0.3\textwidth}
 \includegraphics[width=\textwidth]{data_unaligned_unordered}
 \caption{}
@@ -316,13 +326,13 @@ One can see that the results are visually consistent with the results shown in F
 
 \subsection*{dpERK concentration profiles aligned and ordered using vector diffusion maps}
 
-Instead of using angular synchronization and DMAPS, we can do the alignment and dimensionality reduction/ordering in one computation using vector diffusion maps (VDM).
+Instead of using angular synchronization followed by DMAPS, we can do the alignment and ordering in one computation using vector diffusion maps (VDM).
 %
-VDM is similar to angular synchronization, but it is intended for data sets that contain both underlying symmetries and dynamics.
+VDM is similar to angular synchronization, but it operates on data sets that contain both underlying symmetries and dynamics.
 %
-The results of aligning {\em and} ordering the data using VDM are shown in Figure \ref{fig:vdm_ordering}; the results are similar to those from angular syncrhonization (Figure \ref{fig:angsynch_ordering}).
+The results of aligning {\em and} ordering the data using VDM are shown in Figure \ref{fig:vdm_ordering}; the results are similar to those from angular syncrhonization (Figure \ref{fig:angsynch_ordering}), and the Spearman correlation between $\langle \phi_3, \phi_1 \rangle$ and the membrane length is 0.9123.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 \begin{subfigure}{0.3\textwidth}
 \includegraphics[width=\textwidth]{data_unaligned_unordered}
 \caption{}
@@ -347,19 +357,24 @@ Thus far, we have focused on the one-dimensional linear concentration profiles t
 %
 However, the techniques we have outlined can also be applied to the two-dimensional fluorescent images. 
 %
-We use VDM to align and order the fluorescent images stained for dpERK. 
+We used VDM to align and order the dpERK fluorescent images. 
 %
 We now must factor out translations and rotations in the images. 
 %
-To do this, we project the images onto a sphere;
-rotations and translations of a two-dimensional image then correspond to (three-dimensioanl) rotations of the sphere.
+We first projected the images onto a sphere;
+rotations and translations of a two-dimensional image then correspond to (three-dimensional) rotations of the sphere.
 %
-We then use VDM to align and order the (projected) images, with the underlying symmetry group $SO(3)$. 
+We then used VDM to align and order the (projected) images, with the underlying symmetry group $SO(3)$. 
 %
 The results are shown in Figure \ref{fig:vdm_image_ordering};
 the orderings are of comparable quality to those obtained with the one-dimensional profiles, and the dpERK peaks are nicely aligned.
+%
+The Spearman correlation between $\langle \phi_4, \phi_1 \rangle$ and the membrane length is 0.9051.
 
-\begin{figure}[H]
+\def\imageindices{1,19,25,30,35,40,45,49}
+%\def\imageindices{1,9,17,25,30,34,38,43,49}
+
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{\textwidth}
 \centering
@@ -367,60 +382,86 @@ the orderings are of comparable quality to those obtained with the one-dimension
 \caption{}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
-\foreach \n in {1,9,17,25,30,34,38,43,49}{
-\includegraphics[width=0.07\textwidth, trim=6in 0in 6in 0in, clip]{dpERK_vdm_\n}
+\foreach \n in \imageindices{
+\includegraphics[width=0.1\textwidth]{dpERK_vdm_\n}
 \hfill}
 \caption{}
 \end{subfigure}
 \caption{{\bf Ordering two-dimensional fluorescent images of dpERK.}
 (a) Correlation between the VDM embedding coordinate and the membrane thickness. 
-(b) Some representative fluorescent images, aligned  and ordered using the VDM embedding coordinate. }
+(b) Some representative fluorescent images, aligned  and ordered using the VDM embedding coordinate. The corresponding data points are circled in (a). }
 \label{fig:vdm_image_ordering}
 \end{figure}
 
 \subsection*{Two-dimensional dpERK images ordered using diffusion maps and the scattering transform}
 
-An alternative to aligning the data (as in angular synchronization of VDM) is to construct {\em features} that are invariant to the underlying symmetry group, and then compute distances between data points using these features for use in a DMAPS calculation.
+An alternative to aligning the data (as in angular synchronization or VDM) is to construct {\em features} that are invariant to the underlying symmetry group, and then compute distances between features of the data for use in a DMAPS calculation.
 %
-In our setup, we need features for two-dimensional images that are invariant to translations and rotations of the images.
+In our setup, we require features of two-dimensional images that are invariant to translations and rotations of the images.
 %
-We chose to use the scattering transform \cite{mallat2012group} to construct our invariant features.
+We chose to use the scattering transform \cite{mallat2012group} to construct our invariant features; the scattering transform utilizes a series of wavelet transforms, which are known to perform well for images \cite{akansu2010emerging}.
 %
-Not only is this transform invariant to translations and rotations, but it is built on the wavelet transform (which is know to perform well for images), and is also contractive (so that noise and small deformations are not amplified by the transform).
+Not only is this transform invariant to translations and rotations, and is also contractive (so that noise and small deformations are not amplified by the transform) \cite{bruna2011classification}.
 
 We compute the scattering transform coefficients for each image in our data set.
 %
-We then perform a DMAPS calculation, using the Euclidean distance between the vectors of scattering transform coefficients as our distance metric.
+We then perform a DMAPS calculation, using the Euclidean distance between vectors of scattering transform coefficients as our distance metric.
 %
 The results are shown in Figure \ref{fig:scattrans_dpERK_ordering}.
 %
-The ordering is again good; however, using this method, we do not obtain optimal alignments for the images (we only obtain an ordering).
+The ordering is again good, with a Spearman correlation between $\phi_2$ and the membrane length of 0.9011.
+%
+However, we would like to note that using this method, we do not obtain optimal alignments for the images (we only obtain an ordering).
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{\textwidth}
+\centering
 \includegraphics[width=0.7\textwidth]{DMAPS_scat_time_corr}
 \caption{}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
-\foreach \n in {1,9,17,25,30,34,38,43,49}{
-\includegraphics[width=0.07\textwidth, trim=6in 0in 6in 0in, clip]{dpERK_scat_\n}
+\foreach \n in \imageindices{
+\includegraphics[width=0.1\textwidth]{dpERK_scat_\n}
 \hfill}
 \caption{}
 \end{subfigure}
 \caption{{\bf Ordering two-dimensional fluorescent images of dpERK.}
 (a) Correlation between the first (non-trivial) DMAPS embedding coordinate and the membrane thickness. The DMAPS embedding was computed using the translation- and rotation-invariant scattering transform coefficients as ``features'' of the images.
-(b) Some representative fluorescent images, ordered using the first (non-trivial) DMAPS embedding coordinate computed from the scattering transform coefficients. }
+(b) Some representative fluorescent images, ordered using the first (non-trivial) DMAPS embedding coordinate computed from the scattering transform coefficients. The corresponding data points are circled in (a).}
 \label{fig:scattrans_dpERK_ordering}
 \end{figure}
 
 \subsection*{Two-dimensional membrane images ordered using diffusion maps and the scattering transform}
 
-$\rho = 0.8403$
+Thus far, we have focused on ordering the dpERK fluorescent images. 
+%
+However, we used the membrane thickness in Figure~\ref{fig:background} to order the dpERK concentration profiles. 
+%
+Therefore, we could also use the techniques discussed above to order the two-dimensional {\em membrane} images.
+%
+Because we are only interested in the membrane thickness, and not other features of the images (e.g. fluorescent intensity), we preprocess the images using an edge detection filter.
+%
+Some of these images are shown in Figure~\ref{fig:scattrans_membrane_ordering}; the green fluorescent images are those collected from the confocal microscope, and the grayscale images are the result of applying the edge-detection algorithm. 
 
-$\rho = 0.3525$ for VDM + membrane pics
+Because these images are much more complex than the dpERK fluorescent images, we expect any alignment results to be poor.
+%
+Using VDM to align and order the images yielded a Spearman correlation coefficient of 0.3525.
+%
+However, the scattering transform is robust to small deformations, and so we expect using DMAPS with the scattering transform coefficients to give better results.
+%
+We computed the scattering transform coeffficients of the edge-detected images, and used DMAPS to order the images in time. 
+%
+The results are shown in Figure~\ref{fig:scattrans_membrane_ordering}.
+%
+The correlation between $\phi_2$ and the membrane thickness is not as strong as the correlations for the dpERK images; the Spearman correlation is 0.8403.
+%
+However, these results are still promising considering the relative simplicity of the methods. 
+%
+%$\rho = 0.8403$, 300 seconds for scat + DMAPS
+%$\rho = 0.3525$ for VDM + membrane pics, 1100 seconds
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 \centering
 \begin{subfigure}{\textwidth}
 \centering
@@ -428,66 +469,108 @@ $\rho = 0.3525$ for VDM + membrane pics
 \caption{}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
-\foreach \n in {1,9,17,25,30,34,38,43,49}{
-\includegraphics[width=0.07\textwidth, trim=6in 0in 6in 0in, clip]{membrane_scat_\n}
+\foreach \n in \imageindices{
+\includegraphics[width=0.1\textwidth]{membrane_scat_\n}
 \hfill}
 \newline
-\foreach \n in {1,9,17,25,30,34,38,43,49}{
-\includegraphics[width=0.07\textwidth, trim=6in 0in 6in 0in, clip]{membrane_scat_raw_\n}
+\foreach \n in \imageindices{
+\includegraphics[width=0.1\textwidth]{membrane_scat_raw_\n}
 \hfill}
 \caption{}
 \end{subfigure}
 \caption{{\bf Ordering two-dimensional fluorescent images of membrane proteins.}
 (a) Correlation between the seventh (non-trivial) DMAPS embedding coordinate and the membrane thickness. DMAPS was computed using the translation- and rotation-invariant scattering transform coefficients as ``features'' of the images. The first six non-trivial DMAPS coordinates were found to capture other features of the images, such as  differences in fluorescence intensity within the images.
-(b) Some representative fluorescent images, ordered using the seventh (non-trivial) DMAPS embedding coordinate computed from the scattering transform coefficients. }
+(b) Some representative edge-detected images (top) and fluorescent images (bottom), ordered using the first (non-trivial) DMAPS embedding coordinate computed from the scattering transform coefficients. The corresponding data points are circled in (a).}
 \label{fig:scattrans_membrane_ordering}
 \end{figure}
 
 
 \section*{Discussion}
 
-We hope that we have illustrated the use of dimensionality reduction techniques in application with underlying symmetries.
+We hope that we have demonstrated the utility of dimensionality reduction techniques in dynamical systems with underlying symmetries.
 %
 The work here is intended to provide an overview of the different techniques available, as well as the benefits and shortcomings of each method. 
+%
+The techniques here were presented from least complex (PCA) to most complex (scattering transforms).
+%
+More complex techniques allowed us to deal with more complex data, and allowed us to circumvent much of the preprocessing described in Figure~\ref{fig:background}.
+
+The more complex techniques that operate on two-dimensional images do come at a higher computational cost. 
+%
+The computational time for analyzing the one-dimensional profiles using any of the techniques described (PCA, DMAPS, angular synchronization, VDM) is less than one second. 
+%
+In contrast, the analysis of two-dimensional images using either VDM or the scattering transform with DMAPS is $\mathcal{O}(100)$ seconds.
+%
+The expensive portion of the VDM calculation is computing the pairwise alignments of the images; the expensive portion of the scattering transform with DMAPS is computing the scattering transform coefficients.
+%
+However, computing the pairwise alignments is $\mathcal{O}(n^2)$, where $n$ is the number of data points, while computing the scattering transform coefficients is $\mathcal{O}(n)$.
+%
+We therefore expect for VDM to be computationally intractable for large data sets.
+%
+The added computational cost of VDM is not without benefits, however; VDM produces optimal alignments for each image (in addition to an ordering), while the scattering transform gives us no alignments.
+
+We would like to note that our system was such that the data was inherently one-dimensional, and that this one dimension was monotonic in time.
+%
+However, this monotonicity was a special feature of our system and is not guaranteed in general.
 
 
-\begin{table}
-	\begin{tabular}{| p{0.3\textwidth} | c | c | p{0.3\textwidth} |}
-		\hline 
-		Method & Spearman's $\rho$ & Execution Time & Notes About Method \\ 
-		\hline 
-		PCA on one-dimensional profiles & 0.9244 & $< 1$ second & \\
-		\hline 
-		DMAPS on one-dimensional profiles & 0.9209 & $< 1$ second & \\
-		\hline 
-		Angular synchronization + DMAPS on one-dimensional profiles & 0.9164 & $< 1$ second & \\
-		\hline 
-		VDM on one-dimensional profiles & 0.9232 & $< 1$ second & \\	
-		\hline 
-		VDM on two-dimensional images & 0.9051  & $325$ seconds & $\mathcal{O}(n^2)$ to compute the pairwise alignments\\
-		\hline 	
-		Scattering transform + DMAPS on two-dimensional profiles & 0.9011  & $86$ seconds &  $\mathcal{O}(n)$ to compute the scattering transform for each data point \\
-		\hline
-		Scattering transform + DMAPS on two-dimensional membrane images & 0.8403  & $300$ seconds &  $\mathcal{O}(n)$ to compute the scattering transform for each data point \\
-		\hline
-	\end{tabular}
-\end{table}
+%\begin{table}
+%	\begin{tabular}{| p{0.3\textwidth} | c | c | p{0.3\textwidth} |}
+%		\hline 
+%		Method & Spearman's $\rho$ & Execution Time & Notes About Method \\ 
+%		\hline 
+%		PCA on one-dimensional profiles & 0.9244 & $< 1$ second & \\
+%		\hline 
+%		DMAPS on one-dimensional profiles & 0.9209 & $< 1$ second & \\
+%		\hline 
+%		Angular synchronization + DMAPS on one-dimensional profiles & 0.9164 & $< 1$ second & \\
+%		\hline 
+%		VDM on one-dimensional profiles & 0.9232 & $< 1$ second & \\	
+%		\hline 
+%		VDM on two-dimensional images & 0.9051  & $325$ seconds & $\mathcal{O}(n^2)$ to compute the pairwise alignments\\
+%		\hline 	
+%		Scattering transform + DMAPS on two-dimensional profiles & 0.9011  & $86$ seconds &  $\mathcal{O}(n)$ to compute the scattering transform for each data point \\
+%		\hline
+%		Scattering transform + DMAPS on two-dimensional membrane images & 0.8403  & $300$ seconds &  $\mathcal{O}(n)$ to compute the scattering transform for each data point \\
+%		\hline
+%	\end{tabular}
+%\end{table}
 % You may title this section "Methods" or "Models".
 % "Models" is not a valid title for PLoS ONE authors. However, PLoS ONE
 % authors may use "Analysis"
 \section*{Materials and Methods}
 
-\subsection*{Experimental Setup}
+\subsection*{Experimental setup}
 
-\subsection*{Image Preprocessing}
-The dpERK images we collect from the confocal microscope are subsampled to $100 \times 100$ pixels; the membrane images are subsampled to $200 \times 200$ pixels (due to the finer structure in the membrane pictures). 
-
-Because we are only interested in the membrane thickness, we run a simple edge detection algorithm on the membrane images.
+\subsection*{Image preprocessing}
+The dpERK images we collected from the confocal microscope were subsampled to $100 \times 100$ pixels; 
+the membrane images were subsampled to $200 \times 200$ pixels (due to the finer structure in the membrane pictures). 
 %
-We use a Laplacian of Gaussians filter \cite{...}, as implemented in the Matlab Image processing toolbox \cite{...}.
+Because we are only interested in the membrane thickness, we ran a simple edge detection algorithm on the membrane images.
+%
+We used a Laplacian of Gaussians filter \cite{canny1986computational}, as implemented in the Matlab Image processing toolbox via the \texttt{edge} function (\url{http://www.mathworks.com/help/images/ref/edge.html}).
+%
+To compute the pairwise alignments between images for use in angular synchronization and VDM, we searched over 20 rotations (evenly spaced from $0$ to $2 \pi$) and 10 translations spanning $\pm 10 \%$ of the image pixels.
+%
+We used the Euclidean distance between images to measure the quality of the alignment.
+%
+These translations and rotations were then converted to three-dimensional rotations on the sphere, with the image spanning a $\pi/4 \times \pi/4$ portion of the sphere, so that the angle of rotation of the image corresponded to the Euler angle $\alpha$, $pixels_x/pixels_{max} * \pi/4$ corresponded to the Euler angle $\beta$, and  $pixels_y/pixels_{max} * \pi/4$ corresponded to the Euler angle $\gamma$.
 
+\subsection*{Spearman's rank correlation coefficient}
 
-\subsection*{Principal Component Analysis}
+Spearman's rank correlation coefficient, or Spearman's $\rho$, measures the monotonicity of a function \cite{myers2010research}. 
+%
+It therefore serves as an appropriate metric for the ``goodness'' of our orderings.
+%
+Given data points $X_i$ and $Y_i$, we compute the ranks of each data point within the data set, denoted $x_i$ and $y_i$.
+%
+Spearman's $\rho$ is then defined as the correlation between the ranks
+\begin{equation}
+\rho = \frac{\sum_i (x_i - \overline{x})(y_i - \overline{y})}{\sqrt{\sum_i (x_i - \overline{x})^2 \sum_i (y_i - \overline{y})^2}}
+\end{equation}
+where $\overline{x}$ and $\overline{y}$ are the averages of $x_i$ and $y_i$, respectively. 
+
+\subsection*{Principal component analysis}
 Principal component analysis (PCA) has been the workhorse dimensionality reduction technique for the past century.
 %
 PCA finds the optimal planes or hyperplanes on which to project the data in order to maximize the variance of the projected data \cite{shlens2005tutorial}.
@@ -512,7 +595,7 @@ If there is a {\em spectral gap} such that the first few eigenvectors capture a 
 %
 In our setup, we assume that the data is inherently one-dimensional, and that projection onto $\psi_1$ will uncover the correct time ordering of the data.
 
-\subsection*{Diffusion Maps}
+\subsection*{Diffusion maps}
 Unlike PCA, diffusion maps (DMAPS) is a nonlinear dimensionality reduction technique. 
 %
 DMAPS aims to uncover the parameterization of data sampled from a nonlinear manifold \cite{coifman2005geometric}.
@@ -539,7 +622,7 @@ The eigenvectors $\phi_1, \phi_2, \dots, \phi_n$ give the embedding coordinates,
 %
 Because the matrix $A$ is row-stochastic, $\lambda_1=1$ and $\phi_1$ is a constant vector; the next few eigenvectors give the ``meaningful'' embedding coordinates for the data. 
 
-\subsection*{Angular Synchronization}
+\subsection*{Angular synchronization}
 
 When the data set is invariant under an underlying symmetry group (such as translations and/or rotations), we must first factor out the underlying symmetries before doing further analysis.
 %
@@ -547,39 +630,52 @@ Angular synchronization calculates the optimal alignments for a data set, assumi
 
 Let $x_1, \dots, x_n$ denote the data points that we wish to align under some symmetry group.
 %
-We will consider the case where the symmetry group is the group of two-dimensional rotations, $SO(2)$; the same construction and ideas hold for other symmetry groups, such as $SO(3)$. 
+We will consider the case where the symmetry group is the group of $d$-dimensional rotations, $SO(d)$. 
 %
-Let $R_{ij} \in SO(2)$ denote the rotation that aligns $x_j$ to $x_i$, so that
+Let $R_{ij} \in SO(d)$ denote the rotation that aligns $x_j$ to $x_i$, so that
 \begin{equation}
-R_{ij} = \argmin_{R \in SO(2)} \|Rx_j - x_i \|^2.
+R_{ij} = \argmin_{R \in SO(d)} \|Rx_j - x_i \|^2.
 \end{equation}
 %
-We seek to find the rotations $R_1, R_2, \dots, R_n \in SO(2)$ such that $R_i R_j^T \approx R_{ij}$, for every pair $i, j$. (CHECK THIS)
+We seek to find the rotations $R_1, R_2, \dots, R_n \in SO(d)$ such that $R_i R_j^T \approx R_{ij}$, for every pair $i, j$. 
+%TODO: Check that this order is correct
 %
-We would also like to exploit {\em higher-order} consistency relations.
+We would also like to exploit {\em higher-order} consistency relations;
+for example, the relationship $R_{ij} R_{jk} R_{ki} = I$, where $I$ is the identity matrix, should hold.
 %
-For example, for noiseless measurements, $R_{ij} R_{jk} R_{ki} = I$, where $I$ is the identity matrix; therefore, we consider measurements which (almost) satisfy such conditions ``good'' measurements, and those measurements which do not satisfy such conditions as most likely inaccurate.
+Therefore, we consider measurements which (almost) satisfy such conditions ``good'' measurements, and those measurements which do not satisfy such conditions as most likely inaccurate.
 
 We define the objective function 
 \begin{equation} \label{eqn:angsynch_obj}
-\max_{R_1, \dots, R_n \in SO(2)} \sum_{i=1}^{n} \sum_{j=1}^{n} R_i^T R_{ij} R_j.
+\max_{R_1, \dots, R_n \in SO(d)} \sum_{i=1}^{n} \sum_{j=1}^{n} R_i^T R_{ij} R_j.
 \end{equation}
 %
-In general, the solution to \eqref{eqn:angsynch_obj} is not easily computed.
+%TODO: check if a norm is needed
+This objective function is large if $R_i$ adn $R_j$ are consistent with $R_{ij}$, and will be random with mean 0 if $R_i$ and $R_j$ are inconsistent with $R_{ij}$.
+%
+Therefore, we are seeking the most consistent set of global alignments, given the computed pairwise alignments.
 
-Instead, we relax the problem and allow $R_1, \dots, R_n \in \mathbb{R}^2$.
+In general, the solution to \eqref{eqn:angsynch_obj} is not easily computed.
 %
-We then define the matrix $H$, which is an $n \times n$ block matrix with $2 \times 2$ blocks (so $H \in \mathbb{R}^{2n \times 2n}$).
+Instead, we relax the problem and allow $R_1, \dots, R_n \in \mathbb{R}^{d \times d}$.
 %
-We then compute the top ``block'' eigenvector of $H$, which we denote $\hat{R} \in \mathbb{R}^{2n \times 2}$. 
+We then define the matrix $H$, which is an $n \times n$ block matrix with $d \times d$ blocks (so $H \in \mathbb{R}^{nd \times nd}$).
 %
-The solution to the relaxed problem is given by $\hat{R}$, so that the $i^{th}$ rotation is (approximately) $\hat{R}(i) \in \mathbb{R}^{2 \times 2}$.
+We then compute the top ``block'' eigenvector of $H$, which we denote $\hat{R} \in \mathbb{R}^{nd \times d}$. 
 %
-However, because we relaxed the problem to allow our solutions to lie in $\mathbb{R}^{2 \times 2}$, we must project our approximate solution back to $SO(2)$.
+The solution to the relaxed problem is given by $\hat{R}$, so that the $i^{th}$ rotation is (approximately) $\hat{R}(i) \in \mathbb{R}^{d \times d}$.
+%
+This formulation also accounts for higher-order relations.
+%
+For example, if we want to optimize over all pairs of pairwise rotations, we would solve $\max_{R_1, \dots, R_n \in SO(d)} \sum_{i=1}^{n} \sum_{j=1}^{n} R_i^T \left( \sum_k R_{ik} R_{kj} \right) R_j$. 
+%
+However, the solution to this problem is also given by the top eigenvector of $H$. 
+
+Because we relaxed the problem to allow our solutions to lie in $\mathbb{R}^{d \times d}$, we must project our approximate solution back to $SO(d)$.
 %
 The optimal rotation is therefore given by $R_i = U_i V_i^T$, where $U_i$ and $V_i$ are the left and right singular vectors of $\hat{R}_i$, respectively. 
 
-\subsection*{Vector Diffusion Maps} 
+\subsection*{Vector diffusion maps} 
 
 Angular synchronization assumes that each data point is a replicate measurements of the same underlying configuration, simply corrupted with rotations and some noise.
 %
@@ -593,24 +689,24 @@ We then construct the block matrix $S$, where the blocks of $S$ are defined by
 \begin{equation}
 S_{ij} = \left\{ \begin{array}{l l} 
 A_{ij} H_{ij} & i \ne j \\
-0_{2 \times 2} & i = j
+0_{d \times d} & i = j
 \end{array}
 \right.
 \end{equation}
 %
 where $A_{ij}$ is the $(i,j)$ entry of $A$, and $H_{ij}$ is the $(i,j)$ block of $H$. 
 
-We then compute the eigenvectors $\phi_1, \dots, \phi_{2n}$ and eigenvalues $\lambda_1, \dots, \lambda_{2n}$ of $S$, and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{2n}|$.
+We then compute the eigenvectors $\phi_1, \dots, \phi_{nd}$ and eigenvalues $\lambda_1, \dots, \lambda_{nd}$ of $S$, and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{nd}|$.
 %
-As in angular synchronization, the first ``block'' eigenvector, i.e. the first two eigenvectors concatenated into a $2 n \times 2$ matrix, gives the optimal rotations. 
+As in angular synchronization, the first ``block'' eigenvector, i.e. the first two eigenvectors concatenated into a $nd \times d$ matrix, gives the optimal rotations. 
 %
 However, the eigenvectors now also give us embedding coordinates.
 %
 Let $\phi_j(i)$ denote the $i^{th}$ block of $\phi_j$. 
 %
-The embedding coordinates are then given by $\langle \phi_j(i), \phi_k(i) \rangle$, where $1 \le j, k, \le 2 n$. 
+The embedding coordinates are then given by $\langle \phi_j(i), \phi_k(i) \rangle$, where $1 \le j, k, \le nd$. 
 
-\subsection*{Scattering Transform}
+\subsection*{Scattering transform}
 
 The scattering transform consists of a wavelet transform of the signal, followed by  the appropriate averaging operator.
 %
@@ -618,21 +714,7 @@ This transform is applied to the signal itself, as well as to the residual, in o
 % 
 Furthermore, the scattering transform can be shown to be a contractive operator; therefore, noise and small deformations in the signal are not amplified in the transformation.
 %
-We utilized the freely available ScatNet software (\texttt{http://www.di.ens.fr/data/software/scatnet/}) to compute the rotation-invariant scattering coefficients. 
-
-\subsection*{Spearman's $\rho$}
-
-Spearman's rank correlation coefficient, or Spearman's $\rho$, measures the monotonicity of a function \cite{...}. 
-%
-It therefore serves as an appropriate metric for the ``goodness'' of our orderings.
-%
-Given data points $X_i$ and $Y_i$, we compute the ranks of each data point within the data set, denoted $x_i$ and $y_i$.
-%
-Spearman's $\rho$ is then defined as the correlation between the ranks
-\begin{equation}
-\rho = \frac{\sum_i (x_i - \overline{x})(y_i - \overline{y})}{\sqrt{\sum_i (x_i - \overline{x})^2 \sum_i (y_i - \overline{y})^2}}
-\end{equation}
-where $\overline{x}$ and $\overline{y}$ are the averages of $x_i$ and $y_i$, respectively. 
+We utilized the freely available ScatNet software (\url{http://www.di.ens.fr/data/software/scatnet/}) to compute the rotation-invariant scattering coefficients. 
 
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
@@ -642,7 +724,7 @@ where $\overline{x}$ and $\overline{y}$ are the averages of $x_i$ and $y_i$, res
 % The bibtex filename
 \bibliography{../../references/references}
 
-\section*{Figure Legends}
+%\section*{Figure Legends}
 %\begin{figure}[!ht]
 %\begin{center}
 %%\includegraphics[width=4in]{figure_name.2.eps}
@@ -656,7 +738,7 @@ where $\overline{x}$ and $\overline{y}$ are the averages of $x_i$ and $y_i$, res
 %\end{figure}
 
 
-\section*{Tables}
+%\section*{Tables}
 %\begin{table}[!ht]
 %\caption{
 %\bf{Table title}}
