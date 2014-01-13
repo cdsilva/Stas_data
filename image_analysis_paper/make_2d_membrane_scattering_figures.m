@@ -68,7 +68,7 @@ if print_figures
 end
 
 fprintf('Scattering transform (membrane) Spearman coeff: %2.4f \n', corr(L(:,1), V(:,idx), 'type','spearman'));
-
+%%
 if print_figures
     figure;
     for i=im_save_idx
@@ -79,7 +79,7 @@ if print_figures
         print(sprintf('membrane_scat_%d',i),fmt,res)
         clf
         
-        imshow(image_set_membrane_raw(:,:,I(i)), 'InitialMagnification', 'fit')
+        imshow(uint8(image_set_membrane_raw(:,:,I(i))), 'InitialMagnification', 'fit')
         %imshow(imadjust(uint8(image_set(:,:,I(i)))), 'InitialMagnification', 'fit')
         % make green colormap
         cm_green = gray;
