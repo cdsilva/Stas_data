@@ -107,17 +107,17 @@ In these settings, objects from different frames or timepoints must be aligned o
 %
 Several different techniques have been developed to solve the image registration problem. 
 %
-``Template-based'' techniques, where one selects a prototypical image or ``template'', and then aligns the remaining images to this template \cite{ahuja2007template}.
+``Template-based'' techniques are relatively common, where one selects a prototypical image or ``template'', and then aligns the remaining images to this template \cite{ahuja2007template}.
 %
 Such techniques can suffer if a good template is not know {\em a priori}; when the images are noisy, selecting one image from the data set at random can yield a noisy template and result in many mis-alignments. 
 %
-Other techniques focus on constructing ``features'' that are rotation-invariant \cite{flusser2000independence, lowe1999object, sadler1992shift, ojala2002multiresolution}, and then using these features (rather than the images themselves) in further analyses and computations.
+Other techniques focus on constructing ``features'' that are rotation-invariant \cite{flusser2000independence, lowe1999object, sadler1992shift, ojala2002multiresolution}, so that one can use these features (rather than the images themselves) in further analyses and computations.
 %
-However, such features are often problem-dependent, and developing rotation-invariant features that are stable to noise and deformations is still an active area of research.
+However, constructing rotation-invariant features that still retain the important information in the images is difficult and often problem-dependent, and developing rotation-invariant features that are stable to noise and deformations is still an active area of research \cite{mallat2012group, sifre2013rotation}.
 %
-One can also construct algorithms that are invariant to rotations of the images \cite{hilai1004recognition, zhao2013fourier}.
+One can also construct algorithms that are invariant to rotations of the images \cite{hilai1994recognition, zhao2013fourier}.
 %
-However, 
+ADD WHY THIS IS BAD.
 
 We are interested in analyzing data collected from developing {\em Drosophila} embryos during nuclear cycle 14 (NC14) (CHECK).
 %
@@ -361,13 +361,14 @@ the orderings are of comparable quality to those obtained with the one-dimension
 
 \begin{figure}[H]
 \centering
-\begin{subfigure}{0.45\textwidth}
-\includegraphics[width=\textwidth]{vdm_2d_time_corr}
+\begin{subfigure}{\textwidth}
+\centering
+\includegraphics[width=0.7\textwidth]{vdm_2d_time_corr}
 \caption{}
 \end{subfigure}
-\begin{subfigure}{0.5\textwidth}
+\begin{subfigure}{\textwidth}
 \foreach \n in {1,9,17,25,30,34,38,43,49}{
-\includegraphics[width=0.3\textwidth]{dpERK_vdm_\n}
+\includegraphics[width=0.07\textwidth, trim=6in 0in 6in 0in, clip]{dpERK_vdm_\n}
 \hfill}
 \caption{}
 \end{subfigure}
@@ -397,13 +398,13 @@ The ordering is again good; however, using this method, we do not obtain optimal
 
 \begin{figure}[H]
 \centering
-\begin{subfigure}{0.45\textwidth}
-\includegraphics[width=\textwidth]{DMAPS_scat_time_corr}
+\begin{subfigure}{\textwidth}
+\includegraphics[width=0.7\textwidth]{DMAPS_scat_time_corr}
 \caption{}
 \end{subfigure}
-\begin{subfigure}{0.5\textwidth}
+\begin{subfigure}{\textwidth}
 \foreach \n in {1,9,17,25,30,34,38,43,49}{
-\includegraphics[width=0.3\textwidth]{dpERK_scat_\n}
+\includegraphics[width=0.07\textwidth, trim=6in 0in 6in 0in, clip]{dpERK_scat_\n}
 \hfill}
 \caption{}
 \end{subfigure}
@@ -415,15 +416,24 @@ The ordering is again good; however, using this method, we do not obtain optimal
 
 \subsection*{Two-dimensional membrane images ordered using diffusion maps and the scattering transform}
 
+$\rho = 0.8403$
+
+$\rho = 0.3525$ for VDM + membrane pics
+
 \begin{figure}[H]
 \centering
-\begin{subfigure}{0.45\textwidth}
-\includegraphics[width=\textwidth]{DMAPS_membrane_scat_time_corr}
+\begin{subfigure}{\textwidth}
+\centering
+\includegraphics[width=0.7\textwidth]{DMAPS_membrane_scat_time_corr}
 \caption{}
 \end{subfigure}
-\begin{subfigure}{0.5\textwidth}
+\begin{subfigure}{\textwidth}
 \foreach \n in {1,9,17,25,30,34,38,43,49}{
-\includegraphics[width=0.3\textwidth]{membrane_scat_\n}
+\includegraphics[width=0.07\textwidth, trim=6in 0in 6in 0in, clip]{membrane_scat_\n}
+\hfill}
+\newline
+\foreach \n in {1,9,17,25,30,34,38,43,49}{
+\includegraphics[width=0.07\textwidth, trim=6in 0in 6in 0in, clip]{membrane_scat_raw_\n}
 \hfill}
 \caption{}
 \end{subfigure}
@@ -470,7 +480,7 @@ The work here is intended to provide an overview of the different techniques ava
 \subsection*{Experimental Setup}
 
 \subsection*{Image Preprocessing}
-The dpERK images we collect from the confocal microscope are subsampled to $100 \times 100$ pixels; the membrane images are subsampled to $200 \times 200$ pixels (due to the finer features in the membrane pictures). 
+The dpERK images we collect from the confocal microscope are subsampled to $100 \times 100$ pixels; the membrane images are subsampled to $200 \times 200$ pixels (due to the finer structure in the membrane pictures). 
 
 Because we are only interested in the membrane thickness, we run a simple edge detection algorithm on the membrane images.
 %
@@ -607,11 +617,8 @@ The scattering transform consists of a wavelet transform of the signal, followed
 This transform is applied to the signal itself, as well as to the residual, in order to preserve as much information about the signal itself, while still keeping the transform coefficients translation- and rotation-invariant. 
 % 
 Furthermore, the scattering transform can be shown to be a contractive operator; therefore, noise and small deformations in the signal are not amplified in the transformation.
-
-\subsection*{Edge detection}
-For the membrane images, we are only interested in the location of the edges of the membrane (not other features, such as the intensity of the fluorescent stain).
 %
-We therefore preprocess the 
+We utilized the freely available ScatNet software (\texttt{http://www.di.ens.fr/data/software/scatnet/}) to compute the rotation-invariant scattering coefficients. 
 
 \subsection*{Spearman's $\rho$}
 
@@ -625,7 +632,7 @@ Spearman's $\rho$ is then defined as the correlation between the ranks
 \begin{equation}
 \rho = \frac{\sum_i (x_i - \overline{x})(y_i - \overline{y})}{\sqrt{\sum_i (x_i - \overline{x})^2 \sum_i (y_i - \overline{y})^2}}
 \end{equation}
-
+where $\overline{x}$ and $\overline{y}$ are the averages of $x_i$ and $y_i$, respectively. 
 
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
