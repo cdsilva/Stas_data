@@ -1,0 +1,27 @@
+\documentclass[12pt]{article}
+
+\begin{document}
+
+Assume we have a signal that consists of $n$ features, each which lie in $d$-dimensional space (e.g. if we have a 10-atom molecule in three-dimensional space, then $n=10$ and $d=3$).
+
+Denote the features (atoms) as $\x_1, \dots, x_n \in \mathbb{R}^d$. 
+
+Assume that we observe $m$ rotated noisy copies of the features
+$$y_i^{(k)} = O_k x_i + \xi_^{(k)}, k=1, \dots, m, i=1, \dots, n$$
+
+We would like to construct the original features $x_1, \dots, x_n$ from the rotated noisy copies $y_i^{(k)}$
+
+Note that, up to noise
+$$ \langle y_i^{(k)}, y_j^{(k)} \rangle  \approx \langle x_i, x_j \rangle $$
+because the rotations preserve inner products.
+
+Therefore,  we can approximate $\langle x_i, x_j \rangle$ as 
+$$ \langle x_i, x_j \rangle  \approx \frac{1}{m} \sum_{k=1}^m \langle y_i^{(k)}, y_j^{(k)} \rangle $$
+
+We can therefore estimate the matrix $X$, where $X_{ij} = \langle x_i, x_j \rangle$.
+
+However, this is precisely the covariance matrix of the data $x_1, \dots, x_n$. 
+
+We can therefore recover the original signal using PCA/eigendecomposition. 
+
+\end{document}
