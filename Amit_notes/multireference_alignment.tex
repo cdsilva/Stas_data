@@ -1,0 +1,61 @@
+\documentclass[12pt]{article}
+
+\begin{document}
+
+We have images $I_1, \dots, I_n$
+
+Want to find rotations $R_1, \dots, R_n \in SO(2)$ such that the images are optimally aligned
+
+Define a cost function $c(R_i I_i, R_j I_j)$.
+%
+Then we can write the objective function 
+$$\min_{R_1, \dots R_n \in SO(2)} \sum_{i \ne j} c(R_i I_i, R_j I_j)$$
+
+Since the cost is invariant to global rotations, we can rewrite it as
+$$\min_{R_1, \dots R_n \in SO(2)} \sum_{i \ne j} c(I_i, R_i^T R_j I_j)$$
+
+We can discretize the space of rotations into $L$ intervals, and write each rotation as a number $l \in \mathbb{Z}_L$. 
+%
+We also define a cost function between a {\em specific} pair of images $I_i$ and $I_j$ as $c_{ij}$. 
+%
+This cost function is only a function of the difference in rotations, $l_i - l_j$. 
+%
+Therefore, we can rewrite the optimization problem as
+$$\min_{l_1, \dots, l_n \in \mathbb{Z}_L} \sum_{i \ne j} c_{ij} (l_i - l_j)$$
+
+We now note that each rotation $l_i-l_j \in \mathbb{Z}_L$ maps to a {\em cyclic} permutation matrix $\pi_{ij} \in \mathbb{R}^{L \times L}$, because each rotation can be thought of as a cyclic permutation of the $L$ ``ticks'' on the unit circle.
+%
+However, the set of cyclic permutation matrices is non-convex (e.g. because the average of two permutations matrices is not a permutation matrix). 
+%
+The convex hull of permutation matrices is the set of all doubly stochastic matrices:
+$$\pi_{ij}(k,l) \ge 0  \forall k, l $$
+$$\pi_{ij} \mathbb{1} = \mathbb{1}$$
+$$\mathbb{1}^T \pi_{ij} = \mathbb{1}^T$$
+
+We also require the cyclic condition to hold:
+$$\pi_{ij}(k,l) = \pi_{ij}(k+1, l+1)$$
+
+We would also like {\em consistency} relations to hold, e.g. $\pi_{ij} \pi_{jk} = \pi_{ik}$.
+%
+This is trivially satisfied if $\exists \pi_1, \dots, \pi_n$ such that $\pi_{ij} = \pi_i^T \pi_j \forall i, j$. 
+%
+Therefore, we want
+$$\Pi = \left[ \begin{array}{c} \pi_1^T \\ \dots \\ \pi_n^T \end{array} \right] [\pi_1 \dots \pi_n]$$
+where $\Pi \in \mathbb{R}^{nL \times nL}$ is the Gram matrix, where the $i,j$ block of $\Pi$ is $\pi_{ij} \in \mathbb{R}^{L \times L}$.
+
+This is true if $rank(\Pi) = L$ and $\Pi$ is positive semidefinite. 
+%
+We relax the constrant that $rank(\Pi) = L$, and only require that $\Pi$ is psd. 
+
+We also require that
+$$\pi_{ii} = I){L \times L}$$
+
+We then compute the cost function $c_{ij}$ for every possible $l_i - l_j \in \mathbb{Z}_L$, and put these values into the matrix $C_{ij} \in \mathbb{R}^{L \times L}$.
+%
+The objective function corresponding to a particular permutation matrix can then be written as 
+$$\sum_{i \ne j} Tr(C_{ij} \pi_{ij})$$
+
+Or, if we write it in full matrix notation
+$$\min_{\Pi} Tr(C^T \Pi)$$
+
+\end{document}
