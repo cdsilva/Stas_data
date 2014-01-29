@@ -1,27 +1,60 @@
 \documentclass[12pt]{article}
 
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\title{Solving the Procrustes Problem with PCA}
+
 \begin{document}
 
-Assume we have a signal that consists of $n$ features, each which lie in $d$-dimensional space (e.g. if we have a 10-atom molecule in three-dimensional space, then $n=10$ and $d=3$).
+\maketitle
 
-Denote the features (atoms) as $\x_1, \dots, x_n \in \mathbb{R}^d$. 
+Assume we have a signal that consists of $n$ features, each of which lie in $d$-dimensional space (e.g. if we have a 10-atom molecule in three-dimensional space, then $n=10$ and $d=3$).
+%
+Denote the features as $x_1, \dots, x_n \in \mathbb{R}^d$. 
 
-Assume that we observe $m$ rotated noisy copies of the features
-$$y_i^{(k)} = O_k x_i + \xi_^{(k)}, k=1, \dots, m, i=1, \dots, n$$
+We observe $m$ rotated noisy copies of the features
+\begin{equation}
+y_i^{(k)} = O_k x_i + \xi_i^{(k)}, k=1, \dots, m, i=1, \dots, n,
+\end{equation}
+where $O_k$ is an orthoganol transform, and $\xi_i^{(k)}$ is Gaussian white noise. 
+%
+We would like to estimate the original signal $x_1, \dots, x_n$ from the rotated noisy copies $y_i^{(k)}$.
 
-We would like to construct the original features $x_1, \dots, x_n$ from the rotated noisy copies $y_i^{(k)}$
+Note that, because orthoganol transforms preserve inner products,
+\begin{equation}
+\langle y_i^{(k)}, y_j^{(k)} \rangle  \approx \langle x_i, x_j \rangle 
+\end{equation}
+(up to noise).
 
-Note that, up to noise
-$$ \langle y_i^{(k)}, y_j^{(k)} \rangle  \approx \langle x_i, x_j \rangle $$
-because the rotations preserve inner products.
+Therefore,  we can estimate $\langle x_i, x_j \rangle$ as 
+\begin{equation} \label{eq:ip_est}
+\langle x_i, x_j \rangle  \approx \frac{1}{m} \sum_{k=1}^m \langle y_i^{(k)}, y_j^{(k)} \rangle 
+\end{equation}
 
-Therefore,  we can approximate $\langle x_i, x_j \rangle$ as 
-$$ \langle x_i, x_j \rangle  \approx \frac{1}{m} \sum_{k=1}^m \langle y_i^{(k)}, y_j^{(k)} \rangle $$
-
-We can therefore estimate the matrix $X$, where $X_{ij} = \langle x_i, x_j \rangle$.
-
-However, this is precisely the covariance matrix of the data $x_1, \dots, x_n$. 
-
-We can therefore recover the original signal using PCA/eigendecomposition. 
+We then construct the matrix $C$, where $C_{ij} = \langle x_i, x_j \rangle$, using the estimates in \eqref{eq:ip_est}.
+%
+However, $C$ is precisely the covariance matrix of the data $x_1, \dots, x_n$. 
+%
+We can therefore recover $x_1, \dots, x_n$ using eigendecomposition:
+\begin{equation}
+\begin{bmatrix}
+x_1^T \\
+\vdots \\
+x_n^T 
+\end{bmatrix} = 
+\begin{bmatrix}
+| & | &  & | \\
+\phi_1 & \phi_2 & \cdots & \phi_d \\
+| & | &  & | \\
+\end{bmatrix}
+\begin{bmatrix}
+\sqrt{\lambda_1} & 0 & 0 & \cdots & 0 \\
+0 & \sqrt{\lambda_2} & 0 & \cdots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & \cdots & \sqrt{\lambda_d} 
+\end{bmatrix}
+\end{equation}
+where $\lambda_1, \dots, \lambda_n$ and $\phi_1, \dots, \phi_n$ are the eigenvalues and eigenvectors, respectively, of $C$, and they are ordered such that $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_n$. 
 
 \end{document}

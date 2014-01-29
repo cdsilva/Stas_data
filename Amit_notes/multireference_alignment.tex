@@ -1,61 +1,117 @@
 \documentclass[12pt]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{dsfont}
+
+\title{Multireference Alignment Notes}
 
 \begin{document}
 
-We have images $I_1, \dots, I_n$
+\maketitle
 
-Want to find rotations $R_1, \dots, R_n \in SO(2)$ such that the images are optimally aligned
+We are given images $I_1, \dots, I_n$.
 
-Define a cost function $c(R_i I_i, R_j I_j)$.
-%
-Then we can write the objective function 
-$$\min_{R_1, \dots R_n \in SO(2)} \sum_{i \ne j} c(R_i I_i, R_j I_j)$$
+We want to find rotations $R_1, \dots, R_n \in SO(2)$ such that the images are optimally aligned.
 
-Since the cost is invariant to global rotations, we can rewrite it as
-$$\min_{R_1, \dots R_n \in SO(2)} \sum_{i \ne j} c(I_i, R_i^T R_j I_j)$$
+We define a cost function $c(R_i I_i, R_j I_j)$.
+%
+We would like to solve the optimization problem
+\begin{equation} \label{eq:opt1}
+\min_{R_1, \dots R_n \in SO(2)} \sum_{i \ne j} c(R_i I_i, R_j I_j)
+\end{equation}
 
-We can discretize the space of rotations into $L$ intervals, and write each rotation as a number $l \in \mathbb{Z}_L$. 
+Since the cost is invariant to global rotations, we can rewrite \eqref{eq:opt1} as
+\begin{equation}
+\min_{R_1, \dots R_n \in SO(2)} \sum_{i \ne j} c(I_i, R_i^T R_j I_j)
+\end{equation}
+
+We discretize the space of rotations into $L$ intervals, and write each rotation as a number $l_i \in \mathbb{Z}_L, i=1, \dots, n$. 
 %
-We also define a cost function between a {\em specific} pair of images $I_i$ and $I_j$ as $c_{ij}$. 
+We also define a cost function between a {\em specific} pair of images $I_i$ and $I_j$ as $c_{ij}(l_i - l_j)$; 
+this cost function is only a function of the difference in rotations, $l_i - l_j$. 
 %
-This cost function is only a function of the difference in rotations, $l_i - l_j$. 
-%
-Therefore, we can rewrite the optimization problem as
+we rewrite the optimization problem as
 $$\min_{l_1, \dots, l_n \in \mathbb{Z}_L} \sum_{i \ne j} c_{ij} (l_i - l_j)$$
 
 We now note that each rotation $l_i-l_j \in \mathbb{Z}_L$ maps to a {\em cyclic} permutation matrix $\pi_{ij} \in \mathbb{R}^{L \times L}$, because each rotation can be thought of as a cyclic permutation of the $L$ ``ticks'' on the unit circle.
 %
+We will optimize over the space of cyclic permutation matrices, rather than the space of rotation matrices.
+
 However, the set of cyclic permutation matrices is non-convex (e.g. because the average of two permutations matrices is not a permutation matrix). 
 %
-The convex hull of permutation matrices is the set of all doubly stochastic matrices:
-$$\pi_{ij}(k,l) \ge 0  \forall k, l $$
-$$\pi_{ij} \mathbb{1} = \mathbb{1}$$
-$$\mathbb{1}^T \pi_{ij} = \mathbb{1}^T$$
+The convex hull of permutation matrices can be shown to be the set of all doubly stochastic matrices, which satisfy the following constraints
+\begin{equation} \label{eq:doublestoch}
+\begin{aligned}
+\pi_{ij}(k,l) &  \ge 0 \forall k, l \\
+\pi_{ij} \mathds{1} & = \mathds{1}\\
+\mathds{1}^T \pi_{ij} & = \mathds{1}^T 
+\end{aligned}
+\end{equation}
 
 We also require the cyclic condition to hold:
-$$\pi_{ij}(k,l) = \pi_{ij}(k+1, l+1)$$
+\begin{equation} \label{eq:cyclic_const}
+\pi_{ij}(k,l) = \pi_{ij}(k+1, l+1)
+\end{equation}
 
 We would also like {\em consistency} relations to hold, e.g. $\pi_{ij} \pi_{jk} = \pi_{ik}$.
 %
 This is trivially satisfied if $\exists \pi_1, \dots, \pi_n$ such that $\pi_{ij} = \pi_i^T \pi_j \forall i, j$. 
 %
 Therefore, we want
-$$\Pi = \left[ \begin{array}{c} \pi_1^T \\ \dots \\ \pi_n^T \end{array} \right] [\pi_1 \dots \pi_n]$$
+\begin{equation} \label{eq:Gram_const}
+\Pi = 
+\begin{bmatrix}
+\pi_{11} & \pi_{12} & \cdots & \pi_{1n} \\
+\pi_{21} & \pi_{22} & \cdots  & \pi_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+\pi_{n1} & \pi_{n2} & \cdots  & \pi_{nn} 
+\end{bmatrix} = 
+\begin{bmatrix}
+\pi_1^T \\
+\vdots \\
+\pi_n^T 
+\end{bmatrix}
+\begin{bmatrix}
+\pi_1^T \cdots \pi_n^T 
+\end{bmatrix}
+\end{equation}
 where $\Pi \in \mathbb{R}^{nL \times nL}$ is the Gram matrix, where the $i,j$ block of $\Pi$ is $\pi_{ij} \in \mathbb{R}^{L \times L}$.
 
-This is true if $rank(\Pi) = L$ and $\Pi$ is positive semidefinite. 
+\eqref{eq:Gram_const} holds if $rank(\Pi) = L$ and $\Pi$ is positive semidefinite. 
 %
-We relax the constrant that $rank(\Pi) = L$, and only require that $\Pi$ is psd. 
+We relax the constrant that $rank(\Pi) = L$, and only require  
+\begin{equation} \label{eq:psd_const}
+\Pi \succeq 0
+\end{equation}
 
 We also require that
-$$\pi_{ii} = I){L \times L}$$
+\begin{equation} \label{eq:identity_const}
+\pi_{ii} = I_{L \times L}
+\end{equation}
 
-We then compute the cost function $c_{ij}$ for every possible $l_i - l_j \in \mathbb{Z}_L$, and put these values into the matrix $C_{ij} \in \mathbb{R}^{L \times L}$.
-%
-The objective function corresponding to a particular permutation matrix can then be written as 
-$$\sum_{i \ne j} Tr(C_{ij} \pi_{ij})$$
+We then construct the matrices $C_{ij}  \in \mathbb{R}^{L \times L}$ for $i, j= 1, \dots, n$, where
+\begin{equation}
+C_{ij}(l_1, l_2) = c_{ij}(l_1 - l_2)
+\end{equation}
 
-Or, if we write it in full matrix notation
-$$\min_{\Pi} Tr(C^T \Pi)$$
+The objective function can then be written as
+\begin{equation} \label{eq:one_cost}
+\min_{\pi_{ij}} \sum_{i \ne j} Tr(C_{ij} \pi_{ij})
+\end{equation}
+
+We then define the matrix $C \in \mathbb{R}^{nL \times nL}$, where
+$$C = \begin{bmatrix}
+ C_{11} & C_{12} & \cdots & C_{1n} \\
+ C_{21} & C_{22} & \cdots & C_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\ 
+C_{n1} & C_{n2} & \cdots & C_{nn} \\
+\end{bmatrix} $$
+
+We can then write \eqref{eq:one_cost} as 
+\begin{equation} \label{eq:total_cost}
+\min_{\Pi} Tr(C^T \Pi)
+\end{equation}
+
+\eqref{eq:total_cost}, togther with constraints \eqref{eq:doublestoch}, \eqref{eq:cyclic_const}, \eqref{eq:psd_const}, and \eqref{eq:identity_const}, define the semidefinite program that we would like to solve. 
 
 \end{document}
