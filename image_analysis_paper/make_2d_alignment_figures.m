@@ -6,7 +6,7 @@ addpath('../membrane_pictures/synchron_so3_nosphharm')
 buffer_size = 20;
 
 % maximum shift in pixels
-shift_max = 10;
+shift_max = 20;
 
 %size of "portion" of sphere on which to project
 angle_proj = pi/4;
@@ -30,7 +30,9 @@ end
 
 %% compute pairwise alignments
 tic
-[R, W, angles] = align_data_nosph(image_set_buffered, angle_proj, shift_max);
+xmax = 0.1;
+ymax = 0.1;
+[R, W, angles] = align_data_nosph(image_set_buffered, xmax, ymax, shift_max);
 
         
 %% angular synchronization
@@ -109,16 +111,40 @@ figure;
 for i=1:m
     image_tmp = image_set_buffered(:,:,i);
     
-    R_all = R_opt(1:3, 1:3)'*R_opt(3*i-2:3*i,:);
+    R_all = (R_opt(1:3, 1:3)'*R_opt(3*i-2:3*i,:));
     
-    [alpha, beta, gamma] = calc_angles(R_all);    
-    image_tmp = shift_image(image_tmp, alpha, beta, gamma, angle_proj);
+    [theta, xdisp, ydisp] = calc_angles(R_all, xmax, ymax, npixels2);
+    theta
+    xdisp
+    ydisp
+    
+    image_tmp = shift_image2(image_tmp, theta, xdisp, ydisp);
     image_set_aligned_vdm(:,:,i) = image_tmp(buffer_size+1:buffer_size+npixels,buffer_size+1:buffer_size+npixels);
     
     subplot(subplot_dim1, subplot_dim2, i);
     imshow(uint8(image_set_aligned_vdm(:,:,i)),'InitialMagnification', 'fit')
 
 end
+
+return
+
+figure;
+for i=1:m
+    image_tmp = image_set_buffered(:,:,i);
+    
+    R_all = R(3*i-2:3*i,1:3);
+    
+    [theta, xdisp, ydisp] = calc_angles(R_all, xmax, ymax, npixels2);
+    theta
+    
+    image_tmp = shift_image2(image_tmp, theta, xdisp, ydisp);
+    image_set_aligned_vdm(:,:,i) = image_tmp(buffer_size+1:buffer_size+npixels,buffer_size+1:buffer_size+npixels);
+    
+    subplot(subplot_dim1, subplot_dim2, i);
+    imshow(uint8(image_set_aligned_vdm(:,:,i)),'InitialMagnification', 'fit')
+
+end
+
 
 figure;
 n_embed = size(embed_coord, 2);
@@ -137,15 +163,15 @@ end
 
 [~, I] = sort(embed_coord(:,coord_idx));
 
-figure;
-plot(L(:,1),embed_coord(:,coord_idx),'.')
-hold on
-plot(L(I(im_save_idx),1), embed_coord(I(im_save_idx),coord_idx), 'o')
-xlabel('membrane thickness')
-ylabel(sprintf('$\\langle \\phi_%d, \\phi_%d \\rangle$', embed_idx(1, coord_idx), embed_idx(2, coord_idx)),'interpreter','latex')
-if print_figures
-    print('vdm_2d_time_corr',fmt, res)
-end
+% figure;
+% plot(L(:,1),embed_coord(:,coord_idx),'.')
+% hold on
+% plot(L(I(im_save_idx),1), embed_coord(I(im_save_idx),coord_idx), 'o')
+% xlabel('membrane thickness')
+% ylabel(sprintf('$\\langle \\phi_%d, \\phi_%d \\rangle$', embed_idx(1, coord_idx), embed_idx(2, coord_idx)),'interpreter','latex')
+% if print_figures
+%     print('vdm_2d_time_corr',fmt, res)
+% end
 
 fprintf('VDM (2-D) Spearman coeff: %2.4f \n', corr(L(:,1),embed_coord(:,coord_idx), 'type','spearman'));
 
@@ -171,7 +197,7 @@ figure;
 for i=1:m
     subplot(subplot_dim1, subplot_dim2, i)
     imshow(uint8(image_set_aligned_vdm(:,:,I(i))), 'InitialMagnification', 'fit')
-    set(gca,'position',[0 0 1 1],'units','normalized')
+    %set(gca,'position',[0 0 1 1],'units','normalized')
     % make green colormap
     cm_green = gray;
     cm_green(:,1) = 0;
@@ -180,7 +206,7 @@ for i=1:m
     axis off
 end
 
-save('2d_alignment_figures.mat');
+%save('2d_alignment_figures.mat');
 
 %%
 rmpath('../membrane_pictures/synchron_so3_nosphharm')
