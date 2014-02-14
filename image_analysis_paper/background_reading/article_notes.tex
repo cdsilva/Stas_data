@@ -7,15 +7,17 @@
 
 \begin{document}
 
-\fullcite{wei2006conditional}
+\begin{enumerate}
 
-\fullcite{wei2006quantile}
+\item \fullcite{wei2006conditional}
 
-\fullcite{li2009stochastic}
+\item \fullcite{wei2006quantile}
 
-\fullcite{jordan2013behavioral}
+\item \fullcite{li2009stochastic}
 
-\fullcite{tucker2010pseudotemporal}
+\item \fullcite{jordan2013behavioral}
+
+\item \fullcite{tucker2010pseudotemporal}
 \begin{itemize}
 	\item Uses cross-sectional data of eye disease progression (e.g. glaucoma).
 	\item Build time series from cross-sectional data (``pseudo time series'')
@@ -23,56 +25,65 @@
 	\item Use these shortest paths as time series to train a time series model (i.e. a HMM model).
 \end{itemize}
 
-\fullcite{kafri2013dynamics}
+\item \fullcite{kafri2013dynamics}
 \begin{itemize}
 	\item Take snapshot of fixed cell population
-	\item Fit 1D curve to trajectory (they assert that the two ``important'' parameters are levels of DNA and the level of ``anaphase-promoting complex'')
+	\item Fit 1D curve to trajectory (they assert that the two ``important'' parameters are levels of DNA and the level of ``anaphase-promoting complex'', so they project onto these two components and then fit a 1D closed curve to the data)
 	\item Since the cells follow a closed cycle, given the closed curve, they can use mass balances to determine the relative rates/fluxes through the different stages
 \end{itemize}
 
-\fullcite{wyart2010evaluating}
+\item \fullcite{wyart2010evaluating}
 
-\fullcite{chen2012nonlinear}
+\begin{itemize}
+	\item Use RNA FISH technique to count levels of individual mRNAs in cells; requires cells to be fixed
+	\item Propose models for dynamics of mRNA throughout cell cycle
+	\item Show how they can use data from population of fixed cells to fit model (periodic model for level of mRNA production)
+\end{itemize}
 
-\fullcite{das2013dynamic}
+\item \fullcite{chen2012nonlinear}
 
-\fullcite{schindler2007inferring}
+\item \fullcite{das2013dynamic}
 
-\fullcite{bigot2012geometric}
+\item \fullcite{schindler2007inferring}
 
-\fullcite{escudero2011epithelial}
+\item \fullcite{bigot2012geometric}
 
-\fullcite{machta2013parameter}
+\item \fullcite{escudero2011epithelial}
 
-\fullcite{peng2013detecting}
+\item \fullcite{machta2013parameter}
 
-\fullcite{gerber2010visual}
+\item \fullcite{peng2013detecting}
 
-\fullcite{qiu2011discovering}
+\item \fullcite{gerber2010visual}
 
-\fullcite{gupta2008extracting}
+\item \fullcite{qiu2011discovering}
 
-\fullcite{lau2009modeling}
+\item \fullcite{gupta2008extracting}
 
-\fullcite{toga2003temporal}
+\item \fullcite{lau2009modeling}
+
+\item \fullcite{toga2003temporal}
   
-\fullcite{li2012modelling}
+\item \fullcite{li2012modelling}
 
-\fullcite{denkinger2013set}
+\item \fullcite{denkinger2013set}
 
-\fullcite{xu2012comprehensive}
+\item \fullcite{xu2012comprehensive}
 
-\fullcite{sisan2010event}
+\item \fullcite{sisan2010event}
 
-\fullcite{golparvar2011monitoring}
+\item \fullcite{golparvar2011monitoring}
 
-\fullcite{golani1999phenotyping}
+\item \fullcite{golani1999phenotyping}
 \begin{itemize}
 	\item Want to construct video of construction progress from snapshots
 	\item Building Information Models (BIM) 
 \end{itemize}
 
-\fullcite{anavy2014blind}
+\item \fullcite{anavy2014blind}
+
+\end{enumerate}
+
 
 
 \end{document}

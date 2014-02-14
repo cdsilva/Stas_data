@@ -16,32 +16,105 @@
 
 \subsection{Alignment Using Angular Synchronization}
 
-When a data set is invariant under an underlying symmetry group (such as translations and rotations), we must factor out the underlying symmetries and align the data before doing further analysis.
+Often when we collect images in experiments, each image is taken in a different orientation. 
 %
-In our example, we will translate and rotate images until they are optimally aligned, and then operate on this aligned set. 
+Therefore, the first task in image analysis is to align the set of images. 
 %
+We will consider settings when alignment is done with respect to two--dimensional translations and rotations of the images, as each ``object of interest'' (i.e. each embryo) is in a different position and rotated at a different angle within the image frame. 
+
+
 There are many ways to align images. 
 %
-``Template--based'' alignment \cite{...} is one technique, where one selects a specific image or {\em template} as 
+``Template--based'' alignment \cite{...} is one technique, where one selects a specific image or {\em template}, and then tries to optimally align each image to that template.
+%
+However, this method can result in many misalignemnts for noisy images, and can be problematic if a ``good'' template image is not known {\em a priori}. 
+%
+Instead, we will use a technique called angular synchronization\cite{singer2011angular}.
+%
+Angular synchronization uses each image as a template for every other image to compute the pairwise alignments for every possible pair of images.
+%
+From this large collection of pairwise alignments, it then tries to find optimal alignment for each image, such that these individual alignments are most consistent (in some metric) with the pairwise alignment.
+%
+Because we consider {\em all} pairwise alignments, angular synchronization is often much more robust to noise. 
 
-Angular synchronization calculates the optimal alignments for each point in a data set, given estimates of the optimal alignments between pairs of data points \cite{singer2011angular}. 
+An important part of angular synchronization is that the symmetry group $G$ be {\em compact} and have a real (or perhaps complex) representation.
+%
+Compactness guarantees that the minimizer for each pairwise alignment is contained in the group (Extreme Value Theorem). 
+%
+Having a real representation allows us to write combinations of transforms as group operations, and will allow us to therefore write our optimization problem in matrix form. 
+%
+This is a rather technical point;
+we are only discussing this because the group of two--dimensional translations and rotations, $ISO(2)$, is {\em not} compact.
+%
+The angular synchronization problem is therefore not well--defined for this symmetry group.
+%
+However, we can ``compactify'' this group by mapping $ISO(2)$ into the group $SO(3)$, the group of three--dimensional rotations.
+%
+We do this by projecting the image onto a portion of the surface of a (three--dimensional) sphere.
+%
+Now, rotations in two--dimensions correspond to rotations around one principal axis in three--dimensions, and translations in two--dimensions correspond (approximately) to rotations around the other two principal axes in three--dimensions.
 
-An important part of angular synchronization is that the symmetry group be {\em compact}. 
+Let $x_1, \dots, x_m \in \mathbb{R}^{n \times n}$ denote the images that we wish to align with respect to translations and rotations.
 %
-This is a rather technical point, but all we wish to state is that the group of two--dimensional translations and rotations is {\em not} compact.
+The first step in angular synchronization is to compute the alignments between each pair of data points. 
 %
-We can instead map this group to the group of 
-
-Let $x_1, \dots, x_n$ denote the data points that we wish to align under some symmetry group.
+For each image pair $x_i$ and $x_j$, we want to find the optimal translation + rotation that aligns $x_i$ to $x_j$.
 %
-We will consider the case where the symmetry group is the group of $d$-dimensional rotations, $SO(d)$. 
+We discritize the search space of rotations into 20 possible rotations ($0, \pi/10, \pi/5, \dots, 19\pi/10, 2\pi$), and we allow translations of $-20, -16, -12, \dots, 12, 16, 20$ pixels in both the $x$ and $y$ directions. 
 %
-Let $R_{ij} \in SO(d)$ denote the rotation that aligns $x_j$ to $x_i$, so that
+We then exhaustively search over this space for the best rotation + translation that aligns $x_i$ to $x_j$. 
 \begin{equation}
-R_{ij} = \argmin_{R \in SO(d)} \|Rx_j - x_i \|^2.
+(\theta_{ij}, dx_{ij}, dy_{ij}) = \argmin_{\theta, dx, dy} \|f(x_j, \theta, dx, dy) - x_i \|^2.
+\end{equation}
+where $f$ is a function that first rotates the image $x_j$ by $\theta$ degrees, then translates the image by $dx$ pixels in the $x$ direction, and finally translates the image by $dy$ pixels in the $y$ direction. 
+%
+The norm is the Frobenius norm of the resulting matrix. 
+%
+This means we check each of the 2420 possible combinations; although this is somewhat time intensive (TODO: add timings), it is not prohibative and can be trivially parallelized for larger data sets if necessary.
+%
+Let $\theta$ denote the optimal angle of rotation, and let $dx$ and $dy$ denote the optimal number of pixels to translate in the $x$ and $y$ directions, respectively.
+%
+Then, in the space of three--dimensional rotations, the Euler angles $\alpha$, $\beta$, and $\gamma$ correspond to
+\begin{eqnarray}
+	\alpha_{ij} &=& \theta_{ij} \\
+	\beta_{ij} &=& \frac{dx_{ij}}{npixels} \times \eta_{proj} \\
+	\gamma_{ij} &=& \frac{dy_{ij}}{npixels} \times \eta_{proj} \\
+\end{eqnarray}
+where $\eta_{proj}$ is the angular portion of the sphere onto which we choose to project (we take $\eta_{proj} =  \pi/8$).
+%
+From here, we can write rotations around the three principal axes in terms of the three Euler angles
+\begin{eqnarray}
+	R^x_{ij} &=& \begin{bmatrix}
+	1 & 0 & 0 \\
+    0 & \cos(\alpha) & -\sin(\alpha) \\
+    0 & \sin(\alpha) & \cos(\alpha)
+	\end{bmatrix} \\
+	R^y_{ij} &=& \begin{bmatrix}
+	\cos(\beta) & 0 & \sin(\beta) \\
+    0 & 1 & 0 \\
+    -\sin(\beta) & 0 & \cos(\beta)
+    \end{bmatrix} \\
+	R^z_{ij} &=& \begin{bmatrix} 
+	\cos(\gamma) & -\sin(\gamma) & 0 \\
+    \sin(\gamma) & \cos(\gamma) & 0 \\
+    0 & 0 & 1 
+    \end{bmatrix}
+\end{eqnarray}
+%
+We then write the total rotation $R_{ij} \in SO(3)$ as 
+\begin{equation} \label{eq:total_rot}
+	R_{ij}	 = R^z_{ij} \times R^y_{ij} \times R^x_{ij}
+\end{equation}
+This corresponds to first rotating the image by $\theta$, then translating the image by $dx$ pixels in the $x$ direction, and finally translating the image by $dy$ pixels in the $y$ direction (because the rotation matrices operate on the left, the order of operations/transformations is read from right to left in \eqref{eq:total_rot}.
+
+
+
+Let $R_{ij} \in SO(3)$ denote the rotation that aligns $x_j$ to $x_i$, so that
+\begin{equation}
+R_{ij} = \argmin_{R \in SO(3)} \|Rx_j - x_i \|^2.
 \end{equation}
 %
-We seek to find the rotations $R_1, R_2, \dots, R_n \in SO(d)$ such that $R_i R_j^T \approx R_{ij}$, for every pair $i, j$. 
+We want to find the rotations $R_1, R_2, \dots, R_n \in SO(d)$ such that $R_i R_j^T \approx R_{ij}$, for every pair $i, j$. 
 %TODO: Check that this order is correct
 %
 We would also like to exploit {\em higher-order} consistency relations;
@@ -51,7 +124,7 @@ Therefore, we consider measurements which (almost) satisfy such conditions ``goo
 
 We would like to solve the optimization problem 
 \begin{equation} \label{eqn:angsynch_obj}
-\max_{R_1, \dots, R_n \in SO(d)} \left\| \sum_{i=1}^{n} \sum_{j=1}^{n} R_i^T R_{ij} R_j \right\|^2.
+\max_{R_1, \dots, R_m \in SO(3)} \left\| \sum_{i=1}^{m} \sum_{j=1}^{m} R_i^T R_{ij} R_j \right\|^2.
 \end{equation}
 %
 %TODO: check if a norm is needed
@@ -61,18 +134,18 @@ Therefore, solving \eqref{eqn:angsynch_obj} gives us the set of global alignment
 
 In general, the solution to \eqref{eqn:angsynch_obj} is not easily computed.
 %
-Instead, we relax the problem and allow $R_1, \dots, R_n \in \mathbb{R}^{d \times d}$.
+Instead, we relax the problem and allow $R_1, \dots, R_m \in \mathbb{R}^{3 \times 3}$.
 %
-We define the matrix $H$, which is an $n \times n$ block matrix with $d \times d$ blocks (so $H \in \mathbb{R}^{nd \times nd}$), with $H_{ij} = R_{ij}$.
+We define the matrix $H$, which is an $m \times m$ block matrix with $3 \times 3$ blocks (so $H \in \mathbb{R}^{3m \times 3m}$), with $H_{ij} = R_{ij}$.
 %
 We can then write the relaxed problem as 
 \begin{equation} \label{eqn:angsynch_relax}
-\max_{R\in \mathbb{nd \times d}} \| R^T H R \|^2.
+\max_{R\in \mathbb{3m \times 3}} \| R^T H R \|^2.
 \end{equation}
 %
-The solution to \eqref{eqn:angsynch_relax} is given by the top ``block'' eigenvector of $H$, which we denote $\hat{R} \in \mathbb{R}^{nd \times d}$. 
+The solution to \eqref{eqn:angsynch_relax} is given by the top ``block'' eigenvector of $H$, which we denote $\hat{R} \in \mathbb{R}^{3m \times 3}$. 
 %
-The $i^{th}$ rotation is (approximately) $\hat{R}(i) \in \mathbb{R}^{d \times d}$.
+The $i^{th}$ rotation is (approximately) $\hat{R}(i) \in \mathbb{R}^{3 \times 3}$.
 %
 We would like to note that this formulation also accounts for higher-order relations.
 %
@@ -80,11 +153,11 @@ For example, if we want to optimize over all pairs of pairwise rotations, we wou
 %
 However, the solution to this problem is also given by the top eigenvector of $H$. 
 
-Because we relaxed the problem to allow our solutions to lie in $\mathbb{R}^{d \times d}$, we must project our approximate solution back to $SO(d)$.
+Because we relaxed the problem to allow our solutions to lie in $\mathbb{R}^{3 \times 3}$, we must project our approximate solution back to $SO(3)$.
 %
 The optimal rotation is therefore given by $R_i = U_i V_i^T$, where $U_i$ and $V_i$ are the left and right singular vectors of $\hat{R}_i$, respectively. 
-
-
+%
+Because the eigenvectors of $H$ are determined up to a sign, we adjust the signs of the eigenvectors so that $det(R_i) = +1$. 
 
 \subsection{Ordering Using Diffusion Maps}
 
