@@ -27,11 +27,19 @@ if det(V(1:dim,1:dim)*D(1:dim,1:dim)*V(1:dim,1:dim)') < 0
     V(:,dim) = -V(:,dim);
 end
 
-R_opt = V(:,1:dim)*D(1:dim,1:dim)*V(1:dim,1:dim)';
-
+R_opt = V(:,1:dim);
 for i=1:n
-    R_opt(dim*(i-1)+1:dim*i,:) = R_opt(dim*(i-1)+1:dim*i,:) /(det(R_opt(dim*(i-1)+1:dim*i,:))^(1/dim));
+    [u, s, v] = svd(R_opt(dim*(i-1)+1:dim*i,:));
+    R_opt(dim*(i-1)+1:dim*i,:) = u * v';
 end
+R_opt = R_opt * R_opt(1:dim,:)';
+
+% 
+% R_opt = V(:,1:dim)*D(1:dim,1:dim)*V(1:dim,1:dim)';
+% 
+% for i=1:n
+%     R_opt(dim*(i-1)+1:dim*i,:) = R_opt(dim*(i-1)+1:dim*i,:) /(det(R_opt(dim*(i-1)+1:dim*i,:))^(1/dim));
+% end
 
 embed_coord = zeros(n, neigs*(neigs-1)/2+neigs);
 embed_idx = zeros(2, neigs*(neigs-1)/2+neigs);

@@ -9,22 +9,16 @@ res = '-r300';
 fmt = '-djpeg';
 print_figures = false;
 
-dpERK_data = '../membrane_pictures/large_dataset/time.mat';
-dpERK_image_dir = '../membrane_pictures/large_dataset';
-%dpERK_membrane_dir = '../membrane_pictures/membrane2';
+dpERK_data = '../membrane_lengths/oct16.mat';
+dpERK_image_dir = '../membrane_pictures/membrane2/dpERK_staining';
 
 %% load membrane lengths
 
 load(dpERK_data);
-mem_lengths = length;
+mem_lengths = L(:,1);
 clear length;
 
-ind = setdiff(1:90, [3, 20, 25, 32, 53, 59, 61, 66, 82]);
-%ind = randsample(ind, 25);
-
-m = length(ind);
-
-mem_lengths = mem_lengths(ind);
+m = length(mem_lengths);
 
 %% load images
 
@@ -41,7 +35,7 @@ image_channel = 2;
 %figure;
 for i=1:m
     % read image
-    im1 = imread(sprintf('%s/lat%02d.tif', dpERK_image_dir, ind(i)));
+    im1 = imread(sprintf('%s/emb%02d.tif', dpERK_image_dir, i));
 
     % resize image
     im1 = imresize(im1, [npixels npixels]);

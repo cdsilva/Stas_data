@@ -12,8 +12,23 @@ if det(V(1:dim,:)*D*V(1:dim,:)') < 0
     V(:,end) = -V(:,end);
 end
 
-R_opt = V*D*V(1:dim,:)';
-
+R_opt = V;
 for i=1:m
-    R_opt(dim*(i-1)+1:dim*i,:) = R_opt(dim*(i-1)+1:dim*i,:) /(det(R_opt(dim*(i-1)+1:dim*i,:))^(1/dim));
+    [u, s, v] = svd(R_opt(dim*(i-1)+1:dim*i,:));
+    R_opt(dim*(i-1)+1:dim*i,:) = u * v';
 end
+
+R_opt = R_opt * R_opt(1:dim,:)';
+
+
+% R_opt = V*D*V(1:dim,:)';
+% 
+% for i=1:m
+%    R_opt(dim*(i-1)+1:dim*i,:) = R_opt(dim*(i-1)+1:dim*i,:) /(det(R_opt(dim*(i-1)+1:dim*i,:))^(1/dim));
+% end
+
+% for i=1:m
+%     det(R_opt(dim*(i-1)+1:dim*i,:))
+%     R_opt(dim*(i-1)+1:dim*i,:)'*R_opt(dim*(i-1)+1:dim*i,:)
+% end
+
