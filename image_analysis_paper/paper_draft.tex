@@ -1,5 +1,9 @@
 \documentclass[12pt]{article}
 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
 \begin{document}
 
 \section{Introduction}
@@ -12,7 +16,136 @@
 
 \subsection{Alignment Using Angular Synchronization}
 
+When a data set is invariant under an underlying symmetry group (such as translations and rotations), we must factor out the underlying symmetries and align the data before doing further analysis.
+%
+In our example, we will translate and rotate images until they are optimally aligned, and then operate on this aligned set. 
+%
+There are many ways to align images. 
+%
+``Template--based'' alignment \cite{...} is one technique, where one selects a specific image or {\em template} as 
+
+Angular synchronization calculates the optimal alignments for each point in a data set, given estimates of the optimal alignments between pairs of data points \cite{singer2011angular}. 
+
+An important part of angular synchronization is that the symmetry group be {\em compact}. 
+%
+This is a rather technical point, but all we wish to state is that the group of two--dimensional translations and rotations is {\em not} compact.
+%
+We can instead map this group to the group of 
+
+Let $x_1, \dots, x_n$ denote the data points that we wish to align under some symmetry group.
+%
+We will consider the case where the symmetry group is the group of $d$-dimensional rotations, $SO(d)$. 
+%
+Let $R_{ij} \in SO(d)$ denote the rotation that aligns $x_j$ to $x_i$, so that
+\begin{equation}
+R_{ij} = \argmin_{R \in SO(d)} \|Rx_j - x_i \|^2.
+\end{equation}
+%
+We seek to find the rotations $R_1, R_2, \dots, R_n \in SO(d)$ such that $R_i R_j^T \approx R_{ij}$, for every pair $i, j$. 
+%TODO: Check that this order is correct
+%
+We would also like to exploit {\em higher-order} consistency relations;
+for example, the relationship $R_{ij} R_{jk} \approx R_{ik}$ should hold if the rotation estimates are accurate.
+%
+Therefore, we consider measurements which (almost) satisfy such conditions ``good'' measurements, and those measurements which do not satisfy such conditions as most likely inaccurate.
+
+We would like to solve the optimization problem 
+\begin{equation} \label{eqn:angsynch_obj}
+\max_{R_1, \dots, R_n \in SO(d)} \left\| \sum_{i=1}^{n} \sum_{j=1}^{n} R_i^T R_{ij} R_j \right\|^2.
+\end{equation}
+%
+%TODO: check if a norm is needed
+Each term in the objective function will be large large if $R_i$ and $R_j$ are consistent with $R_{ij}$, and will be random with mean 0 if $R_i$ and $R_j$ are inconsistent with $R_{ij}$.
+%
+Therefore, solving \eqref{eqn:angsynch_obj} gives us the set of global alignments which are most consistent with the computed pairwise alignments.
+
+In general, the solution to \eqref{eqn:angsynch_obj} is not easily computed.
+%
+Instead, we relax the problem and allow $R_1, \dots, R_n \in \mathbb{R}^{d \times d}$.
+%
+We define the matrix $H$, which is an $n \times n$ block matrix with $d \times d$ blocks (so $H \in \mathbb{R}^{nd \times nd}$), with $H_{ij} = R_{ij}$.
+%
+We can then write the relaxed problem as 
+\begin{equation} \label{eqn:angsynch_relax}
+\max_{R\in \mathbb{nd \times d}} \| R^T H R \|^2.
+\end{equation}
+%
+The solution to \eqref{eqn:angsynch_relax} is given by the top ``block'' eigenvector of $H$, which we denote $\hat{R} \in \mathbb{R}^{nd \times d}$. 
+%
+The $i^{th}$ rotation is (approximately) $\hat{R}(i) \in \mathbb{R}^{d \times d}$.
+%
+We would like to note that this formulation also accounts for higher-order relations.
+%
+For example, if we want to optimize over all pairs of pairwise rotations, we would solve $\max_{R_1, \dots, R_n \in SO(d)} \sum_{i=1}^{n} \sum_{j=1}^{n} \left\| R_i^T \left( \sum_k R_{ik} R_{kj} \right) R_j \right\| = \| R^T H^2 R \|^2$. 
+%
+However, the solution to this problem is also given by the top eigenvector of $H$. 
+
+Because we relaxed the problem to allow our solutions to lie in $\mathbb{R}^{d \times d}$, we must project our approximate solution back to $SO(d)$.
+%
+The optimal rotation is therefore given by $R_i = U_i V_i^T$, where $U_i$ and $V_i$ are the left and right singular vectors of $\hat{R}_i$, respectively. 
+
+
+
 \subsection{Ordering Using Diffusion Maps}
+
+Unlike PCA, diffusion maps (DMAPS) is a nonlinear dimensionality reduction technique. 
+%
+DMAPS aims to uncover a parameterization of high-dimensional data sampled from a low-dimensional nonlinear manifold \cite{coifman2005geometric}.
+%
+The {\em essential} requirement for DMAPS is an appropriate distance metric $d(x_i, x_j)$ for comparing data points. 
+%
+This can as simple as the standard Euclidean distance, or a more complex metric (such as a distance between features of the data points) for other data sets.
+
+Given data points $x_1, \dots, x_n \in \mathbb{R}^p$, we fist calculate the matrix $W \in \mathbb{R}^{n \times n}$, where 
+\begin{equation}
+W_{ij} = \exp \left( -\frac{d^2(x_i, x)j)}{\epsilon^2} \right)
+\end{equation}
+and $\epsilon$ is a characteristic distance between data points.
+%
+$\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph}); in practice, we choose $\epsilon$ to be the median of the pairwise distances between data points.
+%
+We then compute the diagonal matrix $D$, where $D_{ii} = \sum_{j=1}^{n} W_{ij}$, and the matrix $A = D^{-1} W$. 
+%
+We calculate the eigenvectors $\phi_1, \phi_2, \dots, \phi_n$ and eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_n$ and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_n|$. 
+%
+Because the matrix $A$ is similar to the symmetric matrix $D^{-1/2} W D^{-1/2}$, $A$ is guaranteed to have real eigenvalues and real, orthogonal eigenvectors. 
+%
+The eigenvectors $\phi_1, \phi_2, \dots, \phi_n$ give the embedding coordinates, such that $\phi_j(i)$ gives the $j^{th}$ embedding coordinate of the $i^{th}$ data point. 
+%
+Because the matrix $A$ is row-stochastic, $\lambda_1=1$ and $\phi_1$ is a constant vector.
+%
+The next few eigenvectors give the ``meaningful'' embedding coordinates for the data. 
+
+\subsection{Aligning and Ordering Using Vector diffusion maps} 
+
+Angular synchronization assumes that each data point is a replicate measurements of the same underlying configuration, simply corrupted with rotations and some noise, and therefore considers all pairwise measurements equally important.
+%
+However, in system with an underlying symmetry group {\em as well as} a dynamical process, the data points are not identical modulo symmetries and noise, and we would like to place more emphasis on aligning data points which are dynamically close.
+
+Vector diffusion maps (VDM) couples the symmetry-reduction of angular synchronization with the automatic parameterization of diffusion maps \cite{singer2012vector}. 
+%
+We construct the matrix $A$ as in diffusion maps, and the matrix $H$ as in angular synchronization.
+%
+We then construct the block matrix $S$, where the blocks of $S$ are defined by
+\begin{equation}
+S_{ij} = \left\{ \begin{array}{l l} 
+A_{ij} H_{ij} & i \ne j \\
+0_{d \times d} & i = j
+\end{array}
+\right.
+\end{equation}
+%
+where $A_{ij}$ is the $(i,j)$ entry of $A$, and $H_{ij}$ is the $(i,j)$ block of $H$. 
+
+We compute the eigenvectors $\phi_1, \dots, \phi_{nd}$ and eigenvalues $\lambda_1, \dots, \lambda_{nd}$ of $S$, and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{nd}|$.
+%
+As in angular synchronization, the first ``block'' eigenvector, i.e. the first $d$ eigenvectors concatenated into a $nd \times d$ matrix, gives the (relaxed) optimal rotations. 
+%
+However, the eigenvectors now also give us embedding coordinates.
+%
+Let $\phi_j(i)$ denote the $i^{th}$ block of $\phi_j$ (so that $\phi_j(i) \in \mathbb{R}^d$). 
+%
+The embedding coordinates of $x_i$ are then given by $\langle \phi_j(i), \phi_k(i) \rangle$, where $1 \le j, k, \le nd$. 
 
 \section{Example: {\em Drosophila}}
 
