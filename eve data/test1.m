@@ -14,6 +14,7 @@ eve_membrane_times = 'Eve_13_0821/times_08_21_13.mat';
 
 %%
 load(eve_membrane_times);
+t = times_08_21_13;
 
 %% load images
 
@@ -96,8 +97,9 @@ end
 
 %%
 
-for idx = 1:15
 %idx = find(embed_idx(1,:)==4 & embed_idx(2,:)==1);
+[~, idx ] = max(abs(corr(embed_coord, t)));
+
 [~, I] = sort(embed_coord(:, idx));
 %[~, I] = sort(V(:,2));
 
@@ -107,6 +109,4 @@ for i=1:m
     %det(R_opt(dim*(i-1)+1:dim*i,:))
     subplot(subplot_dim1, subplot_dim2, i);
     imshow(im1);
-end
-pause
 end
