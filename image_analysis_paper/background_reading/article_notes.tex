@@ -1,7 +1,7 @@
 \documentclass[12pt]{article}
 
 
-\usepackage{biblatex}
+\usepackage[backend=bibtex]{biblatex}
 
 \bibliography{references}
 
@@ -16,6 +16,14 @@
 \item \fullcite{li2009stochastic}
 
 \item \fullcite{jordan2013behavioral}
+\begin{itemize}
+	\item Look at phenotypic diversity of the swimming of the ciliate {\em Tetrahymena}
+	\item Record the swimming trajectories of many samples over their lifetimes
+	\item Define similarity metric between trajectories (compare distributions of speeds and angular velocities)
+	\item Use multidimensional scaling (MDS) to embed the trajectories in a lower-dimensional space
+	\item Find that there are two ``important'' dimensions that describe all trajectories
+	\item Can then look at whether these (low-dimensional) phenotypes are preserved through generations
+\end{itemize}
 
 \item \fullcite{tucker2010pseudotemporal}
 \begin{itemize}
@@ -45,7 +53,13 @@
 \item \fullcite{das2013dynamic}
 
 \item \fullcite{schindler2007inferring}
-
+\begin{itemize}
+	\item Want to order images that span many years
+	\item Solve a constraint satisfaction problem (CSP)
+	\item Find features in images, and then try to match up the features between the different images
+	\item Use structure from motion (SFM) algorithms to construct 3D points and camera angles from 2D images
+	\item Given the sets of features in each image, they then try to order the images in a way that is ``most consistent'' with how buildings are constructed in the real world (i.e. buildings are built, persist for some time, and then can be torn down)-- this is what they call the CSP
+\end{itemize}
 \item \fullcite{bigot2012geometric}
 
 \item \fullcite{escudero2011epithelial}
@@ -71,6 +85,13 @@
 \item \fullcite{xu2012comprehensive}
 
 \item \fullcite{sisan2010event}
+\begin{itemize}
+	\item Looks at time correlations in data to determine temporal ordering
+	\item Goal is to determine in what order cellular events happen (i.e. does rxn A lead to rxn B, or does B lead to A)
+	\item They look at the time-correlation between events.
+	\item Asymmetry in time-correlation tells you in what order events happen (depending on model)
+	\item Looking at time correlation over many samples integrates/averages out stocahsticity in system
+\end{itemize}
 
 \item \fullcite{golparvar2011monitoring}
 
