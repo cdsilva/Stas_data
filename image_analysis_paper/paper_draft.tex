@@ -29,9 +29,9 @@ There are many ways to align images.
 %
 However, this method can result in many misalignemnts for noisy images, and can be problematic if a ``good'' template image is not known {\em a priori}. 
 %
-Instead, we will use a technique called angular synchronization\cite{singer2011angular}.
+Instead, we will use a technique called angular synchronization\cite{singer2011angular} to align our sets of images.
 %
-Angular synchronization uses each image as a template for every other image to compute the pairwise alignments for every possible pair of images.
+Angular synchronization uses each image as a template for every other image and computes the pairwise alignments for every possible pair of images.
 %
 From this large collection of pairwise alignments, it then tries to find optimal alignment for each image, such that these individual alignments are most consistent (in some metric) with the pairwise alignment.
 %
@@ -48,11 +48,11 @@ we are only discussing this because the group of two--dimensional translations a
 %
 The angular synchronization problem is therefore not well--defined for this symmetry group.
 %
-However, we can ``compactify'' this group by mapping $ISO(2)$ into the group $SO(3)$, the group of three--dimensional rotations.
+However, we can ``compactify'' this group by mapping $ISO(2)$ to the group $SO(3)$, the group of three--dimensional rotations.
 %
 We do this by projecting the image onto a portion of the surface of a (three--dimensional) sphere.
 %
-Now, rotations in two--dimensions correspond to rotations around one principal axis in three--dimensions, and translations in two--dimensions correspond (approximately) to rotations around the other two principal axes in three--dimensions.
+Rotations in two--dimensions now correspond to rotations around one principal axis in three--dimensions, and translations in two--dimensions correspond (approximately) to rotations around the other two principal axes in three--dimensions.
 
 Let $x_1, \dots, x_m \in \mathbb{R}^{n \times n}$ denote the images that we wish to align with respect to translations and rotations.
 %
