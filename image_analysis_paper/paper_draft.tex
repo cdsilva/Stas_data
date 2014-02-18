@@ -6,6 +6,7 @@
 
 \usepackage{graphicx}
 \graphicspath{ {paper_figures/} }
+\usepackage{subcaption}
 
 \usepackage{forloop}
 
@@ -14,6 +15,16 @@
 \section{Introduction}
 
 % only images
+We have cross-sectional data. When there is just a few snapshots and differences between them are obvious, such as the overall size or some other morphological feature, ordering is easy. We can point to "fish" as our example.
+
+But there is more and more studies with lots of snapshots, lots of noise, and subtle differences between snapshots. Our example is the dataset from the embryo. We discuss how to align and temporally order cross sectional data in this case.
+
+Maybe figure 1 is fish ordered (B) and unordered (A).
+
+
+Figure 2 can be the embryo dataset - unordered and unoriented (A) and hand-ordered (by membranes) and hand-oriented (by Dorsal) (B).
+
+This way Figure 2 presents the data and makes it a reference for all future alignments.
 
 \section{Techniques}
 
@@ -241,39 +252,60 @@ This technique is called vector diffusion maps \cite{singer2012vector}.
 %
 It is significantly more robust to mistakes in the alignment.
 
-For vector diffusion maps, we construct the matrix $S \in \mathbb{R}^{3m \times 3m}$
+For vector diffusion maps, we construct the matrix $S \in \mathbb{R}^{3m \times 3m}$, with
+\begin{equation}
+	S_{ij} = A_{ij} R_{ij}
+\end{equation}
+%
+We then compute the eigenvalues and eigenvectors of $S$.
+%
+Again, the top (block) eigenvector of $S$ gives us approxiamtions to the optimal rotations for each image.
+%
+However, we now also obtain embedding coordinates for our images.
+%
+The embedding coordinates are given by 
+\begin{equation}
+\psi_{kl} (i) = \langle \phi_k(i), \phi_l(i) \rangle
+\end{equation}
+where $\phi_j$ are the eigenvectors of $S$.
+
 
 \section{Example: {\em Drosophila}}
 
 \subsection{dpERK}
 
-\def \nimages {81}
-\def \imagewidth {0.22in}
+Show how correlation varies with number of images
+
 \begin{figure}
-\begin{minipage}{0.5\textwidth}
-\newcounter{n}
-\forloop{n}{1}{\value{n} < \nimages}{
-	\includegraphics[width=\imagewidth]{dpERK_\arabic{n}}
-}
-\hspace{0pt}
-\end{minipage}
-\includegraphics[width=0.45\textwidth]{dpERK_rank_corr}
+\begin{subfigure}[c]{0.45\textwidth}
+\includegraphics[width=\textwidth]{dpERK_array}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[c]{0.5\textwidth}
+\includegraphics[width=\textwidth]{dpERK_rank_corr}
+\caption{}
+\end{subfigure}
 \end{figure}
+
+ADD TEXT HERE
 
 \subsection{Dorsal}
 
 \begin{figure}
-\begin{minipage}{0.5\textwidth}
-\forloop{n}{1}{\value{n} < \nimages}{
-	\includegraphics[width=\imagewidth]{DI_\arabic{n}}
-	\hfill
-}
-\end{minipage}
-\includegraphics[width=0.45\textwidth]{DI_rank_corr}
+\begin{subfigure}[c]{0.45\textwidth}
+\includegraphics[width=\textwidth]{DI_array}
+\caption{}
+\end{subfigure}
+\begin{subfigure}[c]{0.5\textwidth}
+\includegraphics[width=\textwidth]{DI_rank_corr}
+\caption{}
+\end{subfigure}
 \end{figure}
 
 \section{Discussion}
 % compare to TSP algorithms
+Discussion of what we did and how it relates to other efforts (TSP, etc) and how it can be extended.
+
 
 \bibliographystyle{plain}
 \bibliography{../../references/references}

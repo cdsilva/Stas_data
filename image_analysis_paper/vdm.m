@@ -20,6 +20,9 @@ for i=1:n
 end
 
 [V, D] = eigs(R2, neigs);
+[~, ind] = sort(abs(diag(D)), 'descend');
+V = V(:, ind);
+D = D(ind, ind);
 for i=1:neigs
     V(:,i) = V(:,i) / norm(V(:,i));
 end
