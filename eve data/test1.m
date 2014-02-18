@@ -70,7 +70,7 @@ tic
 %%
 
 eps = median(W(:));
-neigs = 5;
+neigs = 10;
 
 %R_opt = ang_synch(R, dim);
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
@@ -99,12 +99,17 @@ end
 
 %%
 
-for idx = 1:size(embed_idx,2)
+
+
 %idx = find(embed_idx(1,:)==4 & embed_idx(2,:)==1);
 %[~, idx ] = max(abs(corr(embed_coord, t)));
-
+idx = 7;
 [~, I] = sort(embed_coord(:, idx));
-%[~, I] = sort(V(:,2));
+
+% W = squareform(pdist(embed_coord)).^2;
+% eps = median(W(:));
+% [V, D] = dmaps(W, eps, 10);
+% [~, I] = sort(V(:,3));
 
 figure;
 for i=1:m
@@ -112,5 +117,4 @@ for i=1:m
     %det(R_opt(dim*(i-1)+1:dim*i,:))
     subplot(subplot_dim1, subplot_dim2, i);
     imshow(im1);
-end
 end
