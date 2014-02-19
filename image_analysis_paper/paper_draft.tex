@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[twocolumn, 11pt]{article}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -52,10 +52,42 @@ From this large collection of pairwise alignments, it then tries to find optimal
 %
 Because we consider {\em all} pairwise alignments, angular synchronization is often much more robust to noise. 
 
+Let $I_1, \dots, I_m \in \mathbb{R}^{n \times n}$ denote the (grayscale) images that we wish to align with respect to translations and rotations.
+%
+The first step in angular synchronization is to compute the translations and rotations to optimally align each pair of data points. 
+%
+For each image pair $I_i$ and $I_j$, we would like to solve
+\begin{equation}\label{eq:opt_pairwise}
+(\theta_{ij}, dx_{ij}, dy_{ij}) = \argmin_{
+\begin{matrix}
+\theta \in [0, 2\pi) \\ 
+dx \in [-\Delta, \Delta]\\ 
+dy \in [-\Delta, \Delta]
+\end{matrix}
+} \|f(I_j, \theta, dx, dy) - I_i \|_F^2.
+\end{equation}
+where $\| \cdot \|_F$ denotes the Frobenius norm, and $f(I_j, \theta, dx, dy)$ is a function that first rotates the image $I_j$ by $\theta$ degrees, then translates the image by $dx$ pixels in the $x$ direction, and finally translates the image by $dy$ pixels in the $y$ direction. 
+%
+$\Delta$ is the maximum number of pixels by which we are allowed to translate the image (we take $\Delta=20$, which corresponds to a 20\% shift in the image). 
+%
+The solution to \eqref{eq:opt_pairwise} is not easily computed, as the objective function will most likely be nonconvex.
+%
+Therefore, instead of using an optimization procedure to compute the solution to \eqref{eq:opt_pairwise}, we choose to discretize the search space and exhaustively search to estimate the solution to \eqref{eq:opt_pairwise}.
+%
+We discritize the search space of rotations into 20 possible rotations ($0, \pi/10, \pi/5, \dots, 9 \pi/5, 19\pi/10$), and 11 possible translations in both the $x$ and $y$ directions ($-20, -16, -12, \dots, 12, 16, 20$ pixels). 
+%
+We then check all possible combinations for the best rotation and translations that align $I_i$ to $I_j$. 
+%
+Although this can be somewhat time intensive, it is not prohibitive for the size of data sets which we are considering, and can be trivially parallelized for larger data sets if necessary.
+%
+The solution to this search will not be the exact solution to \eqref{eq:opt_pairwise}, but it will (most likely) be a close approximation.
+%
+Since our techniques are robust to noise, close approximations will be sufficient to obtain accurate results.
+
 An important part of angular synchronization is that the symmetry group $G$ be {\em compact} and have a real (or perhaps complex) representation \cite{singer2011angular}.
 %
 Compactness guarantees (by the extreme value theorem) that the minimizer for each pairwise alignment is contained in the group,
-and having a real representation allows us to write combinations of transforms as group operations, which will allow us to therefore write our optimization problem in matrix form. 
+and having a real representation will allow us to write our problem in matrix form. 
 %
 This is a rather technical point;
 we are only discussing this because the group of two--dimensional translations and rotations, $ISO(2)$, is {\em not} compact.
@@ -70,33 +102,7 @@ Rotations in two--dimensions now correspond to rotations around one principal ax
 %
 Furthermore, successive applications of various translations and rotations can be described via multiplication of the corresponding rotation matrices in $SO(3)$.
 
-Let $x_1, \dots, x_m \in \mathbb{R}^{n \times n}$ denote the (grayscale) images that we wish to align with respect to translations and rotations.
-%
-The first step in angular synchronization is to compute the translations and rotations to optimally align each pair of data points. 
-%
-For each image pair $x_i$ and $x_j$, we would like to solve
-\begin{equation}\label{eq:opt_pairwise}
-(\theta_{ij}, dx_{ij}, dy_{ij}) = \argmin_{\theta \in [0, 2\pi), dx \in [-\Delta, \Delta], dy \in [-\Delta, \Delta]} \|f(x_j, \theta, dx, dy) - x_i \|_F^2.
-\end{equation}
-where $\| \cdot \|_F$ denotes the Frobenius norm, and $f$ is a function that first rotates the image $x_j$ by $\theta$ degrees, then translates the image by $dx$ pixels in the $x$ direction, and finally translates the image by $dy$ pixels in the $y$ direction. 
-%
-$\Delta$ is the maximum number of pixels by which we are allowed to translate the image; we take $\Delta=20$, which corresponds to a 20\% shift in the image, $\Delta$ can be taken larger or smaller depending on the nature of the images. 
-%
-The solution to \eqref{eq:opt_pairwise} is not easily computed, as the objective function will most likely be nonconvex.
-%
-Therefore, instead of using an optimization procedure to compute the solution to \eqref{eq:opt_pairwise}, we choose to discretize the search space and exhaustively search to estimate the solution to \eqref{eq:opt_pairwise}.
-%
-We discritize the search space of rotations into 20 possible rotations ($0, \pi/10, \pi/5, \dots, 9 \pi/5, 19\pi/10$), and 11 possible translations in both the $x$ and $y$ directions ($-20, -16, -12, \dots, 12, 16, 20$ pixels). 
-%
-We then check all possible combinations for the best rotation and translations that align $x_i$ to $x_j$. 
-%
-Although this can be somewhat time intensive, it is not prohibitive for the size of data sets which we are considering, and can be trivially parallelized for larger data sets if necessary.
-%
-The solution to this search will not be the exact solution to \eqref{eq:opt_pairwise}, but it will (most likely) be a close approximation.
-%
-Since our techniques are robust to noise, close approximations will be sufficient to obtain accurate results.
-
-We now compute the three--dimensional rotation, $R_{ij} \in SO(3)$, from the two--dimensional parameters $\theta_{ij}$, $dx_{ij}$, and $dy_{ij}$.
+We now compute the three--dimensional rotation, $R_{ij} \in SO(3)$, from the two--dimensional translation and rotation parameters $\theta_{ij}$, $dx_{ij}$, and $dy_{ij}$.
 %
 In the space of three--dimensional rotations, the Euler angles $\alpha_{ij}$, $\beta_{ij}$, and $\gamma_{ij}$ correspond to
 \begin{equation} \label{eq:angle_relations}
@@ -135,7 +141,7 @@ We then write the total rotation $R_{ij} \in SO(3)$ as
 	R_{ij}	 = R^z_{ij} \times R^y_{ij} \times R^x_{ij}
 \end{equation}
 %
-This corresponds to first rotating the image by $\theta$, then translating the image by $dx$ pixels in the $x$ direction, and finally translating the image by $dy$ pixels in the $y$ direction (we note that, because the rotation matrices operate from the left, the rightmost rotation matrix in the product in \eqref{eq:total_rot} corresponds to the first operation we perform on the image).
+\eqref{eq:total_rot} corresponds to first rotating the image by $\theta$, then translating the image by $dx$ pixels in the $x$ direction, and finally translating the image by $dy$ pixels in the $y$ direction (we note that, because the rotation matrices operate from the left, the rightmost rotation matrix in the product in \eqref{eq:total_rot} corresponds to the first operation we perform on the image).
 
 
 Given the pairwise rotations that optimally align the imges, $R_{ij}$, we would like to find the rotations $R_1, R_2, \dots, R_n \in SO(3)$ such that $R_i R_j^T \approx R_{ij}$, for every pair $i, j$. 
@@ -168,26 +174,31 @@ We can then write the relaxed problem as
 \max_{R\in \mathbb{R}^{3m \times 3}} \| R^T H R \|^2.
 \end{equation}
 %
-The solution to \eqref{eqn:angsynch_relax} is given by the top ``block'' eigenvector of $H$, which we denote $\hat{R} \in \mathbb{R}^{3m \times 3}$. 
+The solution to \eqref{eqn:angsynch_relax} is given by the top ``block'' eigenvector of $H$ (i.e. the three eigenvectors corresponding to the three largest eigenvalues, concatenated into a $3m \times 3$ matrix), which we denote $\hat{R} \in \mathbb{R}^{3m \times 3}$. 
 %
 The $i^{th}$ rotation is (approximately) the $i^{th}$ block of $\hat{R}$, $\hat{R}(i) \in \mathbb{R}^{3 \times 3}$.
 %
 We would like to note that this formulation also accounts for higher-order relations.
 %
-For example, if we want to optimize over all pairs of pairwise rotations, we would solve $\max_{R_1, \dots, R_m \in SO(3)} \sum_{i=1}^{m} \sum_{j=1}^{m} \left\| R_i^T \left( \sum_k R_{ik} R_{kj} \right) R_j \right\| = \| R^T H^2 R \|^2$. 
+For example, if we want to optimize over all pairs of pairwise rotations, we would solve 
+\begin{equation}
+\max_{R_1, \dots, R_m \in SO(3)} \sum_{i=1}^{m} \sum_{j=1}^{m} \left\| R_i^T \left( \sum_k R_{ik} R_{kj} \right) R_j \right\|,
+\end{equation} 
 %
-However, the solution to this problem is also given by the top eigenvector of $H$. 
+which relaxes to the problem $ \max_{R \in \mathbb{R}^{3m \times 3}} \| R^T H^2 R \|^2$.
+%
+However, the solution to this problem is also given by the top block eigenvector of $H$. 
 
 Because we relaxed the problem to allow our solutions to lie in $\mathbb{R}^{3 \times 3}$, we must project our approximate solution back to $SO(3)$.
 %
-The optimal rotation is therefore given by $R_i = U_i V_i^T$, where $U_i$ and $V_i$ are the left and right singular vectors of $\hat{R}_i$, respectively \cite{...}. 
+The optimal rotations are given by $R_i = U_i V_i^T$, where $U_i$ and $V_i$ are the left and right singular vectors of $\hat{R}_i$, respectively \cite{...}. 
 %
 Because the eigenvectors of $H$ are determined up to a sign, we adjust the signs of the eigenvectors so that $det(R_i) = +1$ to ensure proper rotations.
 %
 
 From the matrices $R_1, \dots, R_m$, we now wish to find the corresponding translations and rotations of the images.
 %
-Because we are permitted to adjust our rotations by a global rotations, we multiply all rotations by $R_1^T$ to ensure that all the images are (approximately) in the same region of the sphere where we began.
+Because we are permitted to adjust our rotations by a global rotations, we first multiply all rotations by $R_1^T$ to ensure that all the images are (approximately) in the region of the sphere where we began.
 %
 We then compute the Euler angles $\alpha$, $\beta$, and $\gamma$ from the rotation matrix $R$ using the following relationships
 \begin{equation}
@@ -200,25 +211,23 @@ R_{3,3} & = \cos(\alpha)\cos(\beta)
 \end{aligned}
 \end{equation}
 %
-We can then invert \eqref{eq:angle_relations} to compute the optimal translation and rotation for each image.
+We can then invert \eqref{eq:angle_relations} to compute the optimal translation and rotation for each image from the Euler angles.
 
 \subsection{Ordering Using Diffusion Maps}
 
-Given our set of aligned images, we wish to order them {\em in time} so that we can reconstruct the developmental dynamics.
+Given our set of aligned images, we now wish to order them {\em in time} so that we can reconstruct the developmental dynamics.
 %
 We will use diffusion maps (DMAPS) \cite{coifman2005geometric} to temporally order our data.
 %
 DMAPS aims to uncover a parameterization of high-dimensional data sampled from a low-dimensional nonlinear manifold.
 %
-The {\em essential} requirement for DMAPS is an appropriate distance metric $d(x_i, x_j)$ for comparing data points. 
+The {\em essential} requirement for DMAPS is an appropriate distance metric $d(I_i, I_j)$ for comparing data points. 
 %
 This can as simple as the standard Euclidean distance, or a more complex metric (such as a distance between features of the data points) for other data sets.
-%
-We will use the Frobenius norm of the difference of our aligned pictures as our distance metric, $d(x_i, x_j) = \| x_i - x_j \|_F$.
 
-Given {\em aligned} images $x_1, \dots, x_m \in \mathbb{R}^{n \times n}$, we fist calculate the matrix $W \in \mathbb{R}^{m \times m}$, where 
-\begin{equation}
-W_{ij} = \exp \left( -\frac{d^2(x_i, x_j)}{\epsilon^2} \right)
+Given {\em aligned} images $I_1, \dots, I_m \in \mathbb{R}^{n \times n}$, we fist calculate the matrix $W \in \mathbb{R}^{m \times m}$, where 
+\begin{equation} \label{eq:dmaps_W}
+W_{ij} = \exp \left( -\frac{d^2(I_i, I_j)}{\epsilon^2} \right)
 \end{equation}
 and $\epsilon$ is a characteristic distance between data points.
 %
@@ -244,39 +253,43 @@ Therefore, ordering our data by $\phi_2(j)$ will allow us to automatically order
 
 Many times, we would to both align and order our data.
 %
-Our proposed alignment methodology, angular syncrhonization, utilizes the eigendecompostion of the matrix $R \in \mathbb{R}^{3m \times 3m}$, and our proposed ordering algorithm, diffusion maps, utilizes the eigendecomposition of the matrix $A \in \mathbb{R}^{m \times m}$.
+Our proposed alignment methodology, angular synchronization, utilizes the eigendecompostion of the matrix $H \in \mathbb{R}^{3m \times 3m}$, and our proposed ordering algorithm, diffusion maps, utilizes the eigendecomposition of the matrix $A \in \mathbb{R}^{m \times m}$.
 %
-We can combine the two steps into one eigencomputation that allows us to {|em simultaneously} recover the optimal alignments and the temporal ordering.
+We can combine the two steps into one eigencomputation that allows us to {\em simultaneously} recover the optimal alignments and the temporal ordering.
 %
 This technique is called vector diffusion maps \cite{singer2012vector}.
 %
-It is significantly more robust to mistakes in the alignment.
+It not only reduces the number of required eigencomputations, but also is much more robust to noise, as mistakes in alignment are also considered when ordering the data.
 
 For vector diffusion maps, we construct the matrix $S \in \mathbb{R}^{3m \times 3m}$, with
 \begin{equation}
-	S_{ij} = A_{ij} R_{ij}
+	S_{ij} = A_{ij} H_{ij}
 \end{equation}
 %
-We then compute the eigenvalues and eigenvectors of $S$.
+where $A$ is constructed from the matrix $W$ \eqref{eq:dmaps_W}, and the distance metric $d(I_i, I_j)$ is the Frobenius norm between the images {\em after} optimal pairwise alignment ($d(I_i, I_j) = \| f(I_j, \theta_{ij}, dx_{ij}, dy_{ij}) - I_i \|_F$).
+
+We then compute the eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_{3m}$ and eigenvectors $\phi_1, \phi_2, \dots, \phi_{3m}$ of $S$, and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{3m}|$.
 %
-Again, the top (block) eigenvector of $S$ gives us approxiamtions to the optimal rotations for each image.
+Again, the top (block) eigenvector of $S$ gives us approximations to the optimal rotations for each image.
 %
 However, we now also obtain embedding coordinates for our images.
 %
 The embedding coordinates are given by 
 \begin{equation}
-\psi_{kl} (i) = \langle \phi_k(i), \phi_l(i) \rangle
+\psi_{k,l} (i) = \langle \phi_k(i), \phi_l(i) \rangle
 \end{equation}
-where $\phi_j$ are the eigenvectors of $S$.
+where $\phi_k(i) \in \mathbb{R}^3$ denotes the $i^{th}$ block of $\phi_k$.
+%
+If we assume that our data are one--dimensional, and that the rotations and the dynamics are uncoupled and therefore separable, then we can order our data by $\psi_{1,4}$.
+%
+If no such claims can be made, then one often runs a second step of diffusion maps, using $\psi_{k,l}$ as the data points, in order to uncover the true manifold modulo symmetries. 
 
 
 \section{Example: {\em Drosophila}}
 
 \subsection{dpERK}
 
-Show how correlation varies with number of images
-
-\begin{figure}
+\begin{figure*}[h]
 \begin{subfigure}[c]{0.45\textwidth}
 \includegraphics[width=\textwidth]{dpERK_array}
 \caption{}
@@ -285,13 +298,20 @@ Show how correlation varies with number of images
 \includegraphics[width=\textwidth]{dpERK_rank_corr}
 \caption{}
 \end{subfigure}
-\end{figure}
+\caption{(a) Ordering of images fluorescently stained for dpERK. (b) Correlation between ranks from ordering using VDM, and ordering using the membrane length.}
+\label{fig:dpERK}
+\end{figure*}
 
-ADD TEXT HERE
+\begin{figure*}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{bootstrap_rank_corr}
+\caption{Rank correlation as a function of the number of data points.}
+\label{fig:bootstrap}
+\end{figure*}
 
 \subsection{Dorsal}
 
-\begin{figure}
+\begin{figure*}[h]
 \begin{subfigure}[c]{0.45\textwidth}
 \includegraphics[width=\textwidth]{DI_array}
 \caption{}
@@ -300,7 +320,9 @@ ADD TEXT HERE
 \includegraphics[width=\textwidth]{DI_rank_corr}
 \caption{}
 \end{subfigure}
-\end{figure}
+\caption{(a) Ordering of images fluorescently stained for Dorsal. (b) Correlation between ranks from ordering using VDM, and ordering using the membrane length.}
+\label{fig:Dl}
+\end{figure*}
 
 \section{Discussion}
 % compare to TSP algorithms
