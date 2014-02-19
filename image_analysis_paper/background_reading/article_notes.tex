@@ -25,6 +25,11 @@
 \end{itemize}
 
 \item \fullcite{li2009stochastic}
+\begin{itemize}
+	\item Want to look at mechanism for {\em eve} stripe formation
+	\item Propose a large gene/protein interaction network
+	\item Use maximum likelihood to prune the network and find the most probable network that would give rise to the observed spatiotemporal dynamics
+\end{itemize}
 
 \item \fullcite{jordan2013behavioral}
 \begin{itemize}
@@ -78,23 +83,75 @@
 \item \fullcite{machta2013parameter}
 
 \item \fullcite{peng2013detecting}
+\begin{itemize}
+	\item Wants to find which genes/SNPs are responsible for variation in facial features
+	\item Has DNA data and 3D face scans for many samples
+	\item Looks at different facial models (all are based on landmarks)
+	\item Tries to find which variations in the facial models correlate with which SNPs
+\end{itemize}
 
 \item \fullcite{gerber2010visual}
+\begin{itemize}
+	\item Want to find a ``good'' way to visualize high--dimensional functions
+	\item First find local maxima and minima in data set
+	\item Use these maxima and minima to segment the domain of the function into ``crystals''
+	\item Approximate each crystal by a line/curve
+	\item Embed the maxima and minima in 2D using PCA; draw lines connecting relevant maxima and minima
+\end{itemize}
 
 \item \fullcite{qiu2011discovering}
+\begin{itemize}
+	\item Want to order microarray data
+	\item Look at specific (high--variance) genes (~3000 genes)
+	\item Cluster genes into ``modules'' using k--means, so that similairly expressed genes are grouped together
+	\item Within each module, construct a minimium spanning tree of the data (distance between nodes is Euclidean distance)
+	\item Find set of MSTs that are most similar/consistent
+	\item Assume these are the ``right'' MST and that they uncover the progression of the data
+\end{itemize}
 
 \item \fullcite{gupta2008extracting}
+\begin{itemize}
+	\item Want to temporally order gene expression data from cancer patients
+	\item Use TSP to order gene expression data (can show that TSP path will recover the correct ordering under some probability model)
+	\item Use a probabilistic gene/patient model to model the variation from patient to patient (model underlying dynamics with splines, and then assume rest in noise from patient-to-patient variability)
+\end{itemize}
 
 \item \fullcite{lau2009modeling}
+\begin{itemize}
+	\item Want to model trajectory/motion data where each sample is a trajectory
+	\item Assume that the trajectories come from a second-order Markov model (i.e. $t+2$ depends on $t$ and $t+1$)
+	\item Fit a Bayesian network that models the trajectory evolution using training data
+	\item Can then produce new sample trajectories from this Bayesian network
+\end{itemize}
 
 \item \fullcite{toga2003temporal}
-  
+\begin{itemize}
+	\item Want to model spatiotemporal changes in the 3D structure of the brain (so that one can detect disease, etc.)
+	\item Model growth of different portions of the brain using deformation mapping (look at deformation of different regions of a {\em single} person's brain from one scan to the next)
+	\item Can fit cortical models for each person in a population; can then look at variations across these models
+\end{itemize}  
+
 \item \fullcite{li2012modelling}
+\begin{itemize}
+	\item Want to use cross--sectional data to model disease progression
+	\item Data are things that are known to be important/telling for that particlular disease (i.e. breast cancer data contains descriptors of cell morphology, Parkinson's disease data contains descriptors of speech patterns)
+	\item Create ``pseudo time series'' by subsampling data, and from each subsample, finding shortest path that goes from a healthy sample to a diseased sample
+	\item From these pseudo time series, can fit a hidden Markov model to find different states of disease progression and likely transitions from one state to another
+\end{itemize}
 
 \item \fullcite{denkinger2013set}
+\begin{itemize}
+	\item Want to develop a standardized data set that can be used to investigate temporal and causal neural processing
+	\item Developed a set of 222 images which contain different causal and temporal relationships
+\end{itemize}
 
 \item \fullcite{xu2012comprehensive}
-
+\begin{itemize}
+	\item Want to quantify shape of liver lesions
+	\item Take set of 14 common shape descriptors
+	\item Use regression to find optimal combination of shape descriptors that can predict the similairity using a ``similairity reference standard''
+	\item FINISH
+\end{itemize}
 \item \fullcite{sisan2010event}
 \begin{itemize}
 	\item Looks at time correlations in data to determine temporal ordering
@@ -113,6 +170,9 @@
 \end{itemize}
 
 \item \fullcite{anavy2014blind}
+
+\item \fullcite{basu2014detecting}
+
 
 \end{enumerate}
 
