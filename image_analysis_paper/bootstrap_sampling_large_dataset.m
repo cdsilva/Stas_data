@@ -1,78 +1,76 @@
 clear all
 close all
 
-%% set parameters for saving figures
-set(0,'DefaultLineMarkerSize',14)
-set(0,'DefaultAxesFontSize',20)
-
 res = '-r300';
 fmt = '-djpeg';
-print_figures = false;
 
-dpERK_data = '../membrane_pictures/large_dataset/time.mat';
-dpERK_image_dir = '../membrane_pictures/large_dataset';
 im_save_dir = 'paper_figures';
 
-image_channel = 2;
+%% read in data
 
-%% load membrane lengths
+% % directories where things are stored
+% time_data = '../membrane_pictures/large_dataset/time.mat';
+% image_dir = '../membrane_pictures/large_dataset';
+% 
+% % load membrane lengths
+% load(time_data);
+% mem_lengths = length;
+% clear length;
+% 
+% % remove some younger embryos
+% ind = setdiff(1:90, [3, 20, 25, 32, 53, 59, 61, 66, 82]);
+% 
+% m = length(ind);
+% mem_lengths = mem_lengths(ind);
+% 
+% % compute ranks from membrane lengths
+% ranks_from_membranes = compute_ranks(mem_lengths);
+% 
+% % image parameters
+% npixels = 100;
+% image_channel = 2;
+% 
+% %set image plotting parameters
+% subplot_dim1 = ceil(sqrt(m));
+% subplot_dim2 = ceil(m / subplot_dim1);
+% 
+% image_set = zeros(npixels, npixels, m);
+% 
+% %% load images
+% for i=1:m
+%     % read image
+%     im1 = imread(sprintf('%s/lat%02d.tif', image_dir, ind(i)));
+%     
+%     % resize image
+%     im1 = imresize(im1, [npixels npixels]);
+%     
+%     % extract relevent color from image
+%     im1 = im1(:,:,image_channel);
+%     
+%     %store image
+%     im1 = double(im1);
+%     image_set(:, :, i) = im1;
+%     
+% end
+% 
+% % raw dpERK images-- synchronization
+% angle_proj = pi/8;
+% shift_max = 20;
+% shift_step = 4;
+% dim = 3;
+% 
+% [R, W] = compute_pairwise_alignments(image_set, angle_proj, shift_max, shift_step);
 
-load(dpERK_data);
-mem_lengths = length;
-clear length;
-
-ind = setdiff(1:90, [3, 20, 25, 32, 53, 59, 61, 66, 82]);
-
-m = length(ind);
-
-mem_lengths = mem_lengths(ind);
-
-%% load images
-
-npixels = 100;
-
-%set image plotting parameters
-subplot_dim1 = ceil(sqrt(m));
-subplot_dim2 = ceil(m / subplot_dim1);
-
-image_set = zeros(npixels, npixels, m);
-
-
-%figure;
-for i=1:m
-    % read image
-    im1 = imread(sprintf('%s/lat%02d.tif', dpERK_image_dir, ind(i)));
-    
-    % resize image
-    im1 = imresize(im1, [npixels npixels]);
-    
-    % extract relevent color from image
-    im1 = im1(:,:,image_channel);
-    
-    %subplot(subplot_dim1, subplot_dim2, i)
-    %imshow(im1);
-    
-    %store image
-    im1 = double(im1);
-    image_set(:, :, i) = im1;
-    
-end
-
-%% raw dpERK images-- synchronization
-
-angle_proj = pi/8;
-shift_max = 20;
-shift_step = 4;
-dim = 3;
-
-[R, W] = compute_pairwise_alignments(image_set, angle_proj, shift_max, shift_step);
+%% load
+%load large_data_set.mat
+load dpERK_aligned_all.mat
 
 %% define number of bootstrap samples and bootstrap range
 
 npoints_boot = 20;
 boot_range = round(linspace(0.1*m, m, npoints_boot));
 
-nsamples_boot = 25;
+nsamples_boot = 50;
 
 rng(12345);
 
@@ -115,7 +113,7 @@ figure;
 plot(boot_range, r, '.')
 xlabel('number of data points')
 ylabel('average rank correlation')
-if print_figures
-    print(sprintf('%s/bootstrap_rank_corr', im_save_dir), fmt, res);
-end
+% if print_figures
+%     print(sprintf('%s/bootstrap_rank_corr', im_save_dir), fmt, res);
+% end
 
