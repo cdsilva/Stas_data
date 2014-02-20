@@ -9,19 +9,21 @@ res = '-r300';
 fmt = '-djpeg';
 print_figures = false;
 
-eve_image_dir = '14_0216OreR_Eve_Dl';
-%eve_membrane_times = 'Eve_13_0821/times_08_21_13.mat';
-
-m = 60;
-
-%%
+% eve_image_dir = 'Eve_13_0821';
+% eve_membrane_times = 'Eve_13_0821/times_08_21_13.mat';
 % load(eve_membrane_times);
 % t = times_08_21_13;
+
+eve_image_dir = '14_0216OreR_Eve_Dl';
+eve_membrane_times = '14_0216OreR_Eve_Dl/times_14_02_16.mat';
+load(eve_membrane_times);
+t = times_14_02_16;
+
+m = length(t);
 
 %% load images
 
 npixels = 100;
-
 
 %set image plotting parameters
 subplot_dim1 = ceil(sqrt(m));
@@ -46,7 +48,7 @@ for i=1:m
     im1 = padarray(im1, floor(npad/2),'pre');
     im1 = padarray(im1, ceil(npad/2),'post');
     
-    im1 = imrotate(im1, rand*360, 'crop');
+    %im1 = imrotate(im1, rand*360, 'crop');
     
     subplot(subplot_dim1, subplot_dim2, i)
     imshow(im1);
@@ -99,11 +101,9 @@ end
 
 %%
 
-
-
-%idx = find(embed_idx(1,:)==4 & embed_idx(2,:)==1);
+idx = find(embed_idx(1,:)==4 & embed_idx(2,:)==1);
 %[~, idx ] = max(abs(corr(embed_coord, t)));
-idx = 7;
+
 [~, I] = sort(embed_coord(:, idx));
 
 % W = squareform(pdist(embed_coord)).^2;

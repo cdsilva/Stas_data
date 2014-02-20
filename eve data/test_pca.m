@@ -23,17 +23,16 @@ m = length(t);
 
 %% load images
 
-npixels = 100;
+npixels = 60;
 
 %set image plotting parameters
 subplot_dim1 = ceil(sqrt(m));
 subplot_dim2 = ceil(m / subplot_dim1);
 
 image_set = zeros(npixels, npixels, m);
-
 image_channel = 2;
 
-figure;
+%figure;
 for i=1:m
     % read image
     im1 = imread(sprintf('%s/emb%02d.tif', eve_image_dir, i));
@@ -57,6 +56,37 @@ for i=1:m
     
 end
 
+%% PCA
+
+pca_data = zeros(m, npixels^2);
+
+for i=1:m
+    pca_data(i,:) = reshape(image_set(:,:,i), 1, []);
+end
+
+pca_data = pca_data - repmat(mean(pca_data), m, 1);
+
+
+
+[V, D] = PCA(pca_data, 5);
+
+figure;
+for i=1:4
+    subplot(2, 2, i)
+    imagesc(reshape(V(:,i), npixels, []));
+    colormap(gray)
+    axis off
+end
+
+figure;
+for i=1:4
+    subplot(2,2, i)
+    imagesc(abs(reshape(V(:,i), npixels, [])));
+    colormap(gray)
+    axis off
+end
+
+%%
 [X, Y] = meshgrid(1:npixels,1:npixels);
 X = (X-mean(1:npixels))/(npixels/2);
 Y = (Y-mean(1:npixels))/(npixels/2);
@@ -78,56 +108,36 @@ for i=1:m
     
 end
 
-%% raw images-- compute scattering transform coefficients
+%%
 
-addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
-%addpath '../../../MATLAB/scatnet-0.2';
-addpath_scatnet
+pca_data = zeros(m, npixels^2);
 
-% set scattering transform parameters
-filt_opt = struct();
-filt_rot_opt = struct();
-% oversampling is set to infty
-% so that scattering of original and rotated
-% image will be sampled at exactly the same points
-scat_opt = struct();
-scat_opt.oversampling = 10;
-
-% compute scattering transform of first image
-x = image_set(:,:,1);
-% define wavelet transforms
-Wop = wavelet_factory_3d(size(x), filt_opt, filt_rot_opt, scat_opt);
-Sx = scat(x, Wop);
-Sx_mat = format_scat(Sx);
-
-% store scattering invariants (one row per image)
-sx_all = zeros(m, size(Sx_mat, 1));
-
-% compute scattering invariants for each image
 for i=1:m
-    i
-    x = image_set2(:,:,i);
-    
-    Sx = scat(x, Wop);
-
-    sx_all(i,:) = mean(mean(format_scat(Sx),2),3)';
+    pca_data(i,:) = reshape(image_set2(:,:,i), 1, []);
 end
+pca_data = pca_data - repmat(mean(pca_data), m, 1);
 
-%% dmaps
-W = squareform(pdist(sx_all)).^2;
-eps = median(W(:));
-[V, D] = dmaps(W, eps, 10);
 
-% if corr(V(:,2), L(:,1)) < 0
-%     V(:,2) = -V(:,2);
-% end
-
-[~, idx] = max(abs(corr(V, t)));
-[~, I] = sort(V(:,idx));
+[V, D] = PCA(pca_data, 5);
 
 figure;
-for i=1:m
-    im1 = uint8(image_set2(:,:,I(i)));
-    subplot(subplot_dim1, subplot_dim2, i);
-    imshow(im1);
+for i=1:4
+    subplot(2, 2, i)
+    imagesc(reshape(V(:,i), npixels, []));
+    colormap(gray)
+    axis off
 end
+
+figure;
+for i=1:4
+    subplot(2,2, i)
+    imagesc(abs(reshape(V(:,i), npixels, [])));
+    colormap(gray)
+    axis off
+end
+
+figure; 
+plot(t, pca_data*V(:,1),'.')
+
+
+
