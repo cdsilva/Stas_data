@@ -2,10 +2,13 @@
 
 
 \usepackage[backend=bibtex]{biblatex}
+\usepackage[left=1in, right=1in, top=1in, bottom=1in]{geometry}
 
-\bibliography{references}
+\bibliography{references,../../../references/references}
 
 \begin{document}
+
+\section{References from Stas}
 
 \begin{enumerate}
 
@@ -176,6 +179,82 @@
 
 \end{enumerate}
 
+
+\section{Algorithms}
+
+\begin{enumerate}
+
+\item \fullcite{flusser2000independence}
+\begin{itemize}
+\item Construct moments (polynomials) of the pixel intensities that are invariant to rotations
+\end{itemize}
+
+\item \fullcite{besl1992method}
+\begin{itemize}
+	\item Iterative closest point (ICP) algorithm
+	\item Aligns/registers point clouds
+\end{itemize}
+
+\item \fullcite{lowe1999object}
+\begin{itemize}
+	\item Scale-invartiant feature transform (SIFT)
+	\item Computes feature vectors for image; features are scale, translation, and rotation invariant
+\end{itemize}
+
+\item \fullcite{sadler1992shift}
+\begin{itemize}
+	\item Calculate bispectrum for image
+	\item Bispectrum is rotation-invariant
+	\item Do not need to align the images
+\end{itemize}
+
+\item \fullcite{hilai1994recognition}
+\begin{itemize}
+	\item Construct rotation-invariant basis for images
+\end{itemize}
+
+\item \fullcite{ojala2002multiresolution}
+\begin{itemize}
+	\item Decribe local patches of image (texture) by binary code
+	\item Define function on binary code that is rotation-invariant
+	\item Classify using binary code
+\end{itemize}
+
+\item \fullcite{zhao2013fourier}
+\begin{itemize}
+	\item Construct PCA basis that is rotation-invariant
+\end{itemize}
+
+\end{enumerate}
+
+\section{Applications}
+
+\begin{enumerate}
+
+\item \fullcite{hajnal2010medical}
+\begin{itemize}
+	\item Medical image registration (MRI, CT, etc.)
+\end{itemize}
+
+\item \fullcite{greenspan1994rotation}
+\begin{itemize}
+\item Texture recognition/classification
+\item use Fourier basis; fit texture response (in Fourier basis) to rotations 
+\end{itemize}
+
+\item \fullcite{rowley1998rotation}
+\begin{itemize}
+	\item face recognition
+	\item train neural net to estimate face orientation, then orient faces
+\end{itemize}
+
+\item \fullcite{simard1992efficient}
+\begin{itemize}
+	\item recognize digits
+	\item only consider small rotations; fit plane to span of rotations of each digit, then see which plane new digit is closest to
+\end{itemize}
+
+\end{enumerate}
 
 
 \end{document}
