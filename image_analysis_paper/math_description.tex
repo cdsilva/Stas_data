@@ -330,6 +330,8 @@ See the Appendix for more details
 \section{Computing Optimal Alignments for One--Dimensional Signals} 
 
 To compute the optimal angles in \eqref{eq:opt_angle}, we search over all possible shifts of the signals. 
+%
+The signal is discritized into $100$ points.
 
 \subsubsection{Computing Optimal Pairwise Alignments}
 The first step in angular synchronization is to compute the translations and rotations to optimally align each pair of data points. 
@@ -346,7 +348,12 @@ dy \in [-\Delta, \Delta]
 \end{equation}
 where $\| \cdot \|_F$ denotes the Frobenius norm, $\Delta$ is the maximum number of pixels by which we are allowed to translate the image, and $f(I_j, \theta, dx, dy)$ is a function that first rotates the image $I_j$ by $\theta$ degrees, then translates the image by $dx$ pixels in the $x$ direction, and finally translates the image by $dy$ pixels in the $y$ direction. 
 %
-
+The image rotation is done with the \texttt{imrotate} function in Matlab, using nearest neighbor interpolation.
+%
+The missing pixels at the corners of the rotated image are taken to be black.
+%
+The translations are done by shifting the pixels, and taking this missing pixels to be black. 
+%
 In \eqref{eq:opt_pairwise}, we take $\Delta=20$, which corresponds to a 20\% shift in the image. 
 %
 The solution to \eqref{eq:opt_pairwise} is not easily computed, as the objective function will most likely be nonconvex.
