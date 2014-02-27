@@ -33,9 +33,11 @@ end
 R_opt = V(:,1:dim);
 for i=1:n
     [u, s, v] = svd(R_opt(dim*(i-1)+1:dim*i,:));
-    R_opt(dim*(i-1)+1:dim*i,:) = u * v';
+    R_opt(dim*(i-1)+1:dim*i,:) = v * u';
 end
-R_opt = R_opt * R_opt(1:dim,:)';
+for i=n:-1:1
+    R_opt(dim*(i-1)+1:dim*i,:) = R_opt(1:dim,:)' * R_opt(dim*(i-1)+1:dim*i,:);
+end
 
 % 
 % R_opt = V(:,1:dim)*D(1:dim,1:dim)*V(1:dim,1:dim)';

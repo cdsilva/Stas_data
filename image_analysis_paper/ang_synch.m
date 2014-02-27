@@ -8,17 +8,24 @@ end
 
 
 [V, D] = eigs(R, dim);
-if det(V(1:dim,:)*D*V(1:dim,:)') < 0
-    V(:,end) = -V(:,end);
+[~, ind] = sort(abs(diag(D)), 'descend');
+V = V(:, ind);
+D = D(ind, ind);
+for i=1:dim
+    V(:,i) = V(:,i) / norm(V(:,i));
+end
+if det(V(1:dim,1:dim)*D(1:dim,1:dim)*V(1:dim,1:dim)') < 0
+    V(:,dim) = -V(:,dim);
 end
 
 R_opt = V;
 for i=1:m
     [u, s, v] = svd(R_opt(dim*(i-1)+1:dim*i,:));
-    R_opt(dim*(i-1)+1:dim*i,:) = u * v';
+    R_opt(dim*(i-1)+1:dim*i,:) = v * u';
 end
-
-R_opt = R_opt * R_opt(1:dim,:)';
+for i=m:-1:1
+    R_opt(dim*(i-1)+1:dim*i,:) = R_opt(1:dim,:)' * R_opt(dim*(i-1)+1:dim*i,:);
+end
 
 
 % R_opt = V*D*V(1:dim,:)';

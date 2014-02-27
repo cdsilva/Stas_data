@@ -32,9 +32,9 @@ for i=1:m
                     d2 = sum(sum((images(:,:,j) - double(imagei_tmp2)).^2));
                     if d2 < W(i, j)
                         W(i,j) = d2;
-                        thetas(i, j) = theta_vec(k);
-                        dx(i, j) = shifts(k1);
-                        dy(i, j) = shifts(k2);
+                        thetas(j, i) = theta_vec(k);
+                        dx(j, i) = shifts(k1);
+                        dy(j, i) = shifts(k2);
                     end
                 end
             end
@@ -45,8 +45,8 @@ end
 for i=1:m
     for j=1:i-1
         W(j,i) = W(i,j);        
-        R(dim*(i-1)+1:dim*i, dim*(j-1)+1:dim*j) = calc_rot_matrix(thetas(i,j), dx(i,j), dy(i,j), npixels, angle_proj);
-        R(dim*(j-1)+1:dim*j, dim*(i-1)+1:dim*i) = R(dim*(i-1)+1:dim*i, dim*(j-1)+1:dim*j)';
+        R(dim*(j-1)+1:dim*j, dim*(i-1)+1:dim*i) = calc_rot_matrix(thetas(j, i), dx(j, i), dy(j, i), npixels, angle_proj);
+        R(dim*(i-1)+1:dim*i, dim*(j-1)+1:dim*j) = R(dim*(j-1)+1:dim*j, dim*(i-1)+1:dim*i)';
     end
 end
 

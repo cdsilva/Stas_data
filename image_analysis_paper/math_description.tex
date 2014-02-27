@@ -4,18 +4,32 @@
 \usepackage{amssymb}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
+\usepackage{graphicx}
+\usepackage{subcaption}
+\graphicspath{ {paper_figures/} }
+
 \begin{document}
+
+\begin{figure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{fig2a}
+\caption{}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{fig2b}
+\caption{}
+\end{subfigure}
+\caption{}
+\end{figure}
 
 \section{Techniques}
 
-\subsection{Alignment Using Angular Synchronization}
+\subsection{Registration Using Angular Synchronization} \label{subsec:angsynch}
 
 Often when one collects images in experiments, each image is taken in a different orientation. 
 %
-Therefore, the first task in image analysis is to align the set of images. 
+Therefore, the first task in image analysis is to align or {\em register} the set of images. 
 %
-We will consider settings when alignment is done with respect to two--dimensional translations and rotations of the images, as each ``object of interest'' (i.e. each embryo) is in a different position and rotated at a different angle within the image frame. 
-
 There are many ways to align images. 
 %
 ``Template--based'' alignment \cite{ahuja2007template} is one technique, where one selects a specific image or {\em template}, and then tries to optimally align each image to that template.
@@ -32,108 +46,142 @@ Because we consider {\em all} pairwise alignments, angular synchronization is of
 
 We will first discuss angular synchronization with {\em only} rotations. 
 %
-Let $I_1, \dots, I_m \in \mathbb{R}^{n \times n}$ denote the (grayscale) images that we wish to align with respect to rotations.
+Let $x_1, \dots, x_m \in \mathbb{R}^x$ denote the (grayscale) signal that we wish to align with respect to rotations.
 %
-We assume that each image $I_i$ is a noisy rotated copy of the underlying image $I_{true}$ (which we are {\em not} given), such that 
+We assume that each signal $x_i$ is a noisy rotated copy of the underlying signal $x_{true}$ (which we are {\em not} given), such that 
 \begin{equation}
-I_i = R_i I_{true} + \xi_i,
+x_i = f(x_{true}, \theta_i) + \xi_i
 \end{equation}
-where $R_i \in \mathbb{R}^{2 \times 2}$ is an unknown rotation matrix and $\xi_i$ is random (often Gaussian) noise \footnote{The rotation matrices $R_i$ do not operate directly on the $n \times n$ image matrix $I_{true}$; however, we feel that this abuse of notation makes our description of the problem more intuitive.}. 
+where $f(x_{true}, \theta_i)$ rotates the signal $x_{true}$ by $\theta_i$ degrees \footnote{add about how we rotate, because it's soooooo complicated}. 
 %
-Our goal is to obtain estimates of $R_1, \dots, R_m$ so that we can rotate the images $I_1, \dots, I_m$ to be aligned.
+Our goal is to obtain estimates of $\theta_1, \dots, \theta_m$ so that we can align $x_1, \dots, x_m$. 
 %
 Up to noise, 
 \begin{equation} \label{eq:pairwise_rot}
-I_i \approx R_i R_j^T I_j;
+x_i \approx f(x_j, \theta_i - \theta_j) ;
 \end{equation}
- note that \eqref{eq:pairwise_rot} does not require knowledge of the true underlying image $I_{true}$.
+ note that \eqref{eq:pairwise_rot} does not require knowledge of $x_{true}$.
 %
-We can obtain {\em estimates} of $R_i R_j^T$ by computing the rotations to optimally align $I_j$ to $I_i$. 
+We can obtain {\em estimates} of $\theta_i - \theta_j$ by computing the rotations to optimally align $x_j$ to $x_i$. 
 %
-Let $R_{ij}$ denote the rotation that optimally aligns $I_j$ to $I_i$.
+Let $\theta_{ij}$ denote the rotation that optimally aligns $x_j$ to $x_i$, i.e.,
 %
-We then construct the matrix $H \in \mathbb{R}^{2m \times 2m}$, where $H$ is an $m \times m$ matrix of $2 \times 2$ blocks with
+\begin{equation} \label{eq:opt_angle}
+\theta_{ij} = \argmin_{\theta} \|x_i - f(x_j, \theta)\|^2
+\end{equation}
+
+Rather than work with the angles directly, it will be more convenient to work with the rotation matrices 
+\begin{equation} \label{eq:R_theta}
+R(\theta_{ij}) = \begin{bmatrix}
+\cos(\theta_{ij}) & \sin(\theta_{ij}) \\
+-\sin(\theta_{ij}) & \cos(\theta_{ij})
+\end{bmatrix}
+\end{equation}
+%
+Successive rotations correspond to multiplication of the rotation matrices, i.e., 
+$R(\alpha_1 + \alpha_2) = R(\alpha_1) R(\alpha_2)$,
+and, due to the orthogonality of rotation matrices, $R(-\alpha) = R(\alpha)^T$.
+
+Let $d$ denote the dimension of the rotation matrices we are considering (for our example of planar rotations, $d=2$).
+%
+ We then construct the matrix $H \in \mathbb{R}^{md \times md}$, where $H$ is an $m \times m$ matrix of $d \times d$ blocks with
 \begin{equation} \label{eq:H_to_R}
-H_{ij} = R_{ij}
+H_{ij} = R(\theta_{ij})
 \end{equation}
 %
-We note that, under our assumptions, $H_{ij} \approx R_i R_j^T$, and so
+
+We note that, under our assumptions, 
+\begin{equation} 
+H_{ij} = R(\theta_{ij}) \approx R(\theta_i - \theta_j) = R(\theta_i) R(-\theta_j) = R(\theta_i) R(\theta_j)^T,
+\end{equation}
+ and so
 \begin{equation} \label{eq:H_low_rank}
 	H \approx 
 	\begin{bmatrix}
-	R_1 \\
-	R_2 \\
+	R(\theta_1) \\
+	R(\theta_2) \\
 	\vdots \\
-	R_m
+	R(\theta_m)
 	\end{bmatrix}
 	\begin{bmatrix}
-	R_1^T R_2^T \dots R_m^T
+	R(\theta_1)^T R(\theta_2)^T \dots R(\theta_m)^T
 	\end{bmatrix}
 \end{equation}
 %
-We can (approximately) recover $R_1, R_2, \dots, R_m$ by computing the top block eigenvector of $H$ (i.e the eigenvectors corresponding to the two largest eigenvalues, stacked into a $2m \times 2$ matrix), and register the images by rotating image $i$ by $R_i^T$. 
+We can (approximately) recover $R(\theta_1), R(\theta_2), \dots, R(\theta_m)$ by computing the top block eigenvector of $H$ (i.e the eigenvectors corresponding to the $d$ largest eigenvalues, stacked into a $md \times 2$ matrix).
 %
+We can estimate $\theta_{i}$ by inverting \eqref{eq:R_theta}, and then register the signals by rotating image $i$ by $-\theta_i$. 
+
 Furthermore, this eigendecomposition also considers {\em higher--order} consistency information. 
 %
 For example, given our pairwise estimates $R_{ij}$, we know that relationships of the form
 \begin{equation} \label{eq:triplet_consistency}
-R_{ik} R_{kj} \approx R_i R_k^T R_k R_j^T = R_i R_j^T
+R(\theta_{ik}) R(\theta_{kj}) \approx R(\theta_i) R(\theta_k)^T R(\theta_k) R(\theta_j)^T = R(\theta_i) R(\theta_j)^T
 \end{equation}
 should also hold.
 %
 However, 
 \begin{equation}
-(H^2)_{ij} = \sum_k R_{ik} R_{kj}
+(H^2)_{ij} = \sum_k R(\theta_{ik}) R(\theta_{kj})
 \end{equation}
 and so {\em all} infomation of the form in \eqref{eq:triplet_consistency} is contained in the matrix $H^2$.
 %
 Because $H$ and $H^2$ have the same eigenvectors, our problem formulation accounts for not only pairwise alignment information, but also these higher--order considerations. 
 
-We now note that, for \eqref{eq:H_low_rank} to be satisfied, we require that the group operation matrices be orthogonal, i.e. $R_i^{-1} = R_i^T$. 
+To illustrate how angular synchronization works, we have converted the two--dimensional images into concentration profiles on a ring (we will address the full two--dimensional images in a subsequent section). 
 %
-The typical matrix representation for $ISO(2)$, the group of two--dimensional translations and rotations (using the matrix representation for the affine group \cite{...}), does not satisfy this property. 
+Figure \ref{subfig:1d_image_example} shows a typical image that we have converted to a one--dimensional concentration profile. 
 %
-However, we can (approximately) represent rotations and translations in two--dimensions using three--dimensional rotation matrices.
+The images are not aligned, and so rotation of this image corresponds to shifting (with periodic boundary conditions) the one--dimensional concentration profile. 
 %
-We do this by projecting the image onto a portion of the surface of a (three--dimensional) sphere.
+Figure \ref{subfig:1d_unaligned_unordered} shows the concentration profiles for all the images in our data set. 
 %
-Rotations in two--dimensions now correspond to rotations around one principal axis in three--dimensions, and translations in two--dimensions correspond (approximately) to rotations around the other two principal axes in three--dimensions \footnote{Clearly, not all translations can be described this way, as translations can range from $-\infty$ to $+ \infty$, and rotations are only from $0$ to $2 \pi$. However, the images we will be considering are already mostly centered, and so we are only interested in small translations that are well within the $[0, 2\pi)$ range.}.
+The concentration profiles have been stacked in an array, such that each row corresponds to one image.
 %
-These rotation matrices are (by definition) orthoganol, and successive applications of various translations and rotations can be described via multiplication of the corresponding rotation matrices in $SO(3)$.
+Figure \ref{subfig:1d_aligned_unordered} shows the concentration profiles, now aligned using angular synchronization. 
+%
+The peaks are now (mostly) aligned.
 
-The first step in angular synchronization is to compute the translations and rotations to optimally align each pair of data points. 
-%
-For each image pair $I_i$ and $I_j$, we solve
-\begin{equation}\label{eq:opt_pairwise}
-(\theta_{ij}, dx_{ij}, dy_{ij}) = \argmin_{
-\begin{matrix}
-\theta \in [0, 2\pi) \\ 
-dx \in [-\Delta, \Delta]\\ 
-dy \in [-\Delta, \Delta]
-\end{matrix}
-} \|f(I_j, \theta, dx, dy) - I_i \|_F^2.
-\end{equation}
-where $\| \cdot \|_F$ denotes the Frobenius norm, $\Delta$ is the maximum number of pixels by which we are allowed to translate the image, and $f(I_j, \theta, dx, dy)$ is a function that first rotates the image $I_j$ by $\theta$ degrees, then translates the image by $dx$ pixels in the $x$ direction, and finally translates the image by $dy$ pixels in the $y$ direction. 
-%
-We then compute the three--dimensional rotation, $R_{ij} \in SO(3)$, from the two--dimensional translation and rotation parameters $\theta_{ij}$, $dx_{ij}$, and $dy_{ij}$ (see Appendix for more details).
-%
-We then build the matrix $H \in \mathbb{R}^{3m \times 3m}$ as described in \eqref{eq:H_to_R}, and compute the top block eigenvector of $H$, $\hat{R} \in \mathbb{R}^{3m \times 3}.$ 
-%
-The $3 \times 3$ blocks of $\hat{R}$ contain approximations of $R_1, \dots, R_m$.  
-%
-Because the blocks are not guaranteed to lie in $SO(3)$, we then project each block back to $SO(3)$ (see Appendix).
-%
-To register the images, we compute the translations and rotation corresponding to $R_i^T$. 
+\begin{figure}
+\begin{subfigure}{0.17\textwidth}
+\includegraphics[width=\textwidth]{illustrate_1d}
+\caption{}
+\label{subfig:1d_image_example}
+\end{subfigure}
+\begin{subfigure}{0.2\textwidth}
+\includegraphics[width=\textwidth]{unregistered_unordered_1d}
+\caption{}
+\label{subfig:1d_unaligned_unordered}
+\end{subfigure}
+\begin{subfigure}{0.2\textwidth}
+\includegraphics[width=\textwidth]{registered_unordered_1d}
+\caption{}
+\label{subfig:1d_aligned_unordered}
+\end{subfigure}
+\begin{subfigure}{0.2\textwidth}
+\includegraphics[width=\textwidth]{registered_ordered_1d}
+\caption{}
+\label{subfig:1d_aligned_ordered}
+\end{subfigure}
+\begin{subfigure}{0.2\textwidth}
+\includegraphics[width=\textwidth]{registered_ordered_vdm_1d}
+\caption{}
+\label{subfig:1d_aligned_ordered_vdm}
+\end{subfigure}
+\caption{}
+\label{fig:1d_demo}
+\end{figure}
+
 
 \subsection{Ordering Using Diffusion Maps}
 
-Given our set of aligned images, we now wish to order them {\em in time} so that we can reconstruct the developmental dynamics.
+Given our set of registered signals, shown in Figure \ref{subfig:1d_aligned_unordered}, we now wish to order them {\em in time} so that we can reconstruct the developmental dynamics.
 %
 We will use diffusion maps (DMAPS) \cite{coifman2005geometric} to temporally order our data.
 %
 DMAPS aims to uncover a parameterization of high-dimensional data sampled from a low-dimensional nonlinear manifold.
 %
-The {\em essential} requirement for DMAPS is an appropriate distance metric $d(I_i, I_j)$ for comparing data points. 
+The {\em essential} requirement for DMAPS is an appropriate distance metric $d(x_i, x_j)$ for comparing data points. 
 %
 This can as simple as the standard Euclidean distance, or a more complex metric (such as a distance between features of the data points) for other data sets.
 
@@ -190,26 +238,34 @@ In our setup, we assume that our data are inherently one--dimensional, and that 
 %
 Therefore, ordering our data by $\phi_2(j)$ will allow us to automatically order our data in time. 
 
+We demonstrate how we can do this with our one--dimensional concentration profiles. 
+%
+We use the Euclidean distance between the aligned concentration profiles (the rows of Figure \ref{subfig:1d_aligned_unordered}) as our distances in \eqref{eq:dmaps_W}.
+%
+Figure \ref{subfig:1d_aligned_ordered} shows the data from Figure \ref{subfig:1d_aligned_unordered}, now sorted by the value of the first (non--trivial) dmaps component, $\phi_2$. 
+
 \subsection{Vector Diffusion Maps}
 
 Many times, we would to both align and order our data.
 %
-Our proposed alignment methodology, angular synchronization, utilizes the eigendecompostion of the matrix $H \in \mathbb{R}^{3m \times 3m}$, and our proposed ordering algorithm, diffusion maps, utilizes the eigendecomposition of the matrix $A \in \mathbb{R}^{m \times m}$.
+Our proposed alignment methodology, angular synchronization, utilizes the eigendecompostion of the matrix $H \in \mathbb{R}^{md \times md}$, and our proposed ordering algorithm, diffusion maps, utilizes the eigendecomposition of the matrix $A \in \mathbb{R}^{m \times m}$.
 %
 We can combine the two steps into one eigencomputation that allows us to {\em simultaneously} recover the optimal alignments and the temporal ordering.
 %
-This technique is called vector diffusion maps \cite{singer2012vector}.
+This technique is called vector diffusion maps (VDM) \cite{singer2012vector}.
 %
 It not only reduces the number of required eigencomputations, but also is much more robust to noise, as mistakes in alignment are also considered when ordering the data.
 
-For vector diffusion maps, we construct the matrix $S \in \mathbb{R}^{3m \times 3m}$, with
+For vector diffusion maps, we construct the matrix $S \in \mathbb{R}^{md \times md}$, with
 \begin{equation}
 	S_{ij} = A_{ij} H_{ij}
 \end{equation}
 %
-where $A$ is defined in \eqref{eq:dmaps_A}, the distance metric $d(I_i, I_j)$ is the Frobenius norm between the images {\em after} optimal pairwise alignment ($d(I_i, I_j) = \| f(I_j, \theta_{ij}, dx_{ij}, dy_{ij}) - I_i \|_F$), and $H$ is defined in \eqref{eq:H_to_R}.
+where $A$ is defined in \eqref{eq:dmaps_A} and $H$ is defined in \eqref{eq:H_to_R}.
+%
+The distance $d(x_i, x_j)$ is the distance between samples {\em after} alignment (i.e. it is the minimium obtained in \eqref{eq:opt_pairwise}). 
 
-We then compute the eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_{3m}$ and eigenvectors $\phi_1, \phi_2, \dots, \phi_{3m}$ of $S$, and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{3m}|$.
+We then compute the eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_{md}$ and eigenvectors $\phi_1, \phi_2, \dots, \phi_{md}$ of $S$, and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{md}|$.
 %
 Again, the top (block) eigenvector of $S$ gives us approximations to the optimal rotations for each image.
 %
@@ -219,18 +275,77 @@ In general, the embedding coordinates are given by
 \begin{equation}
 \psi_{k,l} (i) = \langle \phi_k(i), \phi_l(i) \rangle
 \end{equation}
-where $\phi_k(i) \in \mathbb{R}^3$ denotes the $i^{th}$ block of $\phi_k$.
+where $\phi_k(i) \in \mathbb{R}^d$ denotes the $i^{th}$ block of $\phi_k$.
 %
-If we assume that our data are one--dimensional, and that the rotations and the dynamics are uncoupled and therefore separable, one can show that the ``correct'' embedding coordinate (i.e. the analog of $\phi_2$ from the diffusion maps case) is $\psi_{1,4}$.
+If we assume that our data are one--dimensional, and that the rotations and the dynamics are uncoupled and therefore separable, one can show that the ``correct'' embedding coordinate (i.e. the analog of $\phi_2$ from the diffusion maps case) is $\psi_{1,d+1}$.
 %
 If no such claims can be made, then one often runs a second step of diffusion maps, using $\psi_{k,l}$ as the data points, in order to uncover the true manifold modulo symmetries. 
 
+Figure \ref{subfig:1d_aligned_ordered_vdm} shows the result of aligning and ordering the data in Figure \ref{subfig:1d_unaligned_unordered} using vector diffusion maps. 
+%
+The data has been ordered by $\psi_{1, 3}$. 
 
-\section{Appendix}
+\subsection{Registering Images with Respect to Translations and Rotations}
 
-\subsection{Angular Synchronization Implementation}
+We now note that, for \eqref{eq:H_low_rank} to be satisfied, we require that the group operation matrices be orthogonal, i.e. $R(\alpha)^{-1} = R(\alpha)^T$. 
+%
+The typical matrix representation for $ISO(2)$, the group of two--dimensional translations and rotations (using the matrix representation for the affine group \cite{...}), does not satisfy this property. 
+%
+However, we can (approximately) represent rotations and translations in two--dimensions using three--dimensional rotation matrices.
+%
+We do this by projecting the image onto a portion of the surface of a (three--dimensional) sphere.
+%
+Rotations in two--dimensions now correspond to rotations around one principal axis in three--dimensions, and translations in two--dimensions correspond (approximately) to rotations around the other two principal axes in three--dimensions \footnote{Clearly, not all translations can be described this way, as translations can range from $-\infty$ to $+ \infty$, and rotations are only from $0$ to $2 \pi$. However, the images we will be considering are already mostly centered, and so we are only interested in small translations that are well within the $[0, 2\pi)$ range.}.
+%
+These rotation matrices are (by definition) orthoganol, and successive applications of various translations and rotations can be described via multiplication of the corresponding rotation matrices in $SO(3)$.
+%
+See the Appendix for more details
+
+
+
+
+\section{Results}
+
+\begin{figure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{fig4a}
+\caption{}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{dpERK_rank_corr}
+\caption{}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{fig4c}
+\caption{}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{Dl_rank_corr}
+\caption{}
+\end{subfigure}
+\end{figure}
+
+\appendix
+
+\section{Computing Optimal Alignments for One--Dimensional Signals} 
+
+To compute the optimal angles in \eqref{eq:opt_angle}, we search over all possible shifts of the signals. 
 
 \subsubsection{Computing Optimal Pairwise Alignments}
+The first step in angular synchronization is to compute the translations and rotations to optimally align each pair of data points. 
+%
+For each image pair $I_i$ and $I_j$, we solve
+\begin{equation}\label{eq:opt_pairwise}
+(\theta_{ij}, dx_{ij}, dy_{ij}) = \argmin_{
+\begin{matrix}
+\theta \in [0, 2\pi) \\ 
+dx \in [-\Delta, \Delta]\\ 
+dy \in [-\Delta, \Delta]
+\end{matrix}
+} \|f(I_j, \theta, dx, dy) - I_i \|_F^2.
+\end{equation}
+where $\| \cdot \|_F$ denotes the Frobenius norm, $\Delta$ is the maximum number of pixels by which we are allowed to translate the image, and $f(I_j, \theta, dx, dy)$ is a function that first rotates the image $I_j$ by $\theta$ degrees, then translates the image by $dx$ pixels in the $x$ direction, and finally translates the image by $dy$ pixels in the $y$ direction. 
+%
 
 In \eqref{eq:opt_pairwise}, we take $\Delta=20$, which corresponds to a 20\% shift in the image. 
 %
@@ -291,7 +406,20 @@ We then write the total rotation $R_{ij} \in SO(3)$ as
 %
 \eqref{eq:total_rot} corresponds to first rotating the image by $\theta$, then translating the image by $dx$ pixels in the $x$ direction, and finally translating the image by $dy$ pixels in the $y$ direction (we note that, because the rotation matrices operate from the left, the rightmost rotation matrix in the product in \eqref{eq:total_rot} corresponds to the first operation we perform on the image).
 
+ADD HOW WE ROTATE AND TRANSLATE, FILL IN MISSING PIXELS, ETC.
+
 \subsubsection{Computing Optimal Translations and Rotations from the Eigenvectors of $H$}
+
+%
+We then compute the three--dimensional rotation, $R_{ij} \in SO(3)$, from the two--dimensional translation and rotation parameters $\theta_{ij}$, $dx_{ij}$, and $dy_{ij}$ (see Appendix for more details).
+%
+We then build the matrix $H \in \mathbb{R}^{3m \times 3m}$ as described in \eqref{eq:H_to_R}, and compute the top block eigenvector of $H$, $\hat{R} \in \mathbb{R}^{3m \times 3}.$ 
+%
+The $3 \times 3$ blocks of $\hat{R}$ contain approximations of $R_1, \dots, R_m$.  
+%
+Because the blocks are not guaranteed to lie in $SO(3)$, we then project each block back to $SO(3)$ (see Appendix).
+%
+To register the images, we compute the translations and rotation corresponding to $R_i^T$. 
 
 From the top block eigenvector $\hat{R} \in \mathbb{R}^{3m \times 3}$, we would like to compute the optimal translation and rotation for each image. 
 %

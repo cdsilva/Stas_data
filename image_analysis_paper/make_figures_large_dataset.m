@@ -112,6 +112,7 @@ for j=1:length(image_channel)
     ylabel('rank from vdm')
     
     image_set_aligned2 = uint8(image_set_aligned(:,:,I));
-    save(mat_file_names{j}, 'image_set_aligned2', 'ranks_from_membranes', 'ranks_from_vdm');
-    save(mat_file_names_all{j})
+    pause
+    %save(mat_file_names{j}, 'image_set_aligned2', 'ranks_from_membranes', 'ranks_from_vdm');
+    %save(mat_file_names_all{j})
 end

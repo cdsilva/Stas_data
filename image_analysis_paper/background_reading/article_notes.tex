@@ -8,98 +8,35 @@
 
 \begin{document}
 
-\section{References from Stas}
+\section{Biology Applications}
 
 \begin{enumerate}
 
-\item \fullcite{wei2006conditional}
+%\item \fullcite{golani1999phenotyping}
+
+\item \fullcite{anavy2014blind}
 \begin{itemize}
-		\item Want to develop a more informative growth chart metric
-		\item Instead of looking at how atypical a current measurement is for an individual, they look at how atypical a time series is for an individual 
-		\item This means that a person will be flagged if, for example, their weight changes dramatically in a short period of time, even if both measurements are within the ``normal'' range
-		\item Fit model to data for ``normal'' time--series behavior
+	\item Want to temporally order RNA-Seq data
+	\item First do PCA on RNA-Seq data to denoise/reduce dimension
+	\item Then solve a TSP in this reduced space; assume that the path found by the TSP is the ``correct'' developmental path
+	\item Assume later stages in development are characterized by more variability/higher entropy to determine where the path starts (in time) and where it ends
 \end{itemize}
 
-\item \fullcite{wei2006quantile}
+\item \fullcite{basu2014detecting}
 \begin{itemize}
-	\item Develop nonparameteric models (using spline regression) for growth charts
-	\item Typical growth charts rely on normality assumptions (data is often transformed to fulfill such assumptions)
-	\item Using nonparametric models can allow them to fit a much broader range of behaviors (i.e. bimodal distributions)
+	\item Want to detect changes in cell morphology
+	\item First use image segmentation to extract individual cells from image
+	\item Center images, and align main axis of cell to be vertical
+	\item Consider pictures as mass distributions (more color = more mass); describe distance between cells to be the amount of effort one must exert (mass * distance) to make one picture look like the other
+	\item Then use PCA to visualize this data
 \end{itemize}
-
-\item \fullcite{li2009stochastic}
-\begin{itemize}
-	\item Want to look at mechanism for {\em eve} stripe formation
-	\item Propose a large gene/protein interaction network
-	\item Use maximum likelihood to prune the network and find the most probable network that would give rise to the observed spatiotemporal dynamics
-\end{itemize}
-
-\item \fullcite{jordan2013behavioral}
-\begin{itemize}
-	\item Look at phenotypic diversity of the swimming of the ciliate {\em Tetrahymena}
-	\item Record the swimming trajectories of many samples over their lifetimes
-	\item Define similarity metric between trajectories (compare distributions of speeds and angular velocities)
-	\item Use multidimensional scaling (MDS) to embed the trajectories in a lower-dimensional space
-	\item Find that there are two ``important'' dimensions that describe all trajectories
-	\item Can then look at whether these (low-dimensional) phenotypes are preserved through generations
-\end{itemize}
-
-\item \fullcite{tucker2010pseudotemporal}
-\begin{itemize}
-	\item Uses cross-sectional data of eye disease progression (e.g. glaucoma).
-	\item Build time series from cross-sectional data (``pseudo time series'')
-	\item Subsample data; from each subsample, build a ``pseudo time series'' by finding the shortest path through the points
-	\item Use these shortest paths as time series to train a time series model (i.e. a HMM model).
-\end{itemize}
-
-\item \fullcite{kafri2013dynamics}
-\begin{itemize}
-	\item Take snapshot of fixed cell population
-	\item Fit 1D curve to trajectory (they assert that the two ``important'' parameters are levels of DNA and the level of ``anaphase-promoting complex'', so they project onto these two components and then fit a 1D closed curve to the data)
-	\item Since the cells follow a closed cycle, given the closed curve, they can use mass balances to determine the relative rates/fluxes through the different stages
-\end{itemize}
-
-\item \fullcite{wyart2010evaluating}
-
-\begin{itemize}
-	\item Use RNA FISH technique to count levels of individual mRNAs in cells; requires cells to be fixed
-	\item Propose models for dynamics of mRNA throughout cell cycle
-	\item Show how they can use data from population of fixed cells to fit model (periodic model for level of mRNA production)
-\end{itemize}
-
-\item \fullcite{chen2012nonlinear}
-
-\item \fullcite{das2013dynamic}
-
-\item \fullcite{schindler2007inferring}
-\begin{itemize}
-	\item Want to order images that span many years
-	\item Solve a constraint satisfaction problem (CSP)
-	\item Find features in images, and then try to match up the features between the different images
-	\item Use structure from motion (SFM) algorithms to construct 3D points and camera angles from 2D images
-	\item Given the sets of features in each image, they then try to order the images in a way that is ``most consistent'' with how buildings are constructed in the real world (i.e. buildings are built, persist for some time, and then can be torn down)-- this is what they call the CSP
-\end{itemize}
-\item \fullcite{bigot2012geometric}
 
 \item \fullcite{escudero2011epithelial}
-
-\item \fullcite{machta2013parameter}
-
-\item \fullcite{peng2013detecting}
 \begin{itemize}
-	\item Wants to find which genes/SNPs are responsible for variation in facial features
-	\item Has DNA data and 3D face scans for many samples
-	\item Looks at different facial models (all are based on landmarks)
-	\item Tries to find which variations in the facial models correlate with which SNPs
-\end{itemize}
-
-\item \fullcite{gerber2010visual}
-\begin{itemize}
-	\item Want to find a ``good'' way to visualize high--dimensional functions
-	\item First find local maxima and minima in data set
-	\item Use these maxima and minima to segment the domain of the function into ``crystals''
-	\item Approximate each crystal by a line/curve
-	\item Embed the maxima and minima in 2D using PCA; draw lines connecting relevant maxima and minima
+	\item Want to be able to characterize differences in cellular organization between organisms
+	\item Describe cells using features of cell morphology (i.e. average size of cells) as well as features of cell organization (i.e. how many neighbors does each cell have?)
+	\item Think of cell organization as a network (each cell is a node, connected by links to its neighbors), and then use network descriptors (degree, average degree of neighbors, clustering coefficient) to describe cell organization
+	\item Then use PCA and discriminant analysis (like regression, but for categorize variables) to show they can separate mutants and WT cells using these network + morphology features
 \end{itemize}
 
 \item \fullcite{qiu2011discovering}
@@ -119,42 +56,21 @@
 	\item Use a probabilistic gene/patient model to model the variation from patient to patient (model underlying dynamics with splines, and then assume rest in noise from patient-to-patient variability)
 \end{itemize}
 
-\item \fullcite{lau2009modeling}
+\item \fullcite{kafri2013dynamics}
 \begin{itemize}
-	\item Want to model trajectory/motion data where each sample is a trajectory
-	\item Assume that the trajectories come from a second-order Markov model (i.e. $t+2$ depends on $t$ and $t+1$)
-	\item Fit a Bayesian network that models the trajectory evolution using training data
-	\item Can then produce new sample trajectories from this Bayesian network
+	\item Take snapshot of fixed cell population
+	\item Fit 1D curve to trajectory (they assert that the two ``important'' parameters are levels of DNA and the level of ``anaphase-promoting complex'', so they project onto these two components and then fit a 1D closed curve to the data)
+	\item Since the cells follow a closed cycle, given the closed curve, they can use mass balances to determine the relative rates/fluxes through the different stages
 \end{itemize}
 
-\item \fullcite{toga2003temporal}
-\begin{itemize}
-	\item Want to model spatiotemporal changes in the 3D structure of the brain (so that one can detect disease, etc.)
-	\item Model growth of different portions of the brain using deformation mapping (look at deformation of different regions of a {\em single} person's brain from one scan to the next)
-	\item Can fit cortical models for each person in a population; can then look at variations across these models
-\end{itemize}  
+\item \fullcite{wyart2010evaluating}
 
-\item \fullcite{li2012modelling}
 \begin{itemize}
-	\item Want to use cross--sectional data to model disease progression
-	\item Data are things that are known to be important/telling for that particlular disease (i.e. breast cancer data contains descriptors of cell morphology, Parkinson's disease data contains descriptors of speech patterns)
-	\item Create ``pseudo time series'' by subsampling data, and from each subsample, finding shortest path that goes from a healthy sample to a diseased sample
-	\item From these pseudo time series, can fit a hidden Markov model to find different states of disease progression and likely transitions from one state to another
+	\item Use RNA FISH technique to count levels of individual mRNAs in cells; requires cells to be fixed
+	\item Propose models for dynamics of mRNA throughout cell cycle
+	\item Show how they can use data from population of fixed cells to fit model (periodic model for level of mRNA production)
 \end{itemize}
 
-\item \fullcite{denkinger2013set}
-\begin{itemize}
-	\item Want to develop a standardized data set that can be used to investigate temporal and causal neural processing
-	\item Developed a set of 222 images which contain different causal and temporal relationships
-\end{itemize}
-
-\item \fullcite{xu2012comprehensive}
-\begin{itemize}
-	\item Want to quantify shape of liver lesions
-	\item Take set of 14 common shape descriptors
-	\item Use regression to find optimal combination of shape descriptors that can predict the similairity using a ``similairity reference standard''
-	\item FINISH
-\end{itemize}
 \item \fullcite{sisan2010event}
 \begin{itemize}
 	\item Looks at time correlations in data to determine temporal ordering
@@ -164,23 +80,161 @@
 	\item Looking at time correlation over many samples integrates/averages out stocahsticity in system
 \end{itemize}
 
-\item \fullcite{golparvar2011monitoring}
+\item \fullcite{peng2013detecting}
+\begin{itemize}
+	\item Wants to find which genes/SNPs are responsible for variation in facial features
+	\item Has DNA data and 3D face scans for many samples
+	\item Looks at different facial models (all are based on landmarks)
+	\item Tries to find which variations in the facial models correlate with which SNPs
+\end{itemize}
 
-\item \fullcite{golani1999phenotyping}
+\item \fullcite{li2009stochastic}
+\begin{itemize}
+	\item Want to look at mechanism for {\em eve} stripe formation
+	\item Propose a large gene/protein interaction network
+	\item Use maximum likelihood to prune the network and find the most probable network that would give rise to the observed spatiotemporal dynamics
+\end{itemize}
+
+\item \fullcite{jordan2013behavioral}
+\begin{itemize}
+	\item Look at phenotypic diversity of the swimming of the ciliate {\em Tetrahymena}
+	\item Record the swimming trajectories of many samples over their lifetimes
+	\item Define similarity metric between trajectories (compare distributions of speeds and angular velocities)
+	\item Use multidimensional scaling (MDS) to embed the trajectories in a lower-dimensional space
+	\item Find that there are two ``important'' dimensions that describe all trajectories
+	\item Can then look at whether these (low-dimensional) phenotypes are preserved through generations
+\end{itemize}
+
+\end{enumerate}
+
+\section{Medical Statistics Applications}
+
+\begin{enumerate}
+
+\item \fullcite{li2012modelling}
+\begin{itemize}
+	\item Want to use cross--sectional data to model disease progression
+	\item Data are things that are known to be important/telling for that particlular disease (i.e. breast cancer data contains descriptors of cell morphology, Parkinson's disease data contains descriptors of speech patterns)
+	\item Create ``pseudo time series'' by subsampling data, and from each subsample, finding shortest path that goes from a healthy sample to a diseased sample
+	\item From these pseudo time series, can fit a hidden Markov model to find different states of disease progression and likely transitions from one state to another
+\end{itemize}
+
+\item \fullcite{tucker2010pseudotemporal}
+\begin{itemize}
+	\item Uses cross-sectional data of eye disease progression (e.g. glaucoma).
+	\item Build time series from cross-sectional data (``pseudo time series'')
+	\item Subsample data; from each subsample, build a ``pseudo time series'' by finding the shortest path through the points
+	\item Use these shortest paths as time series to train a time series model (i.e. a HMM model).
+\end{itemize}
+
+\item \fullcite{das2013dynamic}
+\begin{itemize}
+	\item Use spline regression to model disease progression from irregular longitudinal data
+\end{itemize}
+
+\item \fullcite{xu2012comprehensive}
+\begin{itemize}
+	\item Want to quantify shape of liver lesions
+	\item Take set of 14 common shape descriptors
+	\item Use regression to find optimal combination of shape descriptors that can predict the similairity using a ``similairity reference standard''
+\end{itemize}
+
+\item \fullcite{wei2006conditional}
+\begin{itemize}
+		\item Want to develop a more informative growth chart metric
+		\item Instead of looking at how atypical a current measurement is for an individual, they look at how atypical a time series is for an individual 
+		\item This means that a person will be flagged if, for example, their weight changes dramatically in a short period of time, even if both measurements are within the ``normal'' range
+		\item Fit model to data for ``normal'' time--series behavior
+\end{itemize}
+
+\item \fullcite{wei2006quantile}
+\begin{itemize}
+	\item Develop nonparameteric models (using spline regression) for growth charts
+	\item Typical growth charts rely on normality assumptions (data is often transformed to fulfill such assumptions)
+	\item Using nonparametric models can allow them to fit a much broader range of behaviors (i.e. bimodal distributions)
+\end{itemize}
+
+
+\item \fullcite{toga2003temporal}
+\begin{itemize}
+	\item Want to model spatiotemporal changes in the 3D structure of the brain (so that one can detect disease, etc.)
+	\item Model growth of different portions of the brain using deformation mapping (look at deformation of different regions of a {\em single} person's brain from one scan to the next)
+	\item Can fit cortical models for each person in a population; can then look at variations across these models
+\end{itemize}  
+
+\item \fullcite{denkinger2013set}
+\begin{itemize}
+	\item Want to develop a standardized data set that can be used to investigate temporal and causal neural processing
+	\item Developed a set of 222 images which contain different causal and temporal relationships
+\end{itemize}
+
+\end{enumerate}
+
+\section{Image Applications}
+
+\begin{enumerate}
+
+\item \fullcite{lau2009modeling}
+\begin{itemize}
+	\item Want to model trajectory/motion data where each sample is a trajectory
+	\item Assume that the trajectories come from a second-order Markov model (i.e. $t+2$ depends on $t$ and $t+1$)
+	\item Fit a Bayesian network that models the trajectory evolution using training data
+	\item Can then produce new sample trajectories from this Bayesian network
+\end{itemize}
+
+\item \fullcite{schindler2007inferring}
+\begin{itemize}
+	\item Want to order images that span many years
+	\item Solve a constraint satisfaction problem (CSP)
+	\item Find features in images, and then try to match up the features between the different images
+	\item Use structure from motion (SFM) algorithms to construct 3D points and camera angles from 2D images
+	\item Given the sets of features in each image, they then try to order the images in a way that is ``most consistent'' with how buildings are constructed in the real world (i.e. buildings are built, persist for some time, and then can be torn down)-- this is what they call the CSP
+\end{itemize}
+
+\item \fullcite{bigot2012geometric}
+\begin{itemize}
+	\item Want to do PCA on 2D images (e.g. handwritten digits)
+	\item Typically, Euclidean distance is not a good metric for images
+	\item They define a {\em deformation operator}, and compute the deformation operator needed to take each image to a specified template
+	\item They then do PCA on these deformation operators to see what are ``typical'' deformations in handwritten digits
+\end{itemize}
+
+\item \fullcite{golparvar2011monitoring}
 \begin{itemize}
 	\item Want to construct video of construction progress from snapshots
 	\item Building Information Models (BIM) 
 \end{itemize}
 
-\item \fullcite{anavy2014blind}
+\end{enumerate}
 
-\item \fullcite{basu2014detecting}
+\section{Math/Algorithms (Temporal)}
 
+\begin{enumerate}
+
+\item \fullcite{machta2013parameter}
+\begin{itemize}
+	\item Look at Fisher Information Matrix (measures sensitvity of model to changes in parameters)
+	\item Eigenvalues of FIM tell you how many ``important'' or stiff parameters there are in the system
+	\item Demonstrate how we can use this to see how many parameters are necessary to describe diffusion and an Ising model
+\end{itemize}
+
+\item \fullcite{gerber2010visual}
+\begin{itemize}
+	\item Want to find a ``good'' way to visualize high--dimensional functions
+	\item First find local maxima and minima in data set
+	\item Use these maxima and minima to segment the domain of the function into ``crystals''
+	\item Approximate each crystal by a line/curve
+	\item Embed the maxima and minima in 2D using PCA; draw lines connecting relevant maxima and minima
+\end{itemize}
+
+\item \fullcite{chen2012nonlinear}
+\begin{itemize}
+	\item Want to look at reduced representations for data, where each data point is a function (e.g. a growth trajectory or curve)
+\end{itemize}
 
 \end{enumerate}
 
-
-\section{Algorithms}
+\section{Math/Algorithms (Symmetries)}
 
 \begin{enumerate}
 
@@ -227,7 +281,7 @@
 
 \end{enumerate}
 
-\section{Applications}
+\section{Applications (Symmetries)}
 
 \begin{enumerate}
 
