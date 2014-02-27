@@ -333,7 +333,7 @@ To compute the optimal angles in \eqref{eq:opt_angle}, we search over all possib
 %
 The signal is discritized into $100$ points.
 
-\subsubsection{Computing Optimal Pairwise Alignments}
+\section{Computing Optimal Pairwise Alignments for Two--Dimensional Images}
 The first step in angular synchronization is to compute the translations and rotations to optimally align each pair of data points. 
 %
 For each image pair $I_i$ and $I_j$, we solve
@@ -344,15 +344,15 @@ For each image pair $I_i$ and $I_j$, we solve
 dx \in [-\Delta, \Delta]\\ 
 dy \in [-\Delta, \Delta]
 \end{matrix}
-} \|f(I_j, \theta, dx, dy) - I_i \|_F^2.
+} \|g(I_j, \theta, dx, dy) - I_i \|_F^2.
 \end{equation}
-where $\| \cdot \|_F$ denotes the Frobenius norm, $\Delta$ is the maximum number of pixels by which we are allowed to translate the image, and $f(I_j, \theta, dx, dy)$ is a function that first rotates the image $I_j$ by $\theta$ degrees, then translates the image by $dx$ pixels in the $x$ direction, and finally translates the image by $dy$ pixels in the $y$ direction. 
+where $\| \cdot \|_F$ denotes the Frobenius norm, $\Delta$ is the maximum number of pixels by which we are allowed to translate the image, and $g(I_j, \theta, dx, dy)$ is a function that first rotates the image $I_j$ by $\theta$ degrees, then translates the image by $dx$ pixels in the $x$ direction, and finally translates the image by $dy$ pixels in the $y$ direction. 
 %
 The image rotation is done with the \texttt{imrotate} function in Matlab, using nearest neighbor interpolation.
 %
 The missing pixels at the corners of the rotated image are taken to be black.
 %
-The translations are done by shifting the pixels, and taking this missing pixels to be black. 
+The translations are done by shifting the pixels, and taking the missing pixels at the edges of the image to be black; we only consider shifts that correspond to an integer number of pixels, to remove the need for interpolation when doing the translations. 
 %
 In \eqref{eq:opt_pairwise}, we take $\Delta=20$, which corresponds to a 20\% shift in the image. 
 %
@@ -370,7 +370,7 @@ The solution to this search will not be the exact solution to \eqref{eq:opt_pair
 %
 Since our techniques are robust to noise, close approximations will be sufficient to obtain accurate results.
 
-\subsubsection{Converting from $ISO(2)$ to $SO(3)$}
+\section{Converting from $ISO(2)$ to $SO(3)$}
 
 In the space of three--dimensional rotations, the Euler angles $\alpha_{ij}$, $\beta_{ij}$, and $\gamma_{ij}$ correspond to
 \begin{equation} \label{eq:angle_relations}
@@ -415,7 +415,7 @@ We then write the total rotation $R_{ij} \in SO(3)$ as
 
 ADD HOW WE ROTATE AND TRANSLATE, FILL IN MISSING PIXELS, ETC.
 
-\subsubsection{Computing Optimal Translations and Rotations from the Eigenvectors of $H$}
+\section{Computing Optimal Translations and Rotations from the Eigenvectors of $H$}
 
 %
 We then compute the three--dimensional rotation, $R_{ij} \in SO(3)$, from the two--dimensional translation and rotation parameters $\theta_{ij}$, $dx_{ij}$, and $dy_{ij}$ (see Appendix for more details).
