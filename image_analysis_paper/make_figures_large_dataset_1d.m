@@ -49,6 +49,10 @@ for i=2:m
     dpERK_unaligned(i,:) = circshift(dpERK(i,:),[0 rand_offsets(i)]);
 end
 
+% dpERK_unaligned = [dpERK_unaligned; fliplr(dpERK_unaligned)];
+% mem_lengths = [mem_lengths; mem_lengths];
+% ranks_from_membranes = compute_ranks(mem_lengths);
+
 %%
 figure;
 set(gcf, 'paperposition',[0 0 8 8])

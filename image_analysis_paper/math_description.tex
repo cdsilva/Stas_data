@@ -47,13 +47,13 @@ Because we consider {\em all} pairwise alignments, angular synchronization is of
 
 We will first discuss angular synchronization {\em only} considering rotations. 
 %
-Let $x_1, \dots, x_m \in \mathbb{R}^x$ denote the signals that we wish to align with respect to rotations.
+Let $x_1, \dots, x_m \in \mathbb{R}^n$ denote the signals that we wish to align with respect to rotations.
 %
 We assume that each signal $x_i$ is a noisy rotated copy of the underlying signal $x_{true}$ (which we are {\em not} given), such that 
 \begin{equation}
 x_i = f(x_{true}, \theta_i) + \xi_i
 \end{equation}
-where $f(x_{true}, \theta_i)$ rotates the signal $x_{true}$ by $\theta_i$ degrees, and $\xi_i$ is a noise term (often Gaussian noise). 
+where the function $f(x_{true}, \theta_i)$ rotates the signal $x_{true}$ by $\theta_i$ degrees, and $\xi_i$ is a noise term (often Gaussian noise). 
 %
 Our goal is to obtain estimates of $\theta_1, \dots, \theta_m$ so that we can align $x_1, \dots, x_m$. 
 %
@@ -63,7 +63,7 @@ x_i \approx f(x_j, \theta_i - \theta_j) ;
 \end{equation}
  note that \eqref{eq:pairwise_rot} does not require knowledge of $x_{true}$.
 %
-We can obtain {\em estimates} of $\theta_i - \theta_j$ by computing the rotations to optimally align $x_j$ to $x_i$, 
+We can obtain an {\em estimate} of $\theta_i - \theta_j$ by computing the rotation that optimally aligns $x_j$ to $x_i$, 
 i.e., $\theta_{ij} \approx \theta_i - \theta_j$, where
 %
 \begin{equation} \label{eq:opt_angle}
@@ -78,13 +78,13 @@ R(\theta_{ij}) = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 %
-Successive rotations correspond to multiplication of the rotation matrices, i.e., 
+Successive rotations now correspond to multiplication of rotation matrices, i.e., 
 $R(\alpha_1 + \alpha_2) = R(\alpha_1) R(\alpha_2)$,
 and, due to the orthogonality of rotation matrices, $R(-\alpha) = R(\alpha)^T$.
 
-Let $d$ denote the dimension of the rotation matrices we are considering (for our example of planar rotations, $R(\theta_{ij}) \in \mathbb{R}^{2 \times 2}$ and $d=2$; we describe this for general $d$ because we will later consider three--dimensional rotations).
+Let $d$ denote the dimension of the rotation matrices we are considering (for our example of planar rotations, $R(\theta_{ij}) \in \mathbb{R}^{2 \times 2}$ and $d=2$; we will write our procedure for general $d$ because we will later consider three--dimensional rotations).
 %
-We then construct the matrix $H \in \mathbb{R}^{md \times md}$, where $H$ is an $m \times m$ matrix of $d \times d$ blocks with
+We construct the matrix $H \in \mathbb{R}^{md \times md}$, where $H$ is an $m \times m$ matrix of $d \times d$ blocks with
 \begin{equation} \label{eq:H_to_R}
 H_{ij} = R(\theta_{ij})
 \end{equation}
@@ -105,14 +105,14 @@ H_{ij} = R(\theta_{ij}) \approx R(\theta_i - \theta_j) = R(\theta_i) R(-\theta_j
 	\end{bmatrix}
 	\begin{bmatrix}
 	R(\theta_1)^T R(\theta_2)^T \dots R(\theta_m)^T
-	\end{bmatrix}
+	\end{bmatrix}.
 \end{equation}
 %
-We can (approximately) recover $R(\theta_1), R(\theta_2), \dots, R(\theta_m)$ by computing the top block eigenvector of $H$, which we will denote $\hat{R}$.
+From \eqref{eq:H_low_rank}, we can see that we can (approximately) recover $R(\theta_1), R(\theta_2), \dots, R(\theta_m)$ by computing the top block eigenvector of $H$, which we will denote $\hat{R}$.
 %
-Let $\phi_1, \phi_2, \dots, \phi_{md}$ denote the eigenvectors of $H$, ordered such that $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_{md}$, where $\lambda_i$ is the eigenvalue corresponding to $\phi_i$. 
+Let $\phi_1, \phi_2, \dots, \phi_{md}$ denote the eigenvectors of $H$, ordered such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{md}|$, where $\lambda_i$ is the eigenvalue corresponding to $\phi_i$. 
 %
-Then
+Then the top block eigenvector of $H$, $\hat{R}$, can be written as
 \begin{equation}
 \hat{R} = 
 \begin{bmatrix}
@@ -125,11 +125,11 @@ Then
 | & | & & | \\
 \phi_1 & \phi_2 & \dots & \phi_d \\
 | & | & & | 
-\end{bmatrix}
+\end{bmatrix},
 \end{equation}
-where $\hat{R}_i \in \mathbb{R}^{d \times d}$ is the estimate for $R(\theta_i)$. 
+and $\hat{R}_i \in \mathbb{R}^{d \times d}$ is the estimate for $R(\theta_i)$. 
 %
-Becaus $\hat{R}_i$ is not guaranteed to be a rotation matrix, we project $\hat{R}_i$ onto the closest rotation matrix. 
+Because $\hat{R}_i$ is not guaranteed to be a rotation matrix, we must project $\hat{R}_i$ onto the closest rotation matrix \cite{...}. 
 %
 Let $U_i$ and $V_i$ denote the left and right singular vectors, respectively, of $\hat{R}_i$.
 %
@@ -137,13 +137,13 @@ Then
 \begin{equation}
 R_{i, est} = U_i V_i^T
 \end{equation} 
-where $R_{i, est}$ is our estimate of $R(\theta_i)$. 
+where $R_{i, est}$ is an orthonormal matrix and is our estimate of $R(\theta_i)$. 
 %
-Note that $R_{i, est}$ is not guaranteed to be a proper rotation; because we are permitted to scale the eigenvectors of a matrix, we adjust the sign of $\rho_d$ so that (most of) the rotations are proper. 
+Note that $R_{i, est}$ is not guaranteed to be a proper rotation (i.e. $det(R_{i, est} = \pm 1)$; because we are permitted to scale the eigenvectors of a matrix, we adjust the sign of $\\phi_d$ so that (most of) the rotations are proper. 
 %
-We can estimate $\theta_{i}$ by inverting \eqref{eq:R_theta}, and then register the signals by rotating image $i$ by $-\theta_i$. 
+We can now estimate $\theta_{i}$ by inverting \eqref{eq:R_theta}, and then register the signals by rotating signal $i$ by $-\theta_i$. 
 
-Furthermore, this eigendecomposition also considers {\em higher--order} consistency information. 
+Furthermore, this formulation also considers {\em higher--order} consistency information. 
 %
 For example, given our pairwise estimates $R_{ij}$, we know that relationships of the form
 \begin{equation} \label{eq:triplet_consistency}
@@ -151,15 +151,15 @@ R(\theta_{ik}) R(\theta_{kj}) \approx R(\theta_i) R(\theta_k)^T R(\theta_k) R(\t
 \end{equation}
 should also hold.
 %
-However, 
+Note that
 \begin{equation}
-(H^2)_{ij} = \sum_k R(\theta_{ik}) R(\theta_{kj})
+(H^2)_{ij} = \sum_k R(\theta_{ik}) R(\theta_{kj});
 \end{equation}
-and so {\em all} infomation of the form in \eqref{eq:triplet_consistency} is contained in the matrix $H^2$.
+therefore, {\em all} infomation of the form in \eqref{eq:triplet_consistency} is contained in the matrix $H^2$.
 %
 Because $H$ and $H^2$ have the same eigenvectors, our problem formulation accounts for not only pairwise alignment information, but also these higher--order considerations. 
 
-To illustrate how angular synchronization works, we have converted the two--dimensional images into concentration profiles on a ring (we will address the full two--dimensional images in a subsequent section). 
+To illustrate how angular synchronization works, we have converted the two--dimensional images shown in Figure \ref{fig:fluorescent_images} into concentration profiles on a ring (we will address the full two--dimensional images in a subsequent section). 
 %
 Figure \ref{subfig:1d_image_example} shows a typical image that we have converted to a one--dimensional concentration profile. 
 %
@@ -211,7 +211,7 @@ We will use diffusion maps (DMAPS) \cite{coifman2005geometric} to temporally ord
 %
 DMAPS aims to uncover a parameterization of high-dimensional data sampled from a low-dimensional nonlinear manifold.
 %
-In our framework, we assume that our data lie on a one--dimensional curve or manifold, and that this one dimension is correlated with time. 
+In our analysis, we will assume that our data lie on a one--dimensional curve or manifold, and that this one dimension is correlated with time. 
 %
 We will uncover a parameterization of this curve by only considering {\em local} neighbors of each data point.
 
@@ -219,7 +219,7 @@ To illustrate how local neighbors can allow us to uncover a global parameterizat
 %
 We consider $x_i$ ``close to'' $x_{i+1}$ and $x_{i-1}$, and $x_i$ ``far away from'' all other data points. 
 %
-We then construct the (symmetric) weight matrix, $W \in \mathbb{R}^{m \times m}$, where $W_{ij}$ is large if $x_i$ is close to $x_j$,
+We then construct the (symmetric) weight matrix, $W \in \mathbb{R}^{m \times m}$,
 \begin{equation}
 W = 
 \begin{bmatrix}
@@ -231,9 +231,11 @@ W =
 \end{bmatrix}.
 \end{equation}
 %
-If we normalize this matrix such that $\sum_j W_{ij} = 1$, then one can show that the first eigenvector of this normalized matrix is the all--ones vector, $\phi_1 = [1 1 \dots 1]^T$, and the second eigenvector is a cosine mode, $\phi_2 = [cos(\pi/m) \cos(2 \pi/ m) \dots \cos((m-1) \pi / m) \cos(\pi)]^T$.
+$W_{ij}$ is large if $x_i$ is close to $x_j$,
 %
-Therefore, the second eigenvector, $\phi_2$ is {\em one--to--one} with the parameterization of the data, i.e. $\phi_2(1) < \phi_2(2) < \dots < \phi_2(m)$, just as $x_1 < x_2 < \dots < x_m$. 
+If we normalize this matrix such that $\sum_j W_{ij} = 1$, then one can show that the first eigenvector of this normalized matrix is the all--ones vector, $\phi_1 = [1 1 \dots 1]^T$, and the second eigenvector is a cosine mode, $\phi_2 = [cos(\pi/m) \cos(2 \pi/ m) \cdots \cos((m-1) \pi / m) \cos(\pi)]^T$.
+%
+Therefore, the second eigenvector, $\phi_2$ is {\em one--to--one} with the parameterization of the data, i.e. $\phi_2(1) > \phi_2(2) > \dots > \phi_2(m)$, just as $x_1 < x_2 < \dots < x_m$. 
 %
 Therefore, sorting our data by the value of the entries in $\phi_2$ will allow us to order our data.
 
@@ -264,7 +266,7 @@ In our setup, we assume that our data are inherently one--dimensional, and that 
 %
 Therefore, ordering our data by $\phi_2(j)$ will allow us to automatically order our data in time. 
 
-We demonstrate how we can do this with our one--dimensional concentration profiles. 
+We demonstrate how we can apply these techniques to our (aligned)one--dimensional concentration profiles. 
 %
 We use the Euclidean distance between the aligned concentration profiles (the rows of Figure \ref{subfig:1d_aligned_unordered}) as our distances in \eqref{eq:dmaps_W}.
 %
@@ -293,9 +295,9 @@ The distance $d(x_i, x_j)$ used to compute $W_{ij}$ is the distance between samp
 
 We then compute the eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_{md}$ and eigenvectors $\phi_1, \phi_2, \dots, \phi_{md}$ of $S$, and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{md}|$.
 %
-Again, the top (block) eigenvector of $S$ contains approximations of the optimal rotations for each image.
+Again, the top (block) eigenvector of $S$ contains approximations of the optimal rotations for each image, and the rotations can be computed as described in Section \ref{subsec:angsynch}.
 %
-However, we now also obtain embedding coordinates for our images.
+However, the eigenvectors now also contain information about the embedding coordinates for our images.
 %
 In general, the embedding coordinates are given by 
 \begin{equation}
@@ -321,7 +323,7 @@ The typical matrix representation for the group of two--dimensional translations
 %
 However, we can (approximately) represent rotations and translations in two--dimensions using three--dimensional rotation matrices.
 %
-We do this by projecting the image onto a portion of the surface of a (three--dimensional) sphere (see Appendix).
+We do this by projecting the image onto a portion of the surface of a (three--dimensional) sphere (see Figure \ref{fig:SO3_picture}).
 %
 Rotations in two--dimensions now correspond to rotations around one principal axis in three--dimensions, and translations in two--dimensions correspond (approximately) to rotations around the other two principal axes in three--dimensions \footnote{Clearly, not all translations can be described this way, as translations can range from $-\infty$ to $+ \infty$, and rotations are only from $0$ to $2 \pi$. However, the images we will be considering are already mostly centered, and so we are only interested in small translations that are well within the $[0, 2\pi)$ range.}.
 %
@@ -374,9 +376,9 @@ dy \in [-\Delta, \Delta]
 \end{equation}
 where $\| \cdot \|_F$ denotes the Frobenius norm, $\Delta$ is the maximum number of pixels by which we are allowed to translate the image, and $g(I_j, \theta, dx, dy)$ is a function that first rotates the image $I_j$ by $\theta$ degrees, then translates the image by $dx$ pixels in the $x$ direction, and finally translates the image by $dy$ pixels in the $y$ direction. 
 %
-The image rotation is done with the \texttt{imrotate} function in Matlab, using nearest neighbor interpolation to interpolate the intensities of the pixels (since there is no direct mapping of the pixels of the unrotated image to the pixels of the rotated image).
+The image rotation is done with the \texttt{imrotate} function in Matlab, using nearest neighbor interpolation to estimate the pixel intensities, since there is no direct mapping of the pixels of the unrotated image to the pixels of the rotated image.
 %
-Also, the missing pixels in the rotated image due to corner effects are taken to be black.
+The missing pixels in the rotated image due to corner effects are taken to be black.
 %
 The translations are done by shifting the pixels with periodic boundary conditions.
 %
@@ -386,7 +388,7 @@ We only consider shifts that correspond to an integer number of pixels, to remov
 
 The solution to \eqref{eq:opt_pairwise} is not easily computed, as the objective function will most likely be nonconvex.
 %
-Therefore, instead of using an optimization procedure to compute the solution to \eqref{eq:opt_pairwise}, we choose to discretize the search space and exhaustively search to estimate the solution to \eqref{eq:opt_pairwise}.
+Therefore, instead of using an optimization procedure to compute the solution to \eqref{eq:opt_pairwise}, we choose to discretize the search space and exhaustively search to estimate the solution.
 %
 We discritize the search space of rotations into 20 possible rotations ($d\theta  \in \{0, \pi/10, \pi/5, \dots, 9 \pi/5, 19\pi/10 \}$), and 11 possible translations in both the $x$ and $y$ directions ($dx, dy \in \{-20, -16, -12, \dots, 12, 16, 20 \}$). 
 %
@@ -422,6 +424,7 @@ Since our techniques are robust to noise, close approximations will be sufficien
 \caption{}
 \end{subfigure}
 \caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. (a) The original image. (b) Rotation around the x--axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. (c) Rotation around the y--axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. (d) Rotation around the z--axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three--dimensional spheres, and the bottom row shows the (two--dimensional) surface of the sphere in which we are interested.}
+\label{fig:SO3_picture}
 \end{figure}
 
 As discussed in Section \ref{subsec:trans_rot_register}, the underlying symmetry group needs to have a real and orthoganol matrix representation. 
@@ -443,41 +446,40 @@ We take $\eta_{proj} =  \pi/8$, so the image lies on a $\pi/8 \times \pi/8$ radi
 From here, we can write rotations around the three principal axes in terms of the three Euler angles
 \begin{equation}
 \begin{aligned}
-	R^x_{ij} &= \begin{bmatrix}
+	R^x(\alpha) &= \begin{bmatrix}
 	1 & 0 & 0 \\
     0 & \cos(\alpha) & -\sin(\alpha) \\
     0 & \sin(\alpha) & \cos(\alpha)
 	\end{bmatrix} \\
-	R^y_{ij} &= \begin{bmatrix}
+	R^y(\beta) &= \begin{bmatrix}
 	\cos(\beta) & 0 & \sin(\beta) \\
     0 & 1 & 0 \\
     -\sin(\beta) & 0 & \cos(\beta)
     \end{bmatrix} \\
-	R^z_{ij} &= \begin{bmatrix} 
+	R^z(\gamma) &= \begin{bmatrix} 
 	\cos(\gamma) & -\sin(\gamma) & 0 \\
     \sin(\gamma) & \cos(\gamma) & 0 \\
     0 & 0 & 1 
     \end{bmatrix}
 \end{aligned}
 \end{equation}
-where $R^x_{ij}$, $R^y_{ij}$, and $R^z_{ij}$ correspond to rotations around the $x$, $y$, and $z$ axes, respectively.
+where $R^x(\alpha)$, $R^y(\beta)$, and $R^z(\gamma)$ correspond to rotations around the $x$, $y$, and $z$ axes, respectively.
 %
 We then write the total rotation $R_{ij} \in SO(3)$ as 
 \begin{equation} \label{eq:total_rot}
-	R_{ij}	 = R^z_{ij} \times R^y_{ij} \times R^x_{ij}
+	R(\alpha_{ij}, \beta_{ij}, \gamma_{ij})	 = R^z(\gamma_{ij})  R^y(\beta_{ij})  R^x(\alpha_{ij})
 \end{equation}
 %
 \eqref{eq:total_rot} corresponds to first rotating the image by $\theta$, then translating the image by $dx$ pixels in the $x$ direction, and finally translating the image by $dy$ pixels in the $y$ direction (we note that, because the rotation matrices operate from the left, the rightmost rotation matrix in the product in \eqref{eq:total_rot} corresponds to the first operation we perform on the image).
 
 \section{Computing Optimal Translations and Rotations from the Eigenvectors of $H$}
 
-We then compute the three--dimensional rotation, $R_{ij} \in SO(3)$, from the two--dimensional translation and rotation parameters $\theta_{ij}$, $dx_{ij}$, and $dy_{ij}$ (see Appendix for more details).
+From the three--dimensional rotation matrices $R(\alpha_{ij}, \beta_{ij}, \gamma_{ij})$,
+we build the matrix $H$ and compute the estimates $R_{i, est}$ as described in Section \ref{subsec:angsynch}.
 %
-We then build the matrix $H$ and compute the estimates $R_{i, est}$ as described in Section \ref{subsec:angsynch}.
+From the matrices $R_{1, est}, \dots, R_{m, est}$, we now wish to find the corresponding translations and rotations of the images.
 %
-From the matrices $R_{1, opt}, \dots, R_{m, opt}$, we now wish to find the corresponding translations and rotations of the images.
-%
-Because we are permitted to adjust our rotations by a global rotations, we first multiply all rotations by $R_1^T$ to ensure that all the images are (approximately) in the region of the sphere where we began.
+Because we are permitted to adjust our rotations by a global rotations, we first multiply all rotations by $R_{1, est}^T$ to ensure that all the images are (approximately) in the region of the sphere where we began.
 %
 We then compute the Euler angles $\alpha$, $\beta$, and $\gamma$ from the rotation matrix $R$ using the following relationships
 \begin{equation}
@@ -492,7 +494,7 @@ R_{3,3} & = \cos(\alpha)\cos(\beta)
 %
 We can then invert \eqref{eq:angle_relations} to compute the optimal translation and rotation for each image from the Euler angles.
 %
-We round the optimal translations to the nearest integer.
+We round the optimal translations to the nearest integer to remove the need for interpolation when translating the images. 
 
 \bibliographystyle{plain}
 \bibliography{../../references/references}
