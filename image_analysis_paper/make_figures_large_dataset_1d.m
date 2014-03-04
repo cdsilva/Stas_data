@@ -1,5 +1,5 @@
 clear all
-close all
+%close all
 
 time_data = '../membrane_pictures/large_dataset/time.mat';
 profile_data = '../membrane_pictures/large_dataset/dpERK04_big.mat';

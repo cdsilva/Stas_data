@@ -1,8 +1,7 @@
 clear all
-%close all
+close all
 
 %time_data = '../membrane_lengths/oct16.mat';
-%time_data = '../membrane_lengths/feb11.mat';
 time_data = '../membrane_lengths/mar15.mat';
 
 %% load membrane lengths
@@ -33,6 +32,27 @@ for i=1:m
     rand_offsets(i) = randi(n);
     dpERK_unaligned(i,:) = circshift(dpERK(i,:),[0 rand_offsets(i)]);
 end
+
+%% symmetrize data
+
+dpERK_symm = zeros(size(dpERK_unaligned));
+
+for i=1:m
+    dpERK_prof1 = dpERK_unaligned(i,:);
+    dpERK_prof2 = fliplr(dpERK_prof1);
+    min_dist = inf;
+    min_shift = 0;
+    for j=1:n
+        tmp_dist = sum((dpERK_prof1 - circshift(dpERK_prof2, [0 j])).^2);
+        if tmp_dist < min_dist
+            min_dist = tmp_dist;
+            min_shift = j;
+        end
+    end
+    dpERK_symm(i, :) = (dpERK_prof1 + circshift(dpERK_prof2, [0 min_shift]))/2;
+end
+
+dpERK_unaligned = dpERK_symm;
 
 % dpERK_unaligned = [dpERK_unaligned; fliplr(dpERK_unaligned)];
 % mem_lengths = [mem_lengths; mem_lengths];
