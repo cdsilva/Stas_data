@@ -2,8 +2,8 @@ clear all
 %close all
 
 %time_data = '../membrane_lengths/oct16.mat';
-%time_data = '../membrane_lengths/feb11.mat';
-time_data = '../membrane_lengths/mar15.mat';
+time_data = '../membrane_lengths/feb11.mat';
+%time_data = '../membrane_lengths/mar15.mat';
 
 %% load membrane lengths
 
@@ -11,7 +11,11 @@ load(time_data);
 mem_lengths = L(:,1);
 clear length;
 
+% [~, I] = sort(mem_lengths, 'descend');
+% ind = I(1:30);
+% mem_lengths = mem_lengths(ind);
 m = length(mem_lengths);
+
 ind = 1:m;
 
 % compute ranks from membrane lengths

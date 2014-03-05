@@ -18,6 +18,8 @@ clear length;
 
 % remove some younger embryos
 ind = setdiff(1:90, [3, 20, 25, 32, 53, 59, 61, 66, 82]);
+% [~, I] = sort(mem_lengths, 'descend');
+% ind = I(1:30);
 
 m = length(ind);
 
@@ -62,7 +64,7 @@ xlabel('position (unregistered)', 'fontsize', fontsize)
 ylabel('data sample (unordered)', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-print(sprintf('%s/unregistered_unordered_1d', im_save_dir), fmt, res);
+%print(sprintf('%s/unregistered_unordered_1d', im_save_dir), fmt, res);
 
 %% 
 
@@ -98,7 +100,7 @@ image(dpERK_unaligned(idx,:));
 axis off
 colormap(cm_red)
 
-print(sprintf('%s/illustrate_1d', im_save_dir), fmt, res);
+%print(sprintf('%s/illustrate_1d', im_save_dir), fmt, res);
 
 %%
 
@@ -130,7 +132,7 @@ xlabel('position (registered)', 'fontsize', fontsize)
 ylabel('data sample (unordered)', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-print(sprintf('%s/registered_unordered_1d', im_save_dir), fmt, res);
+%print(sprintf('%s/registered_unordered_1d', im_save_dir), fmt, res);
 
 W2 = squareform(pdist(dpERK_aligned));
 eps2 = median(W2(:));
@@ -151,7 +153,7 @@ xlabel('position (registered)', 'fontsize', fontsize)
 ylabel('data sample (ordered)', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-print(sprintf('%s/registered_ordered_1d', im_save_dir), fmt, res);
+%print(sprintf('%s/registered_ordered_1d', im_save_dir), fmt, res);
 
 ranks_from_membranes = compute_ranks(mem_lengths);
 ranks_from_angsynch = compute_ranks(V(:,2));
@@ -194,7 +196,7 @@ xlabel('position (registered)', 'fontsize', fontsize)
 ylabel('data sample (ordered)', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-print(sprintf('%s/registered_ordered_vdm_1d', im_save_dir), fmt, res);
+%print(sprintf('%s/registered_ordered_vdm_1d', im_save_dir), fmt, res);
 
 ranks_from_membranes = compute_ranks(mem_lengths);
 ranks_from_vdm = compute_ranks(embed_coord(:,idx));

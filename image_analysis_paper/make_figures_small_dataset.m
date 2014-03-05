@@ -3,20 +3,22 @@ close all
 
 %% set parameters 
 
-time_data = '../membrane_lengths/oct16.mat';
-image_dir = '../membrane_pictures/membrane2/dpERK_staining';
+%time_data = '../membrane_lengths/oct16.mat';
+%image_dir = '../membrane_pictures/membrane2/dpERK_staining';
 
+image_dir = '../membrane_pictures/sqhGFP_new';
 %% load membrane lengths
 
-load(time_data);
-mem_lengths = L(:,1);
-clear length;
-
-m = length(mem_lengths);
+% load(time_data);
+% mem_lengths = L(:,1);
+% clear length;
+% 
+% m = length(mem_lengths);
+m = 49;
 ind = 1:m;
 
 % compute ranks from membrane lengths
-ranks_from_membranes = compute_ranks(mem_lengths);
+% ranks_from_membranes = compute_ranks(mem_lengths);
 
 %% image parameters
 
@@ -88,9 +90,9 @@ for j=1:length(image_channel)
     
     idx = find(embed_idx(1,:) == 4 & embed_idx(2,:) == 1);
     
-    if corr(mem_lengths, embed_coord(:, idx)) < 0
-        embed_coord(:, idx) = -embed_coord(:, idx);
-    end
+%     if corr(mem_lengths, embed_coord(:, idx)) < 0
+%         embed_coord(:, idx) = -embed_coord(:, idx);
+%     end
     
     [~, I] = sort(embed_coord(:, idx));
     figure;
@@ -98,6 +100,8 @@ for j=1:length(image_channel)
         subplot(subplot_dim1, subplot_dim2, i);
         imshow(uint8(image_set_aligned(:,:,I(i))));
     end
+    
+    return
     
     ranks_from_membranes = compute_ranks(mem_lengths);
     ranks_from_vdm = compute_ranks(embed_coord(:,idx));
