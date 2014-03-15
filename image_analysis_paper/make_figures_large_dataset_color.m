@@ -33,6 +33,7 @@ npixels = 100;
 %set image plotting parameters
 subplot_dim1 = ceil(sqrt(m));
 subplot_dim2 = ceil(m / subplot_dim1);
+[Y, X] = meshgrid((subplot_dim1:-1:1)/subplot_dim1, (1:subplot_dim2)/subplot_dim2);
 
 nchannels = 3;
 image_set = zeros(npixels, npixels, nchannels, m, 'uint8');
@@ -77,13 +78,10 @@ figure;
 set(gcf, 'paperposition',[0 0 8 8])
 for i=1:m
     im1 = image_set(:,:,:,i);
-    subplot(subplot_dim1, subplot_dim2, i);
+    %subplot(subplot_dim1, subplot_dim2, i);
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1 1/subplot_dim2])
     imshow(im1);
     
-    pos = get(gca, 'position');
-    pos(3) = 0.0884;
-    pos(4) = 0.0884;
-    set(gca, 'position', pos)
 end
 print(sprintf('%s/unregistered_unordered_2d', im_save_dir), fmt, res);
 
@@ -97,13 +95,11 @@ figure;
 set(gcf, 'paperposition',[0 0 8 8])
 for i=1:m
     im1 = image_set_aligned(:,:,:,i);
-    subplot(subplot_dim1, subplot_dim2, i);
+    
+    %subplot(subplot_dim1, subplot_dim2, i);
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1 1/subplot_dim2])
     imshow(im1);
     
-    pos = get(gca, 'position');
-    pos(3) = 0.0884;
-    pos(4) = 0.0884;
-    set(gca, 'position', pos)
 end
 print(sprintf('%s/registered_unordered_2d', im_save_dir), fmt, res);
 
@@ -133,13 +129,10 @@ end
 figure;
 set(gcf, 'paperposition', [0 0 8 8])
 for i=1:m
-    subplot(subplot_dim1, subplot_dim2, i);
-    imshow(image_set_aligned(:,:,:,I(i)));
+    %subplot(subplot_dim1, subplot_dim2, i);
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1 1/subplot_dim2])
     
-    pos = get(gca, 'position');
-    pos(3) = 0.0884;
-    pos(4) = 0.0884;
-    set(gca, 'position', pos)
+    imshow(image_set_aligned(:,:,:,I(i)));
 end
 print(sprintf('%s/registered_ordered_2d', im_save_dir), fmt, res);
 
@@ -171,18 +164,12 @@ if corr(mem_lengths, embed_coord(:, idx)) < 0
 end
 
 [~, I] = sort(embed_coord(:, idx));
-%[Y, X] = meshgrid((subplot_dim1:-1:1)/subplot_dim1, (1:subplot_dim2)/subplot_dim2);
 figure;
 set(gcf, 'paperposition', [0 0 8 8])
 for i=1:m
-    subplot(subplot_dim1, subplot_dim2, i);
-    %subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1 1/subplot_dim2])
+    %subplot(subplot_dim1, subplot_dim2, i);
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1 1/subplot_dim2])
     imshow(image_set_aligned(:,:,:,I(i)));
-    
-    pos = get(gca, 'position');
-    pos(3) = 0.0884;
-    pos(4) = 0.0884;
-    set(gca, 'position', pos)
 end
 print(sprintf('%s/registered_ordered_vdm_2d', im_save_dir), fmt, res);
 
