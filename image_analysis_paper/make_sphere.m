@@ -10,12 +10,14 @@ fmt = '-djpeg';
 
 im_save_dir = 'paper_figures';
 
-n = 100;
+n = 25;
 
 [X, Y, Z] = sphere(n);
 
 C = zeros(size(X));
 C(round(0.4*n):round(0.6*n), round(0.2*n):round(0.3*n)) = 1;
+%C = Z;
+%C(round(0.4*n):round(0.6*n), round(0.2*n):round(0.3*n)) = -2;
 
 v0 = [0 0];
 v1 = [-1.5 1.5];
@@ -31,11 +33,17 @@ r1 = 1.25;
 for i=1:4
     figure;
     set(gcf, 'papersize', [0.1 0.1])
-    h = surf(X, Y, Z, C, 'edgecolor','none');
+    h = surf(X, Y, Z, C, 'edgecolor','k');
     set(gca,'position',[0 0 1 1],'units','normalized')
     camlight(45, -20);
     lighting phong
-    material dull
+    %material dull
+    set(h, 'diffusestrength', 1.0);
+    set(h, 'specularstrength', 0.25);
+    %set(gca, 'ambientlightcolor', [1 0 0]);
+    set(h, 'AmbientStrength', 0.7);
+    %set(h, 'SpecularColorReflectance', 0.25);
+    %set(h, 'SpecularExponent', 5.0);
     
     axis off
     hold on
@@ -72,12 +80,18 @@ figure;
 for i=1:4
     figure;
     set(gcf, 'papersize', [1 1])
-    h = surf(X, Y, Z, C, 'edgecolor','none');
+    h = surf(X, Y, Z, C, 'edgecolor','k');
     set(gca,'position',[0 0 1 1],'units','normalized')
     
     camlight(45, -20);
     lighting phong
-    material dull
+    %material dull
+    set(h, 'diffusestrength', 1.0);
+    set(h, 'specularstrength', 0.25);
+    %set(gca, 'ambientlightcolor', [1 0 0]);
+    set(h, 'AmbientStrength', 0.7);
+    %set(h, 'SpecularColorReflectance', 0.25);
+    %set(h, 'SpecularExponent', 5.0);
     
     axis off
     hold on
