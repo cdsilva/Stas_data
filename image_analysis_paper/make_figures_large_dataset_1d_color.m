@@ -6,7 +6,7 @@ profile_data = '../membrane_pictures/large_dataset/dpERK_DL_140313.mat';
 
 res = '-r300';
 fmt = '-djpeg';
-fontsize = 20;
+fontsize = 30;
 
 im_save_dir = 'paper_figures';
 

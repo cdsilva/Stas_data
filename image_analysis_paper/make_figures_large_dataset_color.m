@@ -177,6 +177,8 @@ ranks_from_membranes = compute_ranks(mem_lengths);
 ranks_from_vdm = compute_ranks(embed_coord(:,idx));
 
 figure;
+set(gcf, 'papersize', [11/4 8.5/4])
+set(gcf, 'paperposition', [0 0 11/4 8.5/4])
 plot(ranks_from_membranes, ranks_from_vdm, '.')
 xlabel('rank from membrane lengths')
 ylabel('rank from vdm')
