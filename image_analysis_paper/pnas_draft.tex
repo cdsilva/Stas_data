@@ -245,6 +245,17 @@ We conclude by discussion of the general requirements that must be satisfied for
 
 \section{Results and Discussion}
 
+We will first demonstrate our techniques considering {\em only} considering rotations. 
+%
+We have converted the two-dimensional images shown in Figure \ref{subfig:images_scrambled} into concentration profiles on a ring (we will address the full two-dimensional images in a subsequent section).
+%
+Figure \ref{subfig:1d_image_example} shows a typical image that we have converted to a one-dimensional concentration profile; the profile is discretized into 100 points. 
+%
+Rotation of this image corresponds to shifting (with periodic boundary conditions) the one--dimensional concentration profile. 
+%
+Figure \ref{subfig:1d_unaligned_unordered} shows the concentration profiles for all the images in our data set. 
+%
+The concentration profiles have been stacked in an array, such that each row corresponds to one image.
 
 \subsection{Angular synchronization for image registration}
 
@@ -270,30 +281,52 @@ The algorithm solves this optimization problem by relaxing it to an eigenproblem
 %
 Because the method considers {\em all} pairwise alignments, angular synchronization is often much more robust to noise. 
 
+Figure \ref{subfig:1d_aligned_unordered} shows the concentration profiles from Figure~\ref{subfig:1d_unaligned_unordered}, now aligned using angular synchronization;
+the peaks are aligned, even though we input no information about the existence or location of these peaks into our algorithm.
+%
+We would like to note that, because angular synchronization only uses pairwise rotation information, the optimal rotations are recovered {\em up to} a global rotation, and we are permitted rotate every point by a constant rotation.
+
 \subsection{Diffusion maps for temporal ordering}
 
 We will use diffusion maps (DMAPS) \cite{coifman2005geometric} to temporally order our data.
 %
-We assume that our data are high-dimensional (for example, we will work with images of 10000 pixels), but that they lie on a one-dimensional, perhaps nonlinear curve.
+Although our data are high-dimensional (for example, we will work with 2-color images of 10000 pixels, and so we treat these images as 20000-dimensional vectors, where each dimension describes the intensity of one color in one pixel), we will assume that they lie on a one-dimensional, perhaps nonlinear curve.
 %
 We further assume that curve can be parameterized by time.
 %
 Therefore, our goal is to {\em automatically} uncover a parameterization of this curve, so that we can sort/order our data along it, effectively ordering our data in time.
 
-To ``unravel'' this curve, we assume that nearby points (in the high-dimensional space) are also close on the curve.
+To ``unravel'' this curve, we assume that data points which are close in the high-dimensional space should also be close on the curve.
 %
-We first construct the matrix $W$ (see Equation \eqref{eq:dmaps_W}); $W_{ij}$ is large if $i$ and $j$ are ``close''.
+We want to find a parameterization of the points, such that the points which are close in the original close are {\em as close as possible} in the parameterization.
 %
-We then want to find a coordinate $y$ such that $y(i)$ and $y(j)$ if $W_{ij}$ is large (i.e., $y$ preserves local information, and so points that are close in the original space are also close in the coordinate $y$).
+This problem can be formulated as an optimization problem \cite{...}, and the solution is given by the top (non-trivial) eigenvector of a matrix which contains information about pairwise distances between the data points. 
+
+As an illustration of how local neighbors are important for parameterizing a curve, Figure~\ref{subfig:dmaps_edges} shows a data set which lies on a one-dimensional, nonlinear curve in two dimensions.
 %
-We therefore want to solve the following optimization problem
-\begin{equation} \label{eq:dmaps_opt_problem}
-\argmin_{y} \sum_{ij} W_{ij} (y(i) - y(j))
-\end{equation}
+The edges between the pairs of data points are colored according to the distance between the data points, so that close data points have a dark edge between them.
 %
-The solution \ref{eq:dmaps_opt_problem} is $\phi_2$, the second eigenvector of $A$, where $A = D^{-1} W$, and $D$ is a diagonal matrix with $D_{ii} = \sum_j W_{ij}$ \cite{...}.
+Visually, these dark edges are meaningful and informative of the structure of the data; they clearly delineate the one-dimensional curve in the data that our eye can extract.
 %
-Therefore, $\phi_2$ provides a one-dimensional parameterization of the data, and ordering the data points by the value of $\phi_2$ will order them in time.
+Furthermore, the light edges are not informative and do not give any meaningful structure to the curve. 
+%
+The DMAPS parameterization of these are data are shown in Figure~\ref{subfig:dmaps_color}.
+%
+The parameterization is what we would expect visually.
+%
+Although this data is useful for illustrative purposes, it is 
+
+Given our set of registered signals, shown in Figure \ref{subfig:1d_aligned_unordered}, we now wish to order them {\em in time} so that we can reconstruct the developmental dynamics.
+%
+We use the total Euclidean distance (both the red and the green channels) between the aligned concentration profiles (the rows of Figure \ref{subfig:1d_aligned_unordered}) as our pairwise distances for DMAPS (in \eqref{eq:dmaps_W}).
+%
+Figure \ref{subfig:1d_aligned_ordered} shows the data from Figure \ref{subfig:1d_aligned_unordered}, now sorted by the value of the first (non-trivial) DMAPS component, $\phi_2$. 
+%
+As expected, the intensity of the dpERK peaks grows as a function of time. 
+%
+Although DMAPS can recover a good ordering for the data, it cannot tell us about the absolute time of the data; we therefore have no information about the speed of this trajectory.
+%
+Furthermore, the direction of the trajectory is also unknown; determining which ``end'' of the DMAPS trajectory corresponds to the young embryos, and which ``end'' corresponds to the old embryos is a task that needs to be done by hand.
 
 \subsection{Vector diffusion maps for registration and ordering}
 
@@ -306,37 +339,6 @@ We can combine angular synchronization (for registration) and diffusion maps (fo
 This technique is called vector diffusion maps (VDM) \cite{singer2012vector}.
 %
 It not only reduces the number of required eigencomputations, but also is much more robust to noise, as mistakes in alignment are also considered when ordering the data.
-
-\subsection{Analysis on one-dimensional concentration profiles}
-
-We will first demonstrate our techniques considering {\em only} considering rotations. 
-%
-We have converted the two-dimensional images shown in Figure \ref{fig:fluorescent_images} into concentration profiles on a ring (we will address the full two-dimensional images in a subsequent section).
-%
-Figure \ref{subfig:1d_image_example} shows a typical image that we have converted to a one-dimensional concentration profile; the profile is discretized into 100 points. 
-%
-Rotation of this image corresponds to shifting (with periodic boundary conditions) the one--dimensional concentration profile. 
-%
-Figure \ref{subfig:1d_unaligned_unordered} shows the concentration profiles for all the images in our data set. 
-%
-The concentration profiles have been stacked in an array, such that each row corresponds to one image.
-
-Figure \ref{subfig:1d_aligned_unordered} shows the concentration profiles, now aligned using angular synchronization;
-the peaks are aligned, even though we input no information about the existence or location of these peaks into our algorithm.
-%
-We would like to note that, because angular synchronization only uses pairwise rotation information, the optimal rotations are recovered {\em up to} a global rotation, and we are permitted rotate every point by a constant rotation.
-
-Given our set of registered signals, shown in Figure \ref{subfig:1d_aligned_unordered}, we now wish to order them {\em in time} so that we can reconstruct the developmental dynamics.
-%
-We use the Euclidean distance between the aligned concentration profiles (the rows of Figure \ref{subfig:1d_aligned_unordered}) as our pairwise distances for DMAPS (in \eqref{eq:dmaps_W}).
-%
-Figure \ref{subfig:1d_aligned_ordered} shows the data from Figure \ref{subfig:1d_aligned_unordered}, now sorted by the value of the first (non-trivial) DMAPS component, $\phi_2$. 
-%
-As expected, the intensity of the dpERK peaks grows as a function of time. 
-%
-Although DMAPS can recover a good ordering for the data, it cannot tell us about the absolute time of the data; we therefore have no information about the speed of this trajectory.
-%
-Furthermore, the direction of the trajectory is also unknown; determining which ``end'' of the DMAPS trajectory corresponds to the young embryos, and which ``end'' corresponds to the old embryos is a task that needs to be done by hand.
 
 Figure \ref{subfig:1d_aligned_ordered_vdm} shows the result of aligning and ordering the data in Figure \ref{subfig:1d_unaligned_unordered} using vector diffusion maps. 
 %
@@ -380,15 +382,31 @@ rank correlation begins to plateau and VDM can accurately order the data.
 
 \section{Conclusions}
 
-\begin{itemize}
+We have presented mathematical techniques for registration and temporal ordering of images arising in studies of developmental biology.
+%
+Although we illustrated our methods using a specific data set arising in a study of {\em Drosophila} embryogenesis, the techniques are very general and require little knowledge of the image features or the developmental dynamics.
 
-\item Techniques for registration and ordering
-\item Very general- requires little knowledge of the types of images
-\item Ordering- different than other studies (TSP, MST, etc.)
-\item assumes one-dimensionality of data, and one dimension is correlated with time
-\item gives no sense of absolute time (speed) or space (where the ``zero point'' is)
-\end{itemize}
+We would like to note that there have been multiple other works with temporally ordering biological data (RNA data, cell morphology data, disease progression data, etc.). 
+%
+The majority of these works temporally order the data either by solving a travelling salesman probelem, or by constructing a minimum spanning tree on the data.
+%
+We, instead, use nonlinear dimensionality reduction techniques, to construct a one-dimensional embedding of the data.
+%
+Furthermore, we work with images that must be first registered before they can be temporally ordered.
 
+Although our methods are applicable to a wide variety of data sets, there are several questions for which our techniques can provide no answers.
+%
+Because our registration algorithm only considers pairwise information, we cannot recover the true ``zero'' point of the images. 
+%
+Similairly, we cannot know which end of our trajectory is the beginning and which is the end.
+%
+Both of these tasks bust be done by hand as a post-processing step.
+%
+Furthermore, our methods can only provide a temporal ordering for the data, and cannot provide any information as to the speed or absolute time of the data samples.
+%
+Regardless, we are confident that our methods hold great promise in areas where cross-sectional imaging data is readily available and relatively inexpensive to obtain. 
+%
+There are many applications for which develpomental dynamics are of interest, and yet there is no time marker to use to reconstruct the dynamics from such cross-sectional data. 
 
 %% == end of paper:
 
@@ -557,18 +575,33 @@ Therefore, points closer than $\epsilon$ apart are considered ``close'' and poin
 %
 $\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph}); in practice, we choose $\epsilon$ to be the median of the pairwise distances between data points.
 
-We then compute the diagonal matrix $D$, where $D_{ii} = \sum_{j=1}^{m} W_{ij}$, and the matrix $A$, where
+We then want to find a coordinate $y$ such that $y(i)$ and $y(j)$ if $W_{ij}$ is large (i.e., $y$ preserves local information, and so points that are close in the original space are also close in the coordinate $y$).
+%
+We therefore want to solve the following optimization problem
+\begin{equation} \label{eq:dmaps_opt_problem}
+\argmin_{y} \sum_{ij} W_{ij} (y(i) - y(j))
+\end{equation}
+%
+%The solution \ref{eq:dmaps_opt_problem} is $\phi_2$, the second eigenvector of $A$, where $A = D^{-1} W$, and $D$ is a diagonal matrix with $D_{ii} = \sum_j W_{ij}$ \cite{...}.
+%%
+%Therefore, $\phi_2$ provides a one-dimensional parameterization of the data, and ordering the data points by the value of $\phi_2$ will order them in time.
+
+To solve \eqref{eq:dmaps_opt_problem}, we compute the diagonal matrix $D$, where $D_{ii} = \sum_{j=1}^{m} W_{ij}$, and the matrix $A$, where
 \begin{equation} \label{eq:dmaps_A}
 A = D^{-1} W.
 \end{equation} 
 %
-We calculate the eigenvectors $\phi_1, \phi_2, \dots, \phi_m$ and eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_m$ and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_m|$ \footnote{Because the matrix $A$ is similar to the symmetric matrix $D^{-1/2} W D^{-1/2}$, $A$ is guaranteed to have real eigenvalues and real, orthogonal eigenvectors.}. 
+We calculate the eigenvectors $\phi_1, \phi_2, \dots, \phi_m$ and eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_m$ and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_m|$.
+%
+Because the matrix $A$ is similar to the symmetric matrix $D^{-1/2} W D^{-1/2}$, $A$ is guaranteed to have real eigenvalues and real, orthogonal eigenvectors. 
 %
 Because the matrix $A$ is row-stochastic, $\lambda_1=1$ and $\phi_1$ is a constant vector.
 %
-In general, the next few eigenvectors $\phi_2, \dots, \phi_m$ give ``meaningful'' embedding coordinates for the data, such that $\phi_j(i)$ gives the $j^{th}$ embedding coordinate of the $i^{th}$ data point. 
+%In general, the next few eigenvectors $\phi_2, \dots, \phi_m$ give ``meaningful'' embedding coordinates for the data, such that $\phi_j(i)$ gives the $j^{th}$ embedding coordinate of the $i^{th}$ data point. 
 %
-In our setup, we assume that our data are inherently one-dimensional, and that this one dimension is correlated with time.
+The next eigenvector, $\phi_2$, can be shown to be the solution to \eqref{eq:dmaps_opt_problem}, so that $\phi_2(j)$ gives the coordinate for data point $x_j$.
+%
+In our setup, we assume that this one dimension, parameterized by $\phi_2$, is correlated with time.
 %
 Therefore, ordering our data by $\phi_2(j)$ will allow us to automatically order our data in time.
 
@@ -764,40 +797,7 @@ We round the optimal translations to the nearest integer to remove the need for 
 \bibliographystyle{pnas}
 \bibliography{../../references/references}
 
-%\begin{thebibliography}{10}
-
-
-
-%\bibitem{ahuja2007template}
-%Sunil Ahuja, Ioannis~G Kevrekidis, and Clarence~W Rowley.
-%\newblock Template-based stabilization of relative equilibria in systems with
-%  continuous symmetry.
-%\newblock {\em Journal of Nonlinear Science}, 17(2):109-143, 2007.
-
-%\bibitem{coifman2005geometric}
-%Ronald~R Coifman, Stephane Lafon, Ann~B Lee, Mauro Maggioni, Boaz Nadler,
-%  Frederick Warner, and Steven~W Zucker.
-%\newblock Geometric diffusions as a tool for harmonic analysis and structure
-%  definition of data: Diffusion maps.
-%\newblock {\em Proceedings of the National Academy of Sciences},
-%  102(21):7426-7431, 2005.
-%
-%\bibitem{coifman2008graph}
-%Ronald~R Coifman, Yoel Shkolnisky, Fred~J Sigworth, and Amit Singer.
-%\newblock Graph laplacian tomography from unknown random projections.
-%\newblock {\em IEEE Transactions on Image Processing}, 17(10):1891-1899, 2008.
-%
-%\bibitem{singer2011angular}
-%A~Singer.
-%\newblock Angular synchronization by eigenvectors and semidefinite programming.
-%\newblock {\em Applied and computational harmonic analysis}, 30(1):20-36,
-%  2011.
-%
-%\bibitem{singer2012vector}
-%Amit Singer and H-T Wu.
-%\newblock Vector diffusion maps and the connection laplacian.
-%\newblock {\em Communications on Pure and Applied Mathematics},
-%  65(8):1067-1144, 2012.
+%\begin{thebibliography}{}
 
 %\end{thebibliography}
 
@@ -869,6 +869,21 @@ We round the optimal translations to the nearest integer to remove the need for 
 \end{subfigure}
 \caption{{\em Drosophila} data. (a) Dorsal-ventral images of {\em Drosphila} embryos in nuclear cycle 14, each stained for Dorsal (green) and dpERK (red). (b) Images from (a), now registered using the location of the Dorsal peak, and temporally ordered using the membrane marker.} 
 \label{fig:fluorescent_images}
+\end{figure}
+
+\begin{figure}
+\begin{subfigure}{0.25\textwidth}
+\includegraphics[width=\textwidth]{dmaps_schematic_edges}
+\caption{}
+\label{subfig:dmaps_edges}
+\end{subfigure}
+\begin{subfigure}{0.25\textwidth}
+\includegraphics[width=\textwidth]{dmaps_schematic_color}
+\caption{}
+\label{subfig:dmaps_color}
+\end{subfigure}
+\caption{Diffusion maps illustration. (a) Data points in two dimensions which lie on a one-dimensional nonlinear curve. Each pair of data points is connected by an edge, and the edge intensity is related to the distance between the points (close data points are connected by dark edges). (b) The data in (a), colored by the first (non-trivial) DMAPS eigenvector, $\phi_2$. The color parameterizes the one-dimensional curve. }
+\label{fig:dmaps_schematic}
 \end{figure}
 
 \begin{figure*}
