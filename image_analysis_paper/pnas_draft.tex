@@ -175,87 +175,36 @@ We demonstrate the utility of our methods using a collection of images from a st
 %% \section{}
 %% \subsection{}
 %% \subsubsection{}
+ 
+\dropcap{E}xperimental studies of developmental dynamics fall in two broadly defined categories: longitudinal and cross-sectional. In longitudinal studies, developmental progress is monitored over time within the same embryo. In a cross-sectional study, one embryo contributes only one snapshot of a chemical or morphological process along developmental trajectory which must be reconstructed from multiple snapshots of different embryos. Both of these experimental designs have their advantages and limitations and are extensively used by developmental biologists. Here we focus on cross-sectional studies, which have a time-honored history and still present the only option for most of the organisms. In a typical cross-sectional study, a group of developing embryos is fixed using a procedure that arrests their development and stained with chemicals that visualize a handful of cellular processes. Fixed embryos are then imaged using any given number of microscopic techniques. Recent advances in large scale physical manipulation of embryos and their imaging produce rapidly increasing volumes of data from such experiments, in which every embryo is observed at a different orientation and at a different time point. Importantly, the ``age'' of any given embryo arrested in its development is not known to high accuracy. In general, it is known that a collection of embryos belongs to a certain time window. In order to mine such datasets for underlying developmental dynamics, snapshots of different embryos must be aligned and ordered in time. We present a general framework that greatly accelerates both of these tasks.
 
-\dropcap{E}xperimental studies of developmental dynamics fall in two broadly defined categories: longitudinal and cross-sectional.  
-%
-In longitudinal studies, a chemical or morphological process is monitored over time within the same embryo.  
-%
-In a cross-sectional study, one embryo provides just a single snapshot of a population-averaged developmental trajectory which must be reconstructed from multiple snapshots provided by different embryos.
-%
-Both experimental designs have their advantages and limitations and are extensively used in studies of embryonic development across species. 
-%
-Our work focuses on cross-sectional studies, which have a time-honored history and still present the only option for most of the organisms.  
-%
-Most commonly, a group of developing embryos is fixed (arresting their development), stained with chemicals that visualize a handful of cellular processes, and imaged by fluorescence microscopy. 
-%
-Recent advances in large scale physical manipulation of embryos produce rapidly increasing volumes of imaging data from such experiments, in which every embryo is observed at a different orientation and at a different point in its developmental trajectory. 
-%
-In order to mine such datasets for underlying developmental dynamics, multiple images must be registered (aligned) and ordered in time. 
-%
-Here present an algorithmic framework that greatly accelerates both of these tasks.
+Temporal ordering and registration of images is straightforward when the number of images is small and differences between them are apparent. As an example, Figure~\ref{fig:fish} shows a schematic of fish development, combining the processes of growth and patterning.  In this case, temporal ordering can be accomplished by arranging the fish by size, which correlates with the progress of development, and image alignment is based on obvious morphological landmarks, such as positions of head and fins. Dealing with real data is far more nontrivial. To illustrate most of the issues associated with temporal ordering and registration of images, we use a data set from an imaging study of pattern formation in the early fruit fly embryo, one of the leading systems for studies of developmental dynamics. This dataset comprises 81 fluorescence microscopy images of different embryos fixed during the 3$^{rd}$ hour of their development. 
 
-Temporal ordering and registration of images is straightforward, when the number of images is small and differences between them are apparent. 
-%
-As an example, Figure~\ref{fig:fish} shows a schematic of fish development, combining the processes of growth and patterning.  
-%
-In this case, temporal ordering can be accomplished by arranging the fish by their size, which correlates with the progress of development, and image alignment is based on obvious morphological landmarks, such positions of head and fins. 
-%
-Dealing with real data is far more nontrivial. 
-%
-To illustrate most of the issues associated with temporal ordering and registration of images, we use a data set from an imaging study of pattern formation in the early {\em Drosophila} embryo, one of the leading systems for studies of developmental dynamics. 
-%
-This dataset comprises 81 fluorescence microscopy images of optical cross-sections of different embryos fixed during the 3$^{rd}$ hour of their development.  
-%
-During this time interval, most of cell nuclei in the embryo are arranged under the common plasma membrane and embryo undergoes the process of cellularization, whereby membranes that enclose individual nuclei into different cells grow in length (Figure~\ref{subfig:images_scrambled}). 
+The fruit fly embryo is shaped like a rice grain, approximately ½ mm long. By end of the 2nd hour of development, sequential divisions of a fertilized egg generated a system where $\sim 6,000$ nuclei are uniformly arranged in under the common plasma membrane. During the 3$^{rd}$ hour, the embryo undergoes the process of cellularization, whereby membranes that enclosing nuclei into different cells grow in length (Figure 2a). Concurrently with these morphological changes, concentration profiles of multiple regulatory molecules form inside the embryo, subdividing it into regions that give rise to future tissues and organs. Images in Figure 2b show optical sections through the short axis of the embryos. The embryos were fixed and stained with chemicals that visualize nuclei as well as the spatial distributions of two different proteins. Each of the images reveals a uniform arrangement of nuclei and nonuniform distribution of two proteins (green and red) involved in patterning of the dorsoventral (back-to-belly) axis of the embryo. 
 
-Each of the images reveals a uniform arrangement of nuclei and nonuniform distribution of two proteins (green and red) involved in patterning of the dorsoventral (back-to-belly) patterning of the embryo. 
+Each image in Figure 2b comes from a different embryo, captured at a different orientation and at a different and unknown point in time (Figure 2a). The goal is to align these images in a globally consistent way and order them in a way that is most representative of the underlying developmental trajectory. Below we show that both of these tasks can be fully automated.
 %
-Each image comes from a different embryo in captured at a different orientation and at a different and unknown point in time (Figure~\ref{subfig:images_scrambled}). 
+We will use angular synchronization \cite{singer2011angular}, to align the images in a consistent way, and use diffusion maps \cite{coifman2005geometric}, a broadly applicable technique for the discovery of low-dimensional structures in high-dimensional data sets, to temporally order our data.
 %
-The task is to align these images in a globally consistent way and order them in a way that is most representative of the underlying developmental trajectory. 
+We will also show how both steps can be combined using methodology called vector diffusion maps \cite{singer2012vector}.
 %
-For this particular dataset, both of these tasks are simplified by prior knowledge. 
-%
-For instance, it is known that the peak in the distribution of one of the proteins (visualized by the green channel) specifies the ventralmost position in the embryo. 
-%
-Based on this, images translated to make the centers of the embryos coincide and rotated to place the peak of the green channel at the same angular position. 
-%
-At the same time, temporal ordering can be done based on the monotonic progress of cellularization. 
-%
-Figure~\ref{subfig:images_hand_ordered} shows the collection of registered and temporally ordered images. 
-
-Note that both of these tasks have been accomplished based on prior knowledge about the underlying developmental processes: We knew that the peak of the green signal can be used to align the images and that the progress of cellularization can order them in time. 
-%
-Is this information essential? 
-%
-Below we show that this is not the case and that both the temporal ordering and registration of images can be fully automated, without prior information about the underlying dynamics. 
-%
-Our temporal ordering analysis is based on diffusion maps, a broadly applicable technique for the discovery of low-dimensional structures in high-dimensional data sets.
-%
-Our image registration is done via angular synchronization, a relatively new technique for registering images which has been applied to reconstructing the three-dimensional structure of molecules from cryo-electron microscopy \cite{singer2011three}; here, we will use the algorithm to register {\em Drosophila} images.
-%
-The paper is organized as follows. 
-%
-In the next two sections, we use a simpler version of the data (one-dimensional spatial profiles) to formulate both tasks mathematically.  
-%
-Then, we show that both of the tasks can be effectively accomplished in single step. 
-%
-Following this, we return to the original set of two-dimensional images and demonstrate that our approach can readily align the images and order them correctly in time. 
-%
-We conclude by discussion of the general requirements that must be satisfied for our approach to work and compare it to other ideas in cross-sectional studies of biological dynamics. 
-
+The paper is organized as follows. First, we use a synthetic dataset, where the correct orientation and ordering of data points is known, to formalize the tasks of image registration and temporal ordering. Then, we show that both of these tasks can be effectively combined in a single step. Following this, we return to the original set of two-dimensional images and demonstrate that our approach can readily align them and order them correctly in time. We conclude by discussing the general requirements that must be satisfied for our approach to work and compare it to other approaches and ideas in cross-sectional studies of biological dynamics. 
 
 \section{Results and Discussion}
 
-We will first demonstrate our techniques using one-dimensional concentrations profiles.
+We will first demonstrate our techniques using a synthetic data set with relatively simple dynamics.
 %
-We have converted the two-dimensional images shown in Figure \ref{subfig:images_scrambled} into profiles defined on a ring, corresponding to the concentrations around the periphery of the embryo (we will address the full two-dimensional images in a subsequent section).
+We consider a concentration profile defined on a ring, shown in Figure~\ref{subfig:1d_image_example}.
 %
-Figure \ref{subfig:1d_image_example} shows a typical image that we have converted to a one-dimensional profile; the profile is discretized into 100 points, and so our signals will be 200-dimensional vectors (100 dimensions correspond to the red channel at the 100 discretization points, and 100 dimensions correspond to the green channel at the 100 discretization points). 
+The concentration profile is a Gaussian bump, which increases in intensity as a function of time.
 %
-Rotation of this image corresponds to shifting (with periodic boundary conditions) the one-dimensional concentration profile shown in the bottom of Figure \ref{subfig:1d_image_example}. 
+Figure \ref{subfig:1d_image_example} shows a typical concentration profile; the profile is discretized into 100 points, and so our signals will be 100-dimensional vectors. 
 %
-Figure \ref{subfig:1d_unaligned_unordered} shows the concentration profiles for all the images in our data set. 
+We assume that the ring is in an arbitrary orientation, and we are allowed to rotate the ring.
+%
+Rotation of the ring corresponds to shifting (with periodic boundary conditions) the one-dimensional concentration profile shown in the bottom of Figure \ref{subfig:1d_image_example}. 
+%
+Figure \ref{subfig:1d_unaligned_unordered} shows all the concentration profiles in our data set. 
 %
 The concentration profiles have been stacked in an array, such that each row corresponds to one image.
 %
@@ -277,7 +226,7 @@ However, this method can result in many errors if the images are noisy, and can 
 %
 Instead, we will use a relatively new technique called angular synchronization\cite{singer2011angular} to register sets of images.
 %
-Angular synchronization first computes the pairwise alignments (rotation for our one-dimensional profiles in Figure \ref{subfig:1d_unaligned_unordered}, or translation + rotation for the two-dimensional images in Figure \ref{subfig:images_scrambled}) for every possible pair of images, effectively using each image as a template for every other image.
+Angular synchronization first computes the pairwise alignments (rotation for our one-dimensional profiles in Figure \ref{subfig:1d_unaligned_unordered}, or translation + rotation for the two-dimensional images in Figure \ref{fig:fluorescent_images}) for every possible pair of images, effectively using each image as a template for every other image.
 %
 From this large collection of pairwise alignments, it then tries to find the optimal alignment for each image, such that these individual alignments are most consistent (in some metric) with the pairwise alignments (i.e., we would like the difference between the optimal rotations for two different concentration profiles to be as close as possible to the pairwise rotation needed to align the two profiles).
 %
@@ -325,7 +274,7 @@ However, we will work with very high-dimensional data, rather than these two-dim
 
 Given our set of registered signals, shown in Figure \ref{subfig:1d_aligned_unordered}, we would like to use DMAPS to order them in time.
 %
-We use the total Euclidean distance (both the red and the green channels) between the aligned concentration profiles (the rows of Figure \ref{subfig:1d_aligned_unordered}) as our pairwise distances for DMAPS (in \eqref{eq:dmaps_W}).
+We use the Euclidean distance between the aligned concentration profiles (the rows of Figure \ref{subfig:1d_aligned_unordered}) as our pairwise distances for DMAPS (in \eqref{eq:dmaps_W}).
 %
 Figure \ref{subfig:1d_aligned_ordered} shows the data from Figure \ref{subfig:1d_aligned_unordered}, now sorted by the value of the first (non-trivial) DMAPS component, $\phi_2$. 
 %
@@ -355,65 +304,107 @@ The data has been ordered by $\psi_{1, 3}$, the first (non-trivial) VDM coordina
 
 The same methodologies (with small modifications) can be applied to two-dimensional images.
 %
-Instead of having $200$-dimensional concentration vectors, we now work with $20000$-dimensional images ($100x100$ pixel images containing two color channels).
+Instead of having $100$-dimensional concentration vectors, we now work with $20000$-dimensional images ($100x100$ pixel images containing two color channels).
 %
 The two-dimensional images are registered with respect to translations and rotations 
 (we convert the two-dimensional translations and rotations to three-dimensional rotations so that we can apply angular synchronization or vector diffusion maps). 
 %
-We used vector diffusion maps to align and order the images shown in Figure~\ref{subfig:images_scrambled}.
+We used vector diffusion maps to align and order the images shown in Figure~\ref{fig:fluorescent_images}
 %
 The results are shown in Figure~\ref{subfig:images_vdm}.
 %
 The peaks are now aligned, and the intensity of dpERK grows as a function of time, as expected.
 
-In these {\em Drosophila} experiments, we have the luxury of an independent measure of time from cellularization.
+In these {\em Drosophila} experiments, both registration and temporal ordering can be done by hand using prior knowledge about the system. 
 %
-We can therefore evaluate the quality of our orderings obtained from VDM by comparing with the orderings obtained from cellularization.
+For instance, it is known that the peak in the distribution of one of the proteins (visualized by the green channel) specifies the ventralmost position in the embryo. 
 %
-The rank of each data point, computed using VDM, versus the rank of each data point computed from cellularization, is shown in Figure~\ref{subfig:rank_corr}.
+Based on this, images translated to make the centers of the embryos coincide and rotated to place the peak of the green channel at the same angular position. 
 %
-The rank correlation is 0.8665, indicating that our ordering from VDM is consistent with the ordering obtained from cellularization.
+At the same time, temporal ordering can be done based on the monotonic progress of cellularization. 
 %
-There is more scatter for the younger embryos; this is to be expected, as the dpERK signal, which is the main feature that changes with time, is very low in this range.
+We can therefore evaluate the quality of our orderings obtained from VDM by comparing hand registered and ordering images.
+%
+These results are shown in Figure~\ref{subfig:1dprofiles_hand}; the results are visually consistent with the results in Figure~\ref{subfig:1dprofiles_vdm} obtained using VDM. 
+%
+Furthermore, we can quantify the accuracy of our orderings by computing the rank correlation coefficient between the ordering obtained form VDM, and the orderings obtained from cellularization.
+%
+The rank correlation coefficient is 0.8665, indicating that our ordering from VDM is consistent with the ordering obtained from cellularization.
 
-Although our methods are fairly robust, they do require a sufficient amount of data so that DMAPS can ``see'' a smooth trajectory.
-%
-We evaluated how much data is required by subsampling our data set (with replacement), and for each subsample, computing the temporal ordering using VDM and calculating the rank correlation between this ordering and the ordering from cellularization.
-%
-The results are shown in Figure~\ref{subfig:bootstrap} (each data point is averaged over 50 random subsamples).
-%
-For small data sets, the average rank correlation is very low, indicating that the orderings from VDM are inaccurate. 
-%
-However, for moderately sized data sets (approximately 30 data points), the 
-rank correlation begins to plateau and VDM can accurately order the data.
+%Although our methods are fairly robust, they do require a sufficient amount of data so that DMAPS can ``see'' a smooth trajectory.
+%%
+%We evaluated how much data is required by subsampling our data set (with replacement), and for each subsample, computing the temporal ordering using VDM and calculating the rank correlation between this ordering and the ordering from cellularization.
+%%
+%The results are shown in Figure~\ref{subfig:bootstrap} (each data point is averaged over 50 random subsamples).
+%%
+%For small data sets, the average rank correlation is very low, indicating that the orderings from VDM are inaccurate. 
+%%
+%However, for moderately sized data sets (approximately 30 data points), the 
+%rank correlation begins to plateau and VDM can accurately order the data.
 
 \section{Conclusions}
 
 We have presented mathematical techniques for registration and temporal ordering of images arising in studies of developmental biology.
 %
-Although we illustrated our methods using a specific data set from a study of {\em Drosophila} embryogenesis, the techniques are very general and require little knowledge of the image features or the developmental dynamics.
+Although we illustrated our methods using a specific data set from a study of {\em Drosophila} embryogenesis, our framework is very general and requires little knowledge of the image features or the developmental dynamics.
 
-We would like to note that there have been multiple other works with temporally ordering biological data (RNA-seq, cell morphology, disease progression, etc.). 
+Temporal ordering of cross-sectional biological data has been studied in a variety of other contexts.
 %
-The majority of these works temporally order the data either by solving a traveling salesman problem, or by constructing a minimum spanning tree on the data.
+Cross-sectional RNA sequencing data has been temporally ordered \cite{anavy2014blind}, where each data point is the transcriptome for a single sample.
 %
-We, instead, use nonlinear dimensionality reduction techniques, to construct a one-dimensional embedding of the data.
+Gene expression data from multiple patients has been studied \cite{gupta2008extracting} \cite{qiu2011discovering},
 %
-Furthermore, we work with images that must be first registered before they can be temporally ordered.
+where each data point is a vector containing the expression levels of the various genes.
+%
+Snapshots of cells throughout the cell cycle can be described by a vector of features (e.g., amount of DNA) which describe the cell's state  \cite{kafri2013dynamics}.
+%
+These problems are no different than our task of ordering images, each of which can be thought of as a large vector of pixel intensities. 
+%
+The majority of these works temporally order the data either by solving a traveling salesman problem (TSP) on the data, or by constructing a minimum spanning tree (MST) of the data, 
+in the hopes that these structures (the path of the TSP, or the MST) characterize the majority of the structure within the data and provide an accurate picture of the dynamical progression.
+%
+We, instead, use diffusion maps, to construct a one-dimensional embedding of the data.
+%
+In general, diffusion maps have been shown to be more robust to noise than other path-based algorithms, such as isomap \cite{tenenbaum2000global} \cite{balasubramanian2002isomap}.
+%
+Furthermore, although we use only the first DMAPS component to order the data (we assume the data are one-dimensional), DMAPS is not limited to one-dimensional data and can be used to analyze data containing more complex structure.
+%
+For example, in data which contains several branches or several classes, the first few DMAPS components will delineate the branches or separate the classes.
 
-Although our methods are applicable to a wide variety of data sets, there are several questions for which our techniques can provide no answers.
+The task of image registration is widely studied, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
 %
-Because our registration algorithm only considers pairwise information, we cannot recover the true ``zero'' point of the images. 
+The main point to note here is that, in most of these applications, registration first requires defining a set of {\em features} or landmark points, and then locating these features within each image.
 %
-Similairly, we cannot know which end of our trajectory is the beginning and which is the end.
+For example, in face recognition, the first step is often to find the eyes, nose, and mouth within the face, and then compare images by comparing these features.
 %
-Both of these tasks bust be done by hand as a post-processing step.
+Temporal ordering of images has been studied, for example, in ordering images taken of a construction site over time \cite{schindler2007inferring}, 
+but these methods are also based on first extracting features from the images. 
 %
-Furthermore, our methods can only provide a temporal ordering for the data, and cannot provide any information as to the speed or absolute time of the data samples.
+In our more general setting of applications in developmental biology, ``good'' features may not be known {\em a priori}, and so we prefer a methodology which does not require this preprocessing step.
 %
-Regardless, we are confident that our methods hold great promise in areas where cross-sectional imaging data is readily available and relatively inexpensive to obtain. 
+The registration algorithm we use, angular synchronization/vector diffusion maps, has been used to register two-dimensional cryo-electron microscopy images of three-dimensional molecules \cite{singer2011three}.
 %
-They provide a simple and cost-effective alternative to live imaging or ordering images by hand in order to gain insight into the developmental dynamics.
+However, in this application, each image is a picture of (essentially) the {\em same} molecule; variation in the data comes from differences in viewing angle (rotations of the molecule) and from instrument/measurement noise.
+%
+In contrast, our data contains variation from the different embryo orientations, as well as the temporal variation of the underling developmental dynamics. 
+
+In all of these data-driven methods, the essential question is ``what data is necessary?'': we would like to know how much and what type of data is needed to accurately reconstruct the dynamics. 
+%
+For the methods we present here, we require a sufficient amount of data for the one-dimensional curve to be ``seen'' by DMAPS (i.e., in Figure ~\ref{fig:dmaps_schematic}, there are a sufficient number of data points so that our eye can see the curve; if there were only 4 data points, it would most likely be difficult for our eye to detect the one-dimensional structure).
+%
+We also require the data we collect to contain enough information/be ``rich enough'' so that the alignments and dynamics are apparent.
+%
+For example, in the data presented in Figure~\ref{fig:fluorescent_images}, the green Dorsal peaks delineate the position of the ventral axis in the embryo, and the intensity of the red dpERK peaks grow over time.
+%
+Therefore, these images contain information about rotational symmetries of the data as well as the dynamics of the data.
+%
+If we removed the green Dorsal peaks, and only used the red dpERK peaks in our analysis, the registration would not be as accurate.
+%
+Furthermore, if we only used the green Dorsal peaks, then there would be no dynamic information (the shape or intensity of Dorsal does not change as a function of time in the developmental stage we are considering), and so the temporal ordering would be inaccurate.
+%
+However, we are confident that for many applications, these requirements - a sufficient number of data points, and data which contain enough information - are easily met. 
+%
+In these cases, our methods allow for the rapid, automated analysis of complex imaging data sets to help uncover complex dynamics and structure. 
 
 %% == end of paper:
 
@@ -714,6 +705,7 @@ where $\eta_{proj}$ is the angular portion of the sphere onto which we choose to
 We take $\eta_{proj} =  \pi/8$, so the image lies on a $\pi/8 \times \pi/8$ radians portion of the unit sphere in $\mathbb{R}^3$.
 %
 From here, we can write rotations around the three principal axes in terms of the three Euler angles
+\small
 \begin{equation}
 \begin{aligned}
 	R^x(\alpha) &= \begin{bmatrix}
@@ -733,6 +725,7 @@ From here, we can write rotations around the three principal axes in terms of th
     \end{bmatrix}
 \end{aligned}
 \end{equation}
+\normalsize
 where $R^x(\alpha)$, $R^y(\beta)$, and $R^z(\gamma)$ correspond to rotations around the $x$, $y$, and $z$ axes, respectively.
 %
 We then write the total rotation $R_{ij} \in SO(3)$ as 
@@ -815,7 +808,7 @@ where $\overline{X}$ and $\overline{Y}$ are the means of $X_1, \dots, X_m$ and $
 %% following \begin{thebibliography}
 
 \bibliographystyle{pnas}
-\bibliography{../../references/references}
+\bibliography{background_reading/references,../../references/references}
 
 %\begin{thebibliography}{}
 
@@ -878,23 +871,8 @@ where $\overline{X}$ and $\overline{Y}$ are the means of $X_1, \dots, X_m$ and $
 
 \begin{figure}
 \includegraphics[width=0.5\textwidth]{unregistered_unordered_2d}
-\caption{}
+\caption{Fluorescent images of {\em Drosophila} embryos. Each embryo has been stained from Dorsal (green) and dpERK (red).}
 \label{fig:fluorescent_images}
-\end{figure}
-
-\begin{figure}
-\begin{subfigure}{0.25\textwidth}
-\includegraphics[width=\textwidth]{dmaps_schematic_edges}
-\caption{}
-\label{subfig:dmaps_edges}
-\end{subfigure}
-\begin{subfigure}{0.25\textwidth}
-\includegraphics[width=\textwidth]{dmaps_schematic_color}
-\caption{}
-\label{subfig:dmaps_color}
-\end{subfigure}
-\caption{Diffusion maps illustration. (a) Data points (in blue) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge intensity is related to the distance between the points (close data points are connected by dark edges). (b) The data in (a), colored by the first (non-trivial) DMAPS eigenvector, $\phi_2$. The color parameterizes the one-dimensional curve. }
-\label{fig:dmaps_schematic}
 \end{figure}
 
 \begin{figure*}
@@ -923,9 +901,24 @@ where $\overline{X}$ and $\overline{Y}$ are the means of $X_1, \dots, X_m$ and $
 \caption{}
 \label{subfig:1d_aligned_ordered_vdm}
 \end{subfigure}
-\caption{Illustration of methodologies using one-dimensional profiles. (a) One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). Rotation of the ring corresponds to shifting the line left and right (with periodic boundary conditions). (b) The concentration profiles corresponding to the images in Figure \ref{fig:fluorescent_images}. Each row in the array corresponds to one image. (c) The concentration profiles in (b), now registered using angular synchronization. (d) The concentration profiles in (c), now temporally ordered using diffusion maps. The profiles are sorted according to the value of the first non-trivial DMAPS component, $\phi_2$. (e) The concentration profiles in (b), now simultaneously registered and temporally ordered using vector diffusion maps. The profiles are sorted according to the value of the first non-trivial VDM component, $\psi_{1, 3}$.}
+\caption{Illustration of methodologies using one-dimensional profiles. (a) One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). Rotation of the ring corresponds to shifting the line left and right (with periodic boundary conditions). (b) Many concentration profiles, each of the form described in (a). Each row in the array corresponds to one image. The overall dynamics are a Gaussian bump growing in time, but this is not readily apparent from the data because the profiles are unregistered and unordered. (c) The concentration profiles in (b), now registered using angular synchronization. (d) The concentration profiles in (c), now temporally ordered using diffusion maps. The profiles are sorted according to the value of the first non-trivial DMAPS component, $\phi_2$. (e) The concentration profiles in (b), now simultaneously registered and temporally ordered using vector diffusion maps. The profiles are sorted according to the value of the first non-trivial VDM component, $\psi_{1, 3}$.}
 \label{fig:1d_demo}
 \end{figure*}
+
+\begin{figure}
+\begin{subfigure}{0.25\textwidth}
+\includegraphics[width=\textwidth]{dmaps_schematic_edges}
+\caption{}
+\label{subfig:dmaps_edges}
+\end{subfigure}
+\begin{subfigure}{0.25\textwidth}
+\includegraphics[width=\textwidth]{dmaps_schematic_color}
+\caption{}
+\label{subfig:dmaps_color}
+\end{subfigure}
+\caption{Diffusion maps illustration. (a) Data points (in blue) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge intensity is related to the distance between the points (close data points are connected by dark edges). (b) The data in (a), colored by the first (non-trivial) DMAPS eigenvector, $\phi_2$. The color parameterizes the one-dimensional curve. }
+\label{fig:dmaps_schematic}
+\end{figure}
 
 \begin{figure*}
 \begin{minipage}{0.6\textwidth}
@@ -937,17 +930,17 @@ where $\overline{X}$ and $\overline{Y}$ are the means of $X_1, \dots, X_m$ and $
 \end{minipage}
 \begin{minipage}{0.3\textwidth}
 \begin{subfigure}{\textwidth}
-\includegraphics[width=\textwidth]{registered_ordered_vdm_1d}
+\includegraphics[width=\textwidth]{registered_ordered_1dfrom2d}
 \caption{}
-\label{subfig:rank_corr}
+\label{subfig:1dprofiles_vdm}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
 \includegraphics[width=\textwidth]{registered_ordered_hand}
 \caption{}
-%\label{subfig:bootstrap}
+\label{subfig:1dprofiles_hand}
 \end{subfigure}
 \end{minipage}
-%\caption{(a) The images in Figure~\ref{fig:fluorescent_images}, aligned and temporally ordered using vector diffusion maps. The images are sorted according to the value of the first non-trivial VDM component, $\psi_{1, 4}$. (b) The rank correlation between the ordering of the images in (a) using vector diffusion maps, and the ordering of in the images in Figure~\ref{subfig:images_hand_ordered}, obtained using cellularization. (c) The rank correlation coefficient between the VDM ordering and the cellularization ordering as a function of the number of data points. }
+\caption{(a) The images in Figure~\ref{fig:fluorescent_images}, aligned and temporally ordered using vector diffusion maps. The images are sorted according to the value of the first non-trivial VDM component, $\psi_{1, 4}$. (b) The one-dimensional concentration profiles corresponding to the images in (a). Each row of the array corresponds to one image. (c) The one-dimensional concentration profiles, extracted, registered, and ordered by hand. The profiles are extracted using the nuclei positions in the image, registered using the location of the Dorsal peak, and ordered using cellularization. }
 \end{figure*}
 
 %\begin{figure*}

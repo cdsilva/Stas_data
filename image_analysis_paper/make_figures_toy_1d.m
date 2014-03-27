@@ -1,8 +1,5 @@
 clear all
-%close all
-
-time_data = '../membrane_pictures/large_dataset/time.mat';
-profile_data = '../membrane_pictures/large_dataset/dpERK_DL_140313.mat';
+close all
 
 res = '-r300';
 fmt = '-djpeg';
@@ -10,82 +7,62 @@ fontsize = 30;
 
 im_save_dir = 'paper_figures';
 
+rng(123);
+
 %% load membrane lengths
 
-load(time_data);
-mem_lengths = length;
-clear length;
+m = 100;
 
-% remove some younger embryos
-ind = setdiff(1:90, [3, 20, 25, 32, 53, 59, 61, 66, 82]);
-
-m = length(ind);
-
-mem_lengths = mem_lengths(ind);
+mem_lengths = randperm(m)';
 
 % compute ranks from membrane lengths
 ranks_from_membranes = compute_ranks(mem_lengths);
 
 %% load profiles
 
-load(profile_data);
+n = 100;
+dpERK = zeros(m, n);
 
-data_red = dpERK_big_feb7;
-data_green = Dl_big_feb7;
-
-[m, n] = size(data_red);
-
-nchannels = 3;
-dpERK = zeros(m, n, nchannels);
-dpERK(:, :, 1) = data_red;
-dpERK(:, :, 2) = data_green;
+sigma = 100;
+for i=1:m
+    dpERK(i, :) = mem_lengths(i) * exp(-((1:n)-(n/2)).^2/sigma);
+end
+sigma_noise = 1;
+dpERK = dpERK + sigma_noise*randn(m, n);
 
 cm_red = gray;
 cm_red(:,2) = 0;
 cm_red(:,3) = 0;
 
-for i=1:2
-    dpERK(:,:,i) = dpERK(:,:,i) / max(max(dpERK(:,:,i))) * 256;
-end
+dpERK = dpERK / max(dpERK(:)) * size(cm_red, 1);
 
 % scramble data alignments
 dpERK_unaligned = zeros(size(dpERK));
-rng(12345);
 rand_offsets = zeros(m,1);
-dpERK_unaligned(1,:,:) = dpERK(1,:,:);
+dpERK_unaligned(1,:) = dpERK(1,:);
 for i=2:m
     rand_offsets(i) = randi(n);
-    dpERK_unaligned(i,:,:) = circshift(dpERK(i,:,:),[0 rand_offsets(i) 0]);
+    dpERK_unaligned(i,:) = circshift(dpERK(i,:),[0 rand_offsets(i)]);
 end
 
+% dpERK_unaligned = [dpERK_unaligned; fliplr(dpERK_unaligned)];
+% mem_lengths = [mem_lengths; mem_lengths];
+% ranks_from_membranes = compute_ranks(mem_lengths);
+
 %%
-
-[~, I] = sort(mem_lengths, 'descend');
-
 figure;
 set(gcf, 'paperposition',[0 0 8 8])
-imshow(uint8(dpERK(I, :, :)))
-xlabel('position (registered using Dl)', 'fontsize', fontsize)
-ylabel('data sample (ordered using cellularization)', 'fontsize', fontsize)
-set(gca, 'xtick', [])
-set(gca, 'ytick', [])
-set(gca,'position',[0.1 0.1 0.9 0.9],'units','normalized')
-print(sprintf('%s/registered_ordered_hand', im_save_dir), fmt, res);
-
-figure;
-set(gcf, 'paperposition',[0 0 8 8])
-imshow(uint8(dpERK_unaligned))
+image(dpERK_unaligned)
+colormap(cm_red)
 xlabel('position (unregistered)', 'fontsize', fontsize)
 ylabel('data sample (unordered)', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-set(gca,'position',[0.1 0.1 0.9 0.9],'units','normalized')
-
-print(sprintf('%s/unregistered_unordered_1d', im_save_dir), fmt, res);
+print(sprintf('%s/unregistered_unordered_toy', im_save_dir), fmt, res);
 
 %% 
 
-idx = 16;
+idx = 1;
 
 npoints = 500;
 [X, Y] = meshgrid(1:npoints, 1:npoints);
@@ -98,34 +75,32 @@ theta = atan2(Y, X);
 idx2 = find(theta < 0);
 theta(idx2) = theta(idx2) + 2*pi;
 
-image_test = zeros(npoints, npoints, nchannels);
-for j=1:nchannels
-    image_test_tmp = zeros(npoints);
-    for i=1:n
-        idx2 = find(theta > (i-1)/n*2*pi & theta < i/n * 2 * pi & R > 0.7*(npoints/2) & R < 0.8*(npoints/2));
-        image_test_tmp(idx2) = dpERK_unaligned(idx, i, j);
-    end
-    image_test(:,:,j) = image_test_tmp;
+image_test = zeros(npoints);
+for i=1:n
+    idx2 = find(theta > (i-1)/n*2*pi & theta < i/n * 2 * pi & R > 0.7*(npoints/2) & R < 0.8*(npoints/2));
+    image_test(idx2) = dpERK_unaligned(idx, i);
 end
 
 figure;
 set(gcf, 'paperposition',[0 0 9 10])
 subplot(10, 1, 1:9)
-imshow(uint8(image_test))
+image(image_test)
 axis off
 set(gca, 'ydir','normal')
+colormap(cm_red)
 
 subplot(10, 1, 10)
-imshow(uint8(dpERK_unaligned(idx,:,:)));
+image(dpERK_unaligned(idx,:));
 axis off
+colormap(cm_red)
 
-print(sprintf('%s/illustrate_1d', im_save_dir), fmt, res);
+print(sprintf('%s/illustrate_toy', im_save_dir), fmt, res);
 
 %%
 
 dim = 2;
 
-[R, W] = compute_pairwise_alignments_1d_color(dpERK_unaligned);
+[R, W] = compute_pairwise_alignments_1d(dpERK_unaligned);
 
 eps = median(W(:));
 neigs = 5;
@@ -140,29 +115,20 @@ dpERK_aligned = zeros(size(dpERK_unaligned));
 for i=1:m
     R_tmp = R_opt(dim*(i-1)+1:dim*i,:);
     theta = atan2(R_tmp(1,2), R_tmp(1,1));
-    dpERK_aligned(i,:,:) = circshift(dpERK_unaligned(i,:,:), [0 round(theta/(2*pi)*n) 0]);
+    dpERK_aligned(i,:) = circshift(dpERK_unaligned(i,:), [0 round(theta/(2*pi)*n)]);
 end
 
 figure;
 set(gcf, 'paperposition',[0 0 8 8])
-imshow(uint8(dpERK_aligned))
+image(dpERK_aligned)
+colormap(cm_red)
 xlabel('position (registered)', 'fontsize', fontsize)
 ylabel('data sample (unordered)', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-set(gca,'position',[0.1 0.1 0.9 0.9],'units','normalized')
+print(sprintf('%s/registered_unordered_toy', im_save_dir), fmt, res);
 
-print(sprintf('%s/registered_unordered_1d', im_save_dir), fmt, res);
-
-W2 = zeros(m);
-for i=1:m
-    imagei = dpERK_aligned(i,:,:);
-    for j=1:i-1    
-        imagej = dpERK_aligned(j,:,:);
-        W2(i, j) = norm(imagei(:)-imagej(:))^2;
-        W2(j,i) = W2(i,j);
-    end
-end
+W2 = squareform(pdist(dpERK_aligned));
 eps2 = median(W2(:));
 
 [V, D] = dmaps(W2, eps2, neigs);
@@ -175,14 +141,13 @@ end
 
 figure;
 set(gcf, 'paperposition',[0 0 8 8])
-imshow(uint8(dpERK_aligned(I, :,:)))
+image(dpERK_aligned(I, :))
+colormap(cm_red)
 xlabel('position (registered)', 'fontsize', fontsize)
 ylabel('data sample (ordered)', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-set(gca,'position',[0.1 0.1 0.9 0.9],'units','normalized')
-
-print(sprintf('%s/registered_ordered_1d', im_save_dir), fmt, res);
+print(sprintf('%s/registered_ordered_toy', im_save_dir), fmt, res);
 
 ranks_from_membranes = compute_ranks(mem_lengths);
 ranks_from_angsynch = compute_ranks(V(:,2));
@@ -203,11 +168,12 @@ dpERK_aligned = zeros(size(dpERK_unaligned));
 for i=1:m
     R_tmp = R_opt(dim*(i-1)+1:dim*i,:);
     theta = atan2(R_tmp(1,2), R_tmp(1,1));
-    dpERK_aligned(i,:,:) = circshift(dpERK_unaligned(i,:,:), [0 round(theta/(2*pi)*n) 0]);
+    dpERK_aligned(i,:) = circshift(dpERK_unaligned(i,:), [0 round(theta/(2*pi)*n)]);
 end
 
 figure;
-imshow(uint8(dpERK_aligned))
+image(dpERK_aligned)
+colormap(cm_red)
 
 idx = find(embed_idx(1,:) == dim+1 & embed_idx(2,:) == 1);
 
@@ -218,17 +184,17 @@ end
 [~, I] = sort(embed_coord(:, idx));
 figure;
 set(gcf, 'paperposition',[0 0 8 8])
-imshow(uint8(dpERK_aligned(I, :,:)))
+image(dpERK_aligned(I, :))
 colormap(cm_red)
 xlabel('position (registered)', 'fontsize', fontsize)
 ylabel('data sample (ordered)', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-set(gca,'position',[0.1 0.1 0.9 0.9],'units','normalized')
-print(sprintf('%s/registered_ordered_vdm_1d', im_save_dir), fmt, res);
+print(sprintf('%s/registered_ordered_vdm_toy', im_save_dir), fmt, res);
 
 ranks_from_membranes = compute_ranks(mem_lengths);
 ranks_from_vdm = compute_ranks(embed_coord(:,idx));
+
 
 figure;
 plot(ranks_from_membranes, ranks_from_vdm, '.')
