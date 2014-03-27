@@ -230,7 +230,9 @@ Is this information essential?
 %
 Below we show that this is not the case and that both the temporal ordering and registration of images can be fully automated, without prior information about the underlying dynamics. 
 %
-Our algorithmic approach is based on diffusion maps, a broadly applicable technique for the discovery of low-dimensional structures in high-dimensional data sets. 
+Our temporal ordering analysis is based on diffusion maps, a broadly applicable technique for the discovery of low-dimensional structures in high-dimensional data sets.
+%
+Our image registration is done via angular synchronization, a relatively new technique for registering images which has been applied to reconstructing the three-dimensional structure of molecules from cryo-electron microscopy \cite{singer2011three}; here, we will use the algorithm to register {\em Drosophila} images.
 %
 The paper is organized as follows. 
 %
@@ -245,17 +247,19 @@ We conclude by discussion of the general requirements that must be satisfied for
 
 \section{Results and Discussion}
 
-We will first demonstrate our techniques considering {\em only} considering rotations. 
+We will first demonstrate our techniques using one-dimensional concentrations profiles.
 %
-We have converted the two-dimensional images shown in Figure \ref{subfig:images_scrambled} into concentration profiles on a ring (we will address the full two-dimensional images in a subsequent section).
+We have converted the two-dimensional images shown in Figure \ref{subfig:images_scrambled} into profiles defined on a ring, corresponding to the concentrations around the periphery of the embryo (we will address the full two-dimensional images in a subsequent section).
 %
-Figure \ref{subfig:1d_image_example} shows a typical image that we have converted to a one-dimensional concentration profile; the profile is discretized into 100 points. 
+Figure \ref{subfig:1d_image_example} shows a typical image that we have converted to a one-dimensional profile; the profile is discretized into 100 points, and so our signals will be 200-dimensional vectors (100 dimensions correspond to the red channel at the 100 discretization points, and 100 dimensions correspond to the green channel at the 100 discretization points). 
 %
-Rotation of this image corresponds to shifting (with periodic boundary conditions) the one--dimensional concentration profile. 
+Rotation of this image corresponds to shifting (with periodic boundary conditions) the one-dimensional concentration profile shown in the bottom of Figure \ref{subfig:1d_image_example}. 
 %
 Figure \ref{subfig:1d_unaligned_unordered} shows the concentration profiles for all the images in our data set. 
 %
 The concentration profiles have been stacked in an array, such that each row corresponds to one image.
+%
+The task is now to shift each profile left and right to optimally register/align the signals, and then temporally order the rows in the array to reconstruct the developmental trajectory.
 
 \subsection{Angular synchronization for image registration}
 
@@ -263,7 +267,7 @@ Often when one collects images in experiments, each image is taken in a differen
 %
 Therefore, the first task in image analysis is to align or {\em register} the set of images. 
 %
-This requires translating and rotating each image, so that the set of images are globally aligned.
+This requires rotating and/or translating each image, so that the set of images are globally aligned.
 
 There are many methods for image registration. 
 %
@@ -273,34 +277,33 @@ However, this method can result in many errors if the images are noisy, and can 
 %
 Instead, we will use a relatively new technique called angular synchronization\cite{singer2011angular} to register sets of images.
 %
-Angular synchronization first computes the pairwise alignments (translation + rotation) for every possible pair of images, effectively using each image as a template for every other image.
+Angular synchronization first computes the pairwise alignments (rotation for our one-dimensional profiles in Figure \ref{subfig:1d_unaligned_unordered}, or translation + rotation for the two-dimensional images in Figure \ref{subfig:images_scrambled}) for every possible pair of images, effectively using each image as a template for every other image.
 %
-From this large collection of pairwise alignments, it then tries to find the optimal translation and rotation for each image, such that these individual alignments are most consistent (in some metric) with the pairwise alignments.
+From this large collection of pairwise alignments, it then tries to find the optimal alignment for each image, such that these individual alignments are most consistent (in some metric) with the pairwise alignments (i.e., we would like the difference between the optimal rotations for two different concentration profiles to be as close as possible to the pairwise rotation needed to align the two profiles).
 %
-The algorithm solves this optimization problem by relaxing it to an eigenproblem; the top eigenvector(s) of a matrix (which contains information about the pairwise alignments) give the translation and rotation for each image.
+The algorithm solves this optimization problem by relaxing it to an eigenproblem; the top eigenvector(s) of a matrix (which contains information about the pairwise alignments) give the alignment for each image.
 %
 Because the method considers {\em all} pairwise alignments, angular synchronization is often much more robust to noise. 
 
 Figure \ref{subfig:1d_aligned_unordered} shows the concentration profiles from Figure~\ref{subfig:1d_unaligned_unordered}, now aligned using angular synchronization;
 the peaks are aligned, even though we input no information about the existence or location of these peaks into our algorithm.
 %
-We would like to note that, because angular synchronization only uses pairwise rotation information, the optimal rotations are recovered {\em up to} a global rotation, and we are permitted rotate every point by a constant rotation.
+We would like to note that, because angular synchronization only uses pairwise rotation information, the optimal rotations are recovered {\em up to} a global rotation; we are permitted rotate every point by a constant rotation.
 
 \subsection{Diffusion maps for temporal ordering}
 
 We will use diffusion maps (DMAPS) \cite{coifman2005geometric} to temporally order our data.
 %
-Although our data are high-dimensional (for example, we will work with 2-color images of 10000 pixels, and so we treat these images as 20000-dimensional vectors, where each dimension describes the intensity of one color in one pixel), we will assume that they lie on a one-dimensional, perhaps nonlinear curve.
+Although our data are high-dimensional (for example, we will work with 2-color images of 10000 pixels, and so our data are 20000-dimensional vectors, where each dimension describes the intensity of one color in one pixel), we will assume that they lie on a one-dimensional, but perhaps nonlinear, curve.
 %
-We further assume that curve can be parameterized by time.
+We further assume that this curve is monotonic in time.
 %
 Therefore, our goal is to {\em automatically} uncover a parameterization of this curve, so that we can sort/order our data along it, effectively ordering our data in time.
-
-To ``unravel'' this curve, we assume that data points which are close in the high-dimensional space should also be close on the curve.
 %
-We want to find a parameterization of the points, such that the points which are close in the original close are {\em as close as possible} in the parameterization.
+To parameterize this one-dimensional curve which lies in high-dimensional space, we assume that data points which are close in the high-dimensional space should also be close on the curve, 
+e.g, images which look similar will be close in the high-dimensional pixel space (they will have similar pixel intensities), and we would like these similar images to be close to each other in our trajectory.
 %
-This problem can be formulated as an optimization problem \cite{...}, and the solution is given by the top (non-trivial) eigenvector of a matrix which contains information about pairwise distances between the data points. 
+%We therefore want to find a parameterization of the points, such that the points which are close in the original, high-dimensional space are {\em as close as possible} in the parameterization.
 
 As an illustration of how local neighbors are important for parameterizing a curve, Figure~\ref{subfig:dmaps_edges} shows a data set which lies on a one-dimensional, nonlinear curve in two dimensions.
 %
@@ -309,14 +312,18 @@ The edges between the pairs of data points are colored according to the distance
 Visually, these dark edges are meaningful and informative of the structure of the data; they clearly delineate the one-dimensional curve in the data that our eye can extract.
 %
 Furthermore, the light edges are not informative and do not give any meaningful structure to the curve. 
+
+The problem of finding a parameterization of the data which forces nearby points together can be formulated as an optimization problem \cite{Belkin2003}, and the solution is given by the top (non-trivial) eigenvector of a matrix which contains information about pairwise distances between the data points. 
+%
+This procedure is called diffusion maps \cite{coifman2005geometric}; the formulation extends from curves to manifolds (i.e., we can search for an $n$-dimensional, rather than a one-dimensional, parameterization of the data, such that data points which are close in the high-dimensional space are also close in the $n$-dimensional parameterization). 
 %
 The DMAPS parameterization of these are data are shown in Figure~\ref{subfig:dmaps_color}.
 %
-The parameterization is what we would expect visually.
+The parameterization agrees with what our eye can detect visually.
 %
-Although this data is useful for illustrative purposes, it is 
+However, we will work with very high-dimensional data, rather than these two-dimensional data points; we therefore have no easy way to plot and visualize the data, and rather need DMAPS to automatically uncover such structure in the data.
 
-Given our set of registered signals, shown in Figure \ref{subfig:1d_aligned_unordered}, we now wish to order them {\em in time} so that we can reconstruct the developmental dynamics.
+Given our set of registered signals, shown in Figure \ref{subfig:1d_aligned_unordered}, we would like to use DMAPS to order them in time.
 %
 We use the total Euclidean distance (both the red and the green channels) between the aligned concentration profiles (the rows of Figure \ref{subfig:1d_aligned_unordered}) as our pairwise distances for DMAPS (in \eqref{eq:dmaps_W}).
 %
@@ -338,9 +345,9 @@ We can combine angular synchronization (for registration) and diffusion maps (fo
 %
 This technique is called vector diffusion maps (VDM) \cite{singer2012vector}.
 %
-It not only reduces the number of required eigencomputations, but also is much more robust to noise, as mistakes in alignment are also considered when ordering the data.
-
-Figure \ref{subfig:1d_aligned_ordered_vdm} shows the result of aligning and ordering the data in Figure \ref{subfig:1d_unaligned_unordered} using vector diffusion maps. 
+It both reduces the number of required eigencomputations, and is much more robust to noise, as mistakes in alignment are also considered when ordering the data.
+%
+Figure \ref{subfig:1d_aligned_ordered_vdm} shows the result of simultaneously registering and ordering the data in Figure \ref{subfig:1d_unaligned_unordered} using VDM. 
 %
 The data has been ordered by $\psi_{1, 3}$, the first (non-trivial) VDM coordinate. 
 
@@ -348,10 +355,10 @@ The data has been ordered by $\psi_{1, 3}$, the first (non-trivial) VDM coordina
 
 The same methodologies (with small modifications) can be applied to two-dimensional images.
 %
-Instead of having $100$-dimensional concentration vectors, we now work with images containing $10000$ pixels.
+Instead of having $200$-dimensional concentration vectors, we now work with $20000$-dimensional images ($100x100$ pixel images containing two color channels).
 %
-The two-dimensional images are registered with respect to all possible translations and rotations; 
-we convert two-dimensional translations and rotations to three-dimensional rotations so that we can apply angular synchronization or vector diffusion maps. 
+The two-dimensional images are registered with respect to translations and rotations 
+(we convert the two-dimensional translations and rotations to three-dimensional rotations so that we can apply angular synchronization or vector diffusion maps). 
 %
 We used vector diffusion maps to align and order the images shown in Figure~\ref{subfig:images_scrambled}.
 %
@@ -359,21 +366,21 @@ The results are shown in Figure~\ref{subfig:images_vdm}.
 %
 The peaks are now aligned, and the intensity of dpERK grows as a function of time, as expected.
 
-In these {\em Drosophila} experiments, we have the luxury of an independent time marker from membranes.
+In these {\em Drosophila} experiments, we have the luxury of an independent measure of time from cellularization.
 %
-We can therefore evaluate the quality of our orderings obtained from VDM by comparing with the orderings obtained from the membrane markers.
+We can therefore evaluate the quality of our orderings obtained from VDM by comparing with the orderings obtained from cellularization.
 %
-The rank of each data point, computed using VDM, versus the rank of each data point computed from the membrane thickness, is shown in Figure~\ref{subfig:rank_corr}.
+The rank of each data point, computed using VDM, versus the rank of each data point computed from cellularization, is shown in Figure~\ref{subfig:rank_corr}.
 %
-The rank correlation is 0.8665, indicating that our ordering from VDM is consistent with the ordering obtained from the membrane thickness.
+The rank correlation is 0.8665, indicating that our ordering from VDM is consistent with the ordering obtained from cellularization.
 %
-There is more scatter for the younger embryos; this is to be expected, as the dpERK signal is very low in this range.
+There is more scatter for the younger embryos; this is to be expected, as the dpERK signal, which is the main feature that changes with time, is very low in this range.
 
-Although our methods are fairly robust, they do require a sufficient amount of data to ``see'' a smooth developmental trajectory.
+Although our methods are fairly robust, they do require a sufficient amount of data so that DMAPS can ``see'' a smooth trajectory.
 %
-We evaluated how much data is required by subsampling our data set (with replacement), and for each subsample, computing the temporal ordering using VDM and calculating the rank correlation between this ordering and the ordering using the membrane markers.
+We evaluated how much data is required by subsampling our data set (with replacement), and for each subsample, computing the temporal ordering using VDM and calculating the rank correlation between this ordering and the ordering from cellularization.
 %
-The results are shown in Figure~\ref{subfig:bootstrap}.
+The results are shown in Figure~\ref{subfig:bootstrap} (each data point is averaged over 50 random subsamples).
 %
 For small data sets, the average rank correlation is very low, indicating that the orderings from VDM are inaccurate. 
 %
@@ -384,11 +391,11 @@ rank correlation begins to plateau and VDM can accurately order the data.
 
 We have presented mathematical techniques for registration and temporal ordering of images arising in studies of developmental biology.
 %
-Although we illustrated our methods using a specific data set arising in a study of {\em Drosophila} embryogenesis, the techniques are very general and require little knowledge of the image features or the developmental dynamics.
+Although we illustrated our methods using a specific data set from a study of {\em Drosophila} embryogenesis, the techniques are very general and require little knowledge of the image features or the developmental dynamics.
 
-We would like to note that there have been multiple other works with temporally ordering biological data (RNA data, cell morphology data, disease progression data, etc.). 
+We would like to note that there have been multiple other works with temporally ordering biological data (RNA-seq, cell morphology, disease progression, etc.). 
 %
-The majority of these works temporally order the data either by solving a travelling salesman probelem, or by constructing a minimum spanning tree on the data.
+The majority of these works temporally order the data either by solving a traveling salesman problem, or by constructing a minimum spanning tree on the data.
 %
 We, instead, use nonlinear dimensionality reduction techniques, to construct a one-dimensional embedding of the data.
 %
@@ -406,7 +413,7 @@ Furthermore, our methods can only provide a temporal ordering for the data, and 
 %
 Regardless, we are confident that our methods hold great promise in areas where cross-sectional imaging data is readily available and relatively inexpensive to obtain. 
 %
-There are many applications for which develpomental dynamics are of interest, and yet there is no time marker to use to reconstruct the dynamics from such cross-sectional data. 
+They provide a simple and cost-effective alternative to live imaging or ordering images by hand in order to gain insight into the developmental dynamics.
 
 %% == end of paper:
 
@@ -418,7 +425,7 @@ There are many applications for which develpomental dynamics are of interest, an
 
 \begin{materials}
 
-\section{Angular synchronization}
+\section{Angular synchronization \cite{singer2011angular}}
 
 Let $x_1, \dots, x_m \in \mathbb{R}^n$ denote the signals that we wish to align with respect to rotations.
 %
@@ -534,7 +541,7 @@ We can now estimate $\theta_{i}$ by inverting \eqref{eq:R_theta}, and then regis
 %%
 %Because $H$ and $H^2$ have the same eigenvectors, our problem formulation accounts for not only pairwise alignment information, but also these higher-order considerations. 
 
-\section{Diffusion Maps}
+\section{Diffusion Maps \cite{coifman2005geometric}}
 
 %We will uncover a parameterization of this curve by only considering {\em local} neighbors of each data point.
 %%
@@ -577,7 +584,7 @@ $\epsilon$ can be chosen using several techniques (see, for example \cite{coifma
 
 We then want to find a coordinate $y$ such that $y(i)$ and $y(j)$ if $W_{ij}$ is large (i.e., $y$ preserves local information, and so points that are close in the original space are also close in the coordinate $y$).
 %
-We therefore want to solve the following optimization problem
+We therefore want to solve the following optimization problem \cite{Belkin2003}
 \begin{equation} \label{eq:dmaps_opt_problem}
 \argmin_{y} \sum_{ij} W_{ij} (y(i) - y(j))
 \end{equation}
@@ -605,7 +612,7 @@ In our setup, we assume that this one dimension, parameterized by $\phi_2$, is c
 %
 Therefore, ordering our data by $\phi_2(j)$ will allow us to automatically order our data in time.
 
-\section{Vector Diffusion Maps}
+\section{Vector Diffusion Maps \cite{singer2012vector}}
 
 For vector diffusion maps, we construct the matrix $S \in \mathbb{R}^{md \times md}$, with
 \begin{equation}
@@ -628,7 +635,7 @@ In general, the embedding coordinates are given by
 \end{equation}
 where $\phi_k(i) \in \mathbb{R}^d$ denotes the $i^{th}$ block of $\phi_k$.
 %
-If we assume that our data are one-dimensional, and that the rotations and the dynamics are uncoupled and therefore separable, one can show that a parameterization of our data (i.e. the analog of $\phi_2$ from the diffusion maps case) is given by $\psi_{1,d+1}$.
+If we assume that our data are one-dimensional, and that the rotations and the dynamics are uncoupled and therefore separable, one can show that a parameterization of our data (i.e., the analog of $\phi_2$ from the diffusion maps case) is given by $\psi_{1,d+1}$.
 %
 If no such claims can be made, then one often runs a second step of diffusion maps, using $\psi_{k,l}$ as the coordinates, in order to uncover the true manifold modulo symmetries. 
 
@@ -644,7 +651,7 @@ However, the typical matrix representation for the group of two-dimensional tran
 %
 Instead, we can (approximately) represent rotations and translations in two-dimensions using three-dimensional rotation matrices.
 %
-We do this by projecting the image onto a portion of the surface of a (three-dimensional) sphere (see Figure \ref{fig:SO3_picture}).
+We do this by projecting the image onto a portion of the surface of a (three-dimensional) sphere \cite{singer2011angular}. %(see Figure \ref{fig:SO3_picture}).
 %
 Rotations in two-dimensions now correspond to rotations around one principal axis in three-dimensions, and translations in two-dimensions correspond (approximately) to rotations around the other two principal axes in three-dimensions. (Clearly, not all translations can be described this way, as translations can range from $-\infty$ to $+ \infty$, and rotations are only from $0$ to $2 \pi$. However, the images we will be considering are already mostly centered, and so we are only interested in small translations that are well within the $[0, 2\pi)$ range.)
 %
@@ -756,6 +763,19 @@ R_{3,3} & = \cos(\alpha)\cos(\beta)
 We then invert \eqref{eq:angle_relations} to compute the optimal translation and rotation for each image from the Euler angles.
 %
 We round the optimal translations to the nearest integer to remove the need for interpolation when translating the images.  
+
+\section{Rank correlation}
+
+We use Spearman's rank correlation coefficient as a metric to evaluate the quality of our orderings.
+%
+Given data $x_1, \dots, x_m$ and $y_1, \dots, y_m$ for which we would like to compute the rank correlation coefficient, we first compute the ranks $X_i$ and $Y_i$ of each data point $x_i$ and $y_i$ in their respective data sets.
+%
+The rank correlation coefficient, $\rho$, is then given by
+\begin{equation}
+\rho = \frac{\sum_{i=1}^m (X_i - \overline{X})(Y_i - \overline{Y})}{\sqrt{\sum_{i=1}^m (X_i - \overline{X})^2 \sum_{i=1}^m (Y_i - \overline{Y})^2}}
+\end{equation}
+where $\overline{X}$ and $\overline{Y}$ are the means of $X_1, \dots, X_m$ and $Y_1, \dots, Y_m$, respectively.
+
 \end{materials}
 
 
@@ -852,7 +872,7 @@ We round the optimal translations to the nearest integer to remove the need for 
 \includegraphics[width=\textwidth]{fish2}
 \caption{}
 \end{subfigure}
-\caption{Schematic illustration of reconstructing dynamics from cross-sectional data. (a) Fish, each in a different orientation and a different stage of development. (b) Fish, now registered and temporally ordered. This is easy to do by hand because the data set is small and the developmental changes are easy to recognize.} 
+\caption{Schematic illustration of reconstructing dynamics from cross-sectional data. (a) Fish, each in a different orientation and a different stage of development. (b) Fish, now registered and temporally ordered. For this example, the registration and ordering is easy to do by hand because the data set is small and the developmental changes are easy to recognize.} 
 \label{fig:fish}
 \end{figure}
 
@@ -867,7 +887,7 @@ We round the optimal translations to the nearest integer to remove the need for 
 \caption{}
 \label{subfig:images_hand_ordered}
 \end{subfigure}
-\caption{{\em Drosophila} data. (a) Dorsal-ventral images of {\em Drosphila} embryos in nuclear cycle 14, each stained for Dorsal (green) and dpERK (red). (b) Images from (a), now registered using the location of the Dorsal peak, and temporally ordered using the membrane marker.} 
+\caption{{\em Drosophila} data. (a) Dorsal-ventral images of {\em Drosphila} embryos, each fluorescentally stained for Dorsal (green) and dpERK (red). (b) Images from (a), now registered using the location of the Dorsal peak, and temporally ordered using cellularization.} 
 \label{fig:fluorescent_images}
 \end{figure}
 
@@ -882,7 +902,7 @@ We round the optimal translations to the nearest integer to remove the need for 
 \caption{}
 \label{subfig:dmaps_color}
 \end{subfigure}
-\caption{Diffusion maps illustration. (a) Data points in two dimensions which lie on a one-dimensional nonlinear curve. Each pair of data points is connected by an edge, and the edge intensity is related to the distance between the points (close data points are connected by dark edges). (b) The data in (a), colored by the first (non-trivial) DMAPS eigenvector, $\phi_2$. The color parameterizes the one-dimensional curve. }
+\caption{Diffusion maps illustration. (a) Data points (in blue) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge intensity is related to the distance between the points (close data points are connected by dark edges). (b) The data in (a), colored by the first (non-trivial) DMAPS eigenvector, $\phi_2$. The color parameterizes the one-dimensional curve. }
 \label{fig:dmaps_schematic}
 \end{figure}
 
@@ -912,14 +932,15 @@ We round the optimal translations to the nearest integer to remove the need for 
 \caption{}
 \label{subfig:1d_aligned_ordered_vdm}
 \end{subfigure}
-\caption{(a) One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). (b) The concentration profiles corresponding to the images in Figure \ref{fig:fluorescent_images}. Each row in the array corresponds to one image. (c) The concentration profiles in (b), now registered using angular synchronization. (d) The concentration profiles in (c), now temporally ordered using diffusion maps. (e) The concentration profiles in (b), now simultaneously registered and temporally ordered using vector diffusion maps. }
+\caption{Illustration of methodologies using one-dimensional profiles. (a) One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). Rotation of the ring corresponds to shifting the line left and right (with periodic boundary conditions). (b) The concentration profiles corresponding to the images in Figure \ref{fig:fluorescent_images}. Each row in the array corresponds to one image. (c) The concentration profiles in (b), now registered using angular synchronization. (d) The concentration profiles in (c), now temporally ordered using diffusion maps. The profiles are sorted according to the value of the first non-trivial DMAPS component, $\phi_2$. (e) The concentration profiles in (b), now simultaneously registered and temporally ordered using vector diffusion maps. The profiles are sorted according to the value of the first non-trivial VDM component, $\psi_{1, 3}$.}
 \label{fig:1d_demo}
 \end{figure*}
 
 \begin{figure*}
 \begin{minipage}{0.6\textwidth}
 \begin{subfigure}{\textwidth}
-\includegraphics[width=\textwidth]{registered_ordered_vdm_2d}
+%\includegraphics[width=\textwidth]{registered_ordered_vdm_2d}
+\includegraphics[width=\textwidth]{test}
 \caption{}
 \label{subfig:images_vdm}
 \end{subfigure}
@@ -936,7 +957,7 @@ We round the optimal translations to the nearest integer to remove the need for 
 \label{subfig:bootstrap}
 \end{subfigure}
 \end{minipage}
-\caption{(a) The images in Figure~\ref{fig:fluorescent_images}, aligned and temporally ordered using vector diffusion maps. (b) The rank correlation between the ordering of the images in (a) using vector diffusion maps, and the ordering obtained using the membrane markers. (c) The rank correlation coefficient as a function of the number of data points. }
+\caption{(a) The images in Figure~\ref{fig:fluorescent_images}, aligned and temporally ordered using vector diffusion maps. The images are sorted according to the value of the first non-trivial VDM component, $\psi_{1, 4}$. (b) The rank correlation between the ordering of the images in (a) using vector diffusion maps, and the ordering of in the images in Figure~\ref{subfig:images_hand_ordered}, obtained using cellularization. (c) The rank correlation coefficient between the VDM ordering and the cellularization ordering as a function of the number of data points. }
 \end{figure*}
 
 %\begin{figure*}

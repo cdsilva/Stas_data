@@ -180,7 +180,7 @@ figure;
 set(gcf, 'papersize', [11/4 8.5/4])
 set(gcf, 'paperposition', [0 0 11/4 8.5/4])
 plot(ranks_from_membranes, ranks_from_vdm, '.')
-xlabel('rank from membrane lengths')
+xlabel('rank from cellularization')
 ylabel('rank from vdm')
 print(sprintf('%s/rank_corr_vdm', im_save_dir), fmt, res);
 
