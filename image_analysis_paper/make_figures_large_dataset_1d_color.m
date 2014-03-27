@@ -59,6 +59,20 @@ for i=2:m
 end
 
 %%
+
+[~, I] = sort(mem_lengths);
+
+figure;
+set(gcf, 'paperposition',[0 0 8 8])
+imshow(uint8(dpERK(I, :, :)))
+xlabel('position (registered)', 'fontsize', fontsize)
+ylabel('data sample (ordered)', 'fontsize', fontsize)
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+set(gca,'position',[0.1 0.1 0.9 0.9],'units','normalized')
+print(sprintf('%s/registered_ordered_hand', im_save_dir), fmt, res);
+return
+
 figure;
 set(gcf, 'paperposition',[0 0 8 8])
 imshow(uint8(dpERK_unaligned))

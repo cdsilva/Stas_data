@@ -79,7 +79,7 @@ set(gcf, 'paperposition',[0 0 8 8])
 for i=1:m
     im1 = image_set(:,:,:,i);
     %subplot(subplot_dim1, subplot_dim2, i);
-    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1 1/subplot_dim2])
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
     imshow(im1);
     
 end
@@ -97,7 +97,7 @@ for i=1:m
     im1 = image_set_aligned(:,:,:,i);
     
     %subplot(subplot_dim1, subplot_dim2, i);
-    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1 1/subplot_dim2])
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
     imshow(im1);
     
 end
@@ -168,7 +168,7 @@ figure;
 set(gcf, 'paperposition', [0 0 8 8])
 for i=1:m
     %subplot(subplot_dim1, subplot_dim2, i);
-    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1 1/subplot_dim2])
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
     imshow(image_set_aligned(:,:,:,I(i)));
 end
 print(sprintf('%s/registered_ordered_vdm_2d', im_save_dir), fmt, res);
