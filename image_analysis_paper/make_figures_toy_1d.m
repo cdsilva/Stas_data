@@ -2,8 +2,9 @@ clear all
 close all
 
 res = '-r300';
-fmt = '-djpeg';
-fontsize = 30;
+%fmt = '-djpeg';
+fmt = '-depsc';
+fontsize = 10;
 
 im_save_dir = 'paper_figures';
 
@@ -45,20 +46,19 @@ for i=2:m
     dpERK_unaligned(i,:) = circshift(dpERK(i,:),[0 rand_offsets(i)]);
 end
 
-% dpERK_unaligned = [dpERK_unaligned; fliplr(dpERK_unaligned)];
-% mem_lengths = [mem_lengths; mem_lengths];
-% ranks_from_membranes = compute_ranks(mem_lengths);
-
 %%
 figure;
-set(gcf, 'paperposition',[0 0 8 8])
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
 image(dpERK_unaligned)
 colormap(cm_red)
-xlabel('position (unregistered)', 'fontsize', fontsize)
-ylabel('data sample (unordered)', 'fontsize', fontsize)
+xlabel('position', 'fontsize', fontsize)
+ylabel('sample', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-print(sprintf('%s/unregistered_unordered_toy', im_save_dir), fmt, res);
+%print(sprintf('%s/unregistered_unordered_toy', im_save_dir), fmt, res);
+saveas(gcf, sprintf('%s/fig3c', im_save_dir), 'epsc');
 
 %% 
 
@@ -82,7 +82,9 @@ for i=1:n
 end
 
 figure;
-set(gcf, 'paperposition',[0 0 9 10])
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
 subplot(10, 1, 1:9)
 image(image_test)
 axis off
@@ -93,8 +95,20 @@ subplot(10, 1, 10)
 image(dpERK_unaligned(idx,:));
 axis off
 colormap(cm_red)
+%print(sprintf('%s/illustrate_toy', im_save_dir), fmt, res);
+saveas(gcf, sprintf('%s/fig3a', im_save_dir), 'epsc');
 
-print(sprintf('%s/illustrate_toy', im_save_dir), fmt, res);
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
+plot(dpERK_unaligned(idx,:), '-r');
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+xlabel('position', 'fontsize', fontsize)
+ylabel('intensity', 'fontsize', fontsize)
+saveas(gcf, sprintf('%s/fig3b', im_save_dir), 'epsc');
 
 %%
 
@@ -119,14 +133,17 @@ for i=1:m
 end
 
 figure;
-set(gcf, 'paperposition',[0 0 8 8])
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
 image(dpERK_aligned)
 colormap(cm_red)
-xlabel('position (registered)', 'fontsize', fontsize)
-ylabel('data sample (unordered)', 'fontsize', fontsize)
+xlabel('position', 'fontsize', fontsize)
+ylabel('sample', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-print(sprintf('%s/registered_unordered_toy', im_save_dir), fmt, res);
+%print(sprintf('%s/registered_unordered_toy', im_save_dir), fmt, res);
+saveas(gcf, sprintf('%s/fig3d', im_save_dir), 'epsc');
 
 W2 = squareform(pdist(dpERK_aligned));
 eps2 = median(W2(:));
@@ -140,14 +157,17 @@ end
 [~, I] = sort(V(:,2));
 
 figure;
-set(gcf, 'paperposition',[0 0 8 8])
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
 image(dpERK_aligned(I, :))
 colormap(cm_red)
-xlabel('position (registered)', 'fontsize', fontsize)
-ylabel('data sample (ordered)', 'fontsize', fontsize)
+xlabel('position', 'fontsize', fontsize)
+ylabel('sample', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-print(sprintf('%s/registered_ordered_toy', im_save_dir), fmt, res);
+%print(sprintf('%s/registered_ordered_toy', im_save_dir), fmt, res);
+saveas(gcf, sprintf('%s/fig3e', im_save_dir), 'epsc');
 
 ranks_from_membranes = compute_ranks(mem_lengths);
 ranks_from_angsynch = compute_ranks(V(:,2));
@@ -183,25 +203,25 @@ end
 
 [~, I] = sort(embed_coord(:, idx));
 figure;
-set(gcf, 'paperposition',[0 0 8 8])
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
 image(dpERK_aligned(I, :))
 colormap(cm_red)
-xlabel('position (registered)', 'fontsize', fontsize)
-ylabel('data sample (ordered)', 'fontsize', fontsize)
+xlabel('position', 'fontsize', fontsize)
+ylabel('sample', 'fontsize', fontsize)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
-print(sprintf('%s/registered_ordered_vdm_toy', im_save_dir), fmt, res);
+%print(sprintf('%s/registered_ordered_vdm_toy', im_save_dir), fmt, res);
+saveas(gcf, sprintf('%s/fig3f', im_save_dir), 'epsc');
 
 ranks_from_membranes = compute_ranks(mem_lengths);
 ranks_from_vdm = compute_ranks(embed_coord(:,idx));
-
 
 figure;
 plot(ranks_from_membranes, ranks_from_vdm, '.')
 xlabel('rank from membrane lengths')
 ylabel('rank from vdm')
-
-
 
 
 
