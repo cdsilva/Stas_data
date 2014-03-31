@@ -75,21 +75,29 @@ theta = atan2(Y, X);
 idx2 = find(theta < 0);
 theta(idx2) = theta(idx2) + 2*pi;
 
-image_test = zeros(npoints);
+image_test_red = zeros(npoints);
+image_test_gray = zeros(npoints);
 for i=1:n
     idx2 = find(theta > (i-1)/n*2*pi & theta < i/n * 2 * pi & R > 0.7*(npoints/2) & R < 0.8*(npoints/2));
-    image_test(idx2) = dpERK_unaligned(idx, i);
+    image_test_red(idx2) = dpERK_unaligned(idx, i);
+    image_test_gray(idx2) = 256/4;
 end
+
+image_test = zeros(npoints, npoints, 3);
+image_test(:, :, 1) = image_test_red*256/max(dpERK(:)) + image_test_gray;
+image_test(:, :, 2) = image_test_gray;
+image_test(:, :, 3) = image_test_gray;
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [4 4])
 set(gcf, 'paperposition',[0 0 4 4])
 subplot(10, 1, 1:9)
-image(image_test)
+%image(image_test)
+imshow(uint8(image_test))
 axis off
 set(gca, 'ydir','normal')
-colormap(cm_red)
+%colormap(cm_red)
 
 subplot(10, 1, 10)
 image(dpERK_unaligned(idx,:));
@@ -98,6 +106,7 @@ colormap(cm_red)
 %print(sprintf('%s/illustrate_toy', im_save_dir), fmt, res);
 saveas(gcf, sprintf('%s/fig3a', im_save_dir), 'epsc');
 
+return
 
 figure;
 set(gcf, 'paperunits', 'centimeters')

@@ -249,7 +249,7 @@ end
 figure;
 imshow(uint8(data_1d))
 
-[~, I] = sort(mem_lengths);
+[~, I] = sort(mem_lengths, 'descend');
 figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [4 4])
@@ -297,4 +297,38 @@ xlabel('position', 'fontsize', fontsize)
 saveas(gcf, sprintf('%s/fig2c', im_save_dir), 'epsc');
 
 
+%%
+load('Dl_dpERK.mat');
+dpERK = nERK;
+Dl = nDl;
+
+dpERK = flipud(dpERK);
+Dl = flipud(Dl);
+
+[m, n] = size(dpERK);
+
+data_1d = zeros(m, n, 3);
+data_1d(:,:,1) = dpERK;
+data_1d(:,:,2) = Dl;
+
+for i=1:2
+    data_1d(:,:,i) = data_1d(:,:,i) / max(max(data_1d(:,:,i))) * 256;
+end
+
+[~, shift_amt] = max(sum(Dl));
+data_1d = circshift(data_1d, [0 round(n/2)-shift_amt 0]);
+
+figure;
+imshow(uint8(data_1d))
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
+image(uint8(data_1d))
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+xlabel('position', 'fontsize', fontsize)
+ylabel('sample', 'fontsize', fontsize)
+saveas(gcf, sprintf('%s/fig6c', im_save_dir), 'epsc');
 
