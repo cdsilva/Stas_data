@@ -153,7 +153,9 @@ If each data point is a two-dimensional image, the images must first be aligned 
 %
 When such data sets are large, and/or if the developmental changes are subtle, these tasks can be difficult to do by hand. 
 %
-We present an automatic way to register and temporally order cross--sectional data sets of images. We use relatively new mathematical techniques (angular synchronization for image registration, and diffusion maps for temporal ordering) which are applicable to a wide variety of data sets and require little {\em a priori} knowledge of the image features or the developmental dynamics. 
+We present an automatic way to register and temporally order cross--sectional data sets of images. 
+%
+We use mathematical techniques (angular synchronization for image registration, and diffusion maps for temporal ordering) which are applicable to a wide variety of data sets and require little {\em a priori} knowledge of the image features or the developmental dynamics. 
 %
 We demonstrate the utility of our methods using a collection of images from a study of {\em Drosophila} embryogenesis.
 \end{abstract}
@@ -219,7 +221,8 @@ This dataset comprises $81$ fluorescence microscopy images of different embryos 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig1}
 \caption{Schematic illustration of reconstructing dynamics from cross-sectional data. (a) Fish, each in a different orientation and a different stage of development. (b) Fish, now registered and temporally ordered. For this example, the registration and ordering is easy to do by hand because the data set is small and the developmental changes are easy to recognize.} 
-\label{fig:fish}
+%\label{fig:fish}
+\customlabel{fig:fish}{1}
 \customlabel{subfig:fish_unordered}{\ref{fig:fish}a}
 \customlabel{subfig:fish_ordered}{\ref{fig:fish}b}
 \end{figure}
@@ -230,18 +233,19 @@ By end of the $2^{nd}$ hour of development, sequential divisions of a fertilized
 %
 During the $3^{rd}$ hour, the embryo undergoes the process of cellularization, whereby membranes that enclose nuclei into different cells grow in length (Figure~\ref{subfig:membranes}). 
 %
-Concurrently with these morphological changes, concentration profiles of multiple regulatory molecules form inside the embryo, subdividing it into regions that give rise to future tissues and organs. 
+Concurrently with these morphological changes, concentration profiles of multiple regulatory molecules form inside the embryo, subdividing it into regions that give rise to future tissues and organs \cite{lim2013kinetics}. 
 %
 Images in Figure~\ref{subfig:images_unordered} show optical sections through the short axis of the embryos. 
 %
-The embryos were fixed and stained with chemicals that visualize nuclei (shown in gray) as well as the spatial distributions of two different proteins (shown in green and red). 
+The embryos were fixed and stained with chemicals that visualize nuclei (shown in gray) as well as the spatial distributions of two different proteins (shown in green and red) \cite{chung2010microfluidic}. 
 %
 Each of the images reveals a uniform arrangement of nuclei and nonuniform distribution of the two proteins, which are involved in patterning of the dorsoventral (back-to-belly) axis of the embryo. 
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig2}
 \caption{(a) Fluorescent images of {\em Drosophila} embryos. Each embryo has been stained from Dorsal (green) and dpERK (red). (b) Selected image from data set. (c) Profile of Dorsal (green) and dpERK (red) around the circumfrence of the embryo in (b).}
-\label{fig:images_unordered}
+%\label{fig:images_unordered}
+\customlabel{fig:images_unordered}{2}
 \customlabel{subfig:images_unordered}{\ref{fig:images_unordered}a}
 \customlabel{subfig:one_image}{\ref{fig:images_unordered}b}
 \customlabel{subfig:image_profiles}{\ref{fig:images_unordered}c}
@@ -259,33 +263,33 @@ We will use diffusion maps \cite{coifman2005geometric}, a broadly applicable tec
 %
 We will also show how both steps can be combined using vector diffusion maps \cite{singer2012vector}.
 %
-The paper is organized as follows. 
-%
-First, we use a synthetic dataset, where the correct orientation and ordering of data points is known, to formalize the tasks of image registration and temporal ordering. 
-%
-Then, we show that both of these tasks can be effectively combined in a single step. 
-%
-Following this, we return to the original set of two-dimensional images and demonstrate that our approach can readily align them and order them correctly in time. 
-%
-We conclude by discussing the general requirements that must be satisfied for our approach to work and compare it to other approaches and ideas in cross-sectional studies of biological dynamics. 
+%The paper is organized as follows. 
+%%
+%First, we use a synthetic dataset, where the correct orientation and ordering of data points is known, to formalize the tasks of image registration and temporal ordering. 
+%%
+%Then, we show that both of these tasks can be effectively combined in a single step. 
+%%
+%Following this, we return to the original set of two-dimensional images and demonstrate that our approach can readily align them and order them correctly in time. 
+%%
+%We conclude by discussing the general requirements that must be satisfied for our approach to work and compare it to other approaches and ideas in cross-sectional studies of biological dynamics. 
 
 \section{Results and Discussion}
 
-We would like to temporally order images, such as the images shown in Figure~\ref{subfig:images_unordered}.
-%
-We will use diffusion maps, a dimensionality reduction algorithm, to automatically order our data.
-%
-However, this algorithm requires distances between data points. 
-%
-Because each image is in a different orientation, we need to first align or {\em register} the images before computing distances.
-%
-Once all the images have been aligned, we can compute distances and use diffusion maps to temporally order the data.
+%We would like to temporally order images, such as the images shown in Figure~\ref{subfig:images_unordered}.
+%%
+%We will use diffusion maps, a dimensionality reduction algorithm, to automatically order our data.
+%%
+%However, this algorithm requires distances between data points. 
+%%
+%Because each image is in a different orientation, we need to first align or {\em register} the images before computing distances.
+%%
+%Once all the images have been aligned, we can compute distances and use diffusion maps to temporally order the data.
 
 We will first demonstrate our techniques for registration and temporal ordering using a synthetic data set with relatively simple dynamics.
 %
 We construct concentration profiles defined on a ring, and we assume that each ring is in an arbitrary orientation; an example is shown in Figure~\ref{subfig:1d_example}.
 %
-Each concentration profile is a Gaussian (shown in Figure~\ref{subfig:1d_intensity}), and the Gaussians increase in intensity as  a function of time.
+Each concentration profile is a noisy Gaussian (shown in Figure~\ref{subfig:1d_intensity}), and the Gaussians increase in intensity as  a function of time.
 %
 We discritize the profiles into 100 points, so our data will be 100-dimensional vectors. 
 %
@@ -300,8 +304,9 @@ Because the profiles are unregistered and unordered, the underlying dynamics (a 
 \begin{figure}[t]
 %\includegraphics{figures_0329_mac_4}
 \includegraphics[width=8.4cm]{fig4}
-\caption{Illustration of methodologies using one-dimensional profiles. (a) One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). Rotation of the ring corresponds to shifting the line left and right (with periodic boundary conditions). (b) One-dimensional profile correspondsing to the profile in (a). This profile is similar to the profile in Figure~\ref{fig:images_unordered}(c).  (c) Many concentration profiles, each of the form described in (a). Each row in the array corresponds to one image. The overall dynamics are a Gaussian bump growing in time, but this is not readily apparent from the data because the profiles are unregistered and unordered. (d) The concentration profiles in (b), now registered using angular synchronization. (e) The concentration profiles in (c), now temporally ordered using diffusion maps. The profiles are sorted according to the value of the first non-trivial DMAPS component, $\phi_2$. (f) The concentration profiles in (b), now simultaneously registered and temporally ordered using vector diffusion maps. The profiles are sorted according to the value of the first non-trivial VDM component, $\psi_{1, 3}$.}
-\label{fig:1d_demo}
+\caption{Illustration of methodologies using one-dimensional profiles. (a) One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). (b) Intensity corresponding to the profile in (a). (c) Many concentration profiles, each of the form described in (a). Each row in the array corresponds to one image. (d) The concentration profiles in (b), now registered using angular synchronization. (e) The concentration profiles in (c), now temporally ordered using diffusion maps. (f) The concentration profiles in (b), now simultaneously registered and temporally ordered using vector diffusion maps.}
+%\label{fig:1d_demo}
+\customlabel{fig:1d_demo}{3}
 \customlabel{subfig:1d_example}{\ref{fig:1d_demo}a}
 \customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}b}
 \customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}c}
@@ -318,7 +323,7 @@ Our first task is to register the set of images or profiles.
 %
 %However, this method can result in many errors if the images are noisy, and can be problematic if a ``good'' template image is not known {\em a priori}. 
 %
-We will use a relatively new technique called angular synchronization\cite{singer2011angular}, which is robust to noise and requires no {\em a priori} knowledge of image features.
+We will use angular synchronization\cite{singer2011angular}, a technique which is robust to noise and requires no {\em a priori} knowledge of image features.
 %
 Angular synchronization first computes the pairwise alignments %(rotations for our one-dimensional profiles in Figure \ref{fig:1d_demo}c, or translations and rotations for the two-dimensional images in Figure \ref{fig:images_unordered}) 
 for every possible pair of data points. %, effectively using each image as a template for every other image.
@@ -343,7 +348,8 @@ The top eigenvector(s) of a matrix (which contains information about the pairwis
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig3}
 \caption{Illustration of diffusion maps and angular synchronization (a) Data points (in blue) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge intensity is related to the distance between the points (close data points are connected by dark edges). (b) The data in (a), colored by the first (non-trivial) eigenvector from diffusion maps, $\phi_2$. The color parameterizes the one-dimensional curve. (c) Set of vectors, each in a different orientation. The angles to align one vector to another are indicated. (d) The vectors from (c), each rotated so that the set of vectors is aligned. Note that the angles are consistent with the pairwise alignments in (c). }
-\label{fig:schematics}
+%\label{fig:schematics}
+\customlabel{fig:schematics}{4}
 \customlabel{subfig:dmaps_edges}{\ref{fig:schematics}a}
 \customlabel{subfig:dmaps_color}{\ref{fig:schematics}b}
 \customlabel{subfig:synch1}{\ref{fig:schematics}c}
@@ -352,27 +358,27 @@ The top eigenvector(s) of a matrix (which contains information about the pairwis
 
 Figure \ref{subfig:1d_aligned_unordered} shows the concentration profiles from Figure~\ref{subfig:1d_unaligned_unordered}, now aligned using angular synchronization.
 %
-The peaks are now aligned, even though we input no information about the existence or location of these peaks into our algorithm.
+The peaks are now aligned, even though our algorithm use no information about the existence or location of these peaks.
 %
-We would like to note that, because angular synchronization only uses pairwise rotation information, the optimal rotations are recovered up to a global rotation.
+Because angular synchronization only uses pairwise rotation information, the optimal rotations are recovered up to a global rotation.
 
 \subsection{Diffusion maps for temporal ordering}
 
 After registering the images or concentration profiles, we want to order them in time to reconstuct the developmental dynamics. 
 %
-We will use diffusion maps (DMAPS) \cite{coifman2005geometric} to temporally order our data.
+We will use diffusion maps (DMAPS) to temporally order our data.
 %
-In general, diffusion maps is a dimensionality reduction technique, which aims to uncover low-dimensional, nonlinear structure in a high-dimensional data set. 
+In general, diffusion maps is a dimensionality reduction technique, which aims to uncover low-dimensional, nonlinear structure in a high-dimensional data set \cite{coifman2005geometric}. 
 %
 Figure~\ref{subfig:dmaps_edges} shows an example of a two-dimensional data set (the ``high-dimensional data'') which lies on a one-dimensional nonlinear curve (the low-dimensional structure).
 %
 Figure~\ref{subfig:dmaps_color} shows the same data, now colored by the first diffusion maps coordinate.
 %
-Clearly, the color parameterizes the one-dimensional curve that our eye can visually detect.
+The color parameterizes the one-dimensional curve that our eye can visually detect.
 %
 We assume that our imaging data also falls on a one-dimensional, nonlinear curve, and that this curve is parameterized by time (e.g., in Figure~\ref{subfig:dmaps_color}, we assume that the data points are ordered from youngest to oldest along the curve). 
 %
-Therefore, ordering our data along this curve will effectively order our data in time.
+Therefore, ordering data along this curve will effectively order data in time.
 %
 Because our data will be very high dimensional, we cannot do this by eye, and instead require an algorithm to automatically extract this one-dimensional structure.
 
@@ -380,7 +386,7 @@ To uncover a parameterization of this curve, we assume that data points which ar
 %
 %We therefore want to find a parameterization of the points, such that the points which are close in the original, high-dimensional space are {\em as close as possible} in the parameterization.
 %
-As an illustration of how local neighbors are important for parameterizing a curve, the edges between the pairs of data points in Figure~\ref{subfig:dmaps_edges} are colored according to the distance between the data points, so that close data points have a dark edge between them.
+To emphasize this point, edges between the pairs of data points in Figure~\ref{subfig:dmaps_edges} are colored according to the distance between the data points, so that close data points have a dark edge between them.
 %
 Visually, the dark edges are meaningful and delineate the one-dimensional curve.
 %
@@ -400,13 +406,13 @@ Figure \ref{subfig:1d_aligned_ordered} shows the data from Figure \ref{subfig:1d
 %
 As expected, the intensity of the peak grows as a function of time. 
 %
-Although diffusion maps can order the data, it cannot tell us about the speed of this trajectory.
+%Although diffusion maps can order the data, it cannot tell us about the speed of this trajectory.
 %
-Furthermore, the direction of the trajectory is also unknown; determining which end of the trajectory corresponds to the beginning of development is a task that needs to be done by hand.
+%Furthermore, the direction of the trajectory is also unknown; determining which end of the trajectory corresponds to the beginning of development is a task that needs to be done by hand.
 
 \subsection{Vector diffusion maps for registration and ordering}
 
-We are often interested in both registering and ordering our data.
+%We are often interested in both registering and ordering our data.
 %
 %Our proposed alignment methodology, angular synchronization, utilizes the eigendecompostion of the matrix $H \in \mathbb{R}^{md \times md}$, and our proposed ordering algorithm, diffusion maps, utilizes the eigendecomposition of the matrix $A \in \mathbb{R}^{m \times m}$.
 %
@@ -434,13 +440,14 @@ the results are shown in Figure~\ref{fig:images_ordered}.
 %
 Both the red and green peaks are now aligned, and the intensity of the red peaks grows as a function of time.
 
-In these {\em Drosophila} experiments, both registration and temporal ordering can be done by hand using prior knowledge about the system. 
+In these experiments, we can evaluate the quality of our automatic registration and ordering using prior knowledge about the system.
 %
-It is known that the peak in the distribution of Dorsal (visualized by the green channel) specifies the ventralmost position in the embryo, and that the nuclei (shown in gray) delineate the circumfrence of the embryo. 
+It is known that the peak in the distribution of Dorsal (visualized by the green channel) specifies the ventralmost position in the embryo, and that the nuclei (shown in gray) delineate the circumference of the embryo. 
 %
-Based on this, images can be translated to make the centers of the embryos coincide and rotated to place the peak of the green channel at the same angular position. 
+%Based on this, images can be translated to make the centers of the embryos coincide and rotated to place the peak of the green channel at the same angular position. 
 %
-At the same time, temporal ordering can be done based on the monotonic progress of cellularization (Figure~\ref{subfig:membranes}). 
+%At the same time, 
+Temporal ordering can be done based on the monotonic progress of cellularization (Figure~\ref{subfig:membranes}) \cite{figard2013plasma}. 
 %
 We can evaluate the quality our automatic orderings by comparing with the orderings obtained from cellularization.
 %
@@ -452,13 +459,13 @@ these results are shown in Figures~\ref{subfig:1d_membranes}~and~\ref{subfig:1d_
 The general trends are consistent:
 the green peaks are aligned, and the red peaks grow as a function of time. 
 %
-However, Figure~\ref{subfig:1d_vdm}, which was registered and ordered using our mathematical algorithms, shows a better clustering of the outer peaks in the top corners of the image.
+However, Figure~\ref{subfig:1d_vdm}, which was automatically registered and ordered, shows a better clustering of the outer peaks in the top corners of the image.
 %
 %These peaks are more scrambled in Figure~\ref{fig:membrane_compare}b, which was analyzed using cellularization.
 %
 These peaks are known to arise later in development, and so it is reassuring that they are at the end of the trajectory.
 %
-Furthermore, the membranes stop growing towards the end of this trajectory, making the ordering of the late signals in Figure~\ref{subfig:1d_membranes} less accurate.
+%Furthermore, the membranes stop growing towards the end of this trajectory, making the ordering of the late signals in Figure~\ref{subfig:1d_membranes} less accurate.
 
 %Although our methods are fairly robust, they do require a sufficient amount of data so that DMAPS can ``see'' a smooth trajectory.
 %%
@@ -473,26 +480,27 @@ Furthermore, the membranes stop growing towards the end of this trajectory, maki
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig5}
-\caption{The images in Figure~\ref{fig:images_unordered}, aligned and temporally ordered using vector diffusion maps. The images are sorted according to the value of the first non-trivial vector diffusion maps component, $\psi_{1, 4}$.}
-\label{fig:images_ordered}
+\caption{The images in Figure~\ref{subfig:images_unordered}, aligned and temporally ordered using vector diffusion maps. The images are sorted according to the value of the first non-trivial vector diffusion maps component, $\psi_{1, 4}$.}
+%\label{fig:images_ordered}
+\customlabel{fig:images_ordered}{5}
 \end{figure}
 
 \begin{figure}[t]
 %\includegraphics{figures_0329_mac_6}
 \includegraphics[width=8.4cm]{fig6}
-\caption{(a) Images, stained for membranes (gray) and Dorsal (green) at different levels of development. (b) Membrane length as a function of time. (c) Distribution of embryo ages in the data set. (d) The one-dimensional concentration profiles, extracted, registered, and ordered by hand. The profiles are extracted using the nuclei positions in the image, registered using the location of the Dorsal peak, and ordered using cellularization. (e) The one-dimensional concentration profiles corresponding to the images in Figure~\ref{fig:images_ordered}. }
-\label{fig:membrane_compare}
+\caption{(a) Images, stained for membranes (gray) and Dorsal (green) at different levels of development. (b) Membrane length as a function of time. (c) The one-dimensional concentration profiles, extracted, registered, and ordered by hand. The profiles are extracted using the nuclei positions in the image, registered using the location of the Dorsal peak, and ordered using cellularization. (d) The one-dimensional concentration profiles corresponding to the images in Figure~\ref{fig:images_ordered}. }
+%\label{fig:membrane_compare}
+\customlabel{fig:membrane_compare}{6}
 \customlabel{subfig:membranes}{\ref{fig:membrane_compare}a}
 \customlabel{subfig:membrane_curve}{\ref{fig:membrane_compare}b}
-\customlabel{subfig:membrane_dist}{\ref{fig:membrane_compare}c}
-\customlabel{subfig:1d_membranes}{\ref{fig:membrane_compare}d}
-\customlabel{subfig:1d_vdm}{\ref{fig:membrane_compare}e}
+\customlabel{subfig:1d_membranes}{\ref{fig:membrane_compare}c}
+\customlabel{subfig:1d_vdm}{\ref{fig:membrane_compare}d}
 \end{figure}
 
 
 \section{Conclusions}
 
-We have presented mathematical techniques for registration and temporal ordering of images arising in studies of developmental biology.
+We have shown how dimensionality reduction techniques can greatly acceleration the registration and temporal ordering of cross-sectional imaging data.
 %
 Although we illustrated our methods using a specific data set from a study of {\em Drosophila} embryogenesis, our framework is very general and requires little knowledge of the image features or the developmental dynamics.
 %
@@ -523,9 +531,9 @@ Diffusion maps are one of many nonlinear dimensionality reduction techniques tha
 %
 In general, they are more robust to noise than other path-based algorithms, such as isomap \cite{balasubramanian2002isomap}; we therefore expect them to perform better than the ordering algorithms used in previous work.
 %
-Furthermore, although we use only the first diffusion maps coordinate to order the data (we assume the data are one-dimensional), diffusion maps are not limited to one-dimensional data and can be used to extract more complex structures.
+%Furthermore, although we use only the first diffusion maps coordinate to order the data (we assume the data are one-dimensional), diffusion maps are not limited to one-dimensional data and can be used to extract more complex structures.
 %
-For example, in data which contains several branches or classes, the first few coordinates will delineate the branches or separate the classes.
+%For example, in data which contains several branches or classes, the first few coordinates will delineate the branches or separate the classes.
 
 The task of image registration is widely studied, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
 %
@@ -536,7 +544,8 @@ For example, in face recognition, the first step is often to find the eyes, nose
 Temporal ordering of images has been studied, for example, in ordering images taken of a construction site over time \cite{schindler2007inferring}, 
 but these methods are also based on first extracting features from the images. 
 %
-In our developmental biology applications, appropriate features may not be known {\em a priori}, and so we require a registration algorithm that does not rely on predefined features.
+%In our developmental biology applications, 
+However, in general, appropriate features may not be known {\em a priori}, and so we require a registration algorithm that does not rely on predefined features.
 %
 Angular synchronization and vector diffusion maps have been used to register two-dimensional cryo-electron microscopy images of three-dimensional molecules \cite{singer2011three}.
 %
@@ -548,7 +557,7 @@ In all of these data-driven methods, the essential question is how much and what
 %
 For the methods we present here, we require a sufficient amount of data for the one-dimensional curve to be ``seen'' by the algorithms (i.e., in Figure~\ref{subfig:dmaps_edges}, there are a sufficient number of data points so that our eye can see the curve; if there were only 4 data points, it would most likely be difficult for our eye to detect the one-dimensional structure).
 %
-We also require the data we collect to contain enough information so that the alignments and dynamics are apparent.
+We also require the data to contain enough information so that the alignments and dynamics are apparent.
 %
 For example, in the data presented in Figure~\ref{subfig:images_unordered}, the green peaks delineate the position of the ventral axis in the embryo, and the intensity of the red peaks grow over time.
 %
@@ -599,7 +608,7 @@ i.e., $\theta_{ij} \approx \theta_i - \theta_j$, where
 %
 For the one-dimensional profiles shown in Figure~\ref{fig:1d_demo}, to compute the optimal angles in \eqref{eq:opt_angle}, we exhaustively search over all 100 possible rotations of the signals. 
 
-Rather than work with the angles $\theta_{ij}$ directly, it will be more convenient to work with the rotation matrices 
+Rather than work with the angles $\theta_{ij}$ directly, it is more convenient to work with the rotation matrices 
 \begin{equation} \label{eq:R_theta}
 R(\theta_{ij}) = \begin{bmatrix}
 \cos(\theta_{ij}) & \sin(\theta_{ij}) \\
@@ -607,9 +616,9 @@ R(\theta_{ij}) = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 %
-Successive rotations now correspond to multiplication of rotation matrices, i.e., 
-$R(\alpha_1 + \alpha_2) = R(\alpha_1) R(\alpha_2)$,
-and, due to the orthogonality of rotation matrices, $R(-\alpha) = R(\alpha)^T$.
+Successive rotations now correspond to multiplication of rotation matrices: $R(\alpha_1 + \alpha_2) = R(\alpha_1) R(\alpha_2)$.
+%
+Due to the orthogonality of rotation matrices, $R(-\alpha) = R(\alpha)^T$.
 
 Let $d$ denote the dimension of the rotation matrices we are considering (for our example of planar rotations, $R(\theta_{ij}) \in \mathbb{R}^{2 \times 2}$ and $d=2$; we will write our procedure for general $d$ because we will later consider three-dimensional rotations).
 %
@@ -658,7 +667,7 @@ Then,
 \end{equation}
 and $\hat{R}_i \in \mathbb{R}^{d \times d}$ is the estimate for $R(\theta_i)$. 
 %
-However, $\hat{R}_i$ is not guaranteed to be a rotation matrix; the closet rotation matrix, $R_{i, est}$, is given by
+However, $\hat{R}_i$ is not guaranteed to be a rotation matrix; the closest rotation matrix, $R_{i, est}$, is given by
 \begin{equation} \label{eq:R_est}
 R_{i, est} = U_i V_i^T, 
 \end{equation} 
@@ -792,7 +801,7 @@ Registering images with respect to rotations {\em and translations} requires som
 %
 For \eqref{eq:H_low_rank} to be satisfied, we require that the matrices used to represent the symmetry group be orthogonal, i.e. $R(\alpha)^{-1} = R(\alpha)^T$. 
 %
-However, the typical matrix representation for the group of two-dimensional translations and rotations \cite{...} does not satisfy this property. 
+However, the typical matrix representation for the group of two-dimensional translations and rotations does not satisfy this property. 
 %
 Instead, we (approximately) represent rotations and translations in two-dimensions using three-dimensional rotation matrices, by projecting the image onto a portion of the surface of a (three-dimensional) sphere \cite{singer2011angular}. %(see Figure \ref{fig:SO3_picture}).
 %
@@ -835,11 +844,13 @@ and 11 possible translations in both the $x$ and $y$ directions. %($dx, dy \in \
 %
 We then check all possible combinations for the best rotation and translations that align $I_j$ to $I_i$. 
 %
-Although this can be somewhat time intensive, it is not prohibitive for the data sets we consider, and can be trivially parallelized if necessary.
+This direct enumeration approach is not prohibitive for this step.
 %
-The solution will not be the exact solution to \eqref{eq:opt_pairwise}, but it will (most likely) be a close approximation.
+%Although this can be somewhat time intensive, it is not prohibitive for the data sets we consider, and can be trivially parallelized if necessary.
 %
-Since our techniques are robust to noise, close approximations will be sufficient to obtain accurate results.
+%The solution will not be the exact solution to \eqref{eq:opt_pairwise}, but it will (most likely) be a close approximation.
+%
+%Since our techniques are robust to noise, close approximations will be sufficient to obtain accurate results.
 
 %As discussed above, for angular synchronization, the underlying symmetry group needs to have a real and orthogonal matrix representation. 
 %
@@ -858,6 +869,8 @@ We first compute the Euler angles $\alpha_{ij}$, $\beta_{ij}$, and $\gamma_{ij}$
 where $\eta_{proj}$ is the angular portion of the sphere onto which we choose to project the image.
 %
 We take $\eta_{proj} =  \pi/8$, so the image lies on a $\pi/8 \times \pi/8$ radians portion of the unit sphere.
+%
+This portion of the sphere is small enough so that curvature effects are not seen in the image.
 %
 We write rotations around the three principal axes, $R^x(\alpha)$, $R^y(\beta)$, and $R^z(\gamma)$, in terms of the three Euler angles
 %\small
@@ -1002,7 +1015,6 @@ We round the optimal translations to the nearest integer to remove the need for 
 %% table text
 %% \end{tabular}
 %% \end{table*}
-
 
 
 %\begin{figure*}
