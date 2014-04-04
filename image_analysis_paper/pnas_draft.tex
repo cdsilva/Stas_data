@@ -132,8 +132,13 @@ of the National Academy of Sciences of the United States of America}
 %% Javier de Ruiz Garcia\affil{2}{Universidad de Murcia, Bioquimica y Biologia
 %% Molecular, Murcia, Spain}, \and Franklin Sonnery\affil{2}{}}
 
-\author{Carmeline J. Dsilva\affil{1}{Department of Chemical and Biological Engineering, Princeton University, Princeton, NJ, 08544}, 
-Bomyi Lim\affil{1}{}, Stanislav Y. Shvartsman\affil{1}{} \affil{2}{Lewis-Sigler Institute for Integrative Genomics, Princeton University, Princeton, NJ 08544}, \and Ioannis G. Kevrekidis\affil{1}{} \affil{3}{Program in Applied and Computational Mathematics, Princeton University, Princeton, NJ 08544}}
+\author{Carmeline~J.~Dsilva\affil{1}{Department of Chemical and Biological Engineering, Princeton University, Princeton, New Jersey, USA},
+Bomyi~Lim\affil{1}{}, 
+Thomas~J.~Levario\affil{2}{School of Chemical and Biomolecular Engineering, Georgia Institute of Technology, Atlanta, Georgia, USA},
+Hang~Lu\affil{2}{},
+Stanislav~Y.~Shvartsman\affil{1}{} \affil{3}{Lewis-Sigler Institute for Integrative Genomics, Princeton University, Princeton, New Jersey, USA}, 
+\and 
+Ioannis~G.~Kevrekidis\affil{1}{} \affil{4}{Program in Applied and Computational Mathematics, Princeton University, Princeton, New Jersey, USA}}
 
 \contributor{Submitted to Proceedings of the National Academy of Sciences
 of the United States of America}
@@ -186,7 +191,7 @@ We demonstrate the utility of our methods using a collection of images from a st
 %
 In longitudinal studies, developmental progress is monitored over time within the same embryo. 
 %
-In a cross-sectional study, one embryo contributes only one snapshot of a chemical or morphological process along developmental trajectory which must be reconstructed from multiple snapshots of different embryos. 
+In a cross-sectional study, one embryo contributes only one snapshot of a chemical or morphological process along a developmental trajectory, which must be reconstructed from multiple snapshots of different embryos. 
 %
 Both of these experimental designs have their advantages and limitations and are extensively used by developmental biologists. 
 %
@@ -196,7 +201,7 @@ In a typical cross-sectional study, a group of developing embryos is fixed using
 %
 Fixed embryos are then imaged using any given number of microscopic techniques. 
 %
-Recent advances in large scale physical manipulation of embryos and their imaging produce rapidly increasing volumes of data from such experiments, in which every embryo is observed at a different orientation and at a different time point.
+Recent advances in large-scale physical manipulation and imaging of embryos have produced rapidly increasing volumes of cross-sectional data, in which every embryo is observed at a different orientation and time point.
 %
 Importantly, the ``age'' of any given embryo arrested in its development is not known to high accuracy. 
 %
@@ -212,15 +217,15 @@ As an example, Figure~\ref{fig:fish} shows a schematic of fish development, comb
 %
 In this case, temporal ordering can be accomplished by arranging the fish by size, which correlates with the progress of development, and image registration is based on obvious morphological landmarks, such as positions of head and fins. 
 %
-Dealing with real data is far more nontrivial. 
+Dealing with real data is far more nontrivial, due to the number of images and similarities between them. 
 %
 To illustrate most of the issues associated with temporal ordering and registration of images, we use a data set from an imaging study of pattern formation in the early fruit fly embryo, one of the leading systems for studies of developmental dynamics. 
 %
-This dataset comprises $81$ fluorescence microscopy images of different embryos fixed during the $3^{rd}$ hour of their development. 
+This dataset comprises $49$ fluorescence microscopy images of different embryos fixed during the $3^{rd}$ hour of their development. 
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig1}
-\caption{Schematic illustration of reconstructing dynamics from cross-sectional data. (a) Fish, each in a different orientation and a different stage of development. (b) Fish, now registered and temporally ordered. For this example, the registration and ordering is easy to do by hand because the data set is small and the developmental changes are easy to recognize.} 
+\caption{Schematic illustration of reconstructing dynamics from cross-sectional data. (a) Fish, each in a different orientation and a different stage of development. (b) Fish, now registered and temporally ordered by hand. For this example, the registration and ordering is easy to do by hand because the data set is small and the developmental changes are easy to recognize.} 
 %\label{fig:fish}
 \customlabel{fig:fish}{1}
 \customlabel{subfig:fish_unordered}{\ref{fig:fish}a}
@@ -243,7 +248,7 @@ Each of the images reveals a uniform arrangement of nuclei and nonuniform distri
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig2}
-\caption{(a) Fluorescent images of {\em Drosophila} embryos. Each embryo has been stained from Dorsal (green) and dpERK (red). (b) Selected image from data set. (c) Profile of Dorsal (green) and dpERK (red) around the circumfrence of the embryo in (b).}
+\caption{(a) Fluorescent images of {\em Drosophila} embryos. Each embryo has been stained for Dorsal (green) and dpERK (red). (b) Selected image from data set. (c) Profile of Dorsal (green) and dpERK (red) around the circumfrence of the embryo in (b).}
 %\label{fig:images_unordered}
 \customlabel{fig:images_unordered}{2}
 \customlabel{subfig:images_unordered}{\ref{fig:images_unordered}a}
@@ -297,14 +302,13 @@ Rotation of the ring in Figure~\ref{subfig:1d_example} corresponds to shifting (
 %
 Figure \ref{subfig:1d_unaligned_unordered} shows all the concentration profiles in our data set. 
 %
-The concentration profiles have been stacked in an array, such that each row corresponds to one data point.
+The concentration profiles have been stacked in an array, such that each row corresponds to one profile.
 %
 Because the profiles are unregistered and unordered, the underlying dynamics (a Gaussian growing in time) are not readily apparent.
 
 \begin{figure}[t]
-%\includegraphics{figures_0329_mac_4}
-\includegraphics[width=8.4cm]{fig4}
-\caption{Illustration of methodologies using one-dimensional profiles. (a) One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). (b) Intensity corresponding to the profile in (a). (c) Many concentration profiles, each of the form described in (a). Each row in the array corresponds to one image. (d) The concentration profiles in (b), now registered using angular synchronization. (e) The concentration profiles in (c), now temporally ordered using diffusion maps. (f) The concentration profiles in (b), now simultaneously registered and temporally ordered using vector diffusion maps.}
+\includegraphics[width=8.4cm]{fig3}
+\caption{Illustration of methodologies using one-dimensional profiles. (a) One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). (b) Intensity corresponding to the profile in (a). (c) Many concentration profiles, each of the form described in (a). Each row in the array corresponds to one image. (d) The concentration profiles in (c), now registered using angular synchronization. (e) The concentration profiles in (c), now temporally ordered using diffusion maps. (f) The concentration profiles in (c), now simultaneously registered and temporally ordered using vector diffusion maps.}
 %\label{fig:1d_demo}
 \customlabel{fig:1d_demo}{3}
 \customlabel{subfig:1d_example}{\ref{fig:1d_demo}a}
@@ -346,8 +350,8 @@ The top eigenvector(s) of a matrix (which contains information about the pairwis
 %Because the method considers {\em all} pairwise alignments, angular synchronization is often robust to noise.
 
 \begin{figure}[t]
-\includegraphics[width=8.4cm]{fig3}
-\caption{Illustration of diffusion maps and angular synchronization (a) Data points (in blue) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge intensity is related to the distance between the points (close data points are connected by dark edges). (b) The data in (a), colored by the first (non-trivial) eigenvector from diffusion maps, $\phi_2$. The color parameterizes the one-dimensional curve. (c) Set of vectors, each in a different orientation. The angles to align one vector to another are indicated. (d) The vectors from (c), each rotated so that the set of vectors is aligned. Note that the angles are consistent with the pairwise alignments in (c). }
+\includegraphics[width=8.4cm]{fig4}
+\caption{(a) Set of vectors, each in a different orientation. The angles to align one vector to another are indicated. (b) The vectors from (a), each rotated so that the set of vectors is aligned. Note that the angles are consistent with the pairwise alignments in (a). (c) Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge intensity is related to the distance between the points (close data points are connected by dark edges). (d) The data in (c), colored by the first (non-trivial) eigenvector from diffusion maps, $\phi_2$. The color parameterizes the one-dimensional curve.  }
 %\label{fig:schematics}
 \customlabel{fig:schematics}{4}
 \customlabel{subfig:dmaps_edges}{\ref{fig:schematics}a}
@@ -486,9 +490,8 @@ These peaks are known to arise later in development, and so it is reassuring tha
 \end{figure}
 
 \begin{figure}[t]
-%\includegraphics{figures_0329_mac_6}
 \includegraphics[width=8.4cm]{fig6}
-\caption{(a) Images, stained for membranes (gray) and Dorsal (green) at different levels of development. (b) Membrane length as a function of time. (c) The one-dimensional concentration profiles, extracted, registered, and ordered by hand. The profiles are extracted using the nuclei positions in the image, registered using the location of the Dorsal peak, and ordered using cellularization. (d) The one-dimensional concentration profiles corresponding to the images in Figure~\ref{fig:images_ordered}. }
+\caption{(a) Images, stained for membranes (gray) and Dorsal (green) at different levels of development. (b) Membrane length as a function of time. (c) The one-dimensional concentration profiles, registered by peak Dorsal fluorescence and ordered by membrane length. (d) The one-dimensional concentration profiles corresponding to the automatically registered and ordered images in Figure~\ref{fig:images_ordered}. }
 %\label{fig:membrane_compare}
 \customlabel{fig:membrane_compare}{6}
 \customlabel{subfig:membranes}{\ref{fig:membrane_compare}a}
@@ -628,10 +631,10 @@ H_{ij} = R(\theta_{ij}).
 \end{equation}
 %
 
-We note that, under our assumption that $\theta_{ij} \approx \theta_i - \theta_j$, 
-\begin{equation} 
-H_{ij} = R(\theta_{ij}) \approx R(\theta_i - \theta_j) = R(\theta_i) R(-\theta_j) = R(\theta_i) R(\theta_j)^T,
-\end{equation}
+We note that, under our assumption that $\theta_{ij} \approx \theta_i - \theta_j$, $H_{ij} \approx R(\theta_i) R(\theta_j)^T$,
+%\begin{equation} 
+%H_{ij} = R(\theta_{ij}) \approx R(\theta_i - \theta_j) = R(\theta_i) R(-\theta_j) = R(\theta_i) R(\theta_j)^T,
+%\end{equation}
  and so
 \begin{equation} \label{eq:H_low_rank}
 	H \approx 
@@ -789,7 +792,8 @@ In general, the embedding coordinates are given by
 \end{equation}
 where $\phi_k(i) \in \mathbb{R}^d$ denotes the $i^{th}$ block of $\phi_k$.
 %
-If we assume that our data are one-dimensional, and that the rotations and the dynamics are uncoupled and therefore separable, the embedding coordinate for our data (i.e., the analog of $\phi_2$ from the diffusion maps case) is given by $\psi_{1,d+1}$.
+If we assume that our data are one-dimensional, and that the rotations and the dynamics are uncoupled and therefore separable, the embedding coordinate for our data %(i.e., the analog of $\phi_2$ from the diffusion maps case) 
+is given by $\psi_{1,d+1}$.
 %
 If no such claims can be made, then one often runs a second step of diffusion maps, using $\psi_{k,l}$ as the coordinates, to uncover a parameterization of the manifold modulo symmetries.
 
@@ -860,11 +864,14 @@ We then convert the two-dimensional translation and rotation to a three dimensio
 %
 We first compute the Euler angles $\alpha_{ij}$, $\beta_{ij}$, and $\gamma_{ij}$,
 \begin{equation} \label{eq:angle_relations}
-\begin{aligned}
-	\alpha_{ij} &= \theta_{ij} \\
-	\beta_{ij} &= \frac{dx_{ij}}{n} \times \eta_{proj} \\
-	\gamma_{ij} &= \frac{dy_{ij}}{n} \times \eta_{proj} \\
-\end{aligned}
+%\begin{aligned}
+%	\alpha_{ij} &= \theta_{ij} \\
+%	\beta_{ij} &= \frac{dx_{ij}}{n} \times \eta_{proj} \\
+%	\gamma_{ij} &= \frac{dy_{ij}}{n} \times \eta_{proj} \\
+%\end{aligned}
+	\alpha_{ij} = \theta_{ij}, \; \; \;
+	\beta_{ij} = \frac{dx_{ij}}{n} \times \eta_{proj}, \; \; \;
+	\gamma_{ij} = \frac{dy_{ij}}{n} \times \eta_{proj} 
 \end{equation}
 where $\eta_{proj}$ is the angular portion of the sphere onto which we choose to project the image.
 %
@@ -918,11 +925,11 @@ We first multiply all rotations by $R_{1, est}^T$ to ensure that all the images 
 We then compute the Euler angles $\alpha$, $\beta$, and $\gamma$ from the rotation matrix $R$ using the following relationships
 \begin{equation}
 \begin{aligned}
-R_{1,1} & = \cos(\beta)\cos(\gamma) \\
+R_{1,1} & = \cos(\beta)\cos(\gamma) &
 R_{2,1} & = \cos(\beta)\sin(\gamma) \\
-R_{3,1} & = -\sin(\beta) \\
+R_{3,1} & = -\sin(\beta) &
 R_{3,2} & = \sin(\alpha)\cos(\beta) \\
-R_{3,3} & = \cos(\alpha)\cos(\beta) 
+R_{3,3} & = \cos(\alpha)\cos(\beta)  &
 \end{aligned}
 \end{equation}
 %
