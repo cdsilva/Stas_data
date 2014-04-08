@@ -586,14 +586,21 @@ In these cases, our methods allow for the rapid, automated analysis of imaging d
 
 \section{Angular synchronization for rotations\cite{singer2011angular}}
 
-Let $x_1, \dots, x_m \in \mathbb{R}^n$ denote the signals that we wish to align with respect to rotations. 
+%TODO: work on
+%Let $x_1, \dots, x_m \in \mathbb{R}^n$ denote the signals that we wish to align with respect to rotations. 
+Let $x_1, \dots, x_m$ denote the signals that we wish to align with respect to rotations. 
+%
+Each signal is a function defined on the unit circle, discretized at $n$ equally-spaced points;
+rotating the function then corresponds to cyclically shifting the elements of $x_i$.
 %
 We assume that each signal $x_i$ is a noisy rotated copy of the underlying signal $x_{true}$ (which we are {\em not} given), such that 
 \begin{equation}
 x_i = f(x_{true}, \theta_i) + \xi_i
 \end{equation}
-where the function $f(x_{true}, \theta_i)$ rotates the signal $x_{true}$ by $\theta_i$ degrees, and $\xi_i$ is a noise term (often Gaussian noise). 
+where the function $f(x_{true}, \theta_i)$ rotates the signal $x_{true}$ by $\theta_i$ radians, and $\xi_i$ is a (typically Gaussian) noise term. 
 %
+For the discretized signals, rotation by $\theta_i$ radians corresponds to cyclically shifting the vectors by $\frac{\theta_i}{2 \pi} n$ elements (rounded to the nearest integer to obtain a valid shift).
+
 Our goal is to obtain estimates of $\theta_1, \dots, \theta_m$.
 %
 Up to noise, 
@@ -603,39 +610,39 @@ x_i \approx f(x_j, \theta_i - \theta_j) ;
  note that \eqref{eq:pairwise_rot} does not require knowledge of $x_{true}$.
 %
 We can obtain an {\em estimate} of $\theta_i - \theta_j$ by computing the rotation that optimally aligns $x_j$ to $x_i$, 
-i.e., $\theta_{ij} \approx \theta_i - \theta_j$, where
+i.e., %$\theta_{ij} \approx \theta_i - \theta_j$, where
 %
 \begin{equation} \label{eq:opt_angle}
-\theta_{ij} = \argmin_{\theta} \|x_i - f(x_j, \theta)\|^2.
+\theta_i - \theta_j \approx \theta_{ij} = \argmin_{\theta} \|x_i - f(x_j, \theta)\|^2.
 \end{equation}
 %
-For the one-dimensional profiles shown in Figure~\ref{fig:1d_demo}, to compute the optimal angles in \eqref{eq:opt_angle}, we exhaustively search over all 100 possible rotations of the signals. 
+For the one-dimensional profiles shown in Figure~\ref{fig:1d_demo}, we exhaustively search over all $n=100$ possible shifts of the signals to compute the optimal angles in \eqref{eq:opt_angle}. 
 
-Rather than work with the angles $\theta_{ij}$ directly, it is more convenient to work with the rotation matrices 
+Rather than work with the angles $\theta_{ij}$ directly, it is more convenient to work with the rotation matrices, 
 \begin{equation} \label{eq:R_theta}
 R(\theta_{ij}) = \begin{bmatrix}
-\cos(\theta_{ij}) & \sin(\theta_{ij}) \\
--\sin(\theta_{ij}) & \cos(\theta_{ij})
-\end{bmatrix}
+\cos(\theta_{ij}) & -\sin(\theta_{ij}) \\
+\sin(\theta_{ij}) & \cos(\theta_{ij})
+\end{bmatrix}.
 \end{equation}
 %
-Successive rotations now correspond to multiplication of rotation matrices: $R(\alpha_1 + \alpha_2) = R(\alpha_1) R(\alpha_2)$.
+Successive rotations correspond to multiplication of rotation matrices: $R(\alpha_1 + \alpha_2) = R(\alpha_1) R(\alpha_2)$.
 %
 Due to the orthogonality of rotation matrices, $R(-\alpha) = R(\alpha)^T$.
 
-Let $d$ denote the dimension of the rotation matrices we are considering (for our example of planar rotations, $R(\theta_{ij}) \in \mathbb{R}^{2 \times 2}$ and $d=2$; we will write our procedure for general $d$ because we will later consider three-dimensional rotations).
+Let $d$ denote the dimension of the rotation matrices we are considering (for our example of planar rotations, $R(\theta_{ij}) \in \mathbb{R}^{2 \times 2}$ and $d=2$; we write our procedure for general $d$ because we will later consider three-dimensional rotations).
 %
-We construct the matrix $H \in \mathbb{R}^{md \times md}$, where $H$ is an $m \times m$ matrix of $d \times d$ blocks with
+We construct the matrix $H \in \mathbb{R}^{md \times md}$, where $H$ is an $m \times m$ matrix of $d \times d$ blocks, with the $i,j^{th}$ block of $H$, $H_{ij}$, defined as
 \begin{equation} \label{eq:H_to_R}
 H_{ij} = R(\theta_{ij}).
 \end{equation}
 %
 
-We note that, under our assumption that $\theta_{ij} \approx \theta_i - \theta_j$, $H_{ij} \approx R(\theta_i) R(\theta_j)^T$,
+Under our assumption that $\theta_{ij} \approx \theta_i - \theta_j$, $H_{ij} \approx R(\theta_i) R(\theta_j)^T$
 %\begin{equation} 
 %H_{ij} = R(\theta_{ij}) \approx R(\theta_i - \theta_j) = R(\theta_i) R(-\theta_j) = R(\theta_i) R(\theta_j)^T,
 %\end{equation}
- and so
+ and 
 \begin{equation} \label{eq:H_low_rank}
 	H \approx 
 	\begin{bmatrix}
@@ -649,7 +656,8 @@ We note that, under our assumption that $\theta_{ij} \approx \theta_i - \theta_j
 	\end{bmatrix}.
 \end{equation}
 %
-From \eqref{eq:H_low_rank}, we can see that the top block eigenvector of $H$, which we will denote $\hat{R}$, contains estimates of $R(\theta_1), R(\theta_2), \dots, R(\theta_m)$.
+From \eqref{eq:H_low_rank}, we can see that the top block eigenvector of $H$, %which we will denote $\hat{R}$, 
+contains estimates of $R(\theta_1), R(\theta_2), \dots, R(\theta_m)$.
 %
 Let $\phi_1, \phi_2, \dots, \phi_{md}$ denote the eigenvectors of $H$, ordered such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{md}|$, where $\lambda_i$ is the eigenvalue corresponding to $\phi_i$. 
 %
@@ -668,7 +676,7 @@ Then,
 | & | & & | 
 \end{bmatrix},
 \end{equation}
-and $\hat{R}_i \in \mathbb{R}^{d \times d}$ is the estimate for $R(\theta_i)$. 
+where $\hat{R}_i \in \mathbb{R}^{d \times d}$ is the estimate for $R(\theta_i)$. 
 %
 However, $\hat{R}_i$ is not guaranteed to be a rotation matrix; the closest rotation matrix, $R_{i, est}$, is given by
 \begin{equation} \label{eq:R_est}
@@ -733,11 +741,12 @@ We typically use a Gaussian kernel,
 %W_{ij} = \exp \left( -\frac{d^2(x_i, x_j)}{\epsilon^2} \right)
 W_{ij} = e^{ -\frac{d^2(x_i, x_j)}{\epsilon^2}}
 \end{equation}
-where $\epsilon$ is a characteristic distance between data points.
+where $d(x_i, x_j)$ is the distance between $x_i$ and $x_j$ (often the Euclidean distance), and $\epsilon$ is a characteristic distance between data points.
 %
 Therefore, points less than $\epsilon$ apart are considered ``close'' and points farther than $\epsilon$ apart are considered ``far away''.
 %
-$\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph}); we take $\epsilon$ to be the median of the pairwise distances between data points.
+%$\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph}); 
+We take $\epsilon$ to be the median of the pairwise distances between data points.
 
 We want to find a coordinate $y$ such that $y(i)$ and $y(j)$ if $W_{ij}$ is large (i.e., $y$ preserves local information, and so points that are close in the original space are also close in the coordinate $y$).
 %
@@ -765,20 +774,20 @@ Because the matrix $A$ is row-stochastic, $\lambda_1=1$ and $\phi_1$ is a consta
 %
 The next eigenvector, $\phi_2$, is the (non-trivial) solution to \eqref{eq:dmaps_opt_problem}, so that $\phi_2(j)$ gives the coordinate for data point $x_j$.
 %
-In our applicatins, we assume that this one dimension, parameterized by $\phi_2$, is correlated with time.
+In our applications, we assume that this one dimension, parameterized by $\phi_2$, is correlated with time.
 %
 Therefore, ordering our data by $\phi_2(j)$ will effectively order our data in time.
 
 \section{Vector Diffusion Maps \cite{singer2012vector}}
 
-For vector diffusion maps, we first construct the matrix $S \in \mathbb{R}^{md \times md}$, with
+For vector diffusion maps, we first construct the matrix $S \in \mathbb{R}^{md \times md}$, with the $i,j^{th}$ block of $S$, $S_{ij}$, defined as
 \begin{equation}
 	S_{ij} = A_{ij} H_{ij}
 \end{equation}
 %
-where $A$ is defined in \eqref{eq:dmaps_A} and $H$ is defined in \eqref{eq:H_to_R}.
+where $A_{ij} \in \mathbb{R}$ is defined in \eqref{eq:dmaps_A} and $H_{ij} \in \mathbb{R}^{d \times d}$ is defined in \eqref{eq:H_to_R}.
 %
-The distance $d(x_i, x_j)$ used in $W_{ij}$ is the distance between samples {\em after} pairwise alignment (i.e., it is the minimium obtained in \eqref{eq:opt_pairwise}). 
+The distance $d(x_i, x_j)$ used in \eqref{eq:dmaps_W} to compute $W_{ij}$ is the distance between samples {\em after} pairwise alignment (i.e., it is the minimium obtained in \eqref{eq:opt_pairwise}). 
 
 We then compute the eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_{md}$ and eigenvectors $\phi_1, \phi_2, \dots, \phi_{md}$ of $S$, and order them such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{md}|$.
 %
@@ -820,8 +829,8 @@ For each image pair $I_i$ and $I_j$, we solve
 (\theta_{ij}, dx_{ij}, dy_{ij}) = \argmin_{
 \scriptsize \begin{matrix}
 \theta \in [0, 2\pi) \\ 
-dx \in [-\Delta, \Delta]\\ 
-dy \in [-\Delta, \Delta]
+dx, dy \in [-\Delta, \Delta]\\ 
+%dy \in [-\Delta, \Delta]
 \end{matrix}
 } \|g(I_j, \theta, dx, dy) - I_i \|^2.
 \end{equation}
@@ -902,9 +911,9 @@ We write rotations around the three principal axes, $R^x(\alpha)$, $R^y(\beta)$,
 \end{equation}
 %\normalsize
 %
-The total rotation, $R_{ij} \in SO(3)$, is 
+The total rotation, $R_{ij} \in \mathbb{R}^{3 \times 3}$, is 
 \begin{equation} \label{eq:total_rot}
-	R(\alpha_{ij}, \beta_{ij}, \gamma_{ij})	 = R^z(\gamma_{ij})  R^y(\beta_{ij})  R^x(\alpha_{ij})
+	R(\alpha_{ij}, \beta_{ij}, \gamma_{ij})	 = R^z(\gamma_{ij})  R^y(\beta_{ij})  R^x(\alpha_{ij}).
 %R(\alpha_{ij}, \beta_{ij}, \gamma_{ij}) = 
 %\begin{bmatrix}
 %\cos(\beta) \cos(\gamma) & \cos(\gamma)\sin(\alpha)\sin(\beta)-\cos(\alpha) \sin(\gamma) & \cos(\alpha)\cos(\gamma)\sin(\beta)+ \sin(\alpha)\sin(\gamma) \\
@@ -922,7 +931,9 @@ From the matrices $R_{1, est}, \dots, R_{m, est}$, we then find the correspondin
 %
 We first multiply all rotations by $R_{1, est}^T$ to ensure that all the images are (approximately) in the region of the sphere where we began.
 %
-We then compute the Euler angles $\alpha$, $\beta$, and $\gamma$ from the rotation matrix $R$ using the following relationships
+$R_{i,est}^T$ then gives the rotation matrix which registers image $i$. 
+%
+From a rotation matrix $R$, we can compute the Euler angles $\alpha$, $\beta$, and $\gamma$ using the following relationships
 \begin{equation}
 \begin{aligned}
 R_{1,1} & = \cos(\beta)\cos(\gamma) &
@@ -933,7 +944,7 @@ R_{3,3} & = \cos(\alpha)\cos(\beta)  &
 \end{aligned}
 \end{equation}
 %
-We then invert \eqref{eq:angle_relations} to compute the optimal translation and rotation for each image.
+We then invert \eqref{eq:angle_relations} to compute the corresponding translation and rotation.
 %
 We round the optimal translations to the nearest integer to remove the need for interpolation when translating the images.  
 
