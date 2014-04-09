@@ -71,7 +71,7 @@ X = X - mean(X(:));
 Y = Y - mean(Y(:));
 
 R = sqrt(X.^2 + Y.^2);
-theta = atan2(Y, X);
+theta = atan2(X, Y);
 idx2 = find(theta < 0);
 theta(idx2) = theta(idx2) + 2*pi;
 
