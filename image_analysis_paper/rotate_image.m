@@ -7,6 +7,19 @@ npixels = size(im2, 1);
 im2 = imrotate(im2, theta, 'crop');
 im2 = circshift(im2, [dxpixels dypixels]);
 
+if dxpixels > 0
+    im2(1:dxpixels, :, :) = 0;
+end
+if dxpixels < 0
+    im2(end+dxpixels+1:end, :, :) = 0;
+end
+if dypixels > 0
+    im2(:, 1:dypixels, :) = 0;
+end
+if dypixels < 0
+    im2(:,end+dypixels+1:end, :) = 0;
+end
+
 im1 = im2;
 
 function [theta, dx, dy] = find_specs(R, npixels, angle_proj)

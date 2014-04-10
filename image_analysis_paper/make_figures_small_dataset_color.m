@@ -38,6 +38,7 @@ subplot_dim2 = ceil(m / subplot_dim1);
 
 nchannels = 3;
 image_set = zeros(npixels, npixels, nchannels, m, 'uint8');
+image_set_raw = zeros(1024, 1024, nchannels, m, 'uint8');
 
 nuclei = zeros(npixels, npixels, m, 'uint8');
 
@@ -47,12 +48,13 @@ for i=1:m
     % read image
     im1 = imread(sprintf('%s/emb%02d.tif', image_dir, ind(i)));
     
+    if i==1
+        im1 = circshift(im1, [0 150 0]);
+    end
+    image_set_raw(:, :, :, i) = im1;
+    
     % resize image
     im1 = imresize(im1, [npixels npixels]);
-    
-    if i==1
-        im1 = circshift(im1, [0 15 0]);
-    end
     
     nuclei(:, :, i) = im1(:, :, 1);
     
@@ -68,13 +70,18 @@ end
 %% raw dpERK images-- synchronization
 
 angle_proj = pi/8;
-shift_max = 20;
-shift_step = 4;
+shift_max = 10;
+shift_step = 2;
 dim = 3;
 
-% [R, W] = compute_pairwise_alignments_color(image_set, angle_proj, shift_max, shift_step);
-% save('pairwise_alignments_small.mat', 'R', 'W');
-load('pairwise_alignments_small.mat');
+[R, W] = compute_pairwise_alignments_color(image_set, angle_proj, shift_max, shift_step);
+
+%save('pairwise_alignments_small.mat', 'R', 'W');
+%load('pairwise_alignments_small.mat');
+
+%save('pairwise_alignments_small_nopbc.mat', 'R', 'W');
+%load('pairwise_alignments_small_nopbc.mat');
+
 
 %% synchronization
 
@@ -183,6 +190,13 @@ for i=1:m
     image_set_aligned(:,:,:,i) = im1;
 end
 
+image_set_raw_aligned = zeros(size(image_set_raw), 'uint8');
+for i=1:m
+    im_tmp = image_set_raw(:,:,:,i);
+    im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
+    image_set_raw_aligned(:,:,:,i) = im1;
+end
+
 %% order using vdm
 
 idx = find(embed_idx(1,:) == 4 & embed_idx(2,:) == 1);
@@ -203,8 +217,7 @@ for i=1:m
     imshow(image_set_aligned(:,:,:,I(i)));
 end
 %print(sprintf('%s/registered_ordered_small_vdm_2d', im_save_dir), fmt, res);
-saveas(gcf, sprintf('%s/fig5a', im_save_dir), 'epsc');
-saveas(gcf, sprintf('%s/fig5a', im_save_dir), 'tif');
+
 
 ranks_from_membranes = compute_ranks(mem_lengths);
 ranks_from_vdm = compute_ranks(embed_coord(:,idx));
@@ -218,15 +231,37 @@ ylabel('rank from vdm')
 %print(sprintf('%s/rank_corr_vdm', im_save_dir), fmt, res);
 
 %%
-% 
-% for i=1:m
-%     im_tmp = imread(sprintf('%s/emb%02d.tif', image_dir, ind(I(i))));
-% 
-%     im1 = rotate_image(R_opt(dim*(I(i)-1)+1:dim*I(i),:), im_tmp, angle_proj);
-% 
-%     imwrite(im1, sprintf('%s/registered_emb_%02d.tif', im_save_dir, i));
-% end
 
+figure;
+for i=1:m
+    
+    im1 = image_set_raw_aligned(:,:,:,I(i));
+    
+    nuclei_tmp = im1(:, :, 1);
+    
+    im1(:, :, 1) = im1(:, :, 2);
+    im1(:, :, 2) = im1(:, :, 3);
+    im1(:, :, 3) = 0;
+    
+    for j=1:3
+        im1(:,:,j) = im1(:,:,j) + nuclei_tmp;
+    end
+    
+    %subplot(subplot_dim1, subplot_dim2, i);
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    
+    imshow(im1);
+end
+saveas(gcf, sprintf('%s/fig5a', im_save_dir), 'epsc');
+saveas(gcf, sprintf('%s/fig5a', im_save_dir), 'tif');
+
+for i=1:m
+    im1 = image_set_raw_aligned(:,:,:,I(i));
+    
+    imwrite(im1, sprintf('%s/registered_emb_%02d.tif', im_save_dir, i));
+end
+
+return
 %%
 
 load('../membrane_pictures/large_dataset/dpERK_DL_140313.mat');
@@ -259,7 +294,7 @@ set(gca, 'xtick', [])
 set(gca, 'ytick', [])
 xlabel('position', 'fontsize', fontsize)
 ylabel('sample', 'fontsize', fontsize)
-saveas(gcf, sprintf('%s/fig6b', im_save_dir), 'epsc');
+% saveas(gcf, sprintf('%s/fig6b', im_save_dir), 'epsc');
 
 %%
 %test_idx = 41;
@@ -281,7 +316,7 @@ set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [4 4])
 set(gcf, 'paperposition',[0 0 4 4])
 imshow(im1);
-saveas(gcf, sprintf('%s/fig2b', im_save_dir), 'epsc');
+% saveas(gcf, sprintf('%s/fig2b', im_save_dir), 'epsc');
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -294,7 +329,7 @@ set(gca, 'xtick', [])
 set(gca, 'ytick', [])
 ylabel('intensity', 'fontsize', fontsize)
 xlabel('position', 'fontsize', fontsize)
-saveas(gcf, sprintf('%s/fig2c', im_save_dir), 'epsc');
+% saveas(gcf, sprintf('%s/fig2c', im_save_dir), 'epsc');
 
 
 %%
@@ -330,5 +365,5 @@ set(gca, 'xtick', [])
 set(gca, 'ytick', [])
 xlabel('position', 'fontsize', fontsize)
 ylabel('sample', 'fontsize', fontsize)
-saveas(gcf, sprintf('%s/fig6c', im_save_dir), 'epsc');
+% saveas(gcf, sprintf('%s/fig6c', im_save_dir), 'epsc');
 

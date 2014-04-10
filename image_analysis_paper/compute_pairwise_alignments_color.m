@@ -27,6 +27,19 @@ for i=1:m
         for k1=1:nshift
             for k2=1:nshift
                 imagei_tmp2 = circshift(imagei_tmp, [shifts(k1) shifts(k2) 0]);
+                if shifts(k1) > 0
+                    imagei_tmp2(1:shifts(k1), :, :) = 0;
+                end
+                if shifts(k1) < 0
+                    imagei_tmp2(end+shifts(k1)+1:end, :, :) = 0;
+                end
+                if shifts(k2) > 0
+                    imagei_tmp2(:, 1:shifts(k2), :) = 0;
+                end
+                if shifts(k2) < 0
+                    imagei_tmp2(:,end+shifts(k2)+1:end, :) = 0;
+                end
+                
                 for j=1:i-1
                     imagej = images(:,:,:,j);
                     d2 = sum((double(imagei_tmp2(:))-double(imagej(:))).^2);
