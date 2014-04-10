@@ -316,17 +316,19 @@ We will also show how both steps can be combined using {\em vector diffusion map
 %%% another reason I want to have the real data is because in the discussion I want to talk about the flips
 %%%
 
-We will first demonstrate our techniques for registration and temporal ordering using a synthetic data set whose features resemble the image features in Figure~\ref{subfig:images_unordered}.
+We will first demonstrate our techniques for registration and temporal ordering using a synthetic data set whose features resemble the image features in Figure~\ref{fig:images_unordered}.
 %
 The relatively simple dynamics of this data set will allow us to easily visualize and illustrate the main points of the different algorithms.
 %
-We construct concentration profiles defined on a ring, and we assume that each ring is arbitrarily rotated around its center; an example is shown in Figure~\ref{subfig:1d_example}.
+We construct concentration profiles defined on a ring (as in Figure~\ref{subfig:one_image}), and we assume that each ring is arbitrarily rotated around its center; an example is shown in Figure~\ref{subfig:1d_example}.
 %
-Rotation of the ring corresponds to shifting (with periodic boundary conditions) the one-dimensional concentration profile shown in the bottom of Figure~\ref{subfig:1d_example} (the symmetry group is $SO(2)$, the group of all two-dimensional proper rotations).
+Rotation of the ring corresponds to shifting (with periodic boundary conditions) the one-dimensional concentration profile shown at the bottom of Figure~\ref{subfig:1d_example} (the symmetry group is $SO(2)$, the group of all two-dimensional proper rotations).
+%
+{\bf We should discuss/mention that the eggs could be flipped.}
 %
 Each concentration profile is a noisy Gaussian (shown in Figure~\ref{subfig:1d_intensity}), and the Gaussians increase in intensity as  a function of time.
 %
-We discretize the profiles into $100$ points, so our numerical data will be $100$-dimensional vectors (the corresponding symmetry group for the discretized profiles is $\mathbb{Z}_n$, the group of integers modulo $n$).
+We discretize the profiles into $100$ points, so our numerical data will be $100$-dimensional vectors (the corresponding symmetry group for the discretized profiles is $\mathbb{Z}_{100}$, the group of integers modulo $100$).
 %
 Figure \ref{subfig:1d_unaligned_unordered} shows the entire data set; the concentration profiles have been stacked in an array, so that each row corresponds to a single profile.
 %
@@ -359,6 +361,8 @@ which make each pair have the maximum possible overlap (see {\it Materials and M
 An illustration is shown in Figure~\ref{subfig:synch1};
 each data point is a vector, and $\theta_{ij}$ denotes the angle of rotation needed to align vectors $i$ and $j$.
 %
+{\bf It is not clear how we are rotating the arrows (around the center vs. around the tail).}
+%
 From this large collection of pairwise alignments, the algorithm then selects a set of rotation angles, $\theta_i$ (one for each data point), such that differences in rotation angles, $\theta_i-\theta_j$, are {\em most consistent} (in some metric) with the pairwise alignments $\theta_{ij}$.
 %
 Figure~\ref{subfig:synch2} shows each vector from Figure~\ref{subfig:synch1}, now rotated so that the entire set is aligned; the computed rotation angles are also indicated.
@@ -368,7 +372,7 @@ Note that the differences between the rotation angles assigned to each vector ar
 The problem of finding these alignments is formulated as an optimization problem, and then relaxed to an eigenproblem.
 %
 The top eigenvector(s) of a matrix (which contains information about all pairwise alignments)
-provides the rotation angles assigned to each data point (see {\it Materials and Methods}).
+provides the rotation angles (up to a constant rotation) assigned to each data point (see {\it Materials and Methods}).
 %
 %Because the method considers {\em all} pairwise alignments, angular synchronization is often robust to noise.
 %
@@ -385,7 +389,7 @@ provides the rotation angles assigned to each data point (see {\it Materials and
 %
 Figure \ref{subfig:1d_aligned_unordered} shows the concentration profiles from Figure~\ref{subfig:1d_unaligned_unordered}, now aligned using angular synchronization.
 %
-It is reassuring that the peaks are aligned,
+It is reassuring that the peaks appear aligned,
 even though the algorithm uses no specific information about the existence or location of such peaks.
 %
 %We note once more that, since angular synchronization only uses pairwise rotation information,
@@ -397,25 +401,25 @@ After geometrically registering the data (concentration profiles or images), we 
 %
 %Our main assumption is that most of the variation in the data correlates with time.
 %
-Our main assumptions are that the high-dimensional data (images have one dimension per color pixel intensity, and concentration profiles have one dimension per discretization point) lie on a one-dimensional, nonlinear curve, {\em and} that this curve is parameterized by time.
+Our main assumptions are that the high-dimensional data (one dimension per discretization point in the concentration profiles/one dimension per color pixel intensity in the images) lie on a one-dimensional, nonlinear curve, {\em and} that this curve is parameterized by time.
 %
-Figure~\ref{subfig:dmaps_edges} shows an schematic of a two-dimensional data set (the ``high-dimensional" data) which lies on a one-dimensional nonlinear curve (the ``low-dimensional" manifold).
+Figure~\ref{subfig:dmaps_edges} shows a schematic of a two-dimensional data set (the ``high-dimensional" data) which lies on a one-dimensional nonlinear curve (the ``low-dimensional" manifold).
 %
 We assume that the data points are ordered from youngest to oldest along the curve.
 %
-Because our data are very high dimensional, we cannot extract this curve by eye.
+When our data are very high dimensional, we cannot extract this curve by eye.
 %
 We instead use diffusion maps \cite{coifman2005geometric}, a dimensionality reduction technique which aims to uncover low-dimensional, nonlinear structure in high-dimensional data sets, to automatically extract this one-dimensional curve.
 %
-Figure~\ref{subfig:dmaps_color} shows the same data, now colored by the leading diffusion map coordinate.
+Figure~\ref{subfig:dmaps_color} shows the same data, now colored by the leading (non-trivial) diffusion map coordinate.
 %
 The color parameterizes the one-dimensional curve that our eye can visually detect, and ordering the data by the leading diffusion map coordinate will effectively order data in time.
 
-To uncover the diffusion maps parameterization, we assume that data points which are close in the high-dimensional space should also be close {\em on the curve} (we would like images which look similar to be close together in our developmental trajectory).
+To uncover the diffusion map parameterization, we assume that data points which are close in the high-dimensional space should also be close {\em on the curve} (we would like images which look similar to be close together in our developmental trajectory).
 %
 %We therefore want to find a parameterization of the points, such that the points which are close in the original, high-dimensional space are {\em as close as possible} in the parameterization.
 %
-To emphasize this point, edges between the pairs of data points in Figure~\ref{subfig:dmaps_edges} are colored according to the distance between the data points, so that pairs of points which are close have dark/strong edges connecting them.
+To emphasize this point, edges between the pairs of data points in Figure~\ref{subfig:dmaps_edges} are colored based on the distance between the data points (using the diffusion kernel of the distance), so that pairs of points which are close have dark/strong edges connecting them.
 %
 Visually, the dark edges delineate the one-dimensional curve, whereas the light edges are less informative about the low-dimensional structure.
 %
@@ -431,7 +435,7 @@ Given our set of registered signals, shown in Figure \ref{subfig:1d_aligned_unor
 %
 We use the Euclidean distance between the (discretized in $\mathbb{R}^{100}$) aligned concentration profiles (the rows of Figure \ref{subfig:1d_aligned_unordered}) as our pairwise distances between data points.
 %
-Figure \ref{subfig:1d_aligned_ordered} shows the data from Figure \ref{subfig:1d_aligned_unordered}, now sorted by the value of the leading diffusion maps coordinate, $\phi_2$.
+Figure \ref{subfig:1d_aligned_ordered} shows the data from Figure \ref{subfig:1d_aligned_unordered}, now sorted by the value of the leading diffusion map coordinate, $\phi_2$.
 %
 As expected, the intensity of the peak grows as a function of $\phi_2$ (since we constructed these data
 to have a peak growing in time).
@@ -446,7 +450,7 @@ to have a peak growing in time).
 %
 %Our proposed alignment methodology, angular synchronization, utilizes the eigendecompostion of the matrix $H \in \mathbb{R}^{md \times md}$, and our proposed ordering algorithm, diffusion maps, utilizes the eigendecomposition of the matrix $A \in \mathbb{R}^{m \times m}$.
 %
-Angular synchronization (for registration) can be combined with diffusion maps (for temporal ordering) in a single eigencomputation that allows us to {\em simultaneously} recover the alignments {\em and} the temporal ordering.
+Angular synchronization (for registration) can be combined with diffusion maps (for temporal ordering) in a single eigencomputation that allows us to {\em simultaneously} recover the registrations {\em and} the temporal ordering.
 %
 This technique is called vector diffusion maps \cite{singer2012vector} (see {\it Materials and Methods}).
 %
@@ -454,11 +458,11 @@ It both reduces the number of required eigencomputations, and is much more robus
 %
 Figure \ref{subfig:1d_aligned_ordered_vdm} shows the result of simultaneously registering and ordering the data in Figure \ref{subfig:1d_unaligned_unordered} using vector diffusion maps.
 %
-The data has been ordered by $\psi_{1, 3}$, the leading vector diffusion maps coordinate.
+The data has been ordered by $\psi_{1, 3}$, the leading vector diffusion map coordinate.
 
 \subsection{Analysis of two-dimensional images}
 
-The same methodologies (with small modifications) can be applied directly to our two-dimensional images.
+The same methods (with small modifications) can be applied directly to our two-dimensional images.
 %
 Instead of one-dimensional profiles (discretized to $100$-dimensional concentration vectors), we now work with
 two color, two-dimensional images (discretized into $100 \times 100$ pixels/$20000$-dimensional vectors), and we register the images with respect to translations and rotations (the symmetry group is $ISO(2)$).
@@ -492,7 +496,7 @@ However, Figure~\ref{subfig:1d_vdm}, which was automatically registered and orde
 %
 These peaks are known to arise later in development, and so it is reassuring that they appear at the end of the (recovered) trajectory.
 %
-%Furthermore, the membranes stop growing towards the end of this trajectory, making the ordering of the late signals in Figure~\ref{subfig:1d_membranes} less accurate.
+Furthermore, the membranes stop growing towards the end of this trajectory, making the ordering of the late signals in Figure~\ref{subfig:1d_membranes} less accurate.
 %
 Quantitatively, the rank correlation coefficient between these two temporal orderings is 0.9158, indicating that our automatic ordering is consistent with the ordering obtained from cellularization.
 
@@ -509,7 +513,7 @@ Quantitatively, the rank correlation coefficient between these two temporal orde
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig5}
-\caption{The images in Figure~\ref{subfig:images_unordered}, aligned and temporally ordered using vector diffusion maps. The images are sorted according to the value of the first non-trivial vector diffusion maps component, $\psi_{1, 4}$.}
+\caption{The images in Figure~\ref{subfig:images_unordered}, aligned and temporally ordered using vector diffusion maps. The images are sorted according to the value of the first non-trivial vector diffusion map component, $\psi_{1, 4}$.}
 %\label{fig:images_ordered}
 \customlabel{fig:images_ordered}{5}
 \end{figure}
@@ -527,7 +531,7 @@ Quantitatively, the rank correlation coefficient between these two temporal orde
 
 \section{Conclusions}
 
-We have shown how symmetry and dimensionality reduction techniques can greatly accelerate the registration and temporal ordering of cross-sectional developmental imaging data.
+We have shown how symmetry and dimensionality reduction techniques can successfully register and order cross-sectional developmental imaging data.
 %
 Although we illustrated our methods using a specific data set from a study of {\em Drosophila} embryogenesis, the framework is quite general and requires little knowledge of the image features or the developmental dynamics.
 %
@@ -539,7 +543,7 @@ Temporal ordering of cross-sectional biological data has been studied in a varie
 %
 Cross-sectional RNA sequencing data has been temporally ordered \cite{anavy2014blind, trapnell2014dynamics}, where each data point is the transcriptome for a single sample.
 %
-Gene expression data from multiple patients has been studied in \cite{gupta2008extracting, qiu2011discovering};
+Gene expression data from multiple patients have been studied in \cite{gupta2008extracting, qiu2011discovering};
 here, each data point is a vector containing the expression levels of the various genes.
 %
 Snapshots of cells throughout the cell cycle can be described by a vector of features (e.g., amount of DNA) which quantify the cell's state  \cite{kafri2013dynamics}.
@@ -547,13 +551,15 @@ Snapshots of cells throughout the cell cycle can be described by a vector of fea
 These problems are no different than our task of ordering images, each of which is a large vector of pixel intensities.
 %
 The majority of these works temporally order the data either by solving a traveling salesman problem on the data, or by constructing a minimum spanning tree of the data,
-expecting that these structures (the path of the travelling salesman, or the minimum spanning tree) characterize the majority of the structure/variability within the data and provide an accurate picture of the dynamical progression.
+expecting that these structures (the path of the travelling salesman, or the minimum spanning tree) characterize the majority of the structure/variability within the data and provide an accurate encoding of the dynamical progression.
 %
 We, instead, use diffusion maps to construct a one-dimensional parameterization of the data.
 %
 Diffusion maps are one of many nonlinear dimensionality reduction techniques that have been recently developed \cite{Belkin2003, tenenbaum2000global, Donoho2003, Roweis2000}.
 %
 They have been shown to be more robust to noise than other path-based algorithms, such as isomap \cite{balasubramanian2002isomap}, and so we suspect they may perform better than the ordering algorithms used in previous work.
+%
+{\bf Yannis says ``careful'', he thinks this might be too strong of a statement.}
 %%%
 %%%   we need help here
 %%%
@@ -564,7 +570,7 @@ They have been shown to be more robust to noise than other path-based algorithms
 
 The task of image registration has been widely studied \cite{zitova2003image}, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
 %
-The main point to note here is that many registration algorithms require the locations of landmarks or features within each image.
+The main point to note here is that many registration algorithms require definition of appropriate landmarks or features for the images and the location of these within each image.
 %
 For example, in face recognition, the first step is often to find the eyes, nose, and mouth within the face, and then register images by aligning these features \cite{zhao2003face}.
 %
@@ -575,6 +581,8 @@ In general, appropriate features may not be known {\em a priori}, and so we requ
 Template-based methods are also common for registration, where one optimally aligns each image to a predefined template function.
 %
 However, these methods can suffer when the images are noisy, and the success of such methods can depend strongly on the template function \cite{shatsky2009method}.
+%
+{\bf Need to discuss consistency.}
 
 Angular synchronization and vector diffusion maps require no feature points and no template function.
 %
@@ -586,11 +594,11 @@ In addition to the eigenproblem relaxation used here, other synchronization algo
 %
 Synchronization is formulated for general symmetry groups, and depending on the data, one might consider other symmetries, such as reflections and scaling/dilation.
 %
-The main requirement is that the symmetry group be represented by orthogonal or unitary matrices \cite{singer2013spectral}.
+Here, the main requirement is that the symmetry group be represented by orthogonal or unitary matrices \cite{singer2013spectral}.
 
 Temporal ordering can also be accomplished without first registering the images, by constructing functions of the images which are invariant under translations and rotations. 
 %
-These functions are then used as the data in the diffusion maps calculation; since the functions do not change under translations and rotations, the resulting diffusion maps embedding is invariant to symmetries.
+These functions are then used as the data in the diffusion maps calculation; since these representative functions do not change under translations and rotations, the resulting diffusion map embedding is invariant to symmetries.
 %
 Such functions include the scale invariant feature transform \cite{lowe1999object, lowe2004distinctive}, the scattering transform \cite{mallat2012group}, and the bispectrum \cite{zhao2014rotationally}.
 %
@@ -608,11 +616,9 @@ In our example, the data set is sufficiently large so that the dynamics are well
 %
 We have included both the red and the green channels so that the principal direction of variability is monotonic in time.
 %
-If we only used the green channel in our analysis, we could not temporally order the data using diffusion maps, as this signal does not change appreciably in time.
+If we only used the green channel in our analysis, we could not successfully order the data using diffusion maps, as this signal does not change appreciably in time.
 %
-Both the red and green channels contain spatial variability: the green channel has one peak at a specific angular around the embryo, and the red channel has two peaks which grow in time.
-%
-This allows us to register the data points.
+Both the red and green channels contain spatial variability which allows us to register the data points: the green channel has one peak at a specific angular around the embryo, and the red channel has two peaks which grow in time.
 %
 We include the green channel because the location of the red peaks is noisy, and so inclusion of the (less noisy) green channel allows us to more accurately register the images.
 %
@@ -630,8 +636,11 @@ We include the green channel because the location of the red peaks is noisy, and
 %
 We are confident that for many applications, these requirements - data which adequately samples the developmental trajectory, and data with sufficient spatial and temporal variability - are easily met.
 %
-In these cases, our methods allow for the rapid, automated analysis of imaging data sets to help uncover complex dynamics and structure.
-
+In these cases, our methods allow for the rapid, automated analysis of imaging data sets to help uncover possibly complex dynamics and structure.
+{\bf Something about smoothness in making movies}
+%
+%{\bf procrustes referece}
+%{\bf allso the guy form Donoho who worried about how much to do syncjhronization}
 
 %%%   you should sample well enough in time
 %%% your dmap coordinate should have a nice slope with time
@@ -667,11 +676,10 @@ In these cases, our methods allow for the rapid, automated analysis of imaging d
 
 \begin{materials}
 
-\section{Angular synchronization for rotations\cite{singer2011angular}}
+\section{Angular synchronization \cite{singer2011angular}}
 
 Let $x_1, \dots, x_m$ denote the signals that we wish to align with respect to rotations;
-%
-Each signal is a function defined on the unit circle (on the plane).
+each signal is a function defined on the unit circle (on the plane).
 %
 %Practically, it is discretized in a $n$-long vector (the local intensity at $n$ equidistant points around the circle);
 %rotating the function by an angle $\theta$ then corresponds to cyclically shifting the elements of $x_i$ by $\frac{\theta_i}{2 \pi} n$ (rounded to the nearest integer to obtain a valid shift).
@@ -714,7 +722,7 @@ R(\theta_{ij}) = \begin{bmatrix}
 \sin(\theta_{ij}) & \cos(\theta_{ij})
 \end{bmatrix},
 \end{equation}
-which we can think of as operating on the points of the unit circle on which our signal is defined.
+which we can think of as operating on the points of the unit circle (on the plane) on which our signal is defined.
 %
 Successive rotations correspond to multiplication of the corresponding rotation matrices: $R(\alpha_1 + \alpha_2) = R(\alpha_1) R(\alpha_2)$.
 %
@@ -797,7 +805,7 @@ discrete shift.
 %
 %Because $H$ and $H^2$ have the same eigenvectors, our problem formulation accounts for not only pairwise alignment information, but also these higher-order considerations.
 
-\section{Ordering using Diffusion Maps \cite{coifman2005geometric}}
+\section{Diffusion maps \cite{coifman2005geometric}}
 
 Given $m$ data points $x_1, \dots, x_m$ (typically vectors in a high-dimensional space), we want to find a coordinate transformation $y(x)$ that preserves local information: points that are close in the original space should also be close in the coordinate $y$.
 %
@@ -816,7 +824,7 @@ $\epsilon$ can be chosen using several techniques (see, for example \cite{coifma
 
 To find this coordinate $y$, we want solve the following optimization problem \cite{Belkin2003}
 \begin{equation} \label{eq:dmaps_opt_problem}
-\argmin_{y} \sum_{ij} W_{ij} (y(x_i) - y(x_j))^2
+\argmin_{y} \sum_{ij} W_{ij} (y(x_i) - y(x_j))^2.
 \end{equation}
 %
 We first compute the diagonal matrix $D$, where $D_{ii} = \sum_{j=1}^{m} W_{ij}$, and the matrix $A$, where
@@ -840,7 +848,7 @@ Ordering the data by $\phi_2(j)$ will then, effectively, order them in time.
 %
 The procedure generalizes when the data lie on higher-dimensional manifolds (not just curves) in data space.
 
-\section{Vector Diffusion Maps \cite{singer2012vector}}
+\section{Vector diffusion maps\cite{singer2012vector}}
 
 In vector diffusion maps, given data points $x_1, \dots, x_m$, one first constructs the matrix $S \in \mathbb{R}^{md \times md}$, with the $i,j^{th}$ block of $S$, $S_{ij}$, defined as
 \begin{equation} \label{eq:vdm_S}
@@ -887,9 +895,9 @@ useful parameterization of the data manifold modulo symmetries.
 %%% \cite....
 %%%
 
-\section{Registering Images with Respect to Translations and Rotations} \label{subsec:trans_rot_register}
+\section{Registering images with respect to translations and rotations} \label{subsec:trans_rot_register}
 
-Using angular synchronization or vector diffusion maps to register images with respect to rotations {\em and translations} requires some additional care.
+Using angular synchronization or vector diffusion maps to register images with respect to rotations {\em and translations} requires some additional effort.
 %
 %We are not only interested in registering the one-dimensional concentration profiles with respect to rotational symmetries, but we would also like to register the two-dimensional images shown in Figure \ref{fig:fluorescent_images} with respect to rotations {\em and} translations.
 %
@@ -913,7 +921,7 @@ where $g(I_j, \theta, dx, dy)$ is image $I_j$ rotated around the center of the s
 %
 The norm, $\| \cdot \|$, is the Euclidean norm between the pixel intensities for both the red and green channels.
 %
-The domain of the image (a square) is not invariant to our rotations and translations; however, the pixels near the border of the square have zero intensity, and so the norm can be computed as long as the main image does not move out of the original square.
+The domain of the image (a square) is not invariant to our rotations and translations; however, the pixels near the border of the square have zero intensity, and so the norm can be meaningfully computed as long as the main image does not ``move out of'' the original square.
 %
 %The norm \eqref{eq:opt_pairwise} involve an integral over the square, which is not left invariant by our rotations and
 %translations; noting however that the pixels close to the border of the square have zero intensity allows a meaningful
@@ -941,7 +949,7 @@ Our discrete translation steps are $\Delta/5$, and our discrete rotations steps 
 %
 %We check all possible combinations for the rotation and translations that best align $I_j$ to $I_i$.
 %
-Although computationally demanding, this ``embarrassingly parallelizable" direct enumeration approach is not prohibitive.
+Although computationally demanding, this ``embarrassingly parallelizable" direct enumeration approach is not prohibitive here.
 %
 %Although this can be somewhat time intensive, it is not prohibitive for the data sets we consider, and can be trivially parallelized if necessary.
 %
@@ -1037,7 +1045,7 @@ R_{3,3} & = \cos(\alpha)\cos(\beta)  &
 \end{aligned}
 \end{equation}
 %
-Inverting \eqref{eq:angle_relations} yields the corresponding approximate translations and rotation, and we round optimal translations to the nearest integer to remove the need for interpolation when translating the images.
+Inverting \eqref{eq:angle_relations} yields the desired approximate translations and rotation, and we round optimal translations to the nearest integer to remove the need for interpolation when translating the images.
 
 \end{materials}
 
