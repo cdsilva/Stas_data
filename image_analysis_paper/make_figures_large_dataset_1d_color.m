@@ -121,6 +121,18 @@ axis off
 
 print(sprintf('%s/illustrate_1d', im_save_dir), fmt, res);
 
+figure;
+set(gcf, 'paperposition',[0 0 8 8])
+plot(dpERK_unaligned(idx,:, 1), '-r', 'linewidth', 3);
+hold on
+plot(dpERK_unaligned(idx,:, 2), '-g', 'linewidth', 3);
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+xlabel('position', 'fontsize', fontsize)
+ylabel('intensity', 'fontsize', fontsize)
+print(sprintf('%s/illustrate_1d_intensity', im_save_dir), fmt, res);
+
+return
 %%
 
 dim = 2;

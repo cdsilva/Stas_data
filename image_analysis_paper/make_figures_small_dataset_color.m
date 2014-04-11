@@ -74,13 +74,13 @@ shift_max = 10;
 shift_step = 2;
 dim = 3;
 
-[R, W] = compute_pairwise_alignments_color(image_set, angle_proj, shift_max, shift_step);
+%[R, W] = compute_pairwise_alignments_color(image_set, angle_proj, shift_max, shift_step);
 
 %save('pairwise_alignments_small.mat', 'R', 'W');
 %load('pairwise_alignments_small.mat');
 
 %save('pairwise_alignments_small_nopbc.mat', 'R', 'W');
-%load('pairwise_alignments_small_nopbc.mat');
+load('pairwise_alignments_small_nopbc.mat');
 
 
 %% synchronization
@@ -233,6 +233,9 @@ ylabel('rank from vdm')
 %%
 
 figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
 for i=1:m
     
     im1 = image_set_raw_aligned(:,:,:,I(i));
@@ -333,9 +336,11 @@ xlabel('position', 'fontsize', fontsize)
 
 
 %%
-load('Dl_dpERK.mat');
-dpERK = nERK;
-Dl = nDl;
+% load('Dl_dpERK.mat');
+% dpERK = nERK;
+% Dl = nDl;
+load('0401_dl_erk.mat');
+dpERK = ERK;
 
 dpERK = flipud(dpERK);
 Dl = flipud(Dl);
@@ -365,5 +370,5 @@ set(gca, 'xtick', [])
 set(gca, 'ytick', [])
 xlabel('position', 'fontsize', fontsize)
 ylabel('sample', 'fontsize', fontsize)
-% saveas(gcf, sprintf('%s/fig6c', im_save_dir), 'epsc');
-
+saveas(gcf, sprintf('%s/fig6c', im_save_dir), 'epsc');
+saveas(gcf, sprintf('%s/fig6c', im_save_dir), 'tiff');
