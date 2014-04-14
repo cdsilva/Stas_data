@@ -68,6 +68,7 @@
 \usepackage{subcaption}
 \graphicspath{ {paper_figures/} }
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% OPTIONAL MACRO FILES
 %% Insert self-defined macros here.
@@ -75,6 +76,8 @@
 
 %\newcommand{\mfrac}[2]{\frac{\displaystyle #1}{\displaystyle #2}}
 %\def\s{\sigma}
+
+%\DeclareMathSizes{9}{8}{7}{7}
 
 \DeclareMathOperator*{\argmin}{arg\,min}
 
@@ -104,7 +107,7 @@ of the National Academy of Sciences of the United States of America}
 %% For titles, only capitalize the first letter
 %% \title{Almost sharp fronts for the surface quasi-geostrophic equation}
 
-\title{Unscrambling arrested development: temporal ordering and registration of cross-sectional imaging data}
+\title{Temporal ordering and registration of cross-sectional imaging data}
 
 
 %% Enter authors via the \author command.
@@ -158,13 +161,13 @@ If each data point is a two-dimensional image, the images must first be register
 %
 When such data sets are large, noisy, and/or if the developmental changes are subtle, these tasks can be difficult to do by hand.
 %
-We present an automatic approach to register {\em and} temporally order cross-sectional data sets of images.
+We present an automatic approach to register {\it and} temporally order cross-sectional data sets of images.
 %
 The mathematical techniques (angular synchronization for image registration, diffusion maps for temporal ordering, and
 vector diffusion maps for simultaneously performing both tasks) are applicable to a wide variety of data sets and
-require little {\em a priori} knowledge of the image features or the developmental dynamics.
+require little {\it a priori} knowledge of the image features or the developmental dynamics.
 %
-We demonstrate the utility of our methods using a collection of images from a study of {\em Drosophila} embryogenesis.
+We demonstrate the utility of our methods using a collection of images from a study of {\it Drosophila} embryogenesis.
 \end{abstract}
 
 
@@ -258,7 +261,7 @@ Each of the images reveals a uniform arrangement of nuclei and a nonuniform dist
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig2}
-\caption{(a) Fluorescent images of {\em Drosophila} embryos. Each embryo has been stained for Dorsal (green) and dpERK (red). (b) Selected image from data set. (c) Profile of Dorsal (green) and dpERK (red) around the circumference of the embryo in (b).}
+\caption{(a) Fluorescent images of {\it Drosophila} embryos. Each embryo has been stained for Dorsal (green) and dpERK (red). (b) Selected image from data set. (c) Profile of Dorsal (green) and dpERK (red) around the circumference of the embryo in (b).}
 %\label{fig:images_unordered}
 \customlabel{fig:images_unordered}{2}
 \customlabel{subfig:images_unordered}{\ref{fig:images_unordered}a}
@@ -278,11 +281,11 @@ The goal is to register these images in a globally consistent way, and order the
 %
 Both of these tasks can be fully automated, and even combined.
 %
-We will use {\em angular synchronization} \cite{singer2011angular}, a registration algorithm that is robust to noise, to align the images in a consistent way.
+We will use {\it angular synchronization} \cite{singer2011angular}, a registration algorithm that is robust to noise, to align the images in a consistent way.
 %
-We will use {\em diffusion maps} \cite{coifman2005geometric}, a broadly applicable technique for the discovery of low-dimensional structures in high-dimensional data sets, to temporally order our data.
+We will use {\it diffusion maps} \cite{coifman2005geometric}, a broadly applicable technique for the discovery of low-dimensional structures in high-dimensional data sets, to temporally order our data.
 %
-We will also show how both steps can be combined using {\em vector diffusion maps} \cite{singer2012vector}.
+We will also show how both steps can be combined using {\it vector diffusion maps} \cite{singer2012vector}.
 %
 %The paper is organized as follows.
 %
@@ -302,7 +305,7 @@ We will also show how both steps can be combined using {\em vector diffusion map
 %
 %However, this algorithm requires distances between data points.
 %
-%Because each image is in a different orientation, we need to first align or {\em register} the images before computing distances.
+%Because each image is in a different orientation, we need to first align or {\it register} the images before computing distances.
 %
 %Once all the images have been aligned, we can compute distances and use diffusion maps to temporally order the data.
 
@@ -349,7 +352,7 @@ Because the profiles are unregistered and unordered, the underlying dynamics (a 
 
 \subsection{Angular synchronization for image registration}
 
-We begin by registering the set of profiles using angular synchronization\cite{singer2011angular}, a technique which is robust to noise and requires no {\em a priori} knowledge of image features.
+We begin by registering the set of profiles using angular synchronization\cite{singer2011angular}, a technique which is robust to noise and requires no {\it a priori} knowledge of image features.
 %
 Angular synchronization first aligns every possible pair of data points, i.e., it computes the rotation angles
 which make each pair have the maximum possible overlap (see {\it Materials and Methods}).
@@ -363,7 +366,7 @@ each data point is a vector, and $\theta_{ij}$ denotes the angle of rotation nee
 %
 {\bf It is not clear how we are rotating the arrows (around the center vs. around the tail).}
 %
-From this large collection of pairwise alignments, the algorithm then selects a set of rotation angles, $\theta_i$ (one for each data point), such that differences in rotation angles, $\theta_i-\theta_j$, are {\em most consistent} (in some metric) with the pairwise alignments $\theta_{ij}$.
+From this large collection of pairwise alignments, the algorithm then selects a set of rotation angles, $\theta_i$ (one for each data point), such that differences in rotation angles, $\theta_i-\theta_j$, are {\it most consistent} (in some metric) with the pairwise alignments $\theta_{ij}$.
 %
 Figure~\ref{subfig:synch2} shows each vector from Figure~\ref{subfig:synch1}, now rotated so that the entire set is aligned; the computed rotation angles are also indicated.
 %
@@ -374,7 +377,7 @@ The problem of finding these alignments is formulated as an optimization problem
 The top eigenvector(s) of a matrix (which contains information about all pairwise alignments)
 provides the rotation angles (up to a constant rotation) assigned to each data point (see {\it Materials and Methods}).
 %
-%Because the method considers {\em all} pairwise alignments, angular synchronization is often robust to noise.
+%Because the method considers {\it all} pairwise alignments, angular synchronization is often robust to noise.
 %
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig4}
@@ -401,7 +404,7 @@ After geometrically registering the data (concentration profiles or images), we 
 %
 %Our main assumption is that most of the variation in the data correlates with time.
 %
-Our main assumptions are that the high-dimensional data (one dimension per discretization point in the concentration profiles/one dimension per color pixel intensity in the images) lie on a one-dimensional, nonlinear curve, {\em and} that this curve is parameterized by time.
+Our main assumptions are that the high-dimensional data (one dimension per discretization point in the concentration profiles/one dimension per color pixel intensity in the images) lie on a one-dimensional, nonlinear curve, {\it and} that this curve is parameterized by time.
 %
 Figure~\ref{subfig:dmaps_edges} shows a schematic of a two-dimensional data set (the ``high-dimensional" data) which lies on a one-dimensional nonlinear curve (the ``low-dimensional" manifold).
 %
@@ -415,9 +418,9 @@ Figure~\ref{subfig:dmaps_color} shows the same data, now colored by the leading 
 %
 The color parameterizes the one-dimensional curve that our eye can visually detect, and ordering the data by the leading diffusion map coordinate will effectively order data in time.
 
-To uncover the diffusion map parameterization, we assume that data points which are close in the high-dimensional space should also be close {\em on the curve} (we would like images which look similar to be close together in our developmental trajectory).
+To uncover the diffusion map parameterization, we assume that data points which are close in the high-dimensional space should also be close {\it on the curve} (we would like images which look similar to be close together in our developmental trajectory).
 %
-%We therefore want to find a parameterization of the points, such that the points which are close in the original, high-dimensional space are {\em as close as possible} in the parameterization.
+%We therefore want to find a parameterization of the points, such that the points which are close in the original, high-dimensional space are {\it as close as possible} in the parameterization.
 %
 To emphasize this point, edges between the pairs of data points in Figure~\ref{subfig:dmaps_edges} are colored based on the distance between the data points (using the diffusion kernel of the distance), so that pairs of points which are close have dark/strong edges connecting them.
 %
@@ -450,7 +453,7 @@ to have a peak growing in time).
 %
 %Our proposed alignment methodology, angular synchronization, utilizes the eigendecompostion of the matrix $H \in \mathbb{R}^{md \times md}$, and our proposed ordering algorithm, diffusion maps, utilizes the eigendecomposition of the matrix $A \in \mathbb{R}^{m \times m}$.
 %
-Angular synchronization (for registration) can be combined with diffusion maps (for temporal ordering) in a single eigencomputation that allows us to {\em simultaneously} recover the registrations {\em and} the temporal ordering.
+Angular synchronization (for registration) can be combined with diffusion maps (for temporal ordering) in a single eigencomputation that allows us to {\it simultaneously} recover the registrations {\it and} the temporal ordering.
 %
 This technique is called vector diffusion maps \cite{singer2012vector} (see {\it Materials and Methods}).
 %
@@ -467,7 +470,7 @@ The same methods (with small modifications) can be applied directly to our two-d
 Instead of one-dimensional profiles (discretized to $100$-dimensional concentration vectors), we now work with
 two color, two-dimensional images (discretized into $100 \times 100$ pixels/$20000$-dimensional vectors), and we register the images with respect to translations and rotations (the symmetry group is $ISO(2)$).
 %
-To facilitate the application of vector diffusion maps, we approximate the two-dimensional translations and rotations by {\em three-dimensional rotations} (symmetry group $SO(3)$; see {\it Materials and Methods}, {\it SI Appendix}).
+To facilitate the application of vector diffusion maps, we approximate the two-dimensional translations and rotations by {\it three-dimensional rotations} (symmetry group $SO(3)$; see {\it SI Appendix}).
 %
 We use vector diffusion maps to align and order the images shown in Figure~\ref{subfig:images_unordered};
 the results are shown in Figure~\ref{fig:images_ordered}.
@@ -533,11 +536,11 @@ Quantitatively, the rank correlation coefficient between these two temporal orde
 
 We have shown how symmetry and dimensionality reduction techniques can successfully register and order cross-sectional developmental imaging data.
 %
-Although we illustrated our methods using a specific data set from a study of {\em Drosophila} embryogenesis, the framework is quite general and requires little knowledge of the image features or the developmental dynamics.
+Although we illustrated our methods using a specific data set from a study of {\it Drosophila} embryogenesis, the framework is quite general and requires little knowledge of the image features or the developmental dynamics.
 %
-To our knowledge, temporal ordering of {\em Drosophila} images has not been automated to this extent.
+To our knowledge, temporal ordering of {\it Drosophila} images has not been automated to this extent.
 %
-Recently, machine learning algorithms have been used to group {\em Drosophila} images into different developmental classes \cite{yuan2014automated}, yet there, the appropriate classes must be defined by the user and hand-labeled training data are required.
+Recently, machine learning algorithms have been used to group {\it Drosophila} images into different developmental classes \cite{yuan2014automated}, yet there, the appropriate classes must be defined by the user and hand-labeled training data are required.
 
 Temporal ordering of cross-sectional biological data has been studied in a variety of other contexts.
 %
@@ -551,7 +554,7 @@ Snapshots of cells throughout the cell cycle can be described by a vector of fea
 These problems are no different than our task of ordering images, each of which is a large vector of pixel intensities.
 %
 The majority of these works temporally order the data either by solving a traveling salesman problem on the data, or by constructing a minimum spanning tree of the data,
-expecting that these structures (the path of the travelling salesman, or the minimum spanning tree) characterize the majority of the structure/variability within the data and provide an accurate encoding of the dynamical progression.
+expecting that these structures (the path of the traveling salesman, or the minimum spanning tree) characterize the majority of the structure/variability within the data and provide an accurate encoding of the dynamical progression.
 %
 We, instead, use diffusion maps to construct a one-dimensional parameterization of the data.
 %
@@ -576,7 +579,7 @@ For example, in face recognition, the first step is often to find the eyes, nose
 %
 Temporally ordering images of a construction site over time is also based on first identifying features within the images \cite{schindler2007inferring}.
 %
-In general, appropriate features may not be known {\em a priori}, and so we require a registration algorithm that does not rely on predefined features, but only on the inherent geometric symmetry of the problem.
+In general, appropriate features may not be known {\it a priori}, and so we require a registration algorithm that does not rely on predefined features, but only on the inherent geometric symmetry of the problem.
 %
 Template-based methods are also common for registration, where one optimally aligns each image to a predefined template function.
 %
@@ -586,7 +589,7 @@ However, these methods can suffer when the images are noisy, and the success of 
 
 Angular synchronization and vector diffusion maps require no feature points and no template function.
 %
-These methods have been used to register two-dimensional cryo-electron microscopy images of three-dimensional molecules \cite{singer2011three}, where each image is a picture of (essentially) the {\em same} molecule; variation in the data comes from differences in the viewing angles (rotations of the molecule) and from instrument/measurement noise.
+These methods have been used to register two-dimensional cryo-electron microscopy images of three-dimensional molecules \cite{singer2011three}, where each image is a picture of (essentially) the {\it same} molecule; variation in the data comes from differences in the viewing angles (rotations of the molecule) and from instrument/measurement noise.
 %
 In contrast, our data contains variation from the different embryo orientations, as well as variation from the underlying developmental dynamics. % (which underpins the development of vector diffusion map algorithms).
 %
@@ -684,8 +687,8 @@ each signal is a function defined on the unit circle (on the plane).
 %Practically, it is discretized in a $n$-long vector (the local intensity at $n$ equidistant points around the circle);
 %rotating the function by an angle $\theta$ then corresponds to cyclically shifting the elements of $x_i$ by $\frac{\theta_i}{2 \pi} n$ (rounded to the nearest integer to obtain a valid shift).
 %
-First assume that each signal $x_i$ is a {\em noisy} rotated copy of the underlying signal $x_{true}$
-(which we are {\em not} given), such that
+First assume that each signal $x_i$ is a {\it noisy} rotated copy of the underlying signal $x_{true}$
+(which we are {\it not} given), such that
 \begin{equation}
 x_i = f(x_{true}, \theta_i) + \xi_i
 \end{equation}
@@ -699,7 +702,7 @@ x_i \approx f(x_j, \theta_i - \theta_j) ;
 \end{equation}
 note that \eqref{eq:pairwise_rot} does not require knowledge of $x_{true}$.
 %
-We can obtain an {\em estimate} of $\theta_i - \theta_j$ by computing the rotation that optimally aligns $x_j$ to $x_i$,
+We can obtain an {\it estimate} of $\theta_i - \theta_j$ by computing the rotation that optimally aligns $x_j$ to $x_i$,
 i.e., %$\theta_{ij} \approx \theta_i - \theta_j$, where
 %
 \begin{equation} \label{eq:opt_angle}
@@ -788,8 +791,10 @@ We estimate $\theta_{i}$ by inverting \eqref{eq:R_theta}, and register the signa
 We note that, in our actual computations, the pairwise rotations $\theta_{ij}$ are computed in a discrete setting, then the overall
 synchronization is performed in the continuum context to obtain $\theta_i$, and the results are rounded to give the closest
 discrete shift.
+%
+Details of registering two-dimensional images using synchronization are given in the {\it SI Appendix}. 
 
-%Furthermore, this formulation also considers {\em higher-order} consistency information.
+%Furthermore, this formulation also considers {\it higher-order} consistency information.
 %
 %For example, given our pairwise estimates $R_{ij}$, we know that relationships of the form
 %\begin{equation} \label{eq:triplet_consistency}
@@ -801,7 +806,7 @@ discrete shift.
 %\begin{equation}
 %(H^2)_{ij} = \sum_k R(\theta_{ik}) R(\theta_{kj});
 %\end{equation}
-%therefore, {\em all} infomation of the form in \eqref{eq:triplet_consistency} is contained in the matrix $H^2$.
+%therefore, {\it all} infomation of the form in \eqref{eq:triplet_consistency} is contained in the matrix $H^2$.
 %
 %Because $H$ and $H^2$ have the same eigenvectors, our problem formulation accounts for not only pairwise alignment information, but also these higher-order considerations.
 
@@ -813,8 +818,8 @@ The first step is to construct the matrix $W \in \mathbb{R}^{m \times m}$, where
 %
 We use a diffusion kernel,
 \begin{equation} \label{eq:dmaps_W}
-%W_{ij} = \exp \left( -\frac{d^2(x_i, x_j)}{\epsilon^2} \right)
-W_{ij} = e^{ -\frac{d^2(x_i, x_j)}{\epsilon^2}}
+W_{ij} = \exp \left( -\frac{d^2(x_i, x_j)}{\epsilon^2} \right)
+%W_{ij} = e^{ -\frac{d^2(x_i, x_j)}{\epsilon^2}}
 \end{equation}
 where $d(x_i, x_j)$ is the pairwise distance between $x_i$ and $x_j$ (often the Euclidean distance), and $\epsilon$ is a characteristic scale.
 %
@@ -857,14 +862,14 @@ In vector diffusion maps, given data points $x_1, \dots, x_m$, one first constru
 %
 where $A_{ij} \in \mathbb{R}$ (defined in \eqref{eq:dmaps_A}) pertains to the diffusion kernel between data points, and $H_{ij} \in \mathbb{R}^{d \times d}$ (defined in \eqref{eq:H_to_R}) pertains to the pairwise alignment between data points.
 %
-It is important to note that distance $d(x_i, x_j)$ used in the diffusion kernel in \eqref{eq:dmaps_W} is the distance between data points {\em after} after pairwise alignment, i.e., the minimum distance between all possible shifts of the two data points (which is obtained in \eqref{eq:opt_pairwise}).
+It is important to note that distance $d(x_i, x_j)$ used in the diffusion kernel in \eqref{eq:dmaps_W} is the distance between data points {\it after} after pairwise alignment, i.e., the minimum distance between all possible shifts of the two data points (which is obtained in \eqref{eq:opt_pairwise}).
 %
 In the language of symmetry groups, this distance is a metric between the orbits induced by the symmetry group.
 
 One then computes the eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_{md}$ and eigenvectors $\phi_1, \phi_2, \dots, \phi_{md}$ of $S$, ordered such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{md}|$.
 %
-These eigenvectors contain information about {\em both} the optimal rotations (the ``synchronization" component) and the
-variation of the data {\em after} the spatial symmetries have been factored out (in our case, their temporal variation).
+These eigenvectors contain information about {\it both} the optimal rotations (the ``synchronization" component) and the
+variation of the data {\it after} the spatial symmetries have been factored out (in our case, their temporal variation).
 %
 Assuming that the data (after symmetries have been factored out) are relatively closely clustered, it is reasonable
 to expect, as in angular synchronization, that the top (block) eigenvector of $S$ contains approximations of the optimal rotations,
@@ -895,157 +900,6 @@ useful parameterization of the data manifold modulo symmetries.
 %%% \cite....
 %%%
 
-\section{Registering images with respect to translations and rotations} \label{subsec:trans_rot_register}
-
-Using angular synchronization or vector diffusion maps to register images with respect to rotations {\em and translations} requires some additional effort.
-%
-%We are not only interested in registering the one-dimensional concentration profiles with respect to rotational symmetries, but we would also like to register the two-dimensional images shown in Figure \ref{fig:fluorescent_images} with respect to rotations {\em and} translations.
-%
-%We first compute the translations and rotations to optimally align each pair of data points.
-%
-The first step (similar to the case of only rotations) is to compute the optimal alignments between pairs of images.
-%
-Practically, we have square images discretized as pixels (rather than continuous functions on the plane).
-%
-For each image pair $I_i$ and $I_j$ we compute
-\begin{equation}\label{eq:opt_pairwise}
-(\theta_{ij}, dx_{ij}, dy_{ij}) = \argmin_{
-\scriptsize \begin{matrix}
-\theta \in [0, 2\pi) \\
-dx, dy \in [-\Delta, \Delta]\\
-%dy \in [-\Delta, \Delta]
-\end{matrix}
-} \|g(I_j, \theta, dx, dy) - I_i \|^2.
-\end{equation}
-where $g(I_j, \theta, dx, dy)$ is image $I_j$ rotated around the center of the square by $\theta$ radians, then translated by $dx$ pixel widths in the $x$ direction, and finally translated by $dy$ pixel widths in the $y$ direction.
-%
-The norm, $\| \cdot \|$, is the Euclidean norm between the pixel intensities for both the red and green channels.
-%
-The domain of the image (a square) is not invariant to our rotations and translations; however, the pixels near the border of the square have zero intensity, and so the norm can be meaningfully computed as long as the main image does not ``move out of'' the original square.
-%
-%The norm \eqref{eq:opt_pairwise} involve an integral over the square, which is not left invariant by our rotations and
-%translations; noting however that the pixels close to the border of the square have zero intensity allows a meaningful
-%computation of this norm as long as the ``main feature" (the embryo) does not move out of the original square (no ``corner effects").
-%
-This also justifies the $\Delta$ limits in \eqref{eq:opt_pairwise}: $\Delta$ is chosen such that the main image is not split or separated when translating (we take $\Delta=10$, which corresponds to a 10\% shift in the image). 
-%; it does not make sense to shift the images so much that the embryo would ``move out" of the original square.
-%
-Image rotation is performed with the \texttt{imrotate} function in Matlab, using nearest neighbor interpolation to estimate the pixel intensities after rotation.
-%, since there is no direct mapping of the pixels of the unrotated image to the pixels of the rotated image.
-%
-The missing pixels in the corners of the rotated image are taken to have zero intensity.
-%
-The translations are implemented by shifting the pixels;
-we only consider shifts that correspond to an integer number of pixels to remove the need for interpolation when doing the translations.
-%
-The solution to \eqref{eq:opt_pairwise} is not easily computed, as the objective function will most likely be nonconvex.
-%
-Therefore, instead of using an optimization procedure, we discretize the search space and exhaustively search to find the solution.
-%
-Our discrete translation steps are $\Delta/5$, and our discrete rotations steps are $\pi/10$. 
-%
-%We discritize the search space of rotations into 20 possible rotations %($d\theta  \in \{0, \pi/10, \pi/5, \dots, 9 \pi/5, 19\pi/10 \}$),
-%and 11 possible translations in both . %($dx, dy \in \{-20, -16, -12, \dots, 12, 16, 20 \}$).
-%
-%We check all possible combinations for the rotation and translations that best align $I_j$ to $I_i$.
-%
-Although computationally demanding, this ``embarrassingly parallelizable" direct enumeration approach is not prohibitive here.
-%
-%Although this can be somewhat time intensive, it is not prohibitive for the data sets we consider, and can be trivially parallelized if necessary.
-%
-%The solution will not be the exact solution to \eqref{eq:opt_pairwise}, but it will (most likely) be a close approximation.
-%
-%Since our techniques are robust to noise, close approximations will be sufficient to obtain accurate results.
-
-%As discussed above, for angular synchronization, the underlying symmetry group needs to have a real and orthogonal matrix representation.
-%
-%We therefore convert $ISO(2)$, the group of two-dimensional translations and rotations, to $SO(3)$, the group of three-dimensional rotations.
-%
-
-The synchronization formulation requires that the matrices used to represent the symmetry group be orthogonal \cite{singer2013spectral}.  
-%(for \eqref{eq:H_low_rank} to be satisfied).
-%
-However, the typical matrix representation for $ISO(2)$, the group of two-dimensional translations and rotations, does not satisfy this property.
-%
-Instead, we {\em approximately} represent rotations and translations in two dimensions using {\em three-dimensional rotation matrices}, by projecting the (two-dimensional) image onto a portion of the surface of a (three-dimensional) sphere \cite{singer2011angular} (see {\it SI Appendix}).
-%
-Rotation of the image corresponds to rotation around one principal axis in three dimensions, while translation of the image corresponds (approximately) to rotations around the other two principal axes. %(Clearly, not all translations can be described this way, as translations can range from $-\infty$ to $+ \infty$, and rotations are only from $0$ to $2 \pi$. However, the images we will be considering are already mostly centered, and so we are only interested in small translations that are well within the $[0, 2\pi)$ range.)
-%
-%These rotation matrices are (by definition) orthogonal, and successive applications of various translations and rotations can be described via multiplication of the corresponding rotation matrices in $SO(3)$.
-
-To convert the optimal two-dimensional translation and rotation to corresponding (continuous) three-dimensional rotations,
-we first compute the Euler angles $\alpha_{ij}$, $\beta_{ij}$, and $\gamma_{ij}$,
-\begin{equation} \label{eq:angle_relations}
-%\begin{aligned}
-%	\alpha_{ij} &= \theta_{ij} \\
-%	\beta_{ij} &= \frac{dx_{ij}}{n} \times \eta_{proj} \\
-%	\gamma_{ij} &= \frac{dy_{ij}}{n} \times \eta_{proj} \\
-%\end{aligned}
-	\alpha_{ij} = \theta_{ij}, \; \; \;
-	\beta_{ij} = \frac{dx_{ij}}{n} \times \eta_{proj}, \; \; \;
-	\gamma_{ij} = \frac{dy_{ij}}{n} \times \eta_{proj}
-\end{equation}
-where $\eta_{proj}$ is the angular portion of the sphere onto which we choose to project the image.
-%
-We take $\eta_{proj} =  \pi/8$, so the image lies on a $\pi/8 \times \pi/8$ radians portion of the unit sphere;
-this portion of the sphere is small enough so that curvature effects are not prominent in the image.
-%
-We write rotations around the three principal axes, $R^x(\alpha)$, $R^y(\beta)$, and $R^z(\gamma)$, in terms of the three Euler angles
-%\small
-\begin{equation}
-\begin{aligned}
-	R^x(\alpha) &= \begin{bmatrix}
-	1 & 0 & 0 \\
-    0 & \cos(\alpha) & -\sin(\alpha) \\
-    0 & \sin(\alpha) & \cos(\alpha)
-	\end{bmatrix} \\
-	R^y(\beta) &= \begin{bmatrix}
-	\cos(\beta) & 0 & \sin(\beta) \\
-    0 & 1 & 0 \\
-    -\sin(\beta) & 0 & \cos(\beta)
-    \end{bmatrix} \\
-	R^z(\gamma) &= \begin{bmatrix}
-	\cos(\gamma) & -\sin(\gamma) & 0 \\
-    \sin(\gamma) & \cos(\gamma) & 0 \\
-    0 & 0 & 1
-    \end{bmatrix}.
-\end{aligned}
-\end{equation}
-%\normalsize
-%
-The total rotation, $R_{ij} \in SO(3) \subset \mathbb{R}^{3 \times 3}$, is
-\begin{equation} \label{eq:total_rot}
-	R(\alpha_{ij}, \beta_{ij}, \gamma_{ij})	 = R^z(\gamma_{ij})  R^y(\beta_{ij})  R^x(\alpha_{ij}).
-%R(\alpha_{ij}, \beta_{ij}, \gamma_{ij}) =
-%\begin{bmatrix}
-%\cos(\beta) \cos(\gamma) & \cos(\gamma)\sin(\alpha)\sin(\beta)-\cos(\alpha) \sin(\gamma) & \cos(\alpha)\cos(\gamma)\sin(\beta)+ \sin(\alpha)\sin(\gamma) \\
-%\cos(\beta) \sin(\gamma) & \cos(\alpha) \cos(\gamma)+\sin(\alpha) \sin(\beta) \sin(\gamma) & \cos(\alpha) \sin(\beta) \sin(\gamma)-\cos(\gamma) \sin(\alpha) \\
-%-\sin(\beta) & \cos(\beta) \sin(\alpha) & \cos(\alpha) \cos(\beta))
-%\end{bmatrix}
-\end{equation}
-%
-%\eqref{eq:total_rot} corresponds to first rotating the image by $\theta$, then translating the image by $dx$ pixels in the $x$ direction, and finally translating the image by $dy$ pixels in the $y$ direction (we note that, because the rotation matrices operate from the left, the rightmost rotation matrix in the product in \eqref{eq:total_rot} corresponds to the first operation we perform on the image).
-
-These rotation matrices $R(\alpha_{ij}, \beta_{ij}, \gamma_{ij})$ are used in formulating the matrix $H$ in \eqref{eq:H_to_R} for angular synchronization, or the matrix $S$ in \eqref{eq:vdm_S} for vector diffusion maps to compute the rotations (and, in the case of vector diffusion maps, temporal orderings) for the images.
-%
-From the three-dimensional rotations $R_{1, est}, \dots, R_{m, est}$, we  require the corresponding translations and rotations of the images.
-%
-We first multiply all rotations by $R_{1, est}^T$ to ensure that all the images are (approximately) in the region of the sphere where we began.
-%
-$R_{i,est}^T$ then gives the rotation matrix which registers image $i$.
-%
-From a rotation matrix $R$, we compute the Euler angles $\alpha$, $\beta$, and $\gamma$ using the following relationships
-\begin{equation}
-\begin{aligned}
-R_{1,1} & = \cos(\beta)\cos(\gamma) &
-R_{2,1} & = \cos(\beta)\sin(\gamma) \\
-R_{3,1} & = -\sin(\beta) &
-R_{3,2} & = \sin(\alpha)\cos(\beta) \\
-R_{3,3} & = \cos(\alpha)\cos(\beta)  &
-\end{aligned}
-\end{equation}
-%
-Inverting \eqref{eq:angle_relations} yields the desired approximate translations and rotation, and we round optimal translations to the nearest integer to remove the need for interpolation when translating the images.
 
 \end{materials}
 
@@ -1162,30 +1016,188 @@ Inverting \eqref{eq:angle_relations} yields the desired approximate translations
 %\caption{Analysis of one-dimensional profiles obtained from experimental data. (a) One-dimensional, two-component concentration profile on a ring (top), and the corresponding profile on a line (bottom). The concentration profile was extracted from an image of the type shown in Figure~\ref{fig:images_unordered}. (b) Intensity corresponding to the profile in (a). (c) An ensemble of concentration profiles, each of the form described in (a). Each row in the array corresponds to a single profile obtained from an image of the type in Figure~\ref{subfig:images_unordered}. (d) The profiles in (c), now registered using angular synchronization. (e) The profiles in (d), now temporally ordered using diffusion maps. (f) The profiles in (c), registered and temporally ordered in a single step using vector diffusion maps.}
 %\end{figure}
 %
-%\begin{figure*}
-%\begin{subfigure}{0.2\textwidth}
-%\includegraphics[width=\textwidth]{sphere_1}
-%\includegraphics[width=\textwidth]{sphere2_1}
-%\caption{}
-%\end{subfigure}
-%\begin{subfigure}{0.2\textwidth}
-%\includegraphics[width=\textwidth]{sphere_2}
-%\includegraphics[width=\textwidth]{sphere2_2}
-%\caption{}
-%\end{subfigure}
-%\begin{subfigure}{0.2\textwidth}
-%\includegraphics[width=\textwidth]{sphere_3}
-%\includegraphics[width=\textwidth]{sphere2_3}
-%\caption{}
-%\end{subfigure}
-%\begin{subfigure}{0.2\textwidth}
-%\includegraphics[width=\textwidth]{sphere_4}
-%\includegraphics[width=\textwidth]{sphere2_4}
-%\caption{}
-%\end{subfigure}
-%\caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. (a) The original image. (b) Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. (c) Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. (d) Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three-dimensional spheres, and the bottom row shows the (two-dimensional) surface of the sphere in which we are interested.}
-%\label{fig:SO3_picture}
-%\end{figure*}
+\begin{figure*}
+\begin{subfigure}{0.2\textwidth}
+\includegraphics[width=\textwidth]{sphere_1}
+\includegraphics[width=\textwidth]{sphere2_1}
+\caption{}
+\end{subfigure}
+\begin{subfigure}{0.2\textwidth}
+\includegraphics[width=\textwidth]{sphere_2}
+\includegraphics[width=\textwidth]{sphere2_2}
+\caption{}
+\end{subfigure}
+\begin{subfigure}{0.2\textwidth}
+\includegraphics[width=\textwidth]{sphere_3}
+\includegraphics[width=\textwidth]{sphere2_3}
+\caption{}
+\end{subfigure}
+\begin{subfigure}{0.2\textwidth}
+\includegraphics[width=\textwidth]{sphere_4}
+\includegraphics[width=\textwidth]{sphere2_4}
+\caption{}
+\end{subfigure}
+\caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. (a) The original image. (b) Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. (c) Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. (d) Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three-dimensional spheres, and the bottom row shows the (two-dimensional) surface of the sphere in which we are interested.}
+\label{fig:SO3_picture}
+\end{figure*}
+
+
+
+\section{Registering images with respect to translations and rotations} \label{subsec:trans_rot_register}
+
+Using angular synchronization or vector diffusion maps to register images with respect to rotations {\it and translations} requires some additional effort.
+%
+%We are not only interested in registering the one-dimensional concentration profiles with respect to rotational symmetries, but we would also like to register the two-dimensional images shown in Figure \ref{fig:fluorescent_images} with respect to rotations {\it and} translations.
+%
+%We first compute the translations and rotations to optimally align each pair of data points.
+%
+The first step (similar to the case of only rotations) is to compute the optimal alignments between pairs of images.
+%
+Practically, we have square images discretized as pixels (rather than continuous functions on the plane).
+%
+For each image pair $I_i$ and $I_j$ we compute
+\begin{equation}\label{eq:opt_pairwise}
+(\theta_{ij}, dx_{ij}, dy_{ij}) = \argmin_{
+\scriptsize \begin{matrix}
+\theta \in [0, 2\pi) \\
+dx, dy \in [-\Delta, \Delta]\\
+%dy \in [-\Delta, \Delta]
+\end{matrix}
+} \|g(I_j, \theta, dx, dy) - I_i \|^2.
+\end{equation}
+where $g(I_j, \theta, dx, dy)$ is image $I_j$ rotated around the center of the square by $\theta$ radians, then translated by $dx$ pixel widths in the $x$ direction, and finally translated by $dy$ pixel widths in the $y$ direction.
+%
+The norm, $\| \cdot \|$, is the Euclidean norm between the pixel intensities for both the red and green channels.
+%
+The domain of the image (a square) is not invariant to our rotations and translations; however, the pixels near the border of the square have zero intensity, and so the norm can be meaningfully computed as long as the main image does not ``move out of'' the original square.
+%
+%The norm \eqref{eq:opt_pairwise} involve an integral over the square, which is not left invariant by our rotations and
+%translations; noting however that the pixels close to the border of the square have zero intensity allows a meaningful
+%computation of this norm as long as the ``main feature" (the embryo) does not move out of the original square (no ``corner effects").
+%
+This also justifies the $\Delta$ limits in \eqref{eq:opt_pairwise}: $\Delta$ is chosen such that the main image is not split or separated when translating (we take $\Delta=10$, which corresponds to a 10\% shift in the image). 
+%; it does not make sense to shift the images so much that the embryo would ``move out" of the original square.
+%
+Image rotation is performed with the \texttt{imrotate} function in Matlab, using nearest neighbor interpolation to estimate the pixel intensities after rotation.
+%, since there is no direct mapping of the pixels of the unrotated image to the pixels of the rotated image.
+%
+The missing pixels in the corners of the rotated image are taken to have zero intensity.
+%
+The translations are implemented by shifting the pixels;
+we only consider shifts that correspond to an integer number of pixels to remove the need for interpolation when doing the translations.
+%
+The solution to \eqref{eq:opt_pairwise} is not easily computed, as the objective function will most likely be nonconvex.
+%
+Therefore, instead of using an optimization procedure, we discretize the search space and exhaustively search to find the solution.
+%
+Our discrete translation steps are $\Delta/5$, and our discrete rotations steps are $\pi/10$. 
+%
+%We discritize the search space of rotations into 20 possible rotations %($d\theta  \in \{0, \pi/10, \pi/5, \dots, 9 \pi/5, 19\pi/10 \}$),
+%and 11 possible translations in both . %($dx, dy \in \{-20, -16, -12, \dots, 12, 16, 20 \}$).
+%
+%We check all possible combinations for the rotation and translations that best align $I_j$ to $I_i$.
+%
+Although computationally demanding, this ``embarrassingly parallelizable" direct enumeration approach is not prohibitive here.
+%
+%Although this can be somewhat time intensive, it is not prohibitive for the data sets we consider, and can be trivially parallelized if necessary.
+%
+%The solution will not be the exact solution to \eqref{eq:opt_pairwise}, but it will (most likely) be a close approximation.
+%
+%Since our techniques are robust to noise, close approximations will be sufficient to obtain accurate results.
+
+%As discussed above, for angular synchronization, the underlying symmetry group needs to have a real and orthogonal matrix representation.
+%
+%We therefore convert $ISO(2)$, the group of two-dimensional translations and rotations, to $SO(3)$, the group of three-dimensional rotations.
+%
+
+The synchronization formulation requires that the matrices used to represent the symmetry group be orthogonal \cite{singer2013spectral}.  
+%(for \eqref{eq:H_low_rank} to be satisfied).
+%
+However, the typical matrix representation for $ISO(2)$, the group of two-dimensional translations and rotations, does not satisfy this property.
+%
+Instead, we {\it approximately} represent rotations and translations in two dimensions using {\it three-dimensional rotation matrices}, by projecting the (two-dimensional) image onto a portion of the surface of a (three-dimensional) sphere \cite{singer2011angular}.
+%
+Rotation of the image corresponds to rotation around one principal axis in three dimensions, while translation of the image corresponds (approximately) to rotations around the other two principal axes. %(Clearly, not all translations can be described this way, as translations can range from $-\infty$ to $+ \infty$, and rotations are only from $0$ to $2 \pi$. However, the images we will be considering are already mostly centered, and so we are only interested in small translations that are well within the $[0, 2\pi)$ range.)
+%
+%These rotation matrices are (by definition) orthogonal, and successive applications of various translations and rotations can be described via multiplication of the corresponding rotation matrices in $SO(3)$.
+
+
+
+To convert the optimal two-dimensional translation and rotation to corresponding (continuous) three-dimensional rotations,
+we first compute the Euler angles $\alpha_{ij}$, $\beta_{ij}$, and $\gamma_{ij}$,
+\begin{equation} \label{eq:angle_relations}
+%\begin{aligned}
+%	\alpha_{ij} &= \theta_{ij} \\
+%	\beta_{ij} &= \frac{dx_{ij}}{n} \times \eta_{proj} \\
+%	\gamma_{ij} &= \frac{dy_{ij}}{n} \times \eta_{proj} \\
+%\end{aligned}
+	\alpha_{ij} = \theta_{ij}, \; \; \;
+	\beta_{ij} = \frac{dx_{ij}}{n} \times \eta_{proj}, \; \; \;
+	\gamma_{ij} = \frac{dy_{ij}}{n} \times \eta_{proj}
+\end{equation}
+where $\eta_{proj}$ is the angular portion of the sphere onto which we choose to project the image.
+%
+We take $\eta_{proj} =  \pi/8$, so the image lies on a $\pi/8 \times \pi/8$ radians portion of the unit sphere;
+this portion of the sphere is small enough so that curvature effects are not prominent in the image.
+%
+We write rotations around the three principal axes, $R^x(\alpha)$, $R^y(\beta)$, and $R^z(\gamma)$, in terms of the three Euler angles
+%\small
+\begin{equation}
+\begin{aligned}
+	R^x(\alpha) &= \begin{bmatrix}
+	1 & 0 & 0 \\
+    0 & \cos(\alpha) & -\sin(\alpha) \\
+    0 & \sin(\alpha) & \cos(\alpha)
+	\end{bmatrix} \\
+	R^y(\beta) &= \begin{bmatrix}
+	\cos(\beta) & 0 & \sin(\beta) \\
+    0 & 1 & 0 \\
+    -\sin(\beta) & 0 & \cos(\beta)
+    \end{bmatrix} \\
+	R^z(\gamma) &= \begin{bmatrix}
+	\cos(\gamma) & -\sin(\gamma) & 0 \\
+    \sin(\gamma) & \cos(\gamma) & 0 \\
+    0 & 0 & 1
+    \end{bmatrix}.
+\end{aligned}
+\end{equation}
+%\normalsize
+%
+The total rotation, $R_{ij} \in SO(3) \subset \mathbb{R}^{3 \times 3}$, is
+\begin{equation} \label{eq:total_rot}
+	R(\alpha_{ij}, \beta_{ij}, \gamma_{ij})	 = R^z(\gamma_{ij})  R^y(\beta_{ij})  R^x(\alpha_{ij}).
+%R(\alpha_{ij}, \beta_{ij}, \gamma_{ij}) =
+%\begin{bmatrix}
+%\cos(\beta) \cos(\gamma) & \cos(\gamma)\sin(\alpha)\sin(\beta)-\cos(\alpha) \sin(\gamma) & \cos(\alpha)\cos(\gamma)\sin(\beta)+ \sin(\alpha)\sin(\gamma) \\
+%\cos(\beta) \sin(\gamma) & \cos(\alpha) \cos(\gamma)+\sin(\alpha) \sin(\beta) \sin(\gamma) & \cos(\alpha) \sin(\beta) \sin(\gamma)-\cos(\gamma) \sin(\alpha) \\
+%-\sin(\beta) & \cos(\beta) \sin(\alpha) & \cos(\alpha) \cos(\beta))
+%\end{bmatrix}
+\end{equation}
+%
+%\eqref{eq:total_rot} corresponds to first rotating the image by $\theta$, then translating the image by $dx$ pixels in the $x$ direction, and finally translating the image by $dy$ pixels in the $y$ direction (we note that, because the rotation matrices operate from the left, the rightmost rotation matrix in the product in \eqref{eq:total_rot} corresponds to the first operation we perform on the image).
+
+These rotation matrices $R(\alpha_{ij}, \beta_{ij}, \gamma_{ij})$ are used in formulating the matrix $H$ in \eqref{eq:H_to_R} for angular synchronization, or the matrix $S$ in \eqref{eq:vdm_S} for vector diffusion maps to compute the rotations (and, in the case of vector diffusion maps, temporal orderings) for the images.
+%
+From the three-dimensional rotations $R_{1, est}, \dots, R_{m, est}$, we  require the corresponding translations and rotations of the images.
+%
+We first multiply all rotations by $R_{1, est}^T$ to ensure that all the images are (approximately) in the region of the sphere where we began.
+%
+$R_{i,est}^T$ then gives the rotation matrix which registers image $i$.
+%
+From a rotation matrix $R$, we compute the Euler angles $\alpha$, $\beta$, and $\gamma$ using the following relationships
+\begin{equation}
+\begin{aligned}
+R_{1,1} & = \cos(\beta)\cos(\gamma) &
+R_{2,1} & = \cos(\beta)\sin(\gamma) \\
+R_{3,1} & = -\sin(\beta) &
+R_{3,2} & = \sin(\alpha)\cos(\beta) \\
+R_{3,3} & = \cos(\alpha)\cos(\beta)  &
+\end{aligned}
+\end{equation}
+%
+Inverting \eqref{eq:angle_relations} yields the desired approximate translations and rotation, and we round optimal translations to the nearest integer to remove the need for interpolation when translating the images.
+
+
 
 \end{document}
 
