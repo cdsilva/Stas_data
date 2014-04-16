@@ -52,10 +52,9 @@
 %% fonts (recommended). If accepted, your article will be typeset
 %% at PNAS using PostScript fonts.
 
-
 % Choose PNASoneF for one column; PNAStwoF for two column:
 %\usepackage{PNASoneF}
-%\usepackage{PNAStwoF}
+\usepackage{PNAStwoF}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% ADDITIONAL OPTIONAL STYLE FILES
@@ -65,9 +64,12 @@
 
 \usepackage{amssymb,amsfonts,amsmath}
 
-\usepackage{subcaption}
+%\usepackage{subcaption}
 \graphicspath{ {paper_figures/} }
 
+%\usepackage{sansmath}
+
+%\usepackage[font={sf, small}]{caption}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% OPTIONAL MACRO FILES
@@ -77,7 +79,7 @@
 %\newcommand{\mfrac}[2]{\frac{\displaystyle #1}{\displaystyle #2}}
 %\def\s{\sigma}
 
-%\DeclareMathSizes{9}{8}{7}{7}
+\DeclareMathSizes{9}{8}{7}{7}
 
 \DeclareMathOperator*{\argmin}{arg\,min}
 
@@ -232,11 +234,11 @@ This dataset comprises $49$ fluorescence microscopy images of different embryos 
 %
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig1}
-\caption{(a) Fish, each in a different orientation and a different stage of development. (b) Fish, now rotationally registered and temporally ordered. For this caricature, the registration and ordering is easy to do ``by hand" because the data set is small and the developmental changes are easy to recognize.}
+\caption{{\it (A)} Fish, each in a different orientation and a different stage of development. {\it (B)} Fish, now rotationally registered and temporally ordered. For this caricature, the registration and ordering is easy to do ``by hand" because the data set is small and the developmental changes are easy to recognize.}
 %\label{fig:fish}
 \customlabel{fig:fish}{1}
-\customlabel{subfig:fish_unordered}{\ref{fig:fish}a}
-\customlabel{subfig:fish_ordered}{\ref{fig:fish}b}
+\customlabel{subfig:fish_unordered}{\ref{fig:fish}{\it A}}
+\customlabel{subfig:fish_ordered}{\ref{fig:fish}{\it B}}
 \end{figure}
 %
 The fruit fly embryo is shaped like a rice grain, approximately $1/2$~mm long.
@@ -261,12 +263,12 @@ Each of the images reveals a uniform arrangement of nuclei and a nonuniform dist
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig2}
-\caption{(a) Fluorescent images of {\it Drosophila} embryos. Each embryo has been stained for Dorsal (green) and dpERK (red). (b) Selected image from data set. (c) Profile of Dorsal (green) and dpERK (red) around the circumference of the embryo in (b).}
+\caption{{\it (A)} Fluorescent images of {\it Drosophila} embryos. Each embryo has been stained for Dorsal (green) and dpERK (red). {\it (B)} Selected image from data set. {\it (C)} Profile of Dorsal (green) and dpERK (red) around the circumference of the embryo in {\it B}. }
 %\label{fig:images_unordered}
 \customlabel{fig:images_unordered}{2}
-\customlabel{subfig:images_unordered}{\ref{fig:images_unordered}a}
-\customlabel{subfig:one_image}{\ref{fig:images_unordered}b}
-\customlabel{subfig:image_profiles}{\ref{fig:images_unordered}c}
+\customlabel{subfig:images_unordered}{\ref{fig:images_unordered}{\it A}}
+\customlabel{subfig:one_image}{\ref{fig:images_unordered}{\it B}}
+\customlabel{subfig:image_profiles}{\ref{fig:images_unordered}{\it C}}
 \end{figure}
 
 
@@ -339,15 +341,15 @@ Because the profiles are unregistered and unordered, the underlying dynamics (a 
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig3}
-\caption{(a) One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). (b) Intensity corresponding to the profile in (a). (c) An ensemble of concentration profiles, each of the form described in (a). Each row in the array corresponds to a single profile. (d) The profiles in (c), now registered using angular synchronization. (e) The profiles in (d), now temporally ordered using diffusion maps. (f) The profiles in (c), registered and temporally ordered in a single step using vector diffusion maps.}
+\caption{{\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
 %\label{fig:1d_demo}
 \customlabel{fig:1d_demo}{3}
-\customlabel{subfig:1d_example}{\ref{fig:1d_demo}a}
-\customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}b}
-\customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}c}
-\customlabel{subfig:1d_aligned_unordered}{\ref{fig:1d_demo}d}
-\customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}e}
-\customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}f}
+\customlabel{subfig:1d_example}{\ref{fig:1d_demo}{\it A}}
+\customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}{\it B}}
+\customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}{\it C}}
+\customlabel{subfig:1d_aligned_unordered}{\ref{fig:1d_demo}{\it D}}
+\customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}{\it E}}
+\customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}{\it F}}
 \end{figure}
 
 \subsection{Angular synchronization for image registration}
@@ -379,16 +381,6 @@ provides the rotation angles (up to a constant rotation) assigned to each data p
 %
 %Because the method considers {\it all} pairwise alignments, angular synchronization is often robust to noise.
 %
-\begin{figure}[t]
-\includegraphics[width=8.4cm]{fig4}
-\caption{(a) Set of vectors, each in a different orientation. The pariwise alignment angles are indicated. (b) The vectors from (a), each rotated so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in (a). (c) Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see \eqref{eq:dmaps_W}), so that close data points are connected by dark (``stronger'') edges. (d) The data in (c), colored by the first (non-trivial) eigenvector from the diffusion map computational procedure, $\phi_2$. The color intensity is monotonic with the arclength, thus parameterizing the curve.  }
-%\label{fig:schematics}
-\customlabel{fig:schematics}{4}
-\customlabel{subfig:synch1}{\ref{fig:schematics}a}
-\customlabel{subfig:synch2}{\ref{fig:schematics}b}
-\customlabel{subfig:dmaps_edges}{\ref{fig:schematics}c}
-\customlabel{subfig:dmaps_color}{\ref{fig:schematics}d}
-\end{figure}
 %
 Figure \ref{subfig:1d_aligned_unordered} shows the concentration profiles from Figure~\ref{subfig:1d_unaligned_unordered}, now aligned using angular synchronization.
 %
@@ -397,6 +389,17 @@ even though the algorithm uses no specific information about the existence or lo
 %
 %We note once more that, since angular synchronization only uses pairwise rotation information,
 %the optimal rotations are recovered up to a global rotation.
+
+\begin{figure}[t]
+\includegraphics[width=8.4cm]{fig4}
+\caption{ {\it (A)} Set of vectors, each in a different orientation. The pariwise alignment angles are indicated. {\it (B)} The vectors from {\it A}, each rotated so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in {\it A}. {\it (C)} Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see \eqref{eq:dmaps_W}), so that close data points are connected by dark (``stronger'') edges. {\it (D)} The data in {\it C}, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure, $\phi_2$. The color intensity is monotonic with the arclength, thus parameterizing the curve.}
+%\label{fig:schematics}
+\customlabel{fig:schematics}{4}
+\customlabel{subfig:synch1}{\ref{fig:schematics}{\it A}}
+\customlabel{subfig:synch2}{\ref{fig:schematics}{\it B}}
+\customlabel{subfig:dmaps_edges}{\ref{fig:schematics}{\it C}}
+\customlabel{subfig:dmaps_color}{\ref{fig:schematics}{\it D}}
+\end{figure}
 
 \subsection{Diffusion maps for temporal ordering}
 
@@ -434,11 +437,11 @@ Finding such a parameterization can be formulated as an optimization problem \ci
 %
 %The formulation extends from curves to manifolds (i.e., we can search for an $n$-dimensional, rather than a one-dimensional, parameterization of the data, such that data points which are close in the high-dimensional space are also close in the $n$-dimensional parameterization).
 
-Given our set of registered signals, shown in Figure \ref{subfig:1d_aligned_unordered}, we use diffusion maps to order them in time.
+Given our set of registered signals, shown in Figure~\ref{subfig:1d_aligned_unordered}, we use diffusion maps to order them in time.
 %
-We use the Euclidean distance between the (discretized in $\mathbb{R}^{100}$) aligned concentration profiles (the rows of Figure \ref{subfig:1d_aligned_unordered}) as our pairwise distances between data points.
+We use the Euclidean distance between the (discretized in $\mathbb{R}^{100}$) aligned concentration profiles (the rows of Figure~\ref{subfig:1d_aligned_unordered}) as our pairwise distances between data points.
 %
-Figure \ref{subfig:1d_aligned_ordered} shows the data from Figure \ref{subfig:1d_aligned_unordered}, now sorted by the value of the leading diffusion map coordinate, $\phi_2$.
+Figure~\ref{subfig:1d_aligned_ordered} shows the data from Figure~\ref{subfig:1d_aligned_unordered}, now sorted by the value of the leading diffusion map coordinate, $\phi_2$.
 %
 As expected, the intensity of the peak grows as a function of $\phi_2$ (since we constructed these data
 to have a peak growing in time).
@@ -459,7 +462,7 @@ This technique is called vector diffusion maps \cite{singer2012vector} (see {\it
 %
 It both reduces the number of required eigencomputations, and is much more robust to noise, as mistakes in alignment are also considered when ordering the data.
 %
-Figure \ref{subfig:1d_aligned_ordered_vdm} shows the result of simultaneously registering and ordering the data in Figure \ref{subfig:1d_unaligned_unordered} using vector diffusion maps.
+Figure~\ref{subfig:1d_aligned_ordered_vdm} shows the result of simultaneously registering and ordering the data in Figure~\ref{subfig:1d_unaligned_unordered} using vector diffusion maps.
 %
 The data has been ordered by $\psi_{1, 3}$, the leading vector diffusion map coordinate.
 
@@ -523,13 +526,13 @@ Quantitatively, the rank correlation coefficient between these two temporal orde
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig6}
-\caption{(a) Images, stained for membranes (gray) and Dorsal (green) at different levels of development. (b) Membrane length as a function of time. The points correspoinding to the images in (a) are indicated with arrows. (c) The one-dimensional concentration profiles, registered by peak Dorsal fluorescence and ordered by membrane length. (d) The one-dimensional concentration profiles corresponding to the automatically registered and ordered images in Figure~\ref{fig:images_ordered}. }
+\caption{{\it (A)} Images, stained for membranes (gray) and Dorsal (green) at different levels of development. {\it (B)} Membrane length as a function of time. The points corresponding to the images in {\it A} are indicated with arrows. {\it (C)} The one-dimensional concentration profiles, registered by peak Dorsal fluorescence and ordered by membrane length. {\it (D)} The one-dimensional concentration profiles corresponding to the automatically registered and ordered images in Figure~\ref{fig:images_ordered}. }
 %\label{fig:membrane_compare}
 \customlabel{fig:membrane_compare}{6}
-\customlabel{subfig:membranes}{\ref{fig:membrane_compare}a}
-\customlabel{subfig:membrane_curve}{\ref{fig:membrane_compare}b}
-\customlabel{subfig:1d_membranes}{\ref{fig:membrane_compare}c}
-\customlabel{subfig:1d_vdm}{\ref{fig:membrane_compare}d}
+\customlabel{subfig:membranes}{\ref{fig:membrane_compare}{\it A}}
+\customlabel{subfig:membrane_curve}{\ref{fig:membrane_compare}{\it B}}
+\customlabel{subfig:1d_membranes}{\ref{fig:membrane_compare}{\it C}}
+\customlabel{subfig:1d_vdm}{\ref{fig:membrane_compare}{\it D}}
 \end{figure}
 
 \section{Conclusions}
@@ -681,7 +684,9 @@ In these cases, our methods allow for the rapid, automated analysis of imaging d
 
 \section{Angular synchronization \cite{singer2011angular}}
 
-Let $x_1, \dots, x_m$ denote the signals that we wish to align with respect to rotations;
+%\sansmath
+
+Let $ x_1, \dots, x_m$ denote the signals that we wish to align with respect to rotations;
 each signal is a function defined on the unit circle (on the plane).
 %
 %Practically, it is discretized in a $n$-long vector (the local intensity at $n$ equidistant points around the circle);
@@ -1016,28 +1021,35 @@ useful parameterization of the data manifold modulo symmetries.
 %\caption{Analysis of one-dimensional profiles obtained from experimental data. (a) One-dimensional, two-component concentration profile on a ring (top), and the corresponding profile on a line (bottom). The concentration profile was extracted from an image of the type shown in Figure~\ref{fig:images_unordered}. (b) Intensity corresponding to the profile in (a). (c) An ensemble of concentration profiles, each of the form described in (a). Each row in the array corresponds to a single profile obtained from an image of the type in Figure~\ref{subfig:images_unordered}. (d) The profiles in (c), now registered using angular synchronization. (e) The profiles in (d), now temporally ordered using diffusion maps. (f) The profiles in (c), registered and temporally ordered in a single step using vector diffusion maps.}
 %\end{figure}
 %
+
+
 \begin{figure*}
-\begin{subfigure}{0.2\textwidth}
-\includegraphics[width=\textwidth]{sphere_1}
-\includegraphics[width=\textwidth]{sphere2_1}
-\caption{}
-\end{subfigure}
-\begin{subfigure}{0.2\textwidth}
-\includegraphics[width=\textwidth]{sphere_2}
-\includegraphics[width=\textwidth]{sphere2_2}
-\caption{}
-\end{subfigure}
-\begin{subfigure}{0.2\textwidth}
-\includegraphics[width=\textwidth]{sphere_3}
-\includegraphics[width=\textwidth]{sphere2_3}
-\caption{}
-\end{subfigure}
-\begin{subfigure}{0.2\textwidth}
-\includegraphics[width=\textwidth]{sphere_4}
-\includegraphics[width=\textwidth]{sphere2_4}
-\caption{}
-\end{subfigure}
-\caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. (a) The original image. (b) Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. (c) Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. (d) Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three-dimensional spheres, and the bottom row shows the (two-dimensional) surface of the sphere in which we are interested.}
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sphere_1}\\
+\includegraphics[width=\textwidth]{sphere2_1}\\
+A
+\end{minipage}
+%
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sphere_2}\\
+\includegraphics[width=\textwidth]{sphere2_2}\\
+B
+\end{minipage}
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sphere_3}\\
+\includegraphics[width=\textwidth]{sphere2_3}\\
+C
+\end{minipage}
+\begin{minipage}{0.2\textwidth} 
+\centering
+\includegraphics[width=\textwidth]{sphere_4}\\
+\includegraphics[width=\textwidth]{sphere2_4}\\
+D
+\end{minipage}
+\caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. {\it (A)} The original image. {\it (B)} Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. {\it (C)} Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. {\it (D)} Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three-dimensional spheres, and the bottom row shows the (two-dimensional) surface of the sphere in which we are interested.}
 \label{fig:SO3_picture}
 \end{figure*}
 
@@ -1058,7 +1070,7 @@ Practically, we have square images discretized as pixels (rather than continuous
 For each image pair $I_i$ and $I_j$ we compute
 \begin{equation}\label{eq:opt_pairwise}
 (\theta_{ij}, dx_{ij}, dy_{ij}) = \argmin_{
-\scriptsize \begin{matrix}
+\begin{matrix}
 \theta \in [0, 2\pi) \\
 dx, dy \in [-\Delta, \Delta]\\
 %dy \in [-\Delta, \Delta]
