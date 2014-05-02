@@ -11,7 +11,7 @@ W = inf(m);
 nrot = 20;
 theta_vec = linspace(0, 360, nrot+1);
 theta_vec = theta_vec(1:end-1);
-    
+
 shifts = -shift_max:shift_step:shift_max;
 nshift = length(shifts);
 
@@ -19,9 +19,13 @@ thetas = zeros(m);
 dx = zeros(m);
 dy = zeros(m);
 
-for i=1:m
+parfor i=1:m
     i
     imagei = images(:,:,:,i);
+    W_tmp = inf(1, m);
+    thetas_tmp = zeros(m, 1);
+    dx_tmp = zeros(m, 1);
+    dy_tmp = zeros(m, 1);
     for k=1:nrot
         imagei_tmp = imrotate(imagei, theta_vec(k), 'crop');
         for k1=1:nshift
@@ -43,21 +47,31 @@ for i=1:m
                 for j=1:i-1
                     imagej = images(:,:,:,j);
                     d2 = sum((double(imagei_tmp2(:))-double(imagej(:))).^2);
-                    if d2 < W(i, j)
-                        W(i,j) = d2;
-                        thetas(j, i) = theta_vec(k);
-                        dx(j, i) = shifts(k1);
-                        dy(j, i) = shifts(k2);
+                    %                     if d2 < W(i, j)
+                    %                         W(i,j) = d2;
+                    %                         thetas(j, i) = theta_vec(k);
+                    %                         dx(j, i) = shifts(k1);
+                    %                         dy(j, i) = shifts(k2);
+                    %                     end
+                    if d2 < W_tmp(j)
+                        W_tmp(j) = d2;
+                        thetas_tmp(j) = theta_vec(k);
+                        dx_tmp(j) = shifts(k1);
+                        dy_tmp(j) = shifts(k2);
                     end
                 end
             end
         end
     end
+    W(i, :) = W_tmp;
+    thetas(:, i) = thetas_tmp;
+    dx(:, i) = dx_tmp;
+    dy(:, i) = dy_tmp;
 end
 
 for i=1:m
     for j=1:i-1
-        W(j,i) = W(i,j);        
+        W(j,i) = W(i,j);
         R(dim*(j-1)+1:dim*j, dim*(i-1)+1:dim*i) = calc_rot_matrix(thetas(j, i), dx(j, i), dy(j, i), npixels, angle_proj);
         R(dim*(i-1)+1:dim*i, dim*(j-1)+1:dim*j) = R(dim*(j-1)+1:dim*j, dim*(i-1)+1:dim*i)';
     end
@@ -84,6 +98,6 @@ Rz = [cos(gamma) -sin(gamma) 0;
 R = Rz * Ry * Rx;
 
 
-    
+
 
 
