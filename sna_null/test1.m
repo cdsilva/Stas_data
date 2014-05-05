@@ -3,6 +3,11 @@ close all
 
 load Snanull_mar14;
 
+m_dpERK = [m_dpERK; fliplr(m_dpERK)];
+w_dpERK = [w_dpERK; fliplr(w_dpERK)];
+m_Dl = [m_Dl; fliplr(m_Dl)];
+w_Dl = [w_Dl; fliplr(w_Dl)];
+
 dpERK = [m_dpERK; w_dpERK];
 Dl = [m_Dl; w_Dl];
 is_mutant = [true(size(m_dpERK, 1), 1); false(size(w_dpERK, 1), 1)];
