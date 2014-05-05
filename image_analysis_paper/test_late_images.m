@@ -5,9 +5,10 @@ close all
 
 image_dir = '../membrane_pictures/14_0501_dpERK_late';
 
-m = 132;
+%m = 132;
+%ind = 1:m;
 
-ind = setdiff(1:m, 93);
+ind = [55,29,123,35,85,19,54,58,93,69,74,17,105,7,70,14,131,115,102,67,82,112,97,117,81,40,127,63,124,96,104,48,120,121,5,92,111,41,34,1,3,2,9,130,20,21,83,108,76,60,44,62,71,30,26,49,36,64,12,57];
 m = length(ind);
 
 %% image parameters
@@ -38,9 +39,10 @@ for i=1:m
     im1 = imresize(im1, [npixels npixels]);
     
 %     blur image
-    H = fspecial('disk',3);
+    H = fspecial('gaussian',9);
     im1(:, :, 1) = imfilter(im1(:, :, 1),H,'replicate');
-    im1(:, :, 1) = 0.35*imadjust(im1(:, :, 1));
+    im1(:, :, 1) = 0.2*imadjust(im1(:, :, 1));
+    %im1(:, :, 1) = 0;
     
     im1(:, :, 3) = 1.5 * im1(:, :, 3);
     
@@ -54,7 +56,6 @@ for i=1:m
 end
 
 
-
 %% raw dpERK images-- synchronization
 
 angle_proj = pi/8;
@@ -62,7 +63,7 @@ shift_max = 10;
 shift_step = 2;
 dim = 3;
 
-matlabpool open 4;
+matlabpool open 2;
 [R, W] = compute_pairwise_alignments_color(image_set, angle_proj, shift_max, shift_step);
 matlabpool close;
 
