@@ -223,7 +223,7 @@ set(gcf, 'papersize', [8 8*subplot_dim2/subplot_dim1])
 set(gcf, 'paperposition',[0 0 8 8*subplot_dim2/subplot_dim1])
 for i=1:m
     %subplot(subplot_dim1, subplot_dim2, i);
-    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.005 1/subplot_dim2-0.005])
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
     im1 = image_set_aligned(:,:,:,I(i));
     im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
     im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
