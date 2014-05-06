@@ -6,7 +6,7 @@ close all
 
 fontsize = 10;
 
-%im_save_dir = 'paper_figures';
+im_save_dir = 'paper_figures2';
 
 %% directories where things are stored
 time_data = '../membrane_lengths/oct16.mat';
@@ -109,15 +109,24 @@ for i=1:m
     imshow(im1);
     
 end
+saveas(gcf,sprintf('%s/raw_data1', im_save_dir), 'pdf')
 
 image_set_aligned = zeros(size(image_set), 'uint8');
+image_set_aligned_withnuclei = zeros(size(image_set), 'uint8');
 for i=1:m
     im_tmp = image_set(:,:,:,i);
-    %     for j=1:3
-    %         im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
-    %     end
+    %         for j=1:3
+    %             im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
+    %         end
     im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
     image_set_aligned(:,:,:,i) = im1;
+    
+    im_tmp = image_set(:,:,:,i);
+    for j=1:3
+        im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
+    end
+    im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
+    image_set_aligned_withnuclei(:,:,:,i) = im1;
 end
 
 figure;
@@ -133,47 +142,78 @@ end
 
 %%
 
-npixels2 = 20;
+fontsize = 8;
 
-data_reshaped = zeros(m, npixels2*npixels2*nchannels);
+data_reshaped = zeros(m, npixels*npixels*nchannels);
+
+[eigenimages, D, proj_coeff] = PCA_images(image_set_aligned, 9);
 
 figure;
+for i=1:9
+    subplot(3, 3, i)
+    imshow(eigenimages(:, :, :, i))
+end
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
+imshow(eigenimages(:, :, :, 1),'border','tight')
+saveas(gcf,sprintf('%s/PCA_eigenimage1', im_save_dir), 'pdf')
+
+[~, I] = sort(proj_coeff(:, 1));
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
 for i=1:m
-    im1 = image_set_aligned(:,:,:,i);
+    im1 = image_set_aligned_withnuclei(:,:,:,I(i));
+    
+    %subplot(subplot_dim1, subplot_dim2, i);
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    imshow(im1);
+    
+end
+saveas(gcf,sprintf('%s/PCA_ordered', im_save_dir), 'pdf')
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
+plot(mem_lengths, proj_coeff(:,1)/1000,'.')
+xlabel('membrane thickness', 'fontsize', fontsize)
+ylabel('PCA projection coefficient', 'fontsize', fontsize)
+saveas(gcf,sprintf('%s/PCA_corr', im_save_dir), 'pdf')
+
+ranks_from_PCA = compute_ranks(proj_coeff(:,1));
+
+corr(ranks_from_membranes, ranks_from_PCA)
+
+return
+
+
+%%
+pca_proj_data = data_reshaped * V(:, 1:2);
+W2 = squareform(pdist(pca_proj_data)).^2;
+eps2 = median(W2(:));
+
+[V, D] = dmaps(W2, eps2, 10);
+
+figure;
+plot(V(:,2),mem_lengths,'.')
+xlabel('\phi_2')
+ylabel('membrane thickness')
+
+[~, I] = sort(V(:,2));
+figure;
+for i=1:m
+    im1 = image_set_aligned(:,:,:,I(i));
     im1 = imresize(im1, [npixels2 npixels2]);
-    data_reshaped(i, :) = im1(:)';
     
     subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
     imshow(im1);
     
 end
 
-data_mean = mean(data_reshaped);
 
-data_reshaped = data_reshaped - repmat(data_mean, m, 1);
-
-[V, D] = PCA(data_reshaped, 9);
-
-figure;
-bar(diag(D))
-xlabel('k')
-ylabel('\lambda_k (PCA)')
-
-figure;
-im1 = V(:,1);
-im1 = im1 - min(im1);
-im1 = im1 * 255 / max(im1);
-im1 = reshape(im1, npixels2, npixels2, nchannels);
-imshow(uint8(im1));
-
-figure;
-plot(data_reshaped*V(:,1),mem_lengths,'.')
-xlabel('\langle x, V_1 \rangle')
-ylabel('membrane thickness')
-
-
-figure;
-plot(data_reshaped*V(:,1),data_reshaped*V(:,2),'.')
-xlabel('\langle x, V_1 \rangle')
-ylabel('\langle x, V_2 \rangle')
 
