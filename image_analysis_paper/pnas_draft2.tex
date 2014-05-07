@@ -243,133 +243,166 @@ The fruit fly embryo is shaped like a rice grain, approximately $1/2$~mm long.
 %
 By end of the $2^{nd}$ hour of development, sequential divisions of a fertilized egg generate a system where $\sim 6,000$ nuclei are uniformly arranged under the common plasma membrane.
 %
-During the $3^{rd}$ hour, the embryo undergoes the process of cellularization, whereby membranes that enclose nuclei into different cells grow in thickness (Figure~\ref{subfig:membranes}).
+During the $3^{rd}$ hour, the embryo undergoes the process of cellularization, whereby membranes that enclose nuclei into different cells grow in thickness.
 %
 In conjunction with these morphological changes, concentration profiles of multiple regulatory molecules form inside the embryo, subdividing it into regions that give rise to future tissues and organs \cite{lim2013kinetics}.
 %
-During the $4^{th}$ hour of development, ...
+Following cellularization, the spatial arrangement of nuclei and the concentration profiles of regulatory molecules change dramatically.
 %
-Images in Figure~\ref{subfig:images_unordered} show optical sections at a fixed depth, perpendicular to the long axis of the embryo.
+Images in Figure~\ref{subfig:raw_data1} and Figure~\ref{subfig:raw_data2} show optical sections at a fixed depth, perpendicular to the long axis of the embryo during and following cellularization, respectively.
 %
 The embryos were fixed and stained with chemicals that help visualize nuclei (shown in gray) as well as the spatial distributions of two different proteins (shown in green and red) \cite{chung2010microfluidic}.
 %
-Each of the images reveals a uniform arrangement of nuclei and a nonuniform distribution of the two proteins, which are involved in patterning of the dorsoventral (back-to-belly) axis of the embryo.
+%Each of the images reveals a uniform arrangement of nuclei and a nonuniform distribution of the two proteins, which are involved in patterning of the dorsoventral (back-to-belly) axis of the embryo.
 
-Each image in Figure~\ref{subfig:images_unordered} comes from a different embryo, captured at a different rotation about the long axis and at a different and unknown point in time.
+Each image in Figures~\ref{subfig:raw_data1}~and~\ref{subfig:raw_data2} comes from a different embryo, captured at a different rotation about the long axis and at a different and unknown point in time.
 %
 The goal is to register these images in a globally consistent way, and order them to be representative of the underlying developmental trajectory.
 %
-We will demonstrate that both of these tasks can be fully automated.
+We will demonstrate that both of these tasks can be fully automated using a sufficiently general framework which can readily be applied to a variety of biological imaging data sets. 
 
-\begin{figure*}[t]
-\includegraphics[width=6.5cm]{raw_data1}
-\hfill
-\includegraphics[width=6.5cm]{PCA_ordered}
-\hfill
-\begin{minipage}[b]{3.3cm}
-\vspace{0in}
-\includegraphics[width=3.3cm]{PCA_eigenimage1}
-\includegraphics[width=3.3cm]{PCA_corr}
-\end{minipage}
-\caption{(A) Raw data from NC14. (B) Data, registered and ordering using PCA. (C) First eigenimage. (D) Correlation between first projection coefficient from PCA and membrane thickness.}
-\customlabel{fig:raw_data}{2}
-\customlabel{subfig:raw_data1}{\ref{fig:fish}{\it A}}
-\customlabel{subfig:raw_data2}{\ref{fig:fish}{\it B}}
-\end{figure*}
-%
+
 
 \section{Results and Discussion}
 
+\begin{figure*}[t]
+\includegraphics[width=5.4cm]{raw_data1}
+\hfill
+\includegraphics[width=5.4cm]{PCA_ordered}
+\hfill
+\begin{minipage}[b]{5.6cm}
+\vspace{0in}
+\includegraphics[width=2.7cm]{PCA_eigenimage1}
+\includegraphics[width=2.7cm]{PCA_corr}
+\includegraphics[width=5.6cm]{PCA_12}
+\end{minipage}
+\caption{(A) Images collected during cellularization. (B) Images, now registered using angular synchronization and ordering by the first PCA projection coefficient. (C) First eigenimage. (D) Correlation between first PCA projection coefficient and membrane thickness. (E) Projection onto first two principal components. }
+\customlabel{fig:data1}{2}
+\customlabel{subfig:raw_data1}{\ref{fig:data1}{\it A}}
+\customlabel{subfig:ordered_data1}{\ref{fig:data1}{\it B}}
+\customlabel{subfig:eigenimage1}{\ref{fig:data1}{\it C}}
+\customlabel{subfig:PCA_corr}{\ref{fig:data1}{\it D}}
+\customlabel{subfig:PCA_12}{\ref{fig:data1}{\it E}}
+\end{figure*}
 
 \subsection{Image Registration}
 
 Because each embryo is imaged in a different orientation, the first task is to align or {\em register} the images so that they are in a consistent frame of reference.
 %
-We use angular synchronization to register our images. 
+We use angular synchronization \cite{singer2011angular} to register our images with respect to translations and rotations. 
 %
-This technique is very general, as it requires no template image or feature points. 
+Angular synchronization is a very general technique which requires no template image or feature points. 
 %
-Furthermore, it has been shown to be robust to noise.
+Although we could have used other image registration algorithms (e.g. ...) for the data sets we present here, we chose instead to use an algorithm that can be applied to a wide variety of data sets with little {\em a priori} knowledge.
 %
 Implementation details are given in the {\it SI appendix}. 
 
-Figure ... shows the images from Figure ..., registered using angular synchronization.
+The images in Figure \ref{subfig:ordered_data1} have been registered using angular synchronization.
 %
 The important features that our eye can visually detect (e.g., the green Dorsal peaks) have been aligned, even though the algorithm does not require identification of such features.
 
 \subsection{Temporal Ordering using Principal Component Analysis}
 
+After registering our images so that they are optimally aligned, we would like to organize our images to extract meaningful patterns and structure. 
+%
+In our data, the main variation in our images arises due to developmental dynamics, and we would like to order our data in time. 
+%
 We will use dimensionality reduction techniques to temporally order our data.
 %
-Although our images are inherently high-dimensional (number of pixels $\times$ number of channels), we assume that they lie on a low-dimensional curve, and that this curve is parameterized by time.
+Although our images are inherently high-dimensional (number of pixels $\times$ number of channels), we assume that they lie on a low-dimensional curve which is monotonic in time. 
 %
+Furthermore, we assume that the main source of variability in this data is due to time/dynamics. 
+%
+Therefore, uncovering a one-dimensional parameterization of this curve will allow us to order our data in time. 
 
-
-For the images shown in Figure ...., the dynamics are relatively simple, and we can use principal component analysis (PCA) to order the images.
+For the images shown in Figure~\ref{subfig:raw_data1}, the dynamics are relatively simple, and we can use principal component analysis (PCA) to order the images.
 %
 PCA extracts a set of {\it eigenimages} from the data, such that each data point can be (approximately) described as a linear combination of these eigenimages. 
 %
-In our dataset, each data point can be effectively described by a multiple of a single eigenimage, i.e., the images lie on a line in a very high-dimensional space.
+In our dataset, the dynamics are such that each data point can be effectively described by a multiple of a single eigenimage, i.e., the images lie on a line in a very high-dimensional space.
 %
-We can therefore sort these images along this line to temporally order them in time.
+We can organize the images by sorting them along this line.
 
-
-Figure ... shows the images, now ordered using PCA. 
+Figure~\ref{subfig:ordered_data1} shows the images, registered using angular synchronization and ordered using PCA. 
 %
-The first eigenimage is also shown.
+The first eigenimage is shown in Figure~\ref{subfig:eigenimage1}.
 
-In this simple example, we can validate our ordering using an independent time marker.
+For these experiments in this particular time window, we are fortunate enough to be able to validate our  ordering using prior physical knowledge about the system.
 %
-Figure ... shows the rank correlation betrween the two orderings.
+Temporal ordering, on the other hand, can be done based on the monotonic progress of cellularization \cite{figard2013plasma}.%; this helps validate our vector diffusion map-based ordering.
 %
-Rank correlation is 0.9199.
+Figure~\ref{subfig:PCA_corr} shows the rank correlation between the two orderings.
+%
+The rank correlation coefficient is 0.9199, indicating that we do a fairly good job of recovering the correct temporal ordering of the images. 
 
-Although PCA can successfully order the data set shown in Figure ..., it can only do so because the data lie on in a one-dimensional, {\em linear} subspace.
+Although PCA can successfully order the data set shown in Figure \ref{subfig:raw_data1}, it can only do so because the data lie on in a one-dimensional, {\it linear} subspace.
 %
 In general, the developmental trajectory is not guaranteed to be linear. 
 %
-This can be seen in the late images of Figure ... that the ordering is not entirely correct.
+This can be seen in the late images of Figure~\ref{subfig:ordered_data1} that the ordering is not entirely correct.
 %
-We can also see this from the projection onto the first two eigenimages, shown in Figure ...
+We can also see this from the projection onto the first two eigenimages, shown in Figure~\ref{subfig:PCA_12}.
 %
-The data clearly lie on a one-dimensional curve, but the curve is nonlinear at late times. 
+The data clearly lie on a one-dimensional, {\em nonlinear} curve.
 %
-This motivates us to use nonlinear dimensioanlity reduction techniques to temporally order our data.
+This motivates us to use nonlinear dimensionality reduction techniques to temporally order our data.
 
 \subsection{Temporal Ordering Using Diffusion Maps}
-We will use diffusion maps, a technique which is robust to noise and broadly applicable to a wide variety of data types.
-%
 
-We can use diffusion maps to analyze more complex data sets where the dynamics are clearly nonlinear.
+We can use diffusion maps \cite{coifman2005geometric} to analyze more complex data sets where the dynamics are clearly nonlinear.
 %
-Figure ... shows a data set from the $4^{th}$ hour of development.
+Diffusion maps is similar to PCA, in that it aims uncover low-dimensional structure in high-dimensional data.
 %
-The dynamics are significantly more complex. 
+However, unlike PCA, diffusion maps is a {\it nonlinear} reduction technique. 
+%
+Figure~\ref{subfig:raw_data2} shows a data set consisting of embryos following cellularization.
+%
+Clearly, the dynamics are significantly more complex than the dynamics in Figure~\ref{subfig:raw_data1}, and the first PCA eigenimage will not capture all of the relevant dynamics.
 %
 However, we can still use diffusion maps to temporally order the data.
+%
+Figure~\ref{subfig:ordered_data2} shows the images in Figure~\ref{subfig:raw_data2}, now registered and ordered using vector diffusion maps \cite{singer2012vector}.
 
-We have no time marker with which to validate our orderings in this time period. 
+Unlike the images in Figure~\ref{subfig:raw_data1}, 
+for Figure~\ref{fig:data2}, we have no time marker with which to validate our orderings.
 %
-However, there are noticable features in the ordering that we can see are consistent with peviously known dynamics. 
+However, there are noticeable features in the ordering that we can see are consistent with previously known dynamics. 
 %
-For example, ....
+We can also construct a smoothed trajectory by averaging over neighboring images.
+%
+Figure~\ref{subfig:averaged_trajectory} shows the images from Figure~\ref{subfig:ordered_data2}, divided into 12 groups and averaged. 
+%
+The dynamics are readily apparent; we can see gastrulation, ....
 
 \newpage
-
 \begin{figure*}[t]
 \includegraphics[width=8.4cm]{raw_data2}
 \hfill
 \includegraphics[width=8.4cm]{VDM_ordered} \\
 \centering
 \includegraphics[width=16.8cm]{average_trajectory}
-\caption{(A) Raw data. (B) Data registered and ordered. (C) Average trajectory.}
-\customlabel{fig:raw_data}{3}
-\customlabel{subfig:raw_data1}{\ref{fig:fish}{\it A}}
-\customlabel{subfig:raw_data2}{\ref{fig:fish}{\it B}}
+\caption{(A) Images collected following cellularization. Each image is of a different embryo in a different rotational orientation. (B) Data from A, registered and ordered using vector diffusion maps. (C) Average trajectory of the images shown in B.}
+\customlabel{fig:data2}{3}
+\customlabel{subfig:raw_data2}{\ref{fig:data2}{\it A}}
+\customlabel{subfig:ordered_data2}{\ref{fig:data2}{\it B}}
+\customlabel{subfig:averaged_trajectory}{\ref{fig:data2}{\it C}}
 \end{figure*}
 
 
 \section{Conclusions}
+
+We present algorithms for registration and temporal ordering of images.
+%
+The algorithms are sufficiently general that they can be applied to a wide variety of biological imaging data.
+
+Although the examples here focus on temporally ordering the data, tasks such as classification and comparison of different mutations can also be accomplished using the same techniques. 
+%
+
+
+
+
+\bibliographystyle{pnas}
+\bibliography{background_reading/references,../../references/references}
 
 \end{article}
 

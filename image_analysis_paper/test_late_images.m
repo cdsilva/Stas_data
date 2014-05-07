@@ -34,13 +34,13 @@ for i=1:m
     % resize image
     im1 = imresize(im1, [npixels npixels]);
     
-    
     %     blur image
     %used on 5/5
     H = fspecial('gaussian',[5 5], 2.0);
     im1(:, :, 1) = imfilter(im1(:, :, 1),H,'replicate');
     im1(:, :, 1) = 0.5*imadjust(im1(:, :, 1));
-    %     im1(:, :, 1) = 0;
+    %im1(:, :, 1) = 0;
+    
     
     im1(:, :, 3) = 1.5 * im1(:, :, 3);
     
@@ -53,6 +53,7 @@ for i=1:m
     image_set(:, :, :, i) = im1;
     
 end
+
 
 %% raw dpERK images-- synchronization
 
@@ -67,7 +68,9 @@ dim = 3;
 %
 %save('pairwise_alignments_late_noblur.mat', 'R', 'W');
 %save('pairwise_alignments_late.mat', 'R', 'W');
+%save('pairwise_alignments_nonuclei.mat', 'R', 'W');
 load('pairwise_alignments_late.mat');
+%load('pairwise_alignments_nonuclei.mat');
 
 
 %% select which images to use
@@ -75,10 +78,14 @@ load('pairwise_alignments_late.mat');
 %ind = 1:m;
 
 % used for pictures on 5/6
-ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 50 102]);
+%ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 50 102]);
+ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102]);
 
 % used for pictures on 5/5
 %ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105]);
+
+% used for pictures on 5/7
+%ind = setdiff(1:m, [1 2 3 35 57 64 71 74 76 92 93 105]);
 
 % only young embryos
 %ind = [55,29,123,35,85,19,54,58,93,69,74,17,105,7,70,14,131,115,102,67,82,112,97,117,81,40,127,63,124,96,104,48,120,121,5,92,111,41,34,1,3,2,9,130,20,21,83,108,76,60,44,62,71,30,26,49,36,64,12,57];
@@ -111,7 +118,8 @@ for i=1:m
     im1 = image_set(:,:,:,i);
     im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
     im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
-    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    %subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
     imshow(im1);
 end
 saveas(gcf,sprintf('%s/raw_data2', im_save_dir), 'pdf')
@@ -179,6 +187,25 @@ for i=1:m
     imshow(image_set_aligned(:,:,:,I(i)));
 end
 
+%% try PCA
+
+[eigenimages, D, proj_coeff] = PCA_images(image_set_aligned, 9);
+
+[~, I] = sort(proj_coeff(:, 1));
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+for i=1:m
+    im1 = image_set_aligned(:,:,:,I(i));
+    
+    %subplot(subplot_dim1, subplot_dim2, i);
+    %subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
+    imshow(im1);
+    
+end
+
 %% VDM
 
 eps = median(W(:))/10;
@@ -223,7 +250,8 @@ set(gcf, 'papersize', [8 8*subplot_dim2/subplot_dim1])
 set(gcf, 'paperposition',[0 0 8 8*subplot_dim2/subplot_dim1])
 for i=1:m
     %subplot(subplot_dim1, subplot_dim2, i);
-    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    %subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
     im1 = image_set_aligned(:,:,:,I(i));
     im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
     im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
@@ -242,7 +270,8 @@ set(gcf, 'papersize', [8 8/nstages])
 set(gcf, 'paperposition',[0 0 8 8/nstages])
 for i=1:nstages
     
-    subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(nstages, 1, 0.01, i);
     stage_indices = I(max(1, round((i-1)*m/nstages)):min(m,round(i*m/nstages)));
     im1 = uint8(mean(double(image_set_aligned(:,:,:,stage_indices)), 4));
     im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);

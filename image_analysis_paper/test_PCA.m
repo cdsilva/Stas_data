@@ -105,7 +105,8 @@ for i=1:m
         im1(:,:,j) = im1(:,:,j) + nuclei(:,:,i);
     end
     %subplot(subplot_dim1, subplot_dim2, i);
-    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    %subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
     imshow(im1);
     
 end
@@ -170,7 +171,8 @@ for i=1:m
     im1 = image_set_aligned_withnuclei(:,:,:,I(i));
     
     %subplot(subplot_dim1, subplot_dim2, i);
-    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    %subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
     imshow(im1);
     
 end
@@ -182,19 +184,24 @@ set(gcf, 'papersize', [4 4])
 set(gcf, 'paperposition',[0 0 4 4])
 plot(mem_lengths, proj_coeff(:,1)/1000,'.')
 xlabel('membrane thickness', 'fontsize', fontsize)
-ylabel('PCA projection coefficient', 'fontsize', fontsize)
+ylabel('projection onto PC1', 'fontsize', fontsize)
 saveas(gcf,sprintf('%s/PCA_corr', im_save_dir), 'pdf')
 
 ranks_from_PCA = compute_ranks(proj_coeff(:,1));
 
 corr(ranks_from_membranes, ranks_from_PCA)
 
-return
-
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 4])
+set(gcf, 'paperposition',[0 0 8 4])
+plot(proj_coeff(:,1)/1000, proj_coeff(:,2)/1000,'.')
+xlabel('projection onto PC1', 'fontsize', fontsize)
+ylabel('projection onto PC2', 'fontsize', fontsize)
+saveas(gcf,sprintf('%s/PCA_12', im_save_dir), 'pdf')
 
 %%
-pca_proj_data = data_reshaped * V(:, 1:2);
-W2 = squareform(pdist(pca_proj_data)).^2;
+W2 = squareform(pdist(proj_coeff(:, 1:2))).^2;
 eps2 = median(W2(:));
 
 [V, D] = dmaps(W2, eps2, 10);
@@ -208,7 +215,6 @@ ylabel('membrane thickness')
 figure;
 for i=1:m
     im1 = image_set_aligned(:,:,:,I(i));
-    im1 = imresize(im1, [npixels2 npixels2]);
     
     subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
     imshow(im1);
