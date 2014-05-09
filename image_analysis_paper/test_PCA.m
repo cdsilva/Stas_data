@@ -162,6 +162,13 @@ set(gcf, 'paperposition',[0 0 4 4])
 imshow(eigenimages(:, :, :, 1),'border','tight')
 saveas(gcf,sprintf('%s/PCA_eigenimage1', im_save_dir), 'pdf')
 
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [4 4])
+set(gcf, 'paperposition',[0 0 4 4])
+imshow(eigenimages(:, :, :, 2),'border','tight')
+saveas(gcf,sprintf('%s/PCA_eigenimage2', im_save_dir), 'pdf')
+
 [~, I] = sort(proj_coeff(:, 1));
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -212,6 +219,9 @@ xlabel('\phi_2')
 ylabel('membrane thickness')
 
 [~, I] = sort(V(:,2));
+if corr(V(:,2), mem_lengths) < 0
+    V(:,2) = -V(:,2);
+end
 figure;
 for i=1:m
     im1 = image_set_aligned(:,:,:,I(i));

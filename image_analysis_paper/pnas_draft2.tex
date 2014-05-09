@@ -109,7 +109,7 @@ of the National Academy of Sciences of the United States of America}
 %% For titles, only capitalize the first letter
 %% \title{Almost sharp fronts for the surface quasi-geostrophic equation}
 
-\title{Temporal ordering and registration of cross-sectional imaging data}
+\title{Reduction of biological imaging data}
 
 
 %% Enter authors via the \author command.
@@ -155,21 +155,18 @@ of the United States of America}
 \begin{article}
 
 \begin{abstract}
-In studies of development, researchers are often presented with cross-sectional data, where each data point is a sample from a population fixed at a slightly different developmental time.
+
+We demonstrate how data reduction techniques can effectively organize large sets of biological images. 
 %
-The goal is then to temporally order the data to reconstruct the developmental dynamics.
+We use existing algorithms to both register images within a data set so that they are in a consistent frame of reference, as well as extract meaningful structure within the image data set.
 %
-If each data point is a two-dimensional image, the images must first be registered before they can be temporally ordered.
+We illustrate the utility of such algorithms using two data sets from a study of {\it Drosophila} emrbyogenesis.
 %
-When such data sets are large, noisy, and/or if the developmental changes are subtle, these tasks can be difficult to do by hand.
+Here, we show that we can temporally order the images to obtain a representative picture of the embryogenesis dynamics. 	
 %
-We present an automatic approach to register {\it and} temporally order cross-sectional data sets of images.
-%
-The mathematical techniques (angular synchronization for image registration, diffusion maps for temporal ordering, and
-vector diffusion maps for simultaneously performing both tasks) are applicable to a wide variety of data sets and
-require little {\it a priori} knowledge of the image features or the developmental dynamics.
-%
-We demonstrate the utility of our methods using a collection of images from a study of {\it Drosophila} embryogenesis.
+In general, these algorithms allow us to extract meaningful structure from imaging data sets where the patterns are not known {\it a priori}. 
+
+
 \end{abstract}
 
 
@@ -194,29 +191,55 @@ We demonstrate the utility of our methods using a collection of images from a st
 %% \subsection{}
 %% \subsubsection{}
 
-\dropcap{E}xperimental studies of developmental dynamics fall in two broadly defined categories: longitudinal and cross-sectional \cite{diggle2002analysis}.
+
+Imaging data is becoming increasingly prevalent in biology research.
 %
-In longitudinal studies, developmental progress is monitored over time for the same embryo.
+General motivation about biology data ...
+
+Need methods to organize data, visualize, ...
+
+REDUCTION is important, reduction because of symmetry and reduction because of content
+
+There are a bunch of recent techniques- some established (like dmaps), some very fresh, like synchronization or VDMaps,  that have had their own reasons to be developed but they are as if tailor made for what we would want to do
+
+
+
+\section{Results and Discussion}
+
+We apply the methods to two imaging data sets from a study of {\it Drosophila} embryogenesis.
 %
-In a cross-sectional study, one embryo contributes only a single snapshot of a chemical or morphological process along its developmental trajectory, and the developmental dynamics must be reconstructed from multiple snapshots of different embryos.
+The first data set (Figure~\ref{subfig:raw_data1}) is from stage 5, when cellularization occurs. 
 %
-Both of these sampling schemes have their advantages and limitations, and both are extensively used by developmental biologists.
+The second data set (Figure~\ref{subfig:raw_data2}) is from the end of stage 5 to stage 7, which captures formation of the ventral furrow and gastrulation.
 %
-Here we focus on cross-sectional studies, which have a time-honored history and still present the only option for most organisms.
+In both of these data sets, each image is taken from a different embryo, fixed at a different developmental time and imaged in a different rotational orientation.
 %
-In a typical cross-sectional study, a group of developing embryos is fixed using a procedure that arrests their development and stained with chemicals that help visualize a handful of cellular processes.
+We would like to organize these data sets in a meaningful and informative way.
 %
-Fixed embryos are then imaged using any given number of microscopy techniques.
+This requires rotating and translating each image so the set is in a consistent frame of reference ({\it registration}), and then organizing the images. 
 %
-Recent advances in large-scale physical manipulation and imaging of embryos have produced rapidly increasing volumes of cross-sectional data, in which every embryo is observed at a different geometric orientation and developmental time point.
+For these data sets, we know (by experimental design) that the main source of variability comes from the different developmental time of each image.
 %
-Importantly, the ``age'' of any given embryo arrested in its development is not known to high accuracy.
+We will show that the algorithms can effectively order the images in time and therefore give us meaningful picture of the underlying developmental dynamics. 
+
+
+\subsection{Image Registration}
+
+Because each embryo is imaged in a different orientation, the first task is to align or {\em register} the images so that they are in a consistent frame of reference.
 %
-In general, it is only known that a collection of embryos belongs to a certain time window.
+We use angular synchronization \cite{singer2011angular} to register our images with respect to translations and rotations. 
 %
-In order to recover the developmental dynamics from such image datasets, snapshots of different embryos must be spatially aligned or registered to factor out the relevant symmetries (i.e., translations and rotations), and then ordered in time.
+The task of image registration has been broadly studied in a variety of contexts (see, for example, ...).
 %
-We present a general computational framework which greatly accelerates -and can combine- both of these tasks.
+We chose to use angular synchronization because it is a very general technique which requires no {\em a priori} knowledge of a good template image or feature points. 
+%
+Therefore, this algorithm can readily be extended to other imaging data sets. 
+%
+Implementation details are given in the {\it SI appendix}. 
+
+The images in Figure \ref{subfig:ordered_data1} have been registered using angular synchronization.
+%
+The important features that our eye can visually detect (e.g., the green Dorsal peaks) have been aligned, even though the algorithm does not require explicit identification of such features.
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig1}
@@ -226,163 +249,155 @@ We present a general computational framework which greatly accelerates -and can 
 \customlabel{subfig:fish_unordered}{\ref{fig:fish}{\it A}}
 \customlabel{subfig:fish_ordered}{\ref{fig:fish}{\it B}}
 \end{figure}
-%
-Temporal ordering and registration of images is straightforward when the number of images is small and differences between them are visually apparent.
-%
-As an example, Figure~\ref{fig:fish} shows a caricature of fish development, combining the processes of growth and color patterning.
-%
-In this case, temporal ordering can be accomplished by arranging the fish by size, which is monotonic with the developmental progress.
-%
-Image registration is based on obvious morphological landmarks, such as the position of head and fins.
-%
-On the other hand, real data poses nontrivial challenges, due to the number of images, measurement noise and variability, and the subtlety of the developmental changes.
 
-To illustrate the issues associated with temporal ordering and registration of images, we use two data sets from an imaging study of signaling protein expression in the early fruit fly embryo, one of the leading model systems for studies of developmental dynamics.
-%
-The fruit fly embryo is shaped like a rice grain, approximately $1/2$~mm long.
-%
-By end of the $2^{nd}$ hour of development, sequential divisions of a fertilized egg generate a system where $\sim 6,000$ nuclei are uniformly arranged under the common plasma membrane.
-%
-During the $3^{rd}$ hour, the embryo undergoes the process of cellularization, whereby membranes that enclose nuclei into different cells grow in thickness.
-%
-In conjunction with these morphological changes, concentration profiles of multiple regulatory molecules form inside the embryo, subdividing it into regions that give rise to future tissues and organs \cite{lim2013kinetics}.
-%
-Following cellularization, the spatial arrangement of nuclei and the concentration profiles of regulatory molecules change dramatically.
-%
-Images in Figure~\ref{subfig:raw_data1} and Figure~\ref{subfig:raw_data2} show optical sections at a fixed depth, perpendicular to the long axis of the embryo during and following cellularization, respectively.
-%
-The embryos were fixed and stained with chemicals that help visualize nuclei (shown in gray) as well as the spatial distributions of two different proteins (shown in green and red) \cite{chung2010microfluidic}.
-%
-%Each of the images reveals a uniform arrangement of nuclei and a nonuniform distribution of the two proteins, which are involved in patterning of the dorsoventral (back-to-belly) axis of the embryo.
-
-Each image in Figures~\ref{subfig:raw_data1}~and~\ref{subfig:raw_data2} comes from a different embryo, captured at a different rotation about the long axis and at a different and unknown point in time.
-%
-The goal is to register these images in a globally consistent way, and order them to be representative of the underlying developmental trajectory.
-%
-We will demonstrate that both of these tasks can be fully automated using a sufficiently general framework which can readily be applied to a variety of biological imaging data sets. 
-
-
-
-\section{Results and Discussion}
-
-\begin{figure*}[t]
-\includegraphics[width=5.4cm]{raw_data1}
-\hfill
-\includegraphics[width=5.4cm]{PCA_ordered}
-\hfill
-\begin{minipage}[b]{5.6cm}
-\vspace{0in}
-\includegraphics[width=2.7cm]{PCA_eigenimage1}
-\includegraphics[width=2.7cm]{PCA_corr}
-\includegraphics[width=5.6cm]{PCA_12}
-\end{minipage}
-\caption{(A) Images collected during cellularization. (B) Images, now registered using angular synchronization and ordering by the first PCA projection coefficient. (C) First eigenimage. (D) Correlation between first PCA projection coefficient and membrane thickness. (E) Projection onto first two principal components. }
+\begin{figure}[t]
+\includegraphics[width=8.4cm]{fig2} 
+\caption{{\it (A)} Fluorescent images of {\it Drosophila} embryos in stage 5. Each embryo has been stained for Dorsal (green) and dpERK (red). Each image is of a different embryo in a different rotational orientation.  {\it (B)} Selected image from data set. {\it (C)} Profile of Dorsal (green) and dpERK (red) around the circumference of the embryo in {\it B}. }
 \customlabel{fig:data1}{2}
 \customlabel{subfig:raw_data1}{\ref{fig:data1}{\it A}}
-\customlabel{subfig:ordered_data1}{\ref{fig:data1}{\it B}}
-\customlabel{subfig:eigenimage1}{\ref{fig:data1}{\it C}}
-\customlabel{subfig:PCA_corr}{\ref{fig:data1}{\it D}}
-\customlabel{subfig:PCA_12}{\ref{fig:data1}{\it E}}
-\end{figure*}
-
-\subsection{Image Registration}
-
-Because each embryo is imaged in a different orientation, the first task is to align or {\em register} the images so that they are in a consistent frame of reference.
-%
-We use angular synchronization \cite{singer2011angular} to register our images with respect to translations and rotations. 
-%
-Angular synchronization is a very general technique which requires no template image or feature points. 
-%
-Although we could have used other image registration algorithms (e.g. ...) for the data sets we present here, we chose instead to use an algorithm that can be applied to a wide variety of data sets with little {\em a priori} knowledge.
-%
-Implementation details are given in the {\it SI appendix}. 
-
-The images in Figure \ref{subfig:ordered_data1} have been registered using angular synchronization.
-%
-The important features that our eye can visually detect (e.g., the green Dorsal peaks) have been aligned, even though the algorithm does not require identification of such features.
+\customlabel{subfig:select_image}{\ref{fig:data1}{\it B}}
+\customlabel{subfig:1d_profile}{\ref{fig:data1}{\it C}}
+\end{figure}
 
 \subsection{Temporal Ordering using Principal Component Analysis}
 
-After registering our images so that they are optimally aligned, we would like to organize our images to extract meaningful patterns and structure. 
-%
-In our data, the main variation in our images arises due to developmental dynamics, and we would like to order our data in time. 
-%
-We will use dimensionality reduction techniques to temporally order our data.
-%
-Although our images are inherently high-dimensional (number of pixels $\times$ number of channels), we assume that they lie on a low-dimensional curve which is monotonic in time. 
-%
-Furthermore, we assume that the main source of variability in this data is due to time/dynamics. 
-%
-Therefore, uncovering a one-dimensional parameterization of this curve will allow us to order our data in time. 
 
-For the images shown in Figure~\ref{subfig:raw_data1}, the dynamics are relatively simple, and we can use principal component analysis (PCA) to order the images.
-%
-PCA extracts a set of {\it eigenimages} from the data, such that each data point can be (approximately) described as a linear combination of these eigenimages. 
-%
-In our dataset, the dynamics are such that each data point can be effectively described by a multiple of a single eigenimage, i.e., the images lie on a line in a very high-dimensional space.
-%
-We can organize the images by sorting them along this line.
 
-Figure~\ref{subfig:ordered_data1} shows the images, registered using angular synchronization and ordered using PCA. 
+After registering our images so that they are in a consistent frame of reference, we would like to organize our images to extract meaningful patterns and structure. 
 %
-The first eigenimage is shown in Figure~\ref{subfig:eigenimage1}.
+Although our images are inherently high-dimensional (number of pixels $\times$ number of channels), we assume that there are only a few modes/directions of variability.
+%
+We will use dimensionality reduction techniques to extract these main directions of variability and efficiently organize our images.
+%
+%In our examples, we assume that the main source of variability in this data is due to time/developmental dynamics. 
+%
+%We will show that dimensionality reduction techniques uncover a one-dimensional parameterization/organization of our images, and that the images are temporally ordered in this parameterization.
 
-For these experiments in this particular time window, we are fortunate enough to be able to validate our  ordering using prior physical knowledge about the system.
+Principal component analysis (PCA) \cite{shlens2005tutorial} is arguably the most common dimensionality reduction technique.
 %
-Temporal ordering, on the other hand, can be done based on the monotonic progress of cellularization \cite{figard2013plasma}.%; this helps validate our vector diffusion map-based ordering.
+PCA extracts the main directions/modes of variability in a data set. 
 %
-Figure~\ref{subfig:PCA_corr} shows the rank correlation between the two orderings.
+We applied PCA to the data set shown in Figure~\ref{subfig:raw_data1}.
 %
-The rank correlation coefficient is 0.9199, indicating that we do a fairly good job of recovering the correct temporal ordering of the images. 
+The first two modes, or eigenimages, are shown in Figure~\ref{subfig:eigenimage1}~and~\ref{subfig:eigenimage2}.
+%
+Clearly, these modes extract/capture meaningful features that we can visually detect in the data set. 
+%
+We can plot the data projected onto the first two eigenimages; this is shown in Figure~\ref{subfig:PCA_12}.
+%
+From this plot, we can see that the data fall effectively on a one-dimensional curve that is parameterized by the first projection coefficient.
+%
+Therefore, an approrpiate way to organize the images would be to order them according to the first projection coefficient. 
 
-Although PCA can successfully order the data set shown in Figure \ref{subfig:raw_data1}, it can only do so because the data lie on in a one-dimensional, {\it linear} subspace.
+Figure~\ref{subfig:ordered_data1} shows the images from Figure~\ref{subfig:raw_data1}, now ordered by the first projection coefficient.
 %
-In general, the developmental trajectory is not guaranteed to be linear. 
+We can now easily see the relevant structure in the data set:
+the red peaks grow in intensity.
 %
-This can be seen in the late images of Figure~\ref{subfig:ordered_data1} that the ordering is not entirely correct.
+Furthermore, for this data set, we know what the relevant structure is.
 %
-We can also see this from the projection onto the first two eigenimages, shown in Figure~\ref{subfig:PCA_12}.
+The data consists of embryos fixed at different developmental times. 
+%
+During stage 5, we can measure the developmental time based on the monotonic progress of cellularization (Figure~\ref{subfig:membranes}) \cite{figard2013plasma}.%; this helps validate our vector diffusion map-based ordering.
+%
+The ordering we extract using the first eigenimage is consistent with the temporal ordering of the images using cellularzation.
+%
+Quantitatively, the rank correlation coefficient between these two orderings is 0.9199.
+%
+The two methods for registration and ordering can be visually compared through the sequences of one-dimensional profiles extracted from the circumference of the embryos, shown in Figures~\ref{subfig:1d_membranes}~and~\ref{subfig:1d_vdm}.
+%
+The general trends are consistent:
+both green  and red peaks are aligned, and the red peaks grow as a function of time/first PCA projection coefficient.
+
+Although PCA can successfully order the data set shown in Figure \ref{subfig:raw_data1}, in general, such data is not guaranteed to lie in a low-dimensional, {\it linear} subspace.
+%
+When the data have nonlinear structure, PCA may not provide the most parsimonious organization of the data.
+%
+This can be seen in the late images of Figure~\ref{subfig:ordered_data1};
+images where the ventral furrow begins to form are interspersed with images containing no obvious dent.
+%
+This is because the dynamics at later stages are nonlinear and and not effectively described by a single eigenimage.
+%
+We can see this from the projection onto the first two eigenimages, shown in Figure~\ref{subfig:PCA_12}.
 %
 The data clearly lie on a one-dimensional, {\em nonlinear} curve.
 %
-This motivates us to use nonlinear dimensionality reduction techniques to temporally order our data.
+This motivates us to use nonlinear dimensionality reduction techniques to organize our data.
+
+
+\begin{figure}[t]
+\raisebox{3.5cm}{{\figtextfont A}}
+\includegraphics[width=4.2cm]{PCA_eigenimage1}
+\raisebox{3.5cm}{{\figtextfont B}}
+\includegraphics[width=4.2cm]{PCA_eigenimage2}
+
+\raisebox{4cm}{{\figtextfont C}}
+\includegraphics[width=8.4cm]{PCA_12}
+
+\raisebox{8cm}{{\figtextfont D}}
+\includegraphics[width=8.4cm]{PCA_ordered}
+\caption{{\it (A)} First eigenimage from the data set shown in Figure~\ref{subfig:raw_data1}. {\it (B)} Second eigenimage from the data set shown in Figure~\ref{subfig:raw_data1}. {\it (B)} Projection of  data set shown in Figure~\ref{subfig:raw_data1} onto the first two eigenimages. {\it (D)} Ordering of  data set shown in Figure~\ref{subfig:raw_data1} by the first projection coefficient. }
+\customlabel{fig:data1b}{3}
+\customlabel{subfig:eigenimage1}{\ref{fig:data1b}{\it A}}
+\customlabel{subfig:eigenimage2}{\ref{fig:data1b}{\it B}}
+\customlabel{subfig:PCA_12}{\ref{fig:data1b}{\it C}}
+\customlabel{subfig:ordered_data1}{\ref{fig:data1b}{\it D}}
+\end{figure}
+
+\begin{figure}[t]
+\includegraphics[width=8.4cm]{fig6}
+\caption{{\it (A)} Images, stained for membranes (gray) and Dorsal (green) at different levels of development. {\it (B)} Membrane length as a function of time. The points corresponding to the images in {\it A} are indicated with arrows. {\it (C)} The one-dimensional concentration profiles, registered by peak Dorsal fluorescence and ordered by membrane length. {\it (D)} The one-dimensional concentration profiles corresponding to the automatically registered and ordered images in Figure~\ref{fig:images_ordered}. }
+%\label{fig:membrane_compare}
+\customlabel{fig:membrane_compare}{4}
+\customlabel{subfig:membranes}{\ref{fig:membrane_compare}{\it A}}
+\customlabel{subfig:membrane_curve}{\ref{fig:membrane_compare}{\it B}}
+\customlabel{subfig:1d_membranes}{\ref{fig:membrane_compare}{\it C}}
+\customlabel{subfig:1d_vdm}{\ref{fig:membrane_compare}{\it D}}
+\end{figure}
 
 \subsection{Temporal Ordering Using Diffusion Maps}
 
-We can use diffusion maps \cite{coifman2005geometric} to analyze more complex data sets where the dynamics are clearly nonlinear.
+We can use diffusion maps \cite{coifman2005geometric} to analyze data sets with nonlinear structure.
 %
 Diffusion maps is similar to PCA, in that it aims uncover low-dimensional structure in high-dimensional data.
 %
 However, unlike PCA, diffusion maps is a {\it nonlinear} reduction technique. 
+
+Figure~\ref{subfig:raw_data2} shows a data set of images from stages 5--7.
 %
-Figure~\ref{subfig:raw_data2} shows a data set consisting of embryos following cellularization.
-%
-Clearly, the dynamics are significantly more complex than the dynamics in Figure~\ref{subfig:raw_data1}, and the first PCA eigenimage will not capture all of the relevant dynamics.
+Clearly, the dynamics are significantly more complex than the dynamics in Figure~\ref{subfig:raw_data1}, and the first eigenimage will not capture all of the relevant dynamics.
 %
 However, we can still use diffusion maps to temporally order the data.
 %
-Figure~\ref{subfig:ordered_data2} shows the images in Figure~\ref{subfig:raw_data2}, now registered and ordered using vector diffusion maps \cite{singer2012vector}.
+In addition, we can combine the steps image registration and temporal ordering using vector diffusion maps. 
 
+Figure~\ref{subfig:ordered_data2} shows the images in Figure~\ref{subfig:raw_data2}, now registered and ordered using vector diffusion maps \cite{singer2012vector}.
+%
 Unlike the images in Figure~\ref{subfig:raw_data1}, 
 for Figure~\ref{fig:data2}, we have no time marker with which to validate our orderings.
 %
-However, there are noticeable features in the ordering that we can see are consistent with previously known dynamics. 
-%
-We can also construct a smoothed trajectory by averaging over neighboring images.
+However, there are noticeable features in the ordering that we can see are consistent with previously known dynamics,
+and we can construct a smoothed trajectory by averaging groups of neighboring images.
 %
 Figure~\ref{subfig:averaged_trajectory} shows the images from Figure~\ref{subfig:ordered_data2}, divided into 12 groups and averaged. 
 %
-The dynamics are readily apparent; we can see gastrulation, ....
+We can easily see the formation of the ventral furrow and germ band elongation, which concludes with ventral cells shifted to the dorsal side of the embryo.
 
 \newpage
 \begin{figure*}[t]
+\raisebox{10.8cm}{{\figtextfont A}}
 \includegraphics[width=8.4cm]{raw_data2}
 \hfill
-\includegraphics[width=8.4cm]{VDM_ordered} \\
+\raisebox{10.8cm}{{\figtextfont B}}
+\includegraphics[width=8.4cm]{VDM_ordered} 
+
+\vspace{0.2cm}
 \centering
+\raisebox{0.6cm}{{\figtextfont C}}
 \includegraphics[width=16.8cm]{average_trajectory}
-\caption{(A) Images collected following cellularization. Each image is of a different embryo in a different rotational orientation. (B) Data from A, registered and ordered using vector diffusion maps. (C) Average trajectory of the images shown in B.}
-\customlabel{fig:data2}{3}
+
+\caption{(A) Images from stages 5-7 of {\it Drosophila} embryogenesis. Each image is of a different embryo in a different rotational orientation. (B) Data from A, registered and ordered using vector diffusion maps. (C) Average trajectory of the images shown in B.}
+\customlabel{fig:data2}{5}
 \customlabel{subfig:raw_data2}{\ref{fig:data2}{\it A}}
 \customlabel{subfig:ordered_data2}{\ref{fig:data2}{\it B}}
 \customlabel{subfig:averaged_trajectory}{\ref{fig:data2}{\it C}}
@@ -398,6 +413,19 @@ The algorithms are sufficiently general that they can be applied to a wide varie
 Although the examples here focus on temporally ordering the data, tasks such as classification and comparison of different mutations can also be accomplished using the same techniques. 
 %
 
+\begin{itemize}
+\item What are other people doing  (maybe critically)
+\item Movies  smoothness
+\item Discrete symmetries like flips
+\item Local information ? (features of the image) (associate with Fourier-Bessel and bispectra)
+\item Mutant-wildtype stuff  IMPORTANT
+\item And in general, MULTIPLE variablities is important (mutants, guys in another cycle, etc.)
+ 
+\item size is an issue
+\item  small tilts is an issue
+\item   could one do three-d image processing ?  of the floating thing, without the device
+\item how do we go about merging datasets ?
+\end{itemize}
 
 
 

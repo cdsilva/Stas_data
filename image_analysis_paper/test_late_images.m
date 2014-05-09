@@ -15,7 +15,7 @@ ind = 1:m;
 npixels = 100;
 
 %set image plotting parameters
-subplot_dim1 = ceil(sqrt(m));
+subplot_dim1 = floor(sqrt(m));
 subplot_dim2 = ceil(m / subplot_dim1);
 [Y, X] = meshgrid((subplot_dim2:-1:1)/subplot_dim2, (1:subplot_dim1)/subplot_dim1);
 
@@ -79,7 +79,10 @@ load('pairwise_alignments_late.mat');
 
 % used for pictures on 5/6
 %ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 50 102]);
-ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102]);
+
+% use for pictures
+%ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102]);
+ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102 101 100]);
 
 % used for pictures on 5/5
 %ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105]);
@@ -100,8 +103,11 @@ R = R(R_ind, R_ind);
 
 m = length(ind);
 
-subplot_dim1 = ceil(sqrt(m));
-subplot_dim2 = ceil(m / subplot_dim1);
+%subplot_dim1 = floor(sqrt(m));
+%subplot_dim2 = ceil(m / subplot_dim1);
+subplot_dim1 = 9;
+subplot_dim2 = 12;
+
 [Y, X] = meshgrid((subplot_dim2:-1:1)/subplot_dim2, (1:subplot_dim1)/subplot_dim1);
 
 %% synchronization
@@ -272,13 +278,12 @@ for i=1:nstages
     
     %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
     make_subplot(nstages, 1, 0.01, i);
-    stage_indices = I(max(1, round((i-1)*m/nstages)):min(m,round(i*m/nstages)));
+    stage_indices = I(max(1, round((i-1)*m/nstages)+1):min(m,round(i*m/nstages)));
     im1 = uint8(mean(double(image_set_aligned(:,:,:,stage_indices)), 4));
     im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
     im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
     
     imshow(im1,'initialmagnification','fit','border','tight')
-    
 end
 saveas(gcf,sprintf('%s/average_trajectory', im_save_dir), 'pdf')
 
