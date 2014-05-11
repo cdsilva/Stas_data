@@ -219,9 +219,7 @@ for i=1:nstages
     %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
     make_subplot(nstages, 1, 0.01, i);
     stage_indices = I(max(1, round((i-1)*m/nstages)+1):min(m,round(i*m/nstages)));
-    im1 = uint8(mean(double(image_set_aligned(:,:,:,stage_indices)), 4));
-    im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
-    im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+    im1 = uint8(mean(double(image_set_aligned_withnuclei(:,:,:,stage_indices)), 4));
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end
@@ -264,9 +262,7 @@ for i=1:nstages
     %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
     make_subplot(nstages, 1, 0.01, i);
     stage_indices = I(max(1, round((i-1)*m/nstages)+1):min(m,round(i*m/nstages)));
-    im1 = uint8(mean(double(image_set_aligned(:,:,:,stage_indices)), 4));
-    im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
-    im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+    im1 = uint8(mean(double(image_set_aligned_withnuclei(:,:,:,stage_indices)), 4));
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end

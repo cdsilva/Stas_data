@@ -250,6 +250,19 @@ The important features that our eye can visually detect (e.g., the green Dorsal 
 \customlabel{subfig:fish_ordered}{\ref{fig:fish}{\it B}}
 \end{figure}
 
+
+
+\begin{figure}[tb]
+\includegraphics[width=8.4cm]{fig4}
+\caption{ {\it (A)} Set of vectors, each in a different orientation. The pariwise alignment angles are indicated. {\it (B)} The vectors from {\it A}, each rotated so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in {\it A}. {\it (C)} Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see \eqref{eq:dmaps_W}), so that close data points are connected by dark (``stronger'') edges. {\it (D)} The data in {\it C}, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure, $\phi_2$. The color intensity is monotonic with the arclength, thus parameterizing the curve.}
+%\label{fig:schematics}
+\customlabel{fig:schematics}{4}
+\customlabel{subfig:synch1}{\ref{fig:schematics}{\it A}}
+\customlabel{subfig:synch2}{\ref{fig:schematics}{\it B}}
+\customlabel{subfig:dmaps_edges}{\ref{fig:schematics}{\it C}}
+\customlabel{subfig:dmaps_color}{\ref{fig:schematics}{\it D}}
+\end{figure}
+
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig2} 
 \caption{{\it (A)} Fluorescent images of {\it Drosophila} embryos in stage 5. Each embryo has been stained for Dorsal (green) and dpERK (red). Each image is of a different embryo in a different rotational orientation.  {\it (B)} Selected image from data set. {\it (C)} Profile of Dorsal (green) and dpERK (red) around the circumference of the embryo in {\it B}. }
@@ -257,6 +270,22 @@ The important features that our eye can visually detect (e.g., the green Dorsal 
 \customlabel{subfig:raw_data1}{\ref{fig:data1}{\it A}}
 \customlabel{subfig:select_image}{\ref{fig:data1}{\it B}}
 \customlabel{subfig:1d_profile}{\ref{fig:data1}{\it C}}
+\end{figure}
+
+
+\newpage
+\begin{figure}[tb]
+\raisebox{8.1cm}{{\figtextfont A}}
+\includegraphics[width=8.4cm]{PCA_ordered}
+\vspace{0.2cm}
+\raisebox{0.9cm}{{\figtextfont B}}
+\includegraphics[width=8.4cm]{average_trajectory_PCA}
+\caption{{\it (A)}  Ordering of  data set shown in Figure~\ref{subfig:raw_data1} by the first projection coefficient.  {\it (B)} Averaged trajectory of images in A.}
+\customlabel{fig:data1b}{3}
+\customlabel{subfig:eigenimage1}{\ref{fig:data1b}{\it A}}
+\customlabel{subfig:eigenimage2}{\ref{fig:data1b}{\it B}}
+\customlabel{subfig:PCA_12}{\ref{fig:data1b}{\it C}}
+\customlabel{subfig:ordered_data1}{\ref{fig:data1b}{\it D}}
 \end{figure}
 
 \subsection{Temporal Ordering using Principal Component Analysis}
@@ -325,35 +354,7 @@ The data clearly lie on a one-dimensional, {\em nonlinear} curve.
 This motivates us to use nonlinear dimensionality reduction techniques to organize our data.
 
 
-\begin{figure}[t]
-\raisebox{3.5cm}{{\figtextfont A}}
-\includegraphics[width=4.2cm]{PCA_eigenimage1}
-\raisebox{3.5cm}{{\figtextfont B}}
-\includegraphics[width=4.2cm]{PCA_eigenimage2}
 
-\raisebox{4cm}{{\figtextfont C}}
-\includegraphics[width=8.4cm]{PCA_12}
-
-\raisebox{8cm}{{\figtextfont D}}
-\includegraphics[width=8.4cm]{PCA_ordered}
-\caption{{\it (A)} First eigenimage from the data set shown in Figure~\ref{subfig:raw_data1}. {\it (B)} Second eigenimage from the data set shown in Figure~\ref{subfig:raw_data1}. {\it (B)} Projection of  data set shown in Figure~\ref{subfig:raw_data1} onto the first two eigenimages. {\it (D)} Ordering of  data set shown in Figure~\ref{subfig:raw_data1} by the first projection coefficient. }
-\customlabel{fig:data1b}{3}
-\customlabel{subfig:eigenimage1}{\ref{fig:data1b}{\it A}}
-\customlabel{subfig:eigenimage2}{\ref{fig:data1b}{\it B}}
-\customlabel{subfig:PCA_12}{\ref{fig:data1b}{\it C}}
-\customlabel{subfig:ordered_data1}{\ref{fig:data1b}{\it D}}
-\end{figure}
-
-\begin{figure}[t]
-\includegraphics[width=8.4cm]{fig6}
-\caption{{\it (A)} Images, stained for membranes (gray) and Dorsal (green) at different levels of development. {\it (B)} Membrane length as a function of time. The points corresponding to the images in {\it A} are indicated with arrows. {\it (C)} The one-dimensional concentration profiles, registered by peak Dorsal fluorescence and ordered by membrane length. {\it (D)} The one-dimensional concentration profiles corresponding to the automatically registered and ordered images in Figure~\ref{fig:images_ordered}. }
-%\label{fig:membrane_compare}
-\customlabel{fig:membrane_compare}{4}
-\customlabel{subfig:membranes}{\ref{fig:membrane_compare}{\it A}}
-\customlabel{subfig:membrane_curve}{\ref{fig:membrane_compare}{\it B}}
-\customlabel{subfig:1d_membranes}{\ref{fig:membrane_compare}{\it C}}
-\customlabel{subfig:1d_vdm}{\ref{fig:membrane_compare}{\it D}}
-\end{figure}
 
 \subsection{Temporal Ordering Using Diffusion Maps}
 
@@ -384,19 +385,19 @@ Figure~\ref{subfig:averaged_trajectory} shows the images from Figure~\ref{subfig
 We can easily see the formation of the ventral furrow and germ band elongation, which concludes with ventral cells shifted to the dorsal side of the embryo.
 
 \newpage
-\begin{figure*}[t]
-\raisebox{10.8cm}{{\figtextfont A}}
-\includegraphics[width=8.4cm]{raw_data2}
-\hfill
-\raisebox{10.8cm}{{\figtextfont B}}
-\includegraphics[width=8.4cm]{VDM_ordered} 
+\begin{figure*}[b]
+\raisebox{5.3cm}{{\figtextfont A}}
+\includegraphics[width=16.8cm]{raw_data2}
+%\hfill
+%\raisebox{10.8cm}{{\figtextfont B}}
+%\includegraphics[width=8.4cm]{VDM_ordered} 
 
 \vspace{0.2cm}
 \centering
-\raisebox{0.6cm}{{\figtextfont C}}
+\raisebox{0.6cm}{{\figtextfont B}}
 \includegraphics[width=16.8cm]{average_trajectory}
 
-\caption{(A) Images from stages 5-7 of {\it Drosophila} embryogenesis. Each image is of a different embryo in a different rotational orientation. (B) Data from A, registered and ordered using vector diffusion maps. (C) Average trajectory of the images shown in B.}
+\caption{{\it (A)} Images from stages 5-7 of {\it Drosophila} embryogenesis. Each image is of a different embryo in a different rotational orientation. {\it (B)} Average trajectory of the images shown in A.}
 \customlabel{fig:data2}{5}
 \customlabel{subfig:raw_data2}{\ref{fig:data2}{\it A}}
 \customlabel{subfig:ordered_data2}{\ref{fig:data2}{\it B}}
