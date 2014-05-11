@@ -208,6 +208,27 @@ ylabel('projection onto PC2', 'fontsize', fontsize)
 saveas(gcf,sprintf('%s/PCA_12', im_save_dir), 'pdf')
 
 %%
+nstages = 7;
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(nstages, 1, 0.01, i);
+    stage_indices = I(max(1, round((i-1)*m/nstages)+1):min(m,round(i*m/nstages)));
+    im1 = uint8(mean(double(image_set_aligned(:,:,:,stage_indices)), 4));
+    im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+    im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+saveas(gcf,sprintf('%s/average_trajectory_PCA', im_save_dir), 'pdf')
+
+
+%%
 W2 = squareform(pdist(proj_coeff(:, 1:2))).^2;
 eps2 = median(W2(:));
 
@@ -230,6 +251,27 @@ for i=1:m
     imshow(im1);
     
 end
+
+%%
+nstages = 7;
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(nstages, 1, 0.01, i);
+    stage_indices = I(max(1, round((i-1)*m/nstages)+1):min(m,round(i*m/nstages)));
+    im1 = uint8(mean(double(image_set_aligned(:,:,:,stage_indices)), 4));
+    im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+    im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+saveas(gcf,sprintf('%s/average_trajectory_DMAPS', im_save_dir), 'pdf')
+
 
 
 

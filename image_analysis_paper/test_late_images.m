@@ -75,17 +75,18 @@ load('pairwise_alignments_late.mat');
 
 %% select which images to use
 % all
-%ind = 1:m;
+ind = 1:m;
 
 % used for pictures on 5/6
 %ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 50 102]);
 
 % use for pictures
 %ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102]);
-ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102 101 100]);
+%%THIS ONE
+%ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102 101 100]);
 
 % used for pictures on 5/5
-%ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105]);
+ind = setdiff(1:m, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105]);
 
 % used for pictures on 5/7
 %ind = setdiff(1:m, [1 2 3 35 57 64 71 74 76 92 93 105]);
@@ -103,10 +104,10 @@ R = R(R_ind, R_ind);
 
 m = length(ind);
 
-%subplot_dim1 = floor(sqrt(m));
-%subplot_dim2 = ceil(m / subplot_dim1);
-subplot_dim1 = 9;
-subplot_dim2 = 12;
+subplot_dim1 = floor(sqrt(m));
+subplot_dim2 = ceil(m / subplot_dim1);
+%subplot_dim1 = 9;
+%subplot_dim2 = 12;
 
 [Y, X] = meshgrid((subplot_dim2:-1:1)/subplot_dim2, (1:subplot_dim1)/subplot_dim1);
 
@@ -128,7 +129,7 @@ for i=1:m
     make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
     imshow(im1);
 end
-saveas(gcf,sprintf('%s/raw_data2', im_save_dir), 'pdf')
+%saveas(gcf,sprintf('%s/raw_data2', im_save_dir), 'pdf')
 
 
 image_set_aligned = zeros(size(image_set), 'uint8');
@@ -264,7 +265,7 @@ for i=1:m
     
     imshow(im1);
 end
-saveas(gcf,sprintf('%s/VDM_ordered', im_save_dir), 'pdf')
+%saveas(gcf,sprintf('%s/VDM_ordered', im_save_dir), 'pdf')
 
 %%
 
@@ -285,6 +286,6 @@ for i=1:nstages
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end
-saveas(gcf,sprintf('%s/average_trajectory', im_save_dir), 'pdf')
+%saveas(gcf,sprintf('%s/average_trajectory', im_save_dir), 'pdf')
 
 
