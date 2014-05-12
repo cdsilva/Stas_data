@@ -114,12 +114,14 @@ saveas(gcf,sprintf('%s/raw_data1', im_save_dir), 'pdf')
 
 image_set_aligned = zeros(size(image_set), 'uint8');
 image_set_aligned_withnuclei = zeros(size(image_set), 'uint8');
+theta_adjust = -58;
 for i=1:m
     im_tmp = image_set(:,:,:,i);
     %         for j=1:3
     %             im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
     %         end
     im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
+    im1 = imrotate(im1, theta_adjust, 'crop');
     image_set_aligned(:,:,:,i) = im1;
     
     im_tmp = image_set(:,:,:,i);
@@ -127,6 +129,7 @@ for i=1:m
         im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
     end
     im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
+    im1 = imrotate(im1, theta_adjust, 'crop');
     image_set_aligned_withnuclei(:,:,:,i) = im1;
 end
 
@@ -147,7 +150,9 @@ fontsize = 8;
 
 data_reshaped = zeros(m, npixels*npixels*nchannels);
 
-[eigenimages, D, proj_coeff] = PCA_images(image_set_aligned, 9);
+[eigenimages, D_PCA, proj_coeff] = PCA_images(image_set_aligned, m);
+
+diag(D_PCA) / sum(diag(D_PCA))
 
 figure;
 for i=1:9
@@ -226,7 +231,7 @@ end
 saveas(gcf,sprintf('%s/average_trajectory_PCA', im_save_dir), 'pdf')
 
 
-%%
+%% DMAPS on PCA
 W2 = squareform(pdist(proj_coeff(:, 1:2))).^2;
 eps2 = median(W2(:));
 
@@ -267,6 +272,76 @@ for i=1:nstages
     imshow(im1,'initialmagnification','fit','border','tight')
 end
 saveas(gcf,sprintf('%s/average_trajectory_DMAPS', im_save_dir), 'pdf')
+
+%% VDM
+
+eps = median(W(:))/10;
+neigs = 10;
+
+[R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
+
+theta_adjust = -55;
+
+image_set_aligned = zeros(size(image_set), 'uint8');
+image_set_aligned_withnuclei = zeros(size(image_set), 'uint8');
+for i=1:m
+    im_tmp = image_set(:,:,:,i);
+    %         for j=1:3
+    %             im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
+    %         end
+    im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
+    im1 = imrotate(im1, theta_adjust, 'crop');
+    image_set_aligned(:,:,:,i) = im1;
+    
+    im_tmp = image_set(:,:,:,i);
+    for j=1:3
+        im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
+    end
+    im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
+    im1 = imrotate(im1, theta_adjust, 'crop');
+    image_set_aligned_withnuclei(:,:,:,i) = im1;
+end
+
+
+%% order using vdm
+
+idx = find(embed_idx(1,:) == 4 & embed_idx(2,:) == 1);
+
+[~, I] = sort(embed_coord(:, idx));
+if corr(embed_coord(:, idx), mem_lengths) < 0
+    I = flipud(I);
+end
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+for i=1:m
+    %subplot(subplot_dim1, subplot_dim2, i);
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    
+    imshow(image_set_aligned_withnuclei(:,:,:,I(i)));
+end
+saveas(gcf,sprintf('%s/VDM_data1_ordered', im_save_dir), 'pdf')
+
+corr(embed_coord(:, idx), mem_lengths, 'type', 'spearman')
+
+%%
+nstages = 7;
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(nstages, 1, 0.01, i);
+    stage_indices = I(max(1, round((i-1)*m/nstages)+1):min(m,round(i*m/nstages)));
+    im1 = uint8(mean(double(image_set_aligned_withnuclei(:,:,:,stage_indices)), 4));
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+saveas(gcf,sprintf('%s/average_trajectory_VDM', im_save_dir), 'pdf')
 
 
 
