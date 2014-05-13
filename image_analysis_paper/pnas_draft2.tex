@@ -319,7 +319,7 @@ Vector diffusion maps combines angular synchronization and diffusion maps to fin
 \includegraphics[width=8.4cm]{fig4}
 \caption{ {\it (A)} Set of vectors, each in a different orientation. The pairwise alignment angles are indicated. {\it (B)} The vectors from {\it A}, each rotated so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in {\it A}. {\it (C)} Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see {\it SI Appendix}), so that close data points are connected by dark (``stronger'') edges. {\it (D)} The data in {\it C}, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure, $\phi_2$. The color intensity is monotonic with the arclength, thus parameterizing the curve.}
 %\label{fig:schematics}
-\customlabel{fig:schematics}{4}
+\customlabel{fig:schematics}{2}
 \customlabel{subfig:synch1}{\ref{fig:schematics}{\it A}}
 \customlabel{subfig:synch2}{\ref{fig:schematics}{\it B}}
 \customlabel{subfig:dmaps1}{\ref{fig:schematics}{\it C}}
@@ -363,7 +363,7 @@ The rank correlation coefficient between these two orderings is 0.9127, indicati
 \centering
 \raisebox{0.5cm}{{\figtextfont C}}
 \includegraphics[width=8.4cm]{average_trajectory_VDM}
-\caption{{\it (A)} Images from stage 5 of {\it Drosophila} embryogenesis. Each image is of a different embryo in a different rotational orientation. {\it (B)} Images from {\it A}, now registered and ordered using vector diffusion maps. {\it (C)} Average trajectory of the images shown in {\it B}.}
+\caption{{\it (A)} Images from stage 5 of {\it Drosophila} embryogenesis. Each image is of a different embryo in a different rotational orientation. {\it (B)} Images from {\it A}, now registered and ordered using vector diffusion maps. {\it (C)} Average trajectory of the images shown in {\it B}.  Each image is the average of $7$ consecutive images in {\it B}. }
 \customlabel{fig:data1}{3}
 \customlabel{subfig:raw_data1}{\ref{fig:data1}{\it A}}
 \customlabel{subfig:ordered_data1}{\ref{fig:data1}{\it B}}
@@ -380,7 +380,7 @@ principal component analysis \cite{shlens2005tutorial} would uncover most of the
 %
 However, developmental dynamics are often significantly more complex, and nonlinear techniques such as diffusion maps/vector diffusion maps are required to extract meaningful structure in the data. 
 %
-Figure~\ref{subfig:raw_data2} shows a data set of images from stages 5--7 of {\it Drosophila} embryogenesis.
+Figure~\ref{subfig:raw_data2} shows a data set of $108$ images from stages 5--7 of {\it Drosophila} embryogenesis.
 %
 Only 22\% of the variability in the data is captured by the first principal component, and so we are forced to use more sophisticated techniques, such as vector diffusion maps, to temporally order the data.
 
@@ -393,7 +393,7 @@ for Figure~\ref{fig:data2}, we have no time marker with which to validate our or
 %
 However, there are noticeable features in the ordering that we can see are consistent with previously known dynamics.
 %
-We can again construct a smoothed trajectory by looking at the moving average of the images, shown in Figure~\ref{sub fig:average_data2}.
+We can again construct a smoothed trajectory by looking at the moving average of the images, shown in Figure~\ref{subfig:averaged_data2}.
 %
 We can see the formation of the ventral furrow and germ band elongation, which concludes with ventral cells shifted to the dorsal side of the embryo, which is consistent with the known picture of {\it Drosophila} embryogeneisis. 
 %
@@ -411,8 +411,8 @@ This assures us that we can obtained an ordering of the data which is developmen
 \vspace{0.2cm}
 \raisebox{0.6cm}{{\figtextfont C}}
 \includegraphics[width=16.8cm]{average_trajectory}
-\caption{{\it (A)} Images from stages 5-7 of {\it Drosophila} embryogenesis. Each image is of a different embryo in a different rotational orientation. {\it(B)} Data from {\it A}, registred and ordered using vector diffusion maps. {\it (C)} Average trajectory of the images shown in {\it B}.}
-\customlabel{fig:data2}{5}
+\caption{{\it (A)} Images from stages 5-7 of {\it Drosophila} embryogenesis. Each image is of a different embryo in a different rotational orientation. {\it(B)} Data from {\it A}, registered and ordered using vector diffusion maps. {\it (C)} Average trajectory of the images shown in {\it B}. Each image is the average of $9$ consecutive images in {\it B}. }
+\customlabel{fig:data2}{4}
 \customlabel{subfig:raw_data2}{\ref{fig:data2}{\it A}}
 \customlabel{subfig:ordered_data2}{\ref{fig:data2}{\it B}}
 \customlabel{subfig:averaged_data2}{\ref{fig:data2}{\it C}}
