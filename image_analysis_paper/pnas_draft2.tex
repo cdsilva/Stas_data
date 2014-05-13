@@ -338,10 +338,8 @@ We registered and ordered the images using vector diffusion maps.
 The results are shown in Figure~\ref{subfig:ordered_data1}.
 %
 The features that our eyes can visually detect (the green Dorsal peak, and the red dpERK peaks) are now consistently registered, even though the algorithm does not require any information about the existence or location of these peaks. 
-%
-In addition, the red dpERK peaks grow in intensity over the developmental trajectory, as expected.
 
-When dealing with large sets of images with interembryo variability, we can gain a better understanding of the developmental trajectory by looking at an averaged trajectory.
+When dealing with large sets of images with interembryo variability, we can gain a better understanding of the developmental dynamics by looking at an averaged trajectory.
 %
 Figure~\ref{subfig:average_data1} shows the moving average of the trajectory in Figure~\ref{subfig:ordered_data1}. 
 %
@@ -349,9 +347,9 @@ We can now easily see the developmental dynamics: the red dpERK peaks grow in ti
 
 For this data set, we can validate our proposed vector diffusion maps ordering of the data.
 %
-During stage 5, we can measure the developmental time based on the monotonic progress of cellularization (details are given in the {\it SI Appendix}).
+During stage 5, we can measure the developmental time of each embryo based on the monotonic progress of cellularization (details are given in the {\it SI Appendix}).
 %
-We can compare the temporal ordering obtained from cellularization with the ordering we extract from vector diffusion maps. 
+We compared the temporal ordering obtained from cellularization with the ordering we extract from vector diffusion maps. 
 %
 The rank correlation coefficient between these two orderings is 0.9127, indicating that there is very good agreement and vector diffusion maps is uncovering the correct temporal ordering of the images. 
 
@@ -375,11 +373,10 @@ The rank correlation coefficient between these two orderings is 0.9127, indicati
 
 \subsection{Stage 5--7 Images of {\it Drosophila} embryogenesis}
 
-The images in Figure~\ref{fig:data1} are relatively simple, and the methods presented here are perhaps unnecessarily complex for these images. 
+The images in Figure~\ref{fig:data1} are relatively simple, and the methods presented here are perhaps unnecessarily complex for this particular data set. 
 %
-These data are effectively a single mode growing in time.
-%
-Therefore, principal component analysis \cite{shlens2005tutorial} would uncover most of the meaningful structure in the data, and projection onto the first principal component would be sufficient to order the data.
+Because these data are effectively a single mode growing in time,
+principal component analysis \cite{shlens2005tutorial} would uncover most of the meaningful structure in the data, and projection onto the first principal component would be sufficient to order the data.
 %
 However, developmental dynamics are often significantly more complex, and nonlinear techniques such as diffusion maps/vector diffusion maps are required to extract meaningful structure in the data. 
 %
@@ -389,6 +386,8 @@ Only 22\% of the variability in the data is captured by the first principal comp
 
 Figure~\ref{subfig:ordered_data2} shows the images in Figure~\ref{subfig:raw_data2}, now registered and ordered using vector diffusion maps \cite{singer2012vector}.
 %
+Again, visually detectable features, such as the green Twist peaks, are consistently aligned. 
+%
 Unlike the images in Figure~\ref{subfig:raw_data1}, 
 for Figure~\ref{fig:data2}, we have no time marker with which to validate our orderings.
 %
@@ -396,7 +395,7 @@ However, there are noticeable features in the ordering that we can see are consi
 %
 We can again construct a smoothed trajectory by looking at the moving average of the images, shown in Figure~\ref{sub fig:average_data2}.
 %
-We can easily see the formation of the ventral furrow and germ band elongation, which concludes with ventral cells shifted to the dorsal side of the embryo.
+We can see the formation of the ventral furrow and germ band elongation, which concludes with ventral cells shifted to the dorsal side of the embryo, which is consistent with the known picture of {\it Drosophila} embryogeneisis. 
 %
 This assures us that we can obtained an ordering of the data which is developmentally meaningful. 
 
@@ -429,11 +428,10 @@ We chose the techniques outlined here, not because they are particularly suited 
 
 The task of image registration has been studied in a variety of contexts \cite{...}.
 %
-However, most of these applications first the definition and identification of good {\it features} within each image. 
+However, most of these applications rely on the definition and identification of good {\it features} within each image. 
 %
-For our biological applications, good features may not be known {\it a priori}.
-%
-We therefore use an algorithm which requires no features, but instead, uses the images directly. 
+For our biological applications, good features may not be known {\it a priori}, 
+and we instead use an algorithm which requires no features, but instead, uses the images directly. 
 
 The task of temporal ordering has also been studied, for data such as ...
 %
@@ -450,8 +448,8 @@ Furthermore, techniques such as diffusion maps do not constrain us to one-dimens
 % 
 In this particular setup, we expect our data to be one-dimensional, as the only (main) source of variability is time.
 %
-However, other sources of variability would also be uncovered using diffusion maps, 
-and tasks such as classification and comparison of different mutations can also be accomplished using the same techniques. 
+However, other sources of variability would also be uncovered using (vector) diffusion maps, 
+and tasks such as classification of embryos by size or viewing angle, and comparison of different mutations can also be accomplished using the same techniques. 
 
 
 \begin{itemize}
