@@ -165,8 +165,7 @@ When such data sets are large, noisy, and/or if the developmental changes are su
 %
 We present an automatic approach to register {\it and} temporally order cross-sectional data sets of images.
 %
-The mathematical techniques (angular synchronization for image registration, diffusion maps for temporal ordering, and
-vector diffusion maps for simultaneously performing both tasks) are applicable to a wide variety of data sets and
+The mathematical techniques (vector diffusion maps) are applicable to a wide variety of data sets and
 require little {\it a priori} knowledge of the image features or the developmental dynamics.
 %
 We demonstrate the utility of our methods using a collection of images from a study of {\it Drosophila} embryogenesis.
@@ -239,19 +238,21 @@ On the other hand, real data poses nontrivial challenges, due to the number of i
 \customlabel{subfig:fish_ordered}{\ref{fig:fish}{\it B}}
 \end{figure}
 
-We will demonstrate our techniques using two data sets from a study of {\it Dropophila} embryogenesis.
+We will show that we can use existing dimensionality reduction techniques to register and temporally order large sets of images from developmental biology studies. 
 %
-The first data set, shown in Figure~\ref{subfig:raw_data1} is relatively simple and will allow us to both illustrate and validate our methods. 
+We will demonstrate these techniques using two data sets from a study of {\it Dropophila} embryogenesis.
 %
-In the second data set, shown in Figure~\ref{subfig:raw_data2}, the dynamics are significantly more complex, and we will show that we can recover a reasonable trajectory that is qualitatively consistent with current knowledge.
+The first data set, shown in Figure~\ref{subfig:raw_data1}, is relatively simple and will allow us to both illustrate and validate our methods. 
+%
+In the second data set, shown in Figure~\ref{subfig:raw_data2}, the dynamics are significantly more complex; here, we will show that we can recover a reasonable trajectory that is qualitatively consistent with current knowledge.
 
 In both of these data sets, each image is taken from a different embryo, fixed at a different developmental time and imaged in a different rotational orientation.
 %
 We would like to organize these data sets in a meaningful and informative way.
 %
-This requires rotating and translating each image so the set is in a consistent frame of reference ({\it registration}), and then organizing the images. 
+This requires rotating and translating each image so the set is in a consistent frame of reference ({\it registration}), and then temporally ordering the images. 
 %
-We will show that the algorithms can effectively order the images in time and therefore give us meaningful picture of the underlying developmental dynamics. 
+We will show that dimensionality reduction algorithms can accomplish both of these tasks and therefore give us a meaningful picture of the underlying developmental dynamics. 
 
 
 \begin{itemize}
@@ -277,34 +278,46 @@ We will show that the algorithms can effectively order the images in time and th
 
 We use vector diffusion maps \cite{singer2012vector} to automatically register and order our images.
 %
-Vector diffusion maps combines two algorithms, angular synchroniation \cite{singer2011angular} for registeratin and diffusion maps \cite{coifman2005geometric} for extracting low-dimensional structure, into one computation that allows us to simulatenously register and temporally order our images. 
+Vector diffusion maps is a general technique, developed for data sets which contain both symmetries (e.g., translations and rotations) which one would like to factor out, and other directions of variability which one would like to uncover.
+%
+It combines two algorithms, angular synchronization \cite{singer2011angular} for registration and diffusion maps \cite{coifman2005geometric} for extracting low-dimensional structure, into one computation that allows us to simultaneously register and temporally order our images. 
+%
+Vector diffusion maps has been applied to cryo-EM images \cite{...}, where each image is a (very noisy) projection of a molecule, taken from a different viewing direction and in a different rotation. 
+%
+Here, we will use it to register the images with respect to rotations and translations, as well as uncover the main direction of variability, which is parameterized by time. 
+%
+The noise in our experiments is primarily from interembryo variability, rather than white noise from a measurement instrument (as in the cryo-EM example). 
 
-Registration via angular synchronizatoin/vector diffusion maps uses pairwise alignment information about the images to globally register the images in a consistent way.
+Registration via angular synchronization/vector diffusion maps uses pairwise alignment information to globally register the images in a consistent way.
 %
-A schematic illustation is shown in Figure~\ref{subfig:synchron1}, where each image is depicted as a vector, and we would like to align the set of vectors. 
+A schematic illustration is shown in Figure~\ref{subfig:synchron1}; each image is depicted as a vector, and the goal is to align the set of vectors. 
 %
-We first compute the angles needed to align pairs of vectors (or images).%
-This is rather simple to do, and requires no template function, but can be noisy and some images may be misaligned.
+We first compute the angles needed to align pairs of vectors (or images).
 %
-Using the angles between all pairs of vectors (or images), angular synchronization/ vector diffusion maps then finds the best rotation angle for each vector that is most consistent with the pairwise measurements.
+This is rather simple to do, and requires no template function; however, when the images are noisy, some pairwise alignment angles may be inaccurate.
+%
+Using the angles between all pairs of vectors (or images), angular synchronization/vector diffusion maps then finds the set of rotation angles, one angle for each vector, that is most consistent with the pairwise measurements.
 
-Diffusion maps \cite{coifman2005geometric} uncovers a parameterization of data that lies on a low-dimensional (perhaps nonlinear) manifold in high-diemnsional space. 
+In general, diffusion maps \cite{coifman2005geometric} is a nonlinear dimensionality reduction technique;
+it uncovers a parameterization of data that lies on a low-dimensional (perhaps nonlinear) manifold in high-dimensional space. 
 %
-This is illustrated in Figure~\ref{subfig:dmaps1}, where the data are two-dimensional points which lie on a one-diemsnional nonlinear curve. 
+This idea is illustrated in Figure~\ref{subfig:dmaps1}: the data are two-dimensional points which lie on a one-dimensional nonlinear curve. 
 %
 The color in Figure~\ref{subfig:dmaps2} depicts the one-dimensional parameterization or ordering of the data that we can detect visually.
 %
-In our examples, each data point will be an image with many pixels, and so extracting the low-dimensional structure visually will be difficult.
+In our examples, each data point will be very high dimensional (e.g, an image with many pixels), and so we cannot extract this low-dimensional structure visually.
 %
-Instead, we will rely on diffusion maps to automatically extract this structure from our high-dimensional data.
-
-Both of these steps are accomplished simulataneously using vector diffusion maps.
+Instead, we will rely on diffusion maps to automatically extract a parameterization of our high-dimensional data.
 %
-Vector diffusion maps finds a good parameterization of the data, while simultaneously registering data points which are close.
+We will assume that our data are (approximately) one-dimensional, and that this dimension is parameterized by time.
+%
+Therefore, ordering our data along this main dimension/direction will temporally order our data. 
+%
+Vector diffusion maps combines angular synchronization and diffusion maps to find a parameterization of the data while simultaneously registering data points which are close.
 
 \begin{figure}[t]
 \includegraphics[width=8.4cm]{fig4}
-\caption{ {\it (A)} Set of vectors, each in a different orientation. The pariwise alignment angles are indicated. {\it (B)} The vectors from {\it A}, each rotated so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in {\it A}. {\it (C)} Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see {\it SI Appendix}), so that close data points are connected by dark (``stronger'') edges. {\it (D)} The data in {\it C}, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure, $\phi_2$. The color intensity is monotonic with the arclength, thus parameterizing the curve.}
+\caption{ {\it (A)} Set of vectors, each in a different orientation. The pairwise alignment angles are indicated. {\it (B)} The vectors from {\it A}, each rotated so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in {\it A}. {\it (C)} Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see {\it SI Appendix}), so that close data points are connected by dark (``stronger'') edges. {\it (D)} The data in {\it C}, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure, $\phi_2$. The color intensity is monotonic with the arclength, thus parameterizing the curve.}
 %\label{fig:schematics}
 \customlabel{fig:schematics}{4}
 \customlabel{subfig:synch1}{\ref{fig:schematics}{\it A}}
@@ -316,27 +329,31 @@ Vector diffusion maps finds a good parameterization of the data, while simultane
 
 \subsection{Stage 5 images in {\it Drosophila} embryogenesis}
 
-Our first data set consists of $49$ images from stage 5 of {\em Drosophila} embryogenesis, shown in Figure~\ref{subfig:raw_data1}. 
+Our first data set, shown in Figure~\ref{subfig:raw_data1}, consists of $49$ images from stage 5 of {\em Drosophila} embryogenesis.
 %
-Each image is from a different embryo in a different orientation and at a different developmental time. 
+Each image is from a different embryo imaged in a different orientation and fixed at a different developmental time. 
 %
 We registered and ordered the images using vector diffusion maps.
 %
 The results are shown in Figure~\ref{subfig:ordered_data1}.
+%
+The features that our eyes can visually detect (the green Dorsal peak, and the red dpERK peaks) are now consistently registered, even though the algorithm does not require any information about the existence or location of these peaks. 
+%
+In addition, the red dpERK peaks grow in intensity over the developmental trajectory, as expected.
 
-Furthermore, we can gain a better understanding of the developmental trajectory by looking at an averaged trajectroy.
+When dealing with large sets of images with interembryo variability, we can gain a better understanding of the developmental trajectory by looking at an averaged trajectory.
 %
-Figure~\ref{subfig:average_data1} shows the moving average of the trajectory in Figure~\ref{subfig:ordered_data1} at different points. 
+Figure~\ref{subfig:average_data1} shows the moving average of the trajectory in Figure~\ref{subfig:ordered_data1}. 
 %
-We can easily see the developmental dynamics.
+We can now easily see the developmental dynamics: the red dpERK peaks grow in time, and the ventral furrow (the dent in green) begins to form at the end of stage 5. 
 
-Furthermore, for this data set, we can validate our proposed ordering of the data.
+For this data set, we can validate our proposed vector diffusion maps ordering of the data.
 %
-During stage 5, we can measure the developmental time based on the monotonic progress of cellularization.
+During stage 5, we can measure the developmental time based on the monotonic progress of cellularization (details are given in the {\it SI Appendix}).
 %
-We can compare this temporal ordering with the ordering we extract from vector diffusion maps. 
+We can compare the temporal ordering obtained from cellularization with the ordering we extract from vector diffusion maps. 
 %
-Quantitatively, the rank correlation coefficient between these two orderings is 0.9127.
+The rank correlation coefficient between these two orderings is 0.9127, indicating that there is very good agreement and vector diffusion maps is uncovering the correct temporal ordering of the images. 
 
 \begin{figure*}[t]
 \raisebox{8.1cm}{{\figtextfont A}}
@@ -358,27 +375,30 @@ Quantitatively, the rank correlation coefficient between these two orderings is 
 
 \subsection{Stage 5--7 Images of {\it Drosophila} embryogenesis}
 
-The images in Figure~\ref{fig:data1} are relatively simple, and the methods presented here are perhaps an overkill for these images.
+The images in Figure~\ref{fig:data1} are relatively simple, and the methods presented here are perhaps unnecessarily complex for these images. 
 %
-By visual inspection, these data are such that principal component analysis \cite{shlens2005tutorial} could uncover meaningful structure, and projection onto the first principal component would be sufficient to order the data.
+These data are effectively a single mode growing in time.
 %
-However, often, developmental data are significantly more complex, and nonlinear techniques such as diffusion maps/vector diffusion maps are required to extract meaningful structure in the data. 
+Therefore, principal component analysis \cite{shlens2005tutorial} would uncover most of the meaningful structure in the data, and projection onto the first principal component would be sufficient to order the data.
 %
-Figure~\ref{subfig:raw_data2} shows a data set of images from stages 5--7.
+However, developmental dynamics are often significantly more complex, and nonlinear techniques such as diffusion maps/vector diffusion maps are required to extract meaningful structure in the data. 
 %
-Only 22\% of the variability in the data is captured by the first principal component, and so we are forced to use more sophisticated techniques. 
+Figure~\ref{subfig:raw_data2} shows a data set of images from stages 5--7 of {\it Drosophila} embryogenesis.
+%
+Only 22\% of the variability in the data is captured by the first principal component, and so we are forced to use more sophisticated techniques, such as vector diffusion maps, to temporally order the data.
 
 Figure~\ref{subfig:ordered_data2} shows the images in Figure~\ref{subfig:raw_data2}, now registered and ordered using vector diffusion maps \cite{singer2012vector}.
 %
 Unlike the images in Figure~\ref{subfig:raw_data1}, 
 for Figure~\ref{fig:data2}, we have no time marker with which to validate our orderings.
 %
-However, there are noticeable features in the ordering that we can see are consistent with previously known dynamics,
-and we can construct a smoothed trajectory by averaging groups of neighboring images.
+However, there are noticeable features in the ordering that we can see are consistent with previously known dynamics.
 %
-Figure~\ref{subfig:averaged_trajectory} shows the images from Figure~\ref{subfig:ordered_data2}, divided into 12 groups and averaged. 
+We can again construct a smoothed trajectory by looking at the moving average of the images, shown in Figure~\ref{sub fig:average_data2}.
 %
 We can easily see the formation of the ventral furrow and germ band elongation, which concludes with ventral cells shifted to the dorsal side of the embryo.
+%
+This assures us that we can obtained an ordering of the data which is developmentally meaningful. 
 
 \newpage
 \begin{figure*}[t]
@@ -401,30 +421,23 @@ We can easily see the formation of the ventral furrow and germ band elongation, 
 
 \section{Conclusions}
 
-We present algorithms for registration and temporal ordering of images.
+We have demonstrated how existing reduction techniques (vector diffusion maps) can be used to register and temporally order images from developmental biology studies. 
 %
-The algorithms are sufficiently general that they can be applied to a wide variety of biological imaging data.
+We acknowledge that the tasks of both registration and ordering can be accomplished using a variety of techniques.
+%
+We chose the techniques outlined here, not because they are particularly suited to this specific problem, but rather, because they are sufficiently general and we are confident that they can be applied to a myriad of biological imaging applications. 
 
-We have shown how symmetry and dimensionality reduction techniques can successfully register and order cross-sectional developmental imaging data.
+The task of image registration has been studied in a variety of contexts \cite{...}.
 %
-Although we illustrated our methods using a specific data set from a study of {\it Drosophila} embryogenesis, the framework is quite general and requires little knowledge of the image features or the developmental dynamics.
+However, most of these applications first the definition and identification of good {\it features} within each image. 
 %
-To our knowledge, temporal ordering of {\it Drosophila} images has not been automated to this extent.
+For our biological applications, good features may not be known {\it a priori}.
 %
-Recently, machine learning algorithms have been used to group {\it Drosophila} images into different developmental classes \cite{yuan2014automated}, yet there, the appropriate classes must be defined by the user and hand-labeled training data are required.
+We therefore use an algorithm which requires no features, but instead, uses the images directly. 
 
-Temporal ordering of cross-sectional biological data has been studied in a variety of other contexts.
+The task of temporal ordering has also been studied, for data such as ...
 %
-Cross-sectional RNA sequencing data has been temporally ordered \cite{anavy2014blind, trapnell2014dynamics}, where each data point is the transcriptome for a single sample.
-%
-Gene expression data from multiple patients have been studied in \cite{gupta2008extracting, qiu2011discovering};
-here, each data point is a vector containing the expression levels of the various genes.
-%
-Snapshots of cells throughout the cell cycle can be described by a vector of features (e.g., amount of DNA) which quantify the cell's state  \cite{kafri2013dynamics}.
-%
-These problems are no different than our task of ordering images, each of which is a large vector of pixel intensities.
-%
-The majority of these works temporally order the data either by solving a traveling salesman problem on the data, or by constructing a minimum spanning tree of the data,
+Most of these applications order the data by solving a traveling salesman problem or constructing a minimum spanning tree on the data,
 expecting that these structures (the path of the traveling salesman, or the minimum spanning tree) characterize the majority of the structure/variability within the data and provide an accurate encoding of the dynamical progression.
 %
 We, instead, use diffusion maps to construct a one-dimensional parameterization of the data.
@@ -432,92 +445,14 @@ We, instead, use diffusion maps to construct a one-dimensional parameterization 
 Diffusion maps are one of many nonlinear dimensionality reduction techniques that have been recently developed \cite{Belkin2003, tenenbaum2000global, Donoho2003, Roweis2000}.
 %
 They have been shown to be more robust to noise than other path-based algorithms, such as isomap \cite{balasubramanian2002isomap}, and so we suspect they may perform better than the ordering algorithms used in previous work.
+% 
+Furthermore, techniques such as diffusion maps do not constrain us to one-dimensional parameterizations/organizations of the data.
+% 
+In this particular setup, we expect our data to be one-dimensional, as the only (main) source of variability is time.
 %
-{\bf Yannis says ``careful'', he thinks this might be too strong of a statement.}
-%%%
-%%%   we need help here
-%%%
-%
-%Furthermore, although we use only the first diffusion maps coordinate to order the data (we assume the data are one-dimensional), diffusion maps are not limited to one-dimensional data and can be used to extract more complex structures.
-%
-%For example, in data which contains several branches or classes, the first few coordinates will delineate the branches or separate the classes.
+However, other sources of variability would also be uncovered using diffusion maps, 
+and tasks such as classification and comparison of different mutations can also be accomplished using the same techniques. 
 
-The task of image registration has been widely studied \cite{zitova2003image}, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
-%
-The main point to note here is that many registration algorithms require definition of appropriate landmarks or features for the images and the location of these within each image.
-%
-For example, in face recognition, the first step is often to find the eyes, nose, and mouth within the face, and then register images by aligning these features \cite{zhao2003face}.
-%
-Temporally ordering images of a construction site over time is also based on first identifying features within the images \cite{schindler2007inferring}.
-%
-In general, appropriate features may not be known {\it a priori}, and so we require a registration algorithm that does not rely on predefined features, but only on the inherent geometric symmetry of the problem.
-%
-Template-based methods are also common for registration, where one optimally aligns each image to a predefined template function.
-%
-However, these methods can suffer when the images are noisy, and the success of such methods can depend strongly on the template function \cite{shatsky2009method}.
-%
-{\bf Need to discuss consistency.}
-
-Angular synchronization and vector diffusion maps require no feature points and no template function.
-%
-These methods have been used to register two-dimensional cryo-electron microscopy images of three-dimensional molecules \cite{singer2011three}, where each image is a picture of (essentially) the {\it same} molecule; variation in the data comes from differences in the viewing angles (rotations of the molecule) and from instrument/measurement noise.
-%
-In contrast, our data contains variation from the different embryo orientations, as well as variation from the underlying developmental dynamics. % (which underpins the development of vector diffusion map algorithms).
-%
-In addition to the eigenproblem relaxation used here, other synchronization algorithms have been proposed \cite{bandeira2014multireference}.
-%
-Synchronization is formulated for general symmetry groups, and depending on the data, one might consider other symmetries, such as reflections and scaling/dilation.
-%
-Here, the main requirement is that the symmetry group be represented by orthogonal or unitary matrices \cite{singer2013spectral}.
-
-Temporal ordering can also be accomplished without first registering the images, by constructing functions of the images which are invariant under translations and rotations. 
-%
-These functions are then used as the data in the diffusion maps calculation; since these representative functions do not change under translations and rotations, the resulting diffusion map embedding is invariant to symmetries.
-%
-Such functions include the scale invariant feature transform \cite{lowe1999object, lowe2004distinctive}, the scattering transform \cite{mallat2012group}, and the bispectrum \cite{zhao2014rotationally}.
-%
-These methods have the disadvantage that we do not obtain a registered set of images, but only a temporal ordering.
-%
-However, such methods can often be faster for large data sets, since the functions are computed per image, rather than computing pairwise quantities in synchronization.
-
-In all of these data-driven methods, an essential question is how much and what type of data is needed to accurately reconstruct the dynamics.
-%
-For diffusion maps to temporally order the data, we require the developmental trajectory to be well-sampled, and that the principal direction of variability in the data (the coordinate which diffusion maps will recover) be monotonic in time.
-%
-In addition, the data should have spatial variability/structure for synchronization to successfully register the images.
-%
-In our example, the data set is sufficiently large so that the dynamics are well-sampled.
-%
-We have included both the red and the green channels so that the principal direction of variability is monotonic in time.
-%
-If we only used the green channel in our analysis, we could not successfully order the data using diffusion maps, as this signal does not change appreciably in time.
-%
-Both the red and green channels contain spatial variability which allows us to register the data points: the green channel has one peak at a specific angular around the embryo, and the red channel has two peaks which grow in time.
-%
-We include the green channel because the location of the red peaks is noisy, and so inclusion of the (less noisy) green channel allows us to more accurately register the images.
-%
-%For the methods we present here, we require a sufficient amount of data for the one-dimensional evolution curve to be ``seen'' by the algorithms (i.e., in Figure~\ref{subfig:dmaps_edges}, there are a sufficient number of data points so that our eye can see the curve; if there were only 4 data points, it would most likely be difficult for our eye to detect the one-dimensional structure).
-%
-%We also require the data to contain enough information so that the alignments and dynamics are apparent.
-%
-%For example, in the data presented in Figure~\ref{subfig:images_unordered}, the green peaks delineate the position of the ventral axis in the embryo, and the intensity of the red peaks grow over time.
-%
-%Therefore, these images contain information about rotational symmetries of the data as well as the dynamics of the data.
-%
-%If we removed the green signal, and only used the red signal in our analysis, the registration would not be as accurate.
-%
-%Furthermore, if we only used the green signal, then there would be no dynamic information (the shape or intensity of Dorsal does not change as a function of time in the developmental stage we are considering), and the temporal ordering would be inaccurate.
-%
-We are confident that for many applications, these requirements - data which adequately samples the developmental trajectory, and data with sufficient spatial and temporal variability - are easily met.
-%
-In these cases, our methods allow for the rapid, automated analysis of imaging data sets to help uncover possibly complex dynamics and structure.
-
-
-
-
-
-Although the examples here focus on temporally ordering the data, tasks such as classification and comparison of different mutations can also be accomplished using the same techniques. 
-%
 
 \begin{itemize}
 \item What are other people doing  (maybe critically)
