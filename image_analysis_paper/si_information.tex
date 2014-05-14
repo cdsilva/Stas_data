@@ -21,6 +21,16 @@
 \label{fig:membrane_compare}
 \end{figure}
 
+\section{Image parameters}
+
+For the images shown in Figure~3 of the paper, we only use the red and green channels (dpERK and Dl) to register the images.
+
+For the images shown in Figure~4 of the paper, we use all three channels (dpERK, Twi, and nuclei) to register the images.
+%
+We blur the nuclei using a disc filter with radius $5$~pixels.
+%
+We also adjust the intensity of the nuclear signal such that 1\% of the pixels are saturated.
+
 \section{PCA for gastrulating images}
 
 \begin{figure}[h!]
@@ -29,12 +39,18 @@
 
 \raisebox{3.7cm}{B}
 \includegraphics[width=8.4cm]{data2_PCA_variance}
-\caption{{\it A} Images shown in Figure~4 of the paper, now ordered by the first PCA projection coefficient. Note that the ordering is not consistent with the developmental dynamics. {\it B} The eigenvalue spectrum from PCA. Note that subsequent components have a nonnegligible contribution on the data.}
+\caption{{\it (A)} Images shown in Figure~4 of the paper, now ordered by the first PCA projection coefficient. Note that the ordering is not consistent with the developmental dynamics. {\it (B)} The eigenvalue spectrum from PCA. Note that subsequent components have a nonnegligible contribution on the data.}
 \end{figure}
 
 \section{Mathematical Algorithms}
 
 \subsection{Angular synchronization \cite{singer2011angular}}
+
+\begin{figure}[t]
+\includegraphics[width=8.4cm]{fig3}
+\caption{{\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
+\label{fig:1d_demo}
+\end{figure}
 
 Let $ x_1, \dots, x_m$ denote the signals that we wish to align with respect to rotations;
 each signal is a function defined on the unit circle (on the plane).
