@@ -202,21 +202,55 @@ end
 [~, I] = sort(proj_coeff(:, 1));
 figure;
 set(gcf, 'paperunits', 'centimeters')
-set(gcf, 'papersize', [8 8])
-set(gcf, 'paperposition',[0 0 8 8])
+set(gcf, 'papersize', [8 8*subplot_dim2/subplot_dim1])
+set(gcf, 'paperposition',[0 0 8 8*subplot_dim2/subplot_dim1])
 for i=1:m
     im1 = image_set_aligned(:,:,:,I(i));
-    
+        im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+    im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
     %subplot(subplot_dim1, subplot_dim2, i);
     %subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
     make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
     imshow(im1);
     
 end
+saveas(gcf,sprintf('%s/data2_PCA_ordered', im_save_dir), 'pdf')
 
-diag(D_PCA(1:10, 1:10)) / sum(diag(D_PCA))
 
+figure;
+for i=1:9
+    subplot(3, 3, i)
+    imshow(eigenimages(:, :, :, i))
+end
 
+nstages = 12;
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(nstages, 1, 0.01, i);
+    stage_indices = I(max(1, round((i-1)*m/nstages)+1):min(m,round(i*m/nstages)));
+    im1 = uint8(mean(double(image_set_aligned(:,:,:,stage_indices)), 4));
+    im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+    im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 4])
+set(gcf, 'paperposition',[0 0 8 4])
+bar(diag(D_PCA(1:10, 1:10)) / sum(diag(D_PCA)))
+xlabel('k')
+ylabel('\lambda_k')
+saveas(gcf,sprintf('%s/data2_PCA_variance', im_save_dir), 'pdf')
+
+return
 %% VDM
 
 eps = median(W(:))/10;
