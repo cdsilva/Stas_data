@@ -343,6 +343,27 @@ for i=1:nstages
 end
 saveas(gcf,sprintf('%s/average_trajectory_VDM', im_save_dir), 'pdf')
 
+%%
 
+idx1 = find(embed_idx(1,:) == 4 & embed_idx(2,:) == 1);
+%idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 3);
+idx2 = find(embed_idx(1,:) == 10 & embed_idx(2,:) == 1);
 
+figure; plot(embed_coord(:, idx1), embed_coord(:, idx2), '.')
 
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8]);
+plot(embed_coord(:,idx1),embed_coord(:,idx2),'.')
+hold on
+dist_in_dmaps = squareform(pdist(embed_coord(:, [idx1 idx2])));
+draw_tol = 0.01;
+im_delta = 0.01;
+hold on
+for i=1:m
+    if i == 1 || min(dist_in_dmaps(i, 1:i-1)) > draw_tol
+        image('cdata', image_set_aligned(:, :, :, i), 'xdata', [embed_coord(i,idx1) embed_coord(i,idx1)+im_delta], 'ydata', [embed_coord(i,idx2) embed_coord(i,idx2)+im_delta])
+    end
+end
+axis equal
