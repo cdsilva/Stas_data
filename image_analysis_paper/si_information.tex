@@ -8,12 +8,24 @@
 \usepackage{amssymb,amsfonts,amsmath}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
+\makeatletter
+\newcommand{\customlabel}[2]{%
+\protected@write \@auxout {}{\string \newlabel {#1}{{#2}{}}}}
+\makeatother
 
 \begin{document}
 
 \section{Experimental Methods}
 
 \subsection{Measuring developmental time during cellularization}
+
+Todo:
+\begin{itemize}
+\item We need to have a supplementary figure that shows the lateral view, that makes it even more clear that we work with optical sections.
+
+\item Need image labeled with D/V
+
+\end{itemize}
 
 \begin{figure}[h!]
 \includegraphics[width=8.4cm, trim=0cm 5.6cm 0cm 0cm, clip]{fig6}
@@ -23,15 +35,29 @@
 
 \section{Image parameters}
 
-For the images shown in Figure~3 of the paper, we only use the red and green channels (dpERK and Dl) to register the images.
-
+Each image is subsampled to $100 \times 100$ pixels.
+%
+For the images shown in Figures~3~and~5 of the paper, we only use the red and green channels (dpERK and Dl) in the vector diffusion maps computations.
+%
+The nuclei are shown only for visual reference.
+%
 For the images shown in Figure~4 of the paper, we use all three channels (dpERK, Twi, and nuclei) to register the images.
 %
-We blur the nuclei using a disc filter with radius $5$~pixels.
+We blur the nuclear signal using a disc filter with a $5$~pixel radius (using the \texttt{imfilter} function in Matlab with a disc filter).
 %
-We also adjust the intensity of the nuclear signal such that 1\% of the pixels are saturated.
+We also adjust the intensity of the nuclear signal in each image such that 1\% of the pixels are saturated (using the \texttt{imadjust} function in Matlab).
 
-\section{PCA for gastrulating images}
+\section{Principal component analysis for gastrulating images}
+
+We performed principal component analysis on the images shown in Figure~4 of the paper.
+%
+We first registered the images using angular synchronization, and then computed the principal components for the data set.
+%
+We ordered the images by the projection onto the first principal component; the results are shown in Figure~\ref{fig:PCA_results}.
+%
+The dynamics that we uncover are not consistent with the expected biological progression.
+%
+Furthermore, the eigenvalue spectrum from PCA indicates that a significant amount of the variance is not captured by the first principal component, therefore motivating us to use nonlinear techniques. 
 
 \begin{figure}[h!]
 \raisebox{5.2cm}{A}
@@ -39,10 +65,27 @@ We also adjust the intensity of the nuclear signal such that 1\% of the pixels a
 
 \raisebox{3.7cm}{B}
 \includegraphics[width=8.4cm]{data2_PCA_variance}
-\caption{{\it (A)} Images shown in Figure~4 of the paper, now ordered by the first PCA projection coefficient. Note that the ordering is not consistent with the developmental dynamics. {\it (B)} The eigenvalue spectrum from PCA. Note that subsequent components have a nonnegligible contribution on the data.}
+\caption{{\it (A)} Images shown in Figure~4 of the paper, now ordered by the first PCA projection coefficient. The recovered ordering is not consistent with the known developmental dynamics. {\it (B)} The fraction of the variance captured by each of the first 10 principal components. Note that components 2--10 have a nonnegligible contribution to the data.}
+\label{fig:PCA_results}
 \end{figure}
 
 \section{Mathematical Algorithms}
+
+We will demonstrate our techniques for registration and temporal ordering using a synthetic data set.
+%
+The relatively simple dynamics of this data set will allow us to easily visualize and illustrate the main points of the different algorithms.
+%
+We construct concentration profiles defined on a ring, and we assume that each ring is arbitrarily rotated around its center; an example is shown in Figure~\ref{subfig:1d_example}.
+%
+Rotation of the ring corresponds to shifting (with periodic boundary conditions) the one-dimensional concentration profile shown at the bottom of Figure~\ref{subfig:1d_example} (the symmetry group is $SO(2)$, the group of all two-dimensional proper rotations).
+%
+Each concentration profile is a noisy Gaussian (shown in Figure~\ref{subfig:1d_intensity}), and the Gaussians increase in intensity as  a function of time.
+%
+We discretize the profiles into $100$ points, so our numerical data will be $100$-dimensional vectors (the corresponding symmetry group for the discretized profiles is $\mathbb{Z}_{100}$, the group of integers modulo $100$).
+%
+Figure \ref{subfig:1d_unaligned_unordered} shows the entire data set; the concentration profiles have been stacked in an array, so that each row corresponds to a single profile.
+%
+Because the profiles are unregistered and unordered, the underlying dynamics (a Gaussian whose amplitude grows in time) are not readily apparent.
 
 \subsection{Angular synchronization \cite{singer2011angular}}
 
@@ -50,6 +93,13 @@ We also adjust the intensity of the nuclear signal such that 1\% of the pixels a
 \includegraphics[width=8.4cm]{fig3}
 \caption{{\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
 \label{fig:1d_demo}
+%\customlabel{fig:1d_demo}{3}
+\customlabel{subfig:1d_example}{\ref{fig:1d_demo}{\it A}}
+\customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}{\it B}}
+\customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}{\it C}}
+\customlabel{subfig:1d_aligned_unordered}{\ref{fig:1d_demo}{\it D}}
+\customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}{\it E}}
+\customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}{\it F}}
 \end{figure}
 
 Let $ x_1, \dots, x_m$ denote the signals that we wish to align with respect to rotations;
@@ -162,24 +212,22 @@ We estimate $\theta_{i}$ by inverting \eqref{eq:R_theta}, and register the signa
 We note that, in our actual computations, the pairwise rotations $\theta_{ij}$ are computed in a discrete setting, then the overall
 synchronization is performed in the continuum context to obtain $\theta_i$, and the results are rounded to give the closest
 discrete shift.
-%
-Details of registering two-dimensional images using synchronization are given in the {\it SI Appendix}. 
 
-%Furthermore, this formulation also considers {\it higher-order} consistency information.
+Furthermore, this formulation also considers {\it higher-order} consistency information.
 %
-%For example, given our pairwise estimates $R_{ij}$, we know that relationships of the form
-%\begin{equation} \label{eq:triplet_consistency}
-%R(\theta_{ik}) R(\theta_{kj}) \approx R(\theta_i) R(\theta_k)^T R(\theta_k) R(\theta_j)^T = R(\theta_i) R(\theta_j)^T
-%\end{equation}
-%should also hold.
+For example, given our pairwise estimates $R_{ij}$, we know that relationships of the form
+\begin{equation} \label{eq:triplet_consistency}
+R(\theta_{ik}) R(\theta_{kj}) \approx R(\theta_i) R(\theta_k)^T R(\theta_k) R(\theta_j)^T = R(\theta_i) R(\theta_j)^T
+\end{equation}
+should also hold.
 %
-%Note that
-%\begin{equation}
-%(H^2)_{ij} = \sum_k R(\theta_{ik}) R(\theta_{kj});
-%\end{equation}
-%therefore, {\it all} infomation of the form in \eqref{eq:triplet_consistency} is contained in the matrix $H^2$.
+Note that
+\begin{equation}
+(H^2)_{ij} = \sum_k R(\theta_{ik}) R(\theta_{kj});
+\end{equation}
+therefore, {\it all} information of the form in \eqref{eq:triplet_consistency} is contained in the matrix $H^2$.
 %
-%Because $H$ and $H^2$ have the same eigenvectors, our problem formulation accounts for not only pairwise alignment information, but also these higher-order considerations.
+Because $H$ and $H^2$ have the same eigenvectors, our problem formulation accounts for not only pairwise alignment information, but also these higher-order considerations.
 
 \subsection{Diffusion maps \cite{coifman2005geometric}}
 
@@ -210,7 +258,7 @@ A = D^{-1} W.
 %
 We calculate the eigenvectors $\phi_1, \phi_2, \dots, \phi_m$, ordered such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_m|$.
 %
-%Because the matrix $A$ is similar to the symmetric matrix $D^{-1/2} W D^{-1/2}$, $A$ is guaranteed to have real eigenvalues and real, orthogonal eigenvectors.
+Because the matrix $A$ is similar to the symmetric matrix $D^{-1/2} W D^{-1/2}$, $A$ is guaranteed to have real eigenvalues and real, orthogonal eigenvectors.
 %
 Because the matrix $A$ is row-stochastic, $\lambda_1=1$ and $\phi_1$ is a constant vector; this is a trivial solution to \eqref{eq:dmaps_opt_problem}.
 %
@@ -222,7 +270,7 @@ In our application, we have assumed that this single direction of variability, p
 %
 Ordering the data by $\phi_2(j)$ will then, effectively, order them in time.
 %
-The procedure generalizes when the data lie on higher-dimensional manifolds (not just curves) in data space.
+The procedure generalizes when the data lie on higher-dimensional manifolds (not just curves) in data space, where lower eigenvectors give subsequent embedding coordinates for the data. 
 
 \subsection{Vector diffusion maps\cite{singer2012vector}}
 
@@ -254,24 +302,59 @@ We then expect subsequent eigenvectors to contain information about the main dir
 %%%
 %However, the eigenvectors now also contain information about the embedding coordinates for our images.
 %
-In general, the embedding coordinates will be given by
+
+If we assume that the rotations and the dynamics are uncoupled and therefore separable, then the eigenvectors of $S$ have the following structure: each block eigenvector contains estimates of the optimal rotations multiplied by the corresponding embedding coordinate.
+%
+As the first diffusion maps coordinate is constant, the first block eigenvector contains only the optimal rotations.
+%
+The second block eigenvector (eigenvectors $d+1$ through $2d$) contains the optimal rotations, each multiplied by their second diffusion maps coordinate. 
+%
+We can therefore recover this diffusion maps coordinate by taking inner products of the columns of the second block eigenvector with columns of the first block eigenvector.
+%
+As rotation matrices are orthonormal, many of these will be zero, 
+and the nonzero inner products give us the embedding coordinates.
+%
+More specifically, the $j^{th}$ embedding coordinate will be given by
 \begin{equation}
-\psi_{k,l} (i) = \langle \phi_k(i), \phi_l(i) \rangle
+\psi_{k,l} (i) = \langle \phi_k(i), \phi_l(i) \rangle, \: 0 < k \le d, (j-1)d < l \le jd
 \end{equation}
-where $\phi_k(i) \in \mathbb{R}^d$ denotes the $i^{th}$ block of $\phi_k$.
+where $\phi_k(i) \in \mathbb{R}^d$ denotes the $i^{th}$ block of $\phi_k$, 
+and we select values of $k$ and $l$ such that the coordinate $\psi_{k, l}$ has the largest variability. 
 %
-If we assume that our data mainly vary along a one-dimensional manifold, and that the rotations and the dynamics are uncoupled and therefore separable, one expects the embedding coordinate for our data %(i.e., the analog of $\phi_2$ from the diffusion maps case)
-to be  $\psi_{1,d+1}$.
+
+\subsection{Registering images with respect to translations and rotations} \label{subsec:trans_rot_register}
+
+
+\begin{figure*}
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sphere_1}\\
+\includegraphics[width=\textwidth]{sphere2_1}\\
+A
+\end{minipage}
 %
-Our example is, by physical considerations, a separable one, and so sorting our data by $\psi_{1,d+1}$ will order our data in time.
-%
-If no separability claims can be made, a second diffusion map step, using $\psi_{k,l}$ as the coordinates, may uncover a
-useful parameterization of the data manifold modulo symmetries.
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sphere_2}\\
+\includegraphics[width=\textwidth]{sphere2_2}\\
+B
+\end{minipage}
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sphere_3}\\
+\includegraphics[width=\textwidth]{sphere2_3}\\
+C
+\end{minipage}
+\begin{minipage}{0.2\textwidth} 
+\centering
+\includegraphics[width=\textwidth]{sphere_4}\\
+\includegraphics[width=\textwidth]{sphere2_4}\\
+D
+\end{minipage}
+\caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. {\it (A)} The original image. {\it (B)} Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. {\it (C)} Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. {\it (D)} Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three-dimensional spheres, and the bottom row shows the (two-dimensional) surface of the sphere in which we are interested.}
+\label{fig:SO3_picture}
+\end{figure*}
 
-
-
-
-\section{Registering images with respect to translations and rotations} \label{subsec:trans_rot_register}
 
 Using angular synchronization or vector diffusion maps to register images with respect to rotations {\it and translations} requires some additional effort.
 %
@@ -295,7 +378,7 @@ dx, dy \in [-\Delta, \Delta]\\
 \end{equation}
 where $g(I_j, \theta, dx, dy)$ is image $I_j$ rotated around the center of the square by $\theta$ radians, then translated by $dx$ pixel widths in the $x$ direction, and finally translated by $dy$ pixel widths in the $y$ direction.
 %
-The norm, $\| \cdot \|$, is the Euclidean norm between the pixel intensities for both the red and green channels.
+The norm, $\| \cdot \|$, is the Euclidean norm between the pixel intensities of the channels. 
 %
 The domain of the image (a square) is not invariant to our rotations and translations; however, the pixels near the border of the square have zero intensity, and so the norm can be meaningfully computed as long as the main image does not ``move out of'' the original square.
 %
@@ -345,9 +428,9 @@ However, the typical matrix representation for $ISO(2)$, the group of two-dimens
 %
 Instead, we {\it approximately} represent rotations and translations in two dimensions using {\it three-dimensional rotation matrices}, by projecting the (two-dimensional) image onto a portion of the surface of a (three-dimensional) sphere \cite{singer2011angular}.
 %
-Rotation of the image corresponds to rotation around one principal axis in three dimensions, while translation of the image corresponds (approximately) to rotations around the other two principal axes. %(Clearly, not all translations can be described this way, as translations can range from $-\infty$ to $+ \infty$, and rotations are only from $0$ to $2 \pi$. However, the images we will be considering are already mostly centered, and so we are only interested in small translations that are well within the $[0, 2\pi)$ range.)
+Rotation of the image corresponds to rotation around one principal axis in three dimensions, while translation of the image corresponds (approximately) to rotations around the other two principal axes. (Clearly, not all translations can be described this way, as translations can range from $-\infty$ to $+ \infty$, and rotations are only from $0$ to $2 \pi$. However, the images we will be considering are already mostly centered, and so we are only interested in small translations that are well within the $[0, 2\pi)$ range.)
 %
-%These rotation matrices are (by definition) orthogonal, and successive applications of various translations and rotations can be described via multiplication of the corresponding rotation matrices in $SO(3)$.
+These rotation matrices are (by definition) orthogonal, and successive applications of various translations and rotations can be described via multiplication of the corresponding rotation matrices in $SO(3)$.
 
 
 
@@ -424,7 +507,6 @@ R_{3,3} & = \cos(\alpha)\cos(\beta)  &
 \end{equation}
 %
 Inverting \eqref{eq:angle_relations} yields the desired approximate translations and rotation, and we round optimal translations to the nearest integer to remove the need for interpolation when translating the images.
-
 
 \bibliographystyle{pnas}
 \bibliography{background_reading/references,../../references/references}

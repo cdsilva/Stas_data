@@ -3235,6 +3235,7 @@ tabnote\the\tablenotenum\endcsname
 %% Section fonts
 \font\sectionfont=\frutigerbold at 10pt
 \font\subsectionfont=\frutigerbold at9pt
+\font\subsectionitfont=\frutigerboldoblique at9pt
 
 \font\significanceheadfont=\frutigerbold at 9pt
 \font\significancefont=\frutigerbold at 8pt
@@ -3247,6 +3248,7 @@ tabnote\the\tablenotenum\endcsname
 %% Caption
   \font\fignumfont=\frutigerbold at 9pt
 \font\xfigtextfont=\frutiger at 7pt
+\font\xfigtextfontit=\frutigeroblique at 7pt
   \def\figtextfont{\small\dospecialaccents\xfigtextfont}
 
 %% Table font

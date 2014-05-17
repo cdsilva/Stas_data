@@ -16,6 +16,9 @@ mut = [7 11 13 15 16 17 18 20 21 29 32 33 34 36 37 38 40 41 48 49 ...
     52 53 54 55 56 57 60 61 62 63 68 71 72 73 74 81 82 83 84 85 ...
     86 87 90 93 96 97 98]; %47
 
+mutation = true(m, 1);
+mutation(wt) = false;
+
 ind = 1:m;
 
 %% image parameters
@@ -48,7 +51,8 @@ for i=1:m
     nuclei(:, :, i) = im1(:, :, 1);
     
     im1(:, :, 1) = im1(:, :, 2);
-    im1(:, :, 2) = uint8(0.5*double(im1(:, :, 3)));
+    %im1(:, :, 2) = uint8(0.5*double(im1(:, :, 3)));
+    im1(:, :, 2) = 0;
     im1(:, :, 3) = 0;
     
     %store image
@@ -58,7 +62,6 @@ for i=1:m
     imshow(im1);
 end
 
-
 %% raw dpERK images-- synchronization
 
 angle_proj = pi/8;
@@ -66,7 +69,7 @@ shift_max = 10;
 shift_step = 2;
 dim = 3;
 
-matlabpool open 4;
+matlabpool open 2;
 [R, W] = compute_pairwise_alignments_color(image_set, angle_proj, shift_max, shift_step);
 matlabpool close
 
@@ -78,19 +81,7 @@ matlabpool close
 
 ind = setdiff(1:m, [17]);
 
-wt = [1 2 3 4 5 6 8 9 10 12 14 19 22 23 24 25 26 27 28 30 ...
-    31 35 39 42 43 44 45 46 47 50 51 58 59 64 65 66 67 69 70 75 ...
-    76 77 78 79 80 88 89 91 92 94 95]; %51
-
-mut = [7 11 13 15 16 18 20 21 29 32 33 34 36 37 38 40 41 48 49 ...
-    52 53 54 55 56 57 60 61 62 63 68 71 72 73 74 81 82 83 84 85 ...
-    86 87 90 93 96 97 98]; %47
-
-i = find(wt > 17);
-wt(i) = wt(i) - 1;
-i = find(mut > 17);
-mut(i) = mut(i) - 1;
-
+mutation = mutation(ind);
 
 image_set = image_set(:, :, :, ind);
 image_set_raw = image_set_raw(:, :, :, ind);
@@ -152,8 +143,12 @@ eps2 = median(W2(:))*10;
 [V2, D] = dmaps(W2, eps2, 10);
 
 figure;
-plot(V2(:,2),V2(:,3),'.')
+plot(V2(:,2),V2(:,3),'.');
 
+figure;
+plot(V2(~mutation,2),V2(~mutation,3),'.');
+hold on
+plot(V2(mutation,2),V2(mutation,3),'.r');
 
 figure;
 im_delta = 0.04;
@@ -235,7 +230,7 @@ bar(diag(D))
 %%
 
 idx1 = find(embed_idx(1,:) == 4 & embed_idx(2,:) == 1);
-idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 3);
+idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 2);
 
 figure;
 plot(embed_coord(:,idx1),embed_coord(:,idx2),'.')
@@ -243,9 +238,9 @@ plot(embed_coord(:,idx1),embed_coord(:,idx2),'.')
 %%
 
 figure;
-plot(embed_coord(wt,idx1),embed_coord(wt,idx2),'.')
+plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'.')
 hold on
-plot(embed_coord(mut,idx1),embed_coord(mut,idx2),'.r')
+plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'.r')
 
 %%
 
@@ -267,7 +262,7 @@ end
 axis equal
 
 %%
-[~, I ] =sort(embed_coord(:,idx1));
+[~, I ] =sort(embed_coord(:,idx2));
 
 figure;
 for i=1:m
