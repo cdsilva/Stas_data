@@ -33,11 +33,11 @@ for i=1:m
     
     % resize image
     im1 = imresize(im1, [npixels npixels]);
-
+    
     %     blur image
     H = fspecial('disk',5);
     im1(:, :, 1) = imfilter(im1(:, :, 1),H,'replicate');
-    im1(:, :, 1) = 0.5*imadjust(im1(:, :, 1));    
+    im1(:, :, 1) = 0.5*imadjust(im1(:, :, 1));
     
     im1(:, :, 3) = 1.5 * im1(:, :, 3);
     
@@ -206,7 +206,7 @@ set(gcf, 'papersize', [8 8*subplot_dim2/subplot_dim1])
 set(gcf, 'paperposition',[0 0 8 8*subplot_dim2/subplot_dim1])
 for i=1:m
     im1 = image_set_aligned(:,:,:,I(i));
-        im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+    im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
     im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
     %subplot(subplot_dim1, subplot_dim2, i);
     %subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
@@ -307,7 +307,7 @@ for i=1:m
     
     imshow(im1);
 end
-saveas(gcf,sprintf('%s/VDM_ordered', im_save_dir), 'pdf')
+%saveas(gcf,sprintf('%s/VDM_ordered', im_save_dir), 'pdf')
 
 %%
 
@@ -331,3 +331,117 @@ end
 saveas(gcf,sprintf('%s/average_trajectory', im_save_dir), 'pdf')
 
 
+%%
+
+% window_delta = 5;
+% window_eps = 5;
+% window_weights = exp(-(-window_delta:window_delta).^2/window_eps);
+%
+% writerObj = VideoWriter('gastrulation.avi');
+% writerObj.FrameRate = 15;
+% open(writerObj);
+%
+% i = window_delta + 1;
+% stage_indices = I(i-window_delta:i+window_delta);
+% im1 = window_weights(1) * double(image_set_raw_aligned(:,:,:,stage_indices(1)));
+% for j=2:window_delta+1
+%     im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,stage_indices(j)));
+% end
+% im1 = uint8(im1 / sum(window_weights));
+%
+% im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+% im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+%
+% imshow(im1,'initialmagnification','fit','border','tight')
+% set(gca,'nextplot','replacechildren');
+% set(gcf,'Renderer','zbuffer');
+%
+%
+% figure;
+% set(gcf, 'paperunits', 'centimeters')
+% set(gcf, 'papersize', [8 8])
+% set(gcf, 'paperposition',[0 0 8 8])
+% for i=window_delta+2:m-window_delta
+%
+%     stage_indices = I(i-window_delta:i+window_delta);
+%     im1 = window_weights(1) * double(image_set_raw_aligned(:,:,:,stage_indices(1)));
+%     for j=2:window_delta+1
+%         im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,stage_indices(j)));
+%     end
+%     im1 = uint8(im1 / sum(window_weights));
+%
+% %     im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+% %     im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+%
+%     imshow(im1,'initialmagnification','fit','border','tight')
+%
+%     %pause(0.1)
+%     frame = getframe;
+%     writeVideo(writerObj,frame);
+%     clf
+% end
+%
+% close(writerObj);
+
+writerObj = VideoWriter('gastrulation.avi');
+writerObj.FrameRate = 100;
+open(writerObj);
+
+nframes = 1000;
+frame_points = linspace(1, m, nframes);
+window_eps = 20;
+window_tol = 0.01;
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+
+i = 1;
+window_weights = exp(-(frame_points(i)-(1:m)).^2/window_eps);
+window_weights = window_weights / sum(window_weights);
+window_weights(window_weights < window_tol) = 0;
+im1 = window_weights(1) * double(image_set_raw_aligned(:,:,:,I(1)));
+for j=2:m
+    if window_weights(j) > window_tol
+        im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,I(j)));
+    end
+end
+im1 = uint8(im1 / sum(window_weights));
+
+im1 = circshift(im1,[0 0 -1]);
+im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+
+imshow(im1,'initialmagnification','fit','border','tight')
+set(gca,'nextplot','replacechildren');
+set(gcf,'Renderer','zbuffer');
+
+clf
+
+for i=1:nframes
+    
+    window_weights = exp(-(frame_points(i)-(1:m)).^2/window_eps);
+    window_weights = window_weights / sum(window_weights);
+    window_weights(window_weights < window_tol) = 0;
+    im1 = window_weights(1) * double(image_set_raw_aligned(:,:,:,I(1)));
+    for j=2:m
+        if window_weights(j) > window_tol
+            im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,I(j)));
+        end
+    end
+    im1 = uint8(im1 / sum(window_weights));
+    
+    im1 = circshift(im1,[0 0 -1]);
+    im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+    im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+    
+    %pause(0.1)
+    frame = getframe;
+    writeVideo(writerObj,frame);
+    clf
+end
+
+close(writerObj);

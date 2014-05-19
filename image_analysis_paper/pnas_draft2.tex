@@ -250,7 +250,7 @@ Based on manifold learning algorithms for high-dimensional data (such as images)
 %
 Here we adapt these techniques for temporal ordering and registration of imaging data from cross-sectional studies of developmental dynamics, with the main objective of revealing stereotypic developmental trajectories.
 %
-We demonstrate these techniques using three data sets from a study of {\it Dropophila} embryogenesis, one of the best experimental models for studies of developmental dynamics.
+We demonstrate these techniques using three data sets from a study of {\it Drosophila} embryogenesis, one of the best experimental models for studies of developmental dynamics.
 %
 The first data set, shown in Figure~\ref{subfig:raw_data1}, is relatively simple and will allow us to both illustrate and validate our methods. 
 %
@@ -426,7 +426,8 @@ For example, the images contain size variability.
 %
 In this example, the size variation is relatively small relative to the developmental changes. 
 %
-However, in other applications where the size variation is significant or the developmental dynamics are more subtle, it may be important to factor out size or scaling symmetries.
+However, in other applications where the size variation is significant or the developmental dynamics are more subtle, it may be important to factor out size or scaling symmetries, or consider additional components.
+
 
 %Furthermore, the dynamics uncovered by vector diffusion maps is relatively simple, which suggests that a simpler approach could have been used to order the data.
 %
@@ -465,7 +466,7 @@ These two peaks merge together during invagination, eventually forming (together
 %
 During this time window, germband elongation causes cells from the ventral side of the embryo to move towards the poles of the embryo, and then wrap around to the dorsal side.
 %
-At the end of this process, cells which were originally on the ventral side have migrated to the dorsal side of the embryo, causing similar ``omega'' shaped patterns (formed by Twi and dpERK) to arise on the dorsal side.
+At the end of this process, cells which were originally on the ventral side have migrated to the dorsal side of the embryo, causing similar ``omega'' shaped patterns (formed by Twi and dpERK) to arise on the dorsal side (shown in the late images in Figure~\ref{subfig:averaged_data2}).
 
 \begin{figure*}[t]
 \raisebox{5.3cm}{{\figtextfont A}}
@@ -484,6 +485,8 @@ At the end of this process, cells which were originally on the ventral side have
 \customlabel{subfig:ordered_data2}{\ref{fig:data2}{\it B}}
 \customlabel{subfig:averaged_data2}{\ref{fig:data2}{\it C}}
 \end{figure*}
+
+
 
 
 The dynamics in this data set are highly nonlinear, and only 22\% of the variability in the data is captured by the first principal component.
@@ -508,7 +511,10 @@ Figure~\ref{subfig:averaged_data2} shows the average trajectory for this data se
 In this example, we accomplished the same task presented in the caricature in Figure~\ref{fig:fish}, but without knowledge about the appropriate landmarks (e.g., fins) for registration or the appropriate statistic (e.g., body size) by which to order. 
 
 
+
+
 \subsection{Identifying distinct developmental trajectories}
+
 
 Vector diffusion maps can not only temporally order data, but can also uncover other sources of variability.
 %
@@ -520,9 +526,13 @@ As an example, Figure~\ref{subfig:raw_data3} shows a data set consisting of $42$
 %
 Again, each image is an optical cross-section of an embryo fixed at a different developmental time, and the embryos have been stained for nuclei (gray), Dl (green), and dpERK (red).
 %
-In this data set, $21$ of the embryos are wild type, and $21$ of the embryos are an sna null mutant.
+In this data set, $21$ of the embryos are wild type, and $21$ of the embryos are mutant embryos where dpERK is expressed in one broad peak at the ventral side, instead of in two bimodal peaks.
 %
 We therefore expect two sources of variability in this data set: differences due to developmental time, and differences between mutant and wild type dynamics.
+
+
+
+
 
 Figure~\ref{subfig:projection_data3} shows the data, projected onto the first two vector diffusion maps coordinates;
 each data point corresponds to one image in our data set.
@@ -541,26 +551,28 @@ The average over the red curve, shown in Figure~\ref{subfig:average_mut_data3}, 
 %
 This is consistent with previously known dynamics.
 %
-At early times, the wild type and mutant embryos both have little dpERK signal, and are therefore indistinguishable, whereas at later times, the two groups separate as the wild type embryos develop two distinct dpERK peaks and sna null mutants develop only a single peak.
+At early times, the wild type and mutant embryos both have little dpERK signal, and are therefore indistinguishable, whereas at later times, the two groups separate as the wild type embryos develop two distinct dpERK peaks and the mutant embryos develop only a single peak.
+%
+We have therefore demonstrated that vector diffusion maps can not only recover dynamics, but also distinguish different expression patterns and developmental trajectories.
 
-\begin{figure*}[t]
-\raisebox{8.8cm}{{\figtextfont A}}
-\includegraphics[height=9cm]{raw_data3}
-\begin{minipage}[b]{8.5cm}
-\raisebox{5.3cm}{{\figtextfont B}}
+\begin{figure}[t]
+%\raisebox{8.8cm}{{\figtextfont A}}
+%\includegraphics[height=9cm]{raw_data3}
+%\begin{minipage}[b]{8.5cm}
+\raisebox{6cm}{{\figtextfont B}}
 \includegraphics[width=8.4cm]{mut_wt_vdm_embedding}
-\raisebox{1.3cm}{{\figtextfont C}}
+\raisebox{2cm}{{\figtextfont C}}
 \includegraphics[width=8.4cm]{wt_trajectory}
-\raisebox{1.3cm}{{\figtextfont D}}
+\raisebox{2cm}{{\figtextfont D}}
 \includegraphics[width=8.4cm]{mut_trajectory}
-\end{minipage}
+%\end{minipage}
 \caption{Mutant and wild type {\xfigtextfontit Drosophila}. {\xfigtextfontit (A)} Images of cellularizing {\xfigtextfontit Drosophila} embryos. Each image is of a different embryo in a different rotational orientation. Half of the images are of wild type embryos, and half of the images are of sna null mutant embryos. {\xfigtextfontit(B)} Data from {\xfigtextfontit A}, projected onto the first two vector diffusion maps coordinates. The two distinct trajectories are highlighted in blue and red. {\xfigtextfontit (C)} Average trajectory of the dpERK signal over the blue curve in {\xfigtextfontit B}. {\xfigtextfontit (D)} Average trajectory of the dpERK signal over the red curve in {\xfigtextfontit B}.}
 \customlabel{fig:data3}{5}
 \customlabel{subfig:raw_data3}{\ref{fig:data3}{\it A}}
 \customlabel{subfig:projection_data3}{\ref{fig:data3}{\it B}}
 \customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it C}}
 \customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it D}}
-\end{figure*}
+\end{figure}
 
 \section{Conclusions}
 
@@ -569,6 +581,7 @@ We have demonstrated how vector diffusion maps, an existing reduction technique,
 We acknowledge that the tasks of both registration and ordering could have been accomplished using a variety of other techniques.
 %
 We chose the algorithm outlined here, not because it is specifically tailored to our particular data sets, but rather, because it is sufficiently general and we are confident that it can be applied to a myriad of biological imaging applications. 
+
 
 The task of image registration has been widely studied \cite{zitova2003image}, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
 %
@@ -695,8 +708,8 @@ We are confident that, as biological becomes easier and more robust, the dimensi
 %% Enter the largest bibliography number in the facing curly brackets
 %% following \begin{thebibliography}
 
-\bibliographystyle{pnas}
-\bibliography{background_reading/references,../../references/references}
+%\bibliographystyle{pnas}
+%\bibliography{background_reading/references,../../references/references}
 
 %\begin{thebibliography}{}
 

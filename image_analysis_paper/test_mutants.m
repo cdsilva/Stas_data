@@ -296,9 +296,134 @@ figure;
 plot(embed_coord(:,idx1),embed_coord(:,idx2),'.')
 
 
-% [cluster_idx, C, SUMD] = kmeans(embed_coord(:, [idx1 idx2]), 3);
-% figure;
-% scatter(embed_coord(:,idx1),embed_coord(:,idx2),50, cluster_idx, '.')
+
+%%
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 6])
+set(gcf, 'paperposition',[0 0 8 6])
+coord2_scale = 0.6;
+
+plot(embed_coord(~mutation,idx1),coord2_scale*embed_coord(~mutation,idx2),'xk', 'markersize', 5)
+hold on
+plot(embed_coord(mutation,idx1),coord2_scale*embed_coord(mutation,idx2),'ok', 'markersize', 5)
+hold on
+mut_draw = [2 37 5 22 27];
+wt_draw = [19 7 10 9 34];
+im_delta = 0.004;
+draw_delta = 0.008;
+hold on
+plot(embed_coord(mut_draw,idx1),coord2_scale*embed_coord(mut_draw,idx2),'ob', 'markersize', 5, 'linewidth', 1)
+
+plot(embed_coord(wt_draw,idx1),coord2_scale*embed_coord(wt_draw,idx2),'xb', 'markersize', 5, 'linewidth', 1)
+for i=mut_draw
+   image('cdata', image_set_aligned(:, :, :, i), 'xdata', [embed_coord(i,idx1)-sign(embed_coord(i,idx1)-0.01)*draw_delta-im_delta embed_coord(i,idx1)-sign(embed_coord(i,idx1)-0.01)*draw_delta+im_delta], 'ydata', [coord2_scale*embed_coord(i,idx2)-draw_delta-im_delta coord2_scale*embed_coord(i,idx2)-draw_delta+im_delta])
+end
+for i=wt_draw
+   image('cdata', image_set_aligned(:, :, :, i), 'xdata', [embed_coord(i,idx1)-draw_delta-im_delta embed_coord(i,idx1)-draw_delta+im_delta], 'ydata', [coord2_scale*embed_coord(i,idx2)-im_delta coord2_scale*embed_coord(i,idx2)+im_delta])
+end
+axis equal
+%axis([-0.025 0.055 -0.07 0.07])
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+
+xlabel('first VDM coordinate')
+ylabel('second VDM coordinate')
+lgnd = legend('wild type','mutant', 'location','northeast');
+set(lgnd,'fontsize',6);
+print(sprintf('%s/mut_wt_vdm_embedding2', im_save_dir), '-dpdf', '-r600')
+
+
+return
+
+%%
+
+nclusters = 3;
+
+cluster_idx = kmeans(embed_coord(:, [idx1 idx2]), nclusters, 'start', [-0.01 -0.01; 0.01 0.03; 0.03 -0.01]);
+figure;
+scatter(embed_coord(:,idx1),embed_coord(:,idx2),50, cluster_idx, '.')
+
+wt_ind = [];
+mut_ind = [];
+
+figure;
+symb = '.ox';
+%scatter(embed_coord(:,idx1),embed_coord(:,idx2),50, cluster_idx, '.')
+hold on
+for i=1:nclusters
+%for i=2:nclusters
+    tmp_idx = find(cluster_idx == i);
+    %tmp_idx = find(cluster_idx == i | cluster_idx == 1);
+    data = embed_coord(tmp_idx, [idx1 idx2]);
+    mean_data = mean(data);
+    data = data - repmat(mean_data, size(data, 1), 1);
+    
+    [V,D]=PCA(data,1);
+    proj_data = (data * V(:, 1) * V(:, 1)' + repmat(mean_data, size(data, 1), 1));
+    r = compute_ranks(data * V(:, 1));
+    [~, I] = sort(data * V(:, 1));
+    scatter(embed_coord(tmp_idx,idx1),embed_coord(tmp_idx,idx2),50, r/max(r), symb(i));
+    %plot(proj_data(:,1), proj_data(:,2), '.');
+    
+    if i==1
+        wt_ind = [wt_ind; tmp_idx(I)];
+        mut_ind = [mut_ind; tmp_idx(I)];
+    elseif i==2 
+        wt_ind = [wt_ind; tmp_idx(I)];
+    elseif i==3
+        mut_ind = [mut_ind; tmp_idx(I)];
+    end
+end
+
+figure;
+plot(embed_coord(wt_ind,idx1),embed_coord(wt_ind,idx2),'.')
+hold on
+plot(embed_coord(mut_ind,idx1),embed_coord(mut_ind,idx2),'o')
+
+image_set_wt = image_set_aligned_withnuclei(:, :, :, wt_ind);
+image_set_mut = image_set_aligned_withnuclei(:, :, :, mut_ind);
+
+m_wt = length(wt_ind);
+m_mut = length(mut_ind);
+
+
+nstages = 5;
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(nstages, 1, 0.01, i);
+    stage_indices = max(1, round((i-1)*m_wt/nstages)+1):min(m_wt,round(i*m_wt/nstages));
+    im1 = uint8(mean(double(image_set_wt(:,:,:,stage_indices)), 4));
+    im1(:, :, 2) = im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+% saveas(gcf,sprintf('%s/wt_trajectory', im_save_dir), 'pdf')
+
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(nstages, 1, 0.01, i);
+    stage_indices = max(1, round((i-1)*m_mut/nstages)+1):min(m_mut,round(i*m_mut/nstages));
+    im1 = uint8(mean(double(image_set_mut(:,:,:,stage_indices)), 4));
+    im1(:, :, 2) = im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+% saveas(gcf,sprintf('%s/mut_trajectory', im_save_dir), 'pdf')
+
+%%
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -357,6 +482,11 @@ plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'.')
 hold on
 plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'.r')
 
+
+mut_draw = [2 37 5 22 27];
+wt_draw = [19 7 10 9 34];
+
+
 figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [8 6])
@@ -364,17 +494,22 @@ set(gcf, 'paperposition',[0 0 8 6])
 plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'xk', 'markersize', 5)
 hold on
 plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'ok', 'markersize', 5)
+plot(embed_coord(wt_draw,idx1),embed_coord(wt_draw,idx2),'xk', 'markersize', 5, 'linewidth', 2)
+hold on
+plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5, 'linewidth', 2)
 curve_delta_wt = 0.028;
 curve_delta_mut = 0.021;
 patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
 patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
 axis([-0.025 0.055 -0.07 0.07])
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
 xlabel('first VDM coordinate')
 ylabel('second VDM coordinate')
 lgnd = legend('wild type','mutant', 'location','northeast');
 set(lgnd,'fontsize',6);
-% saveas(gcf,sprintf('%s/mut_wt_vdm_embedding', im_save_dir), 'pdf')
-print(sprintf('%s/mut_wt_vdm_embedding', im_save_dir), '-dpdf', '-r600')
+%saveas(gcf,sprintf('%s/mut_wt_vdm_embedding', im_save_dir), 'pdf')
+print(sprintf('%s/mut_wt_vdm_embedding', im_save_dir), '-dpdf', '-r900')
 
 return
 
@@ -449,6 +584,72 @@ for i=1:nstages
     imshow(im1,'initialmagnification','fit','border','tight')
 end
 saveas(gcf,sprintf('%s/mut_trajectory', im_save_dir), 'pdf')
+
+nstages = 5;
+mut_draw = [2 37 5 22 27];
+wt_draw = [19 7 10 9 34];
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(nstages, 1,  0.01, i);
+    im1 = image_set_aligned(:,:,:,wt_draw(i));
+    im1(:, :, 2) = im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+saveas(gcf,sprintf('%s/wt_trajectory', im_save_dir), 'pdf')
+
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot( nstages,1,  0.01, i);
+    im1 = image_set_aligned(:,:,:,mut_draw(i));
+    im1(:, :, 2) = im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+saveas(gcf,sprintf('%s/mut_trajectory', im_save_dir), 'pdf')
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8/nstages 8])
+set(gcf, 'paperposition',[0 0 8/nstages 8])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(1, nstages,  0.01, i);
+    im1 = image_set_aligned(:,:,:,wt_draw(i));
+    im1(:, :, 2) = im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+saveas(gcf,sprintf('%s/wt_trajectory2', im_save_dir), 'pdf')
+
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8/nstages 8])
+set(gcf, 'paperposition',[0 0 8/nstages 8])
+for i=1:nstages
+    
+    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+    make_subplot(1, nstages,  0.01, i);
+    im1 = image_set_aligned(:,:,:,mut_draw(i));
+    im1(:, :, 2) = im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+saveas(gcf,sprintf('%s/mut_trajectory2', im_save_dir), 'pdf')
 
 
 return
