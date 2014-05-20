@@ -254,7 +254,7 @@ axis equal
 %% VDM
 
 eps = median(W(:));
-neigs = 9;
+neigs = 12;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
@@ -280,10 +280,32 @@ for i=1:m
     image_set_aligned_withnuclei(:,:,:,i) = im1;
 end
 
+figure; 
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+plot(diag(D),'.')
+xlabel('k')
+ylabel('\lambda_k')
+saveas(gcf,sprintf('%s/data3_evals', im_save_dir), 'pdf')
+
+
+figure;  
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+scatter(embed_idx(1,:), embed_idx(2, :), 500, var(embed_coord),'.')
+colorbar
+xlabel('k')
+ylabel('l')
+saveas(gcf,sprintf('%s/data3_coord_var', im_save_dir), 'pdf')
+
+
 %% find relevant VDM coordinates
 
 idx1 = find(embed_idx(1,:) == 4 & embed_idx(2,:) == 1);
 idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 3);
+% idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 1);
 
 if mean(embed_coord(:, idx1)) < 0
     embed_coord(:, idx1) = -embed_coord(:, idx1);
@@ -329,7 +351,7 @@ xlabel('first VDM coordinate')
 ylabel('second VDM coordinate')
 lgnd = legend('wild type','mutant', 'location','northeast');
 set(lgnd,'fontsize',6);
-print(sprintf('%s/mut_wt_vdm_embedding2', im_save_dir), '-dpdf', '-r600')
+%print(sprintf('%s/mut_wt_vdm_embedding2', im_save_dir), '-dpdf', '-r600')
 
 %% clustering
 
@@ -375,6 +397,43 @@ figure;
 plot(embed_coord(wt_ind,idx1),embed_coord(wt_ind,idx2),'.')
 hold on
 plot(embed_coord(mut_ind,idx1),embed_coord(mut_ind,idx2),'o')
+
+p_wt = polyfit(embed_coord(wt_ind,idx1),embed_coord(wt_ind,idx2),1);
+p_mut = polyfit(embed_coord(mut_ind,idx1),embed_coord(mut_ind,idx2),2);
+
+x_wt = linspace(-0.025, 0.05, 100);
+x_mut = linspace(-0.025, 0.055, 100);
+
+figure;
+plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'.')
+hold on
+plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'.r')
+plot(x_wt, polyval(p_wt,x_wt), '-b')
+plot(x_mut, polyval(p_mut,x_mut), '-r')
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 6])
+set(gcf, 'paperposition',[0 0 8 6])
+plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'xk', 'markersize', 5)
+hold on
+plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'ok', 'markersize', 5)
+plot(embed_coord(wt_draw,idx1),embed_coord(wt_draw,idx2),'xk', 'markersize', 5, 'linewidth', 2)
+hold on
+plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5, 'linewidth', 2)
+curve_delta_wt = 0.1*std(embed_coord(wt_ind,idx2)-polyval(p_wt, embed_coord(wt_ind,idx2)));
+curve_delta_mut = std(embed_coord(mut_ind,idx2)-polyval(p_mut, embed_coord(mut_ind,idx2)));
+patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
+patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
+axis([-0.025 0.055 -0.07 0.07])
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+xlabel('first VDM coordinate')
+ylabel('second VDM coordinate')
+lgnd = legend('wild type','mutant', 'location','northeast');
+set(lgnd,'fontsize',6);
+
+
 
 %% draw all images
 

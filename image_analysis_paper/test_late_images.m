@@ -250,12 +250,32 @@ xlabel('k')
 ylabel('\lambda_k')
 saveas(gcf,sprintf('%s/data2_PCA_variance', im_save_dir), 'pdf')
 
-return
 %% VDM
 
 eps = median(W(:))/10;
-
+neigs = 6;
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
+
+figure; 
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+plot(diag(D),'.')
+xlabel('k')
+ylabel('\lambda_k')
+saveas(gcf,sprintf('%s/data2_evals', im_save_dir), 'pdf')
+
+
+figure;  
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+scatter(embed_idx(1,:), embed_idx(2, :), 500, var(embed_coord),'.')
+colorbar
+xlabel('k')
+ylabel('l')
+saveas(gcf,sprintf('%s/data2_coord_var', im_save_dir), 'pdf')
+
 
 image_set_aligned = zeros(size(image_set), 'uint8');
 image_set_raw_aligned = zeros(size(image_set_raw), 'uint8');

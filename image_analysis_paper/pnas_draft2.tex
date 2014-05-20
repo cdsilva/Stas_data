@@ -67,6 +67,8 @@
 %\usepackage{subcaption}
 \graphicspath{ {paper_figures2/} }
 
+\usepackage{tikz}
+
 %\usepackage{sansmath}
 
 %\usepackage[font={sf, small}]{caption}
@@ -246,9 +248,11 @@ Additional challenges arise from embryo-to-embryo variability, sample size, and 
 
 Here, we show how recently developed dimensionality reduction techniques can successfully address these challenges and reveal developmental trajectories from collections of unregistered and unordered imaging data. 
 %
-Based on manifold learning algorithms for high-dimensional data (such as images), these techniques have been used for data mining in a wide range of applications, from cryo-EM analysis of individual molecules to face recognition. 
+Image registration has been studied in a variety of contexts \cite{zitova2003image, rowley1998rotation, hajnal2010medical, greenspan1994rotation, zhao2003face}, as have dimensionality reduction techniques \cite{Belkin2003, coifman2005geometric, coifman2006geometric, tenenbaum2000global, roweis2000nonlinear} and their applications \cite{anavy2014blind, trapnell2014dynamics,gupta2008extracting, qiu2011discovering, kafri2013dynamics}.
 %
-Here we adapt these techniques for temporal ordering and registration of imaging data from cross-sectional studies of developmental dynamics, with the main objective of revealing stereotypic developmental trajectories.
+Here, we use a manifold learning algorithm \cite{singer2012vector} for high-dimensional data (such as images) which both factors out symmetries to align images and extracts low-dimensional structure in the imaging data set; these techniques have been used for data mining in a wide range of applications, from cryo-EM analysis of individual molecules to face recognition. 
+%
+We adapt these techniques for temporal ordering and registration of imaging data from cross-sectional studies of developmental dynamics, with the main objective of revealing stereotypic developmental trajectories.
 %
 We demonstrate these techniques using three data sets from a study of {\it Drosophila} embryogenesis, one of the best experimental models for studies of developmental dynamics.
 %
@@ -258,7 +262,7 @@ In the second data set, shown in Figure~\ref{subfig:raw_data2}, the dynamics are
 %
 Here, we will show that we can recover a trajectory that is qualitatively consistent with current knowledge.
 %
-The third data set, shown in Figure~\ref{subfig:raw_data3}, consists of data collected from both wild type and mutant embryos.
+The third data set consists of data collected from both wild type and mutant embryos.
 %
 We will demonstrate that these algorithms can not only extract stereotypic dynamics, but also separate data sampled from distinct developmental paths.
 
@@ -486,9 +490,6 @@ At the end of this process, cells which were originally on the ventral side have
 \customlabel{subfig:averaged_data2}{\ref{fig:data2}{\it C}}
 \end{figure*}
 
-
-
-
 The dynamics in this data set are highly nonlinear, and only 22\% of the variability in the data is captured by the first principal component.
 %
 We require a more sophisticated approach, such as vector diffusion maps, to temporally order the data.
@@ -510,7 +511,19 @@ Figure~\ref{subfig:averaged_data2} shows the average trajectory for this data se
 %
 In this example, we accomplished the same task presented in the caricature in Figure~\ref{fig:fish}, but without knowledge about the appropriate landmarks (e.g., fins) for registration or the appropriate statistic (e.g., body size) by which to order. 
 
-
+We can further use this collection of registered and ordered snapshots to construct a smooth movie of the developmental dynamics. 
+%
+Using a Gaussian kernel, we calculate the average image for each frame of a movie which (approximately) spans the ordered images. 
+%
+This movie is included in the {\it SI Appendix}.
+%
+The dynamics are now apparent.
+%
+There are artifacts in the movie due to size variation in the samples.
+%
+Furthermore, the dynamics at the end of the movie are not as smooth, as we have fewer samples in this window. 
+%
+We would like to note that, although this movie provides a picture of the dynamics, the speed of the movie is not constant with respect to the real time dynamics. 
 
 
 \subsection{Identifying distinct developmental trajectories}
@@ -556,23 +569,44 @@ At early times, the wild type and mutant embryos both have little dpERK signal, 
 We have therefore demonstrated that vector diffusion maps can not only recover dynamics, but also distinguish different expression patterns and developmental trajectories.
 
 \begin{figure}[t]
-%\raisebox{8.8cm}{{\figtextfont A}}
-%\includegraphics[height=9cm]{raw_data3}
-%\begin{minipage}[b]{8.5cm}
-\raisebox{6cm}{{\figtextfont B}}
-\includegraphics[width=8.4cm]{mut_wt_vdm_embedding}
-\raisebox{2cm}{{\figtextfont C}}
+\raisebox{5.7cm}{{\figtextfont A}}
+\begin{tikzpicture}
+     \node at (0,0)
+       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding_background}};
+     \node at (0,0)
+       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding}};  
+\end{tikzpicture}
+\raisebox{0.7cm}{{\figtextfont B}}
 \includegraphics[width=8.4cm]{wt_trajectory}
-\raisebox{2cm}{{\figtextfont D}}
+\raisebox{0.7cm}{{\figtextfont C}}
 \includegraphics[width=8.4cm]{mut_trajectory}
-%\end{minipage}
-\caption{Mutant and wild type {\xfigtextfontit Drosophila}. {\xfigtextfontit (A)} Images of cellularizing {\xfigtextfontit Drosophila} embryos. Each image is of a different embryo in a different rotational orientation. Half of the images are of wild type embryos, and half of the images are of sna null mutant embryos. {\xfigtextfontit(B)} Data from {\xfigtextfontit A}, projected onto the first two vector diffusion maps coordinates. The two distinct trajectories are highlighted in blue and red. {\xfigtextfontit (C)} Average trajectory of the dpERK signal over the blue curve in {\xfigtextfontit B}. {\xfigtextfontit (D)} Average trajectory of the dpERK signal over the red curve in {\xfigtextfontit B}.}
+\caption{Mutant and wild type {\xfigtextfontit Drosophila}.  {\xfigtextfontit(A)} Data collected from wild type and mutant embryos (original data set is shown in {\xfigtextfontit SI Appendix}), projected onto the first two vector diffusion maps coordinates. The two distinct trajectories are highlighted in blue and red. {\xfigtextfontit (B)} dpERK signal at select wild type points in {\xfigtextfontit A} (denoted by bold symbols). {\xfigtextfontit (C)} dpERK signal at select mutant points in {\xfigtextfontit A} (denoted by bold symbols).}
 \customlabel{fig:data3}{5}
-\customlabel{subfig:raw_data3}{\ref{fig:data3}{\it A}}
-\customlabel{subfig:projection_data3}{\ref{fig:data3}{\it B}}
-\customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it C}}
-\customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it D}}
+\customlabel{subfig:projection_data3}{\ref{fig:data3}{\it A}}
+\customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it B}}
+\customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it C}}
 \end{figure}
+
+\begin{figure*}[t]
+\raisebox{8cm}{{\figtextfont A}}
+\includegraphics[height=8.4cm]{wt_trajectory2}
+%\raisebox{8cm}{{\figtextfont B}}
+\begin{tikzpicture}
+     \node at (0,0)
+       {\includegraphics[height=8.4cm]{mut_wt_vdm_embedding_background}};
+     \node at (0,0)
+       {\includegraphics[height=8.4cm]{mut_wt_vdm_embedding}};  
+     \node at (-5cm, 3.8cm)
+       {{\figtextfont B}};
+\end{tikzpicture}
+\raisebox{8cm}{{\figtextfont C}}
+\includegraphics[height=8.4cm]{mut_trajectory2}
+\caption{Mutant and wild type {\xfigtextfontit Drosophila}.  {\xfigtextfontit (A)} dpERK signal at select wild type points in {\xfigtextfontit B} (denoted by bold symbols). {\xfigtextfontit(B)} Data collected from wild type and mutant embryos (original data set is shown in {\xfigtextfontit SI Appendix}), projected onto the first two vector diffusion maps coordinates. The two distinct trajectories are highlighted in blue and red. {\xfigtextfontit (C)} dpERK signal at select mutant points in {\xfigtextfontit B} (denoted by bold symbols).}
+\customlabel{fig:data3}{5}
+\customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it A}}
+\customlabel{subfig:projection_data3}{\ref{fig:data3}{\it B}}
+\customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it C}}
+\end{figure*}
 
 \section{Conclusions}
 
@@ -581,7 +615,12 @@ We have demonstrated how vector diffusion maps, an existing reduction technique,
 We acknowledge that the tasks of both registration and ordering could have been accomplished using a variety of other techniques.
 %
 We chose the algorithm outlined here, not because it is specifically tailored to our particular data sets, but rather, because it is sufficiently general and we are confident that it can be applied to a myriad of biological imaging applications. 
-
+%
+Such algorithms are often tested on databases containing hundreds or thousands of images.
+%
+Here, we showed that we can successfully recover the underlying dynamics with relatively small data sets.
+%
+In general, the number of images required to accurately recover the dynamics will be a function of the noise in the data, as well as the dynamic range and complexity.
 
 The task of image registration has been widely studied \cite{zitova2003image}, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
 %
@@ -708,8 +747,8 @@ We are confident that, as biological becomes easier and more robust, the dimensi
 %% Enter the largest bibliography number in the facing curly brackets
 %% following \begin{thebibliography}
 
-%\bibliographystyle{pnas}
-%\bibliography{background_reading/references,../../references/references}
+\bibliographystyle{pnas}
+\bibliography{background_reading/references,../../references/references}
 
 %\begin{thebibliography}{}
 
