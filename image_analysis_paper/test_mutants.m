@@ -499,8 +499,8 @@ hold on
 plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5, 'linewidth', 2)
 curve_delta_wt = 0.028;
 curve_delta_mut = 0.021;
-patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
-patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
+%patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
+%patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
 axis([-0.025 0.055 -0.07 0.07])
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
@@ -508,8 +508,33 @@ xlabel('first VDM coordinate')
 ylabel('second VDM coordinate')
 lgnd = legend('wild type','mutant', 'location','northeast');
 set(lgnd,'fontsize',6);
-%saveas(gcf,sprintf('%s/mut_wt_vdm_embedding', im_save_dir), 'pdf')
-print(sprintf('%s/mut_wt_vdm_embedding', im_save_dir), '-dpdf', '-r900')
+saveas(gcf,sprintf('%s/mut_wt_vdm_embedding', im_save_dir), 'pdf')
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 6])
+set(gcf, 'paperposition',[0 0 8 6])
+% plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'xk', 'markersize', 5)
+% hold on
+% plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'ok', 'markersize', 5)
+% plot(embed_coord(wt_draw,idx1),embed_coord(wt_draw,idx2),'xk', 'markersize', 5, 'linewidth', 2)
+% hold on
+% plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5, 'linewidth', 2)
+curve_delta_wt = 0.028;
+curve_delta_mut = 0.021;
+patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
+hold on
+patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
+axis([-0.025 0.055 -0.07 0.07])
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+%xlabel('first VDM coordinate')
+%ylabel('second VDM coordinate')
+%lgnd = legend('wild type','mutant', 'location','northeast');
+%set(lgnd,'fontsize',6);
+%saveas(gcf,sprintf('%s/mut_wt_vdm_embedding_background', im_save_dir), 'pdf')
+print(sprintf('%s/mut_wt_vdm_embedding_background', im_save_dir), '-dpdf', '-r600')
+
 
 return
 
