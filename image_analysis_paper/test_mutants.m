@@ -529,7 +529,7 @@ set(gcf, 'paperposition',[0 0 8 8/nstages])
 for i=1:nstages
     
     make_subplot(nstages, 1,  0.01, i);
-    im1 = image_set_aligned(:,:,:,wt_draw(i));
+    im1 = image_set_aligned_withnuclei(:,:,:,wt_draw(i));
     im1(:, :, 2) = im1(:, :, 3);
     
     imshow(im1,'initialmagnification','fit','border','tight')
@@ -544,7 +544,7 @@ set(gcf, 'paperposition',[0 0 8 8/nstages])
 for i=1:nstages
     
     make_subplot( nstages,1,  0.01, i);
-    im1 = image_set_aligned(:,:,:,mut_draw(i));
+    im1 = image_set_aligned_withnuclei(:,:,:,mut_draw(i));
     im1(:, :, 2) = im1(:, :, 3);
     
     imshow(im1,'initialmagnification','fit','border','tight')
@@ -558,7 +558,7 @@ set(gcf, 'paperposition',[0 0 8/nstages 8])
 for i=1:nstages
     
     make_subplot(1, nstages,  0.01, i);
-    im1 = image_set_aligned(:,:,:,wt_draw(i));
+    im1 = image_set_aligned_withnuclei(:,:,:,wt_draw(i));
     im1(:, :, 2) = im1(:, :, 3);
     
     imshow(im1,'initialmagnification','fit','border','tight')
@@ -573,7 +573,7 @@ set(gcf, 'paperposition',[0 0 8/nstages 8])
 for i=1:nstages
     
     make_subplot(1, nstages,  0.01, i);
-    im1 = image_set_aligned(:,:,:,mut_draw(i));
+    im1 = image_set_aligned_withnuclei(:,:,:,mut_draw(i));
     im1(:, :, 2) = im1(:, :, 3);
     
     imshow(im1,'initialmagnification','fit','border','tight')

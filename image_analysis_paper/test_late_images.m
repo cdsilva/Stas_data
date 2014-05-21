@@ -250,13 +250,22 @@ xlabel('k')
 ylabel('\lambda_k')
 saveas(gcf,sprintf('%s/data2_PCA_variance', im_save_dir), 'pdf')
 
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 4])
+set(gcf, 'paperposition',[0 0 8 4])
+plot(proj_coeff(:,1),proj_coeff(:,2),'.')
+xlabel('PCA projection 1')
+ylabel('PCA projection 2')
+saveas(gcf,sprintf('%s/data2_PCA_proj', im_save_dir), 'pdf')
+
 %% VDM
 
 eps = median(W(:))/10;
 neigs = 6;
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
-figure; 
+figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [8 8])
 set(gcf, 'paperposition',[0 0 8 8])
@@ -266,7 +275,7 @@ ylabel('\lambda_k')
 saveas(gcf,sprintf('%s/data2_evals', im_save_dir), 'pdf')
 
 
-figure;  
+figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [8 8])
 set(gcf, 'paperposition',[0 0 8 8])
@@ -291,6 +300,8 @@ for i=1:m
     im_tmp = image_set_raw(:,:,:,i);
     im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
     im1 = imrotate(im1, theta_adjust, 'crop');
+    im1 = circshift(im1, [50 100 0]);
+    
     image_set_raw_aligned(:,:,:,i) = im1;
 end
 
@@ -331,7 +342,31 @@ end
 
 %%
 
-nstages = 12;
+% nstages = 12;
+%
+% figure;
+% set(gcf, 'paperunits', 'centimeters')
+% set(gcf, 'papersize', [8 8/nstages])
+% set(gcf, 'paperposition',[0 0 8 8/nstages])
+% for i=1:nstages
+%
+%     %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
+%     make_subplot(nstages, 1, 0.01, i);
+%     stage_indices = I(max(1, round((i-1)*m/nstages)+1):min(m,round(i*m/nstages)));
+%     im1 = uint8(mean(double(image_set_aligned(:,:,:,stage_indices)), 4));
+%     im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+%     im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+%
+%     imshow(im1,'initialmagnification','fit','border','tight')
+% end
+% saveas(gcf,sprintf('%s/average_trajectory', im_save_dir), 'pdf')
+
+
+%%
+
+frame_points = linspace(1, m, nstages);
+window_eps = 20;
+window_tol = 0.01;
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -339,69 +374,28 @@ set(gcf, 'papersize', [8 8/nstages])
 set(gcf, 'paperposition',[0 0 8 8/nstages])
 for i=1:nstages
     
-    %subplot('position', [(i-1)/nstages 0 1/nstages-0.005 1])
-    make_subplot(nstages, 1, 0.01, i);
-    stage_indices = I(max(1, round((i-1)*m/nstages)+1):min(m,round(i*m/nstages)));
-    im1 = uint8(mean(double(image_set_aligned(:,:,:,stage_indices)), 4));
+    window_weights = exp(-(frame_points(i)-(1:m)).^2/window_eps);
+    window_weights = window_weights / sum(window_weights);
+    window_weights(window_weights < window_tol) = 0;
+    im1 = window_weights(1) * double(image_set_raw_aligned(:,:,:,I(1)));
+    for j=2:m
+        if window_weights(j) > window_tol
+            im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,I(j)));
+        end
+    end
+    im1 = uint8(im1 / sum(window_weights));
+    
+    im1 = circshift(im1,[0 0 -1]);
     im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
     im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
     
+    make_subplot(nstages, 1, 0.01, i);
     imshow(im1,'initialmagnification','fit','border','tight')
+    
 end
 saveas(gcf,sprintf('%s/average_trajectory', im_save_dir), 'pdf')
 
-
 %%
-
-% window_delta = 5;
-% window_eps = 5;
-% window_weights = exp(-(-window_delta:window_delta).^2/window_eps);
-%
-% writerObj = VideoWriter('gastrulation.avi');
-% writerObj.FrameRate = 15;
-% open(writerObj);
-%
-% i = window_delta + 1;
-% stage_indices = I(i-window_delta:i+window_delta);
-% im1 = window_weights(1) * double(image_set_raw_aligned(:,:,:,stage_indices(1)));
-% for j=2:window_delta+1
-%     im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,stage_indices(j)));
-% end
-% im1 = uint8(im1 / sum(window_weights));
-%
-% im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
-% im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
-%
-% imshow(im1,'initialmagnification','fit','border','tight')
-% set(gca,'nextplot','replacechildren');
-% set(gcf,'Renderer','zbuffer');
-%
-%
-% figure;
-% set(gcf, 'paperunits', 'centimeters')
-% set(gcf, 'papersize', [8 8])
-% set(gcf, 'paperposition',[0 0 8 8])
-% for i=window_delta+2:m-window_delta
-%
-%     stage_indices = I(i-window_delta:i+window_delta);
-%     im1 = window_weights(1) * double(image_set_raw_aligned(:,:,:,stage_indices(1)));
-%     for j=2:window_delta+1
-%         im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,stage_indices(j)));
-%     end
-%     im1 = uint8(im1 / sum(window_weights));
-%
-% %     im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
-% %     im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
-%
-%     imshow(im1,'initialmagnification','fit','border','tight')
-%
-%     %pause(0.1)
-%     frame = getframe;
-%     writeVideo(writerObj,frame);
-%     clf
-% end
-%
-% close(writerObj);
 
 writerObj = VideoWriter('gastrulation.avi');
 writerObj.FrameRate = 100;

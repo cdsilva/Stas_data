@@ -111,13 +111,7 @@ of the National Academy of Sciences of the United States of America}
 %% For titles, only capitalize the first letter
 %% \title{Almost sharp fronts for the surface quasi-geostrophic equation}
 
-\title{Temporal ordering and registration of cross-sectional imaging data}
-
-
-%%%
-%%%YGK   should "development" be in the title ? maybe yes, maybe no.
-%%% 
-
+\title{Temporal ordering and registration of images in studies of developmental dynamics}
 
 %% Enter authors via the \author command.
 %% Use \affil to define affiliations.
@@ -177,10 +171,10 @@ We present an automated approach to registering {\it and} temporally ordering cr
 The mathematical techniques (vector diffusion maps) are applicable to a wide variety of data sets and
 require little {\it a priori} knowledge of the image features or the developmental dynamics.
 %
-Furthermore, these techniques can separate multiple trajectories within the same data set.
-%%%
-%%%YGK  The approach can detect multiple sources of variability in the data 
-%%%     and thus help visualize multiple trajectories within a data set.
+%Furthermore, these techniques can separate multiple trajectories within the same data set.
+%
+Furthermore, the approach can detect multiple sources of variability 
+and thus help visualize multiple trajectories within a data set.
 %
 We demonstrate the utility of these methods using a collection of images from a study of {\it Drosophila} embryogenesis.
 \end{abstract}
@@ -239,15 +233,14 @@ Importantly, the ``age'' of any given embryo arrested in its development is not 
 a certain time window to which a collection of embryos belongs.
 %to high accuracy.
 %
-%%%YGK   datasets consistent one or two
+Furthermore, each embryo appears at an arbitrary translation and rotation within the image frame (see {\it SI Appendix}). 
 %
-In order to recover the developmental dynamics from such datasets, snapshots of different embryos must be spatially aligned or {\em registered} to factor out the relevant geometric symmetries (e.g., translations and rotations), and then ordered in time.
+In order to recover the developmental dynamics from such data sets, snapshots of different embryos must be spatially aligned or {\em registered} to factor out the relevant geometric symmetries (e.g., translations and rotations), and then ordered in time.
 %
 We show how existing dimensionality reduction algorithms can automate, greatly accelerate {\it and combine} both of these tasks.
 
 An example where 
-temporal ordering and registration of images is straightforward
-%%%YGK can be done by hand
+temporal ordering and registration of images can be done manually
 because the number of images is small and the differences between them are visually apparent is shown
 in Figure~\ref{fig:fish}: a caricature of fish development which illustrates the processes of growth and patterning.
 %
@@ -257,12 +250,12 @@ Image registration is based on obvious morphological landmarks, such as the posi
 %
 In contrast to this simple illustration, real data poses nontrivial challenges for both registration and temporal ordering.
 %
-In general, the landmarks needed for registration (here the heads and fins) as well as the attributes which can be used to order the data, such as the body length, are not known {\it a priori}.
+In general, the landmarks needed for registration (here the heads and fins) as well as the attributes which can be used to order the data (such as the body length) are not known {\it a priori}.
 %
 Additional challenges arise from embryo-to-embryo variability, sample size, and measurement noise.
 
 \begin{figure}[t]
-\includegraphics[width=8.4cm]{fig1}
+\includegraphics[width=8.7cm]{fig1}
 \caption{Caricature illustrating the tasks of image registration and temporal ordering. {\xfigtextfontit (A)} Fish, each in a different orientation and a different stage of development. {\xfigtextfontit (B)} Fish, now rotationally registered and temporally ordered. For this caricature, the registration and ordering is easy to do ``by hand" because the data set is small and the developmental changes are easy to recognize.}
 %\label{fig:fish}
 \customlabel{fig:fish}{1}
@@ -272,28 +265,25 @@ Additional challenges arise from embryo-to-embryo variability, sample size, and 
 
 %%%YGK put an arrow in the disc
 
-Here, we show how recently developed dimensionality reduction techniques can successfully address these challenges and reveal developmental trajectories from collections of unregistered and unordered imaging data.
+We show how recently developed dimensionality reduction techniques can successfully address these challenges and reveal developmental trajectories from collections of unregistered and unordered imaging data.
 %
 Image registration has been studied in a variety of contexts \cite{zitova2003image, rowley1998rotation, hajnal2010medical, greenspan1994rotation, zhao2003face}, and so have dimensionality reduction techniques \cite{Belkin2003, coifman2005geometric, coifman2006geometric, tenenbaum2000global, roweis2000nonlinear} and their applications \cite{anavy2014blind, trapnell2014dynamics,gupta2008extracting, qiu2011discovering, kafri2013dynamics}, especially in the last decade.
 %
-Here, we use a manifold learning algorithm \cite{singer2012vector} for high-dimensional data (such as images) which both factors out geometric symmetries to register and extracts low-dimensional structure in the imaging data set.
+Here, we use a manifold learning algorithm \cite{singer2012vector} for high-dimensional imaging data.% which both factors out geometric symmetries to register the images and extracts low-dimensional structure in the imaging data set.
 %
 Such techniques have been used for data mining in 
-applications ranging from cryo-EM analysis of individual molecules to face recognition; here they are adapted
-for simultaneous registration and temporal ordering of imaging data from cross-sectional studies of developmental dynamics.
-%
-The main objective of revealing stereotypic developmental trajectories.
+applications ranging from analysis of cryo-electron microscopy images of individual molecules to face recognition; here they are adapted
+for simultaneous registration and temporal ordering of imaging data from cross-sectional studies of developmental dynamics, with the main objective of revealing stereotypic developmental trajectories.
 %
 We analyze three data sets from a study of {\it Drosophila} embryogenesis, one of the best experimental models for studies of developmental dynamics.
 %
-The first data set, shown in Figure~\ref{subfig:raw_data1}, is relatively simple and will allow us to both illustrate and validate our methods.
+The first data set, shown in Figure~\ref{subfig:raw_data1}, is relatively simple and will allow us to both illustrate and validate this approach.
 %
 In the second data set, shown in Figure~\ref{subfig:raw_data2}, the dynamics are significantly more complex.
 %
 Here, we will show that we can recover a trajectory that is qualitatively consistent with current knowledge.
 %
-The third set consists of data collected from both wild type and mutant embryos; joint processing of the data 
-helps visualize the different sources of variability along distinct developmental paths.
+The third set consists of data collected from both wild type and mutant embryos, and joint processing of the data will help to visualize the different sources of variability along distinct developmental paths.
 
 %\begin{itemize}
 %\item Imaging data is becoming increasingly prevalent in biology research.
@@ -312,21 +302,12 @@ helps visualize the different sources of variability along distinct developmenta
 
 \subsection{Vector diffusion maps for registration and temporal ordering}
 
-%%%YGK need to repeat ? maybe not ?  English rephrase.
-%%%
-A typical dataset from cross-sectional studies of developmental processes is a collection of images of different embryos, each of which is fixed at a different developmental time and imaged in a different rotational and translational orientation.
 %%%YGK  when I read this I think of Eiffel tower pictures, not of ours - there is a transition... careful where we do it.
 %
-Our goal is to organize these data sets in a meaningful and informative way.
+Our goal is to organize data sets from cross-sectional studies of developmental processes in a meaningful and informative way.
 %
-%%%YGK   maybe here is where this transition should be  -- I again have a feeling of repetition
+%We will show that dimensionality reduction algorithms can simultaneously register and temporally order the images to give us a meaningful picture of the underlying developmental dynamics.
 %
-This requires rotating and translating each image so the set is in a consistent frame of reference ({\it registration}), and then temporally ordering the images.
-%
-We will show that dimensionality reduction algorithms can simultaneously accomplish both of these tasks to give us a meaningful picture of the underlying developmental dynamics.
-
-
-
 Our approach is based on vector diffusion maps \cite{singer2012vector}, a general technique developed for data sets which contain two types of sources of variability:
 geometric symmetries (such as translations and rotations of the images due to the experimental setup) which one would like to factor out, 
 and ``additional" directions of variability (such as temporal dynamics) which one wants to uncover.
@@ -334,8 +315,7 @@ and ``additional" directions of variability (such as temporal dynamics) which on
 Vector diffusion maps combine two algorithms, {\em angular synchronization} \cite{singer2011angular} for image registration and {\em diffusion maps} \cite{coifman2005geometric} for extracting intrinsic low-dimensional structure in data, into a single computation that allows us to simultaneously register and temporally order our images.
 %
 
-Vector diffusion maps has been used to classify images from cryo-electron microscopy (cryo-EM) experiments, where each image is a projection 
-of a randomly oriented molecule.
+Vector diffusion maps has been used to classify images from cryo-electron microscopy (cryo-EM) experiments, where each image is a projection of a randomly oriented molecule.
 %
 %%%YGK to imply which rotations we need to have discussed it above
 %%
@@ -352,23 +332,18 @@ A schematic illustration is shown in Figure~\ref{subfig:synch1}, where each imag
 %
 We first compute the angles needed to align pairs of vectors (or images).
 %
-In general, this requires no template function or image landmarks; 
-%%%
-%%%YGK  ref template landmark
-%%%
+In general, this requires no template function \cite{ahuja2007template} or image landmarks \cite{ian1998statistical}; 
 however, when the images are noisy, some pairwise alignments may be inaccurate.
 %
 Using the alignment angles between all pairs of vectors (or images), angular synchronization finds the set of rotation angles (one angle for each vector) most consistent with all pairwise measurements (see {\it SI Appendix}).
 %
 In this schematic, registration via angular synchronization is trivial as the pairwise measurements contain no noise.
 %
-However, the algorithm has been shown to successfully register sets of vectors (or images) even when many of the pairwise measurements are corrupted by noise \cite{...}.
+However, the algorithm has been shown to successfully register sets of vectors (or images) even when many of the pairwise measurements are corrupted by noise \cite{singer2011angular}.
 %
 
 %
-In the data sets we will consider, after removing the variability due to translations and rotations of the images, the remaining variability may be due to developmental dynamics.
-%
-These dynamics can be revealed by ordering the data along the one-dimensional manifold that parameterizes the data.
+After removing the variability due to translations and rotations of the images, the developmental dynamics may be revealed by ordering the data along the one-dimensional manifold that parameterizes most of the variability in the data.
 %%%
 %%%YGK feels like repeats
 %%%
@@ -405,12 +380,9 @@ the algorithm uses information about pairwise alignments {\em and} pairwise dist
 %
 It is thus perfectly suited for our task of registering and temporally ordering cross-sectional imaging data.
 %
-We will use it to uncover a temporal ordering of our images, as well as register images which are similar, to obtain a global picture of developmental dynamics.
-%
-%%%YGK fees like a repeat
 
 \begin{figure}[t]
-\includegraphics[width=8.4cm]{fig4}
+\includegraphics[width=8.7cm]{fig2}
 \caption{Schematic illustrating angular synchronization and diffusion maps. {\xfigtextfontit (A)} Set of vectors, each in a different orientation. The pairwise alignment angles are indicated. {\xfigtextfontit (B)} The vectors from {\xfigtextfontit A}, each rotated about their midpoint so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in {\xfigtextfontit A}: the differences between a pair of angles in {\xfigtextfontit B} is the same as the pairwise angle in {\xfigtextfontit A}. {\xfigtextfontit (C)} Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of data points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see {\xfigtextfontit SI Appendix}), so that close data points are connected by dark (``stronger'') edges. {\xfigtextfontit (D)} The data in {\xfigtextfontit C}, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure. The color intensity is monotonic with the arclength, thus parameterizing the curve.}
 %\label{fig:schematics}
 \customlabel{fig:schematics}{2}
@@ -422,16 +394,8 @@ We will use it to uncover a temporal ordering of our images, as well as register
 
 
 \begin{figure*}[t]
-\raisebox{8.1cm}{{\figtextfont A}}
-\includegraphics[width=8.4cm]{raw_data1}
-\hfill
-\raisebox{8.1cm}{{\figtextfont B}}
-\includegraphics[width=8.4cm]{VDM_data1_ordered}\\
-%\vspace{0.2cm}
-%\centering
-%\raisebox{0.5cm}{{\figtextfont C}}
-%\includegraphics[width=8.4cm]{average_trajectory_VDM}
-\caption{{\xfigtextfontit Drosophila} during cellularization. {\xfigtextfontit (A)} Images of {\xfigtextfontit Drosophila} embryos collected during cellularization. Each image is of a different embryo in a different rotational and translational orientation. {\xfigtextfontit (B)} Images from {\xfigtextfontit A}, now registered and ordered using vector diffusion maps. }%{\it (C)} Average trajectory of the images shown in {\it B}.  Each image is the average of $7$ consecutive images in {\it B}. }
+\includegraphics{fig3}
+\caption{{\xfigtextfontit Drosophila} during cellularization. {\xfigtextfontit (A)} Images of {\xfigtextfontit Drosophila} embryos collected during cellularization. Each image is of a different embryo in a different rotational and translational orientation. {\xfigtextfontit (B)} Images from {\xfigtextfontit A}, now registered and ordered using vector diffusion maps. The dorsal side of each embryo now appears at the top of each image, and the ventral side appears at the bottom.}
 \customlabel{fig:data1}{3}
 \customlabel{subfig:raw_data1}{\ref{fig:data1}{\it A}}
 \customlabel{subfig:ordered_data1}{\ref{fig:data1}{\it B}}
@@ -440,13 +404,13 @@ We will use it to uncover a temporal ordering of our images, as well as register
 
 \subsection{Images of {\subsectionitfont Drosophila} embryos during cellularization}
 
-As a first illustration of this approach to temporal ordering and registration of images, we used a dataset where the correct registration and temporal order is known {\it a priori}.
+As a first illustration of this approach to temporal ordering and registration of images, we analyze a data set where the correct registration and temporal order is known {\it a priori}.
 %
-This dataset is obtained by fluorescent imaging of {\it Drosophila} embryos during the third hour after fertilization.
+This data set is obtained by fluorescent imaging of {\it Drosophila} embryos during the third hour after fertilization.
 %
 By this stage of development, sequential divisions of the fertilized egg have generated a system where most of the nuclei are arranged in a monolayer under the common plasma membrane \cite{foe1983studies}.
 %
-Figure 3a shows optical cross-sections of each embryo, with nuclei (gray) labeled by DAPI, a DNA stain.
+Figure~\ref{subfig:raw_data1} shows optical cross-sections of each embryo, with nuclei (gray in the figure) labeled by DAPI, a DNA stain.
 %
 During the third hour of development, the spatially uniform two-dimensional arrangement of nuclei is patterned by the concentration profiles of chemical signals that control cell differentiation.
 %
@@ -464,27 +428,24 @@ The spatiotemporal pattern of dpERK is more complex: dpERK is first detected in 
 %
 This bimodal pattern is then augmented by a peak at the dorsal side of the embryo.
 %
-Both of these features become readily apparent when images are registered and ordered using vector diffusion maps (see Figure~\ref{subfig:ordered_data1}): the peak of nuclear Dl is consistent throughout the images and intensity of the dpERK signal in the lateral regions of the embryo monotonically increases across the dataset.
+Both of these features become readily apparent when images are registered and ordered using vector diffusion maps (see Figure~\ref{subfig:ordered_data1}): the peak of nuclear Dl is consistent throughout the images and intensity of the dpERK signal in the lateral regions of the embryo monotonically increases across the data set.
 %
 
-For this dataset, the quality of the temporal ordering provided by vector diffusion maps can be assessed by comparing with the ordering obtained through an independent approach.
+For this data set, the quality of the temporal ordering provided by vector diffusion maps can be assessed by comparing with the ordering obtained through an independent approach.
 %
 During the third hour of development, the embryo cellularizes: nuclei located under common plasma membrane are enclosed by lateral membranes which grow inward, separating the nuclei into individual cells.
 %
 The highly reproducible kinetics of lateral membrane growth can be used to estimate the age of each embryo to within 1--3 minutes \cite{figard2013plasma} (see {\it SI Appendix}).
 %
-The rank correlation coefficient between the orderings obtained based on the progress of cellularization and vector diffusion maps is 0.9127.
-%%%
-%%%YGK how many digits are significant ?
-%%%
+Spearman's rank correlation coefficient between the orderings obtained based on the progress of cellularization and vector diffusion maps is 0.91.
 %
-Thus, we have validated a dimensionality reduction approach to temporal ordering and registration of data on a dataset where image orientation and ordering can be assessed independently.
+Thus, we have validated a dimensionality reduction approach to temporal ordering and registration of data on a data set where image orientation and ordering can be assessed independently.
 
 Although the first vector diffusion maps coordinate accurately captures the developmental dynamics, there are other sources of variability within this data set that could also be extracted using these techniques.
 %
-An obvious one is variability due to size; here the size variation is relatively small relative to the developmental changes.
+An obvious one is variability due to size; here, the size variation is relatively small relative to the developmental changes.
 %
-However, in other applications where the size variation is significant or the developmental dynamics are more subtle, it may be important to factor out size or {\em scaling} symmetries.
+However, in other applications where the size variation is significant or the developmental dynamics are more subtle, it may be important to factor out size or {\it scaling} symmetries.
 %%%
 %%%YGK   for teh "additional components" - don't have in the same sentence - say it somewhere else.... INCLUDE IT (maybe in the mutants)
 
@@ -495,24 +456,24 @@ However, in other applications where the size variation is significant or the de
 
 \subsection{Images of gastrulating  {\subsectionitfont Drosophila} embryos}
 
-Because the images in Figure~\ref{fig:data1} are relatively simple, other techniques could have been used to temporally order them.
+As the images in Figure~\ref{fig:data1} are relatively simple, other techniques could have been used to temporally order them.
 %
-Because these data are effectively a single mode (the two dpERK peaks) growing in time,
+Because this data set is effectively a single mode (the two dpERK peaks) growing in time,
 principal component analysis (PCA) \cite{shlens2005tutorial} would uncover most of the meaningful structure in the data, and projection onto the first principal component would be sufficient to order the data.
 %
 However, developmental dynamics are often significantly more complex, and nonlinear techniques such as (vector) diffusion maps are required to extract meaningful structure in the data.
 %
-The next dataset illustrates this point.
+The next data set illustrates this point.
 
 Figure~\ref{subfig:raw_data2} shows a data set of $108$ images of {\it Drosophila} embryos.
 %
-These images cover a thirty minute time interval and span late cellularization (the early images in this data set overlap with the late images in the previous set) through gastrulation, when the two-dimensional sheet of newly formed cells begins to deform into three-dimensional structures of the future organs.
+These images cover a thirty minute time interval and span late cellularization (the early images in this data set overlap with the late images in the previous set) through gastrulation, when the two-dimensional sheet of newly formed cells begins to deform into three-dimensional structures which will form the future organs.
 %
 As before, each image is an optical cross-section of an embryo fixed at a different developmental time.
 %
 The nuclei (gray) are again labeled with a DNA marker.
 %
-However, during this developmental time period, the nuclei are no longer uniformly arranged around the periphery of the embryo as the tissue begins to morph.
+However, during this developmental time period, the nuclei are no longer uniformly arranged around the periphery of the embryo.
 %
 Instead of Dl, which is difficult to visualize at this point, we stained for Twist (Twi, shown in green), a transcription factor that is activated by high levels of Dl, specifying the cells of the future muscle tissue.
 %
@@ -524,21 +485,12 @@ dpERK (red) again appears as two lateral peaks at the ventral side of the embryo
 %
 These two peaks merge together during invagination, eventually forming (together with Twi) a characteristic ``omega'' shape.
 %
-During this time window, germband elongation causes cells from the ventral side of the embryo to move towards the poles of the embryo, and then wrap around to the dorsal side.
+During this time window, germband elongation causes cells from the ventral side to move towards the poles of the embryo, and then wrap around to the dorsal side.
 %
 At the end of this process, cells which were originally on the ventral side have migrated to the dorsal side of the embryo, causing similar ``omega'' shaped patterns (formed by Twi and dpERK) to arise on the dorsal side (shown in the late images in Figure~\ref{subfig:averaged_data2}).
 
 \begin{figure*}[t]
-\raisebox{5.3cm}{{\figtextfont A}}
-\includegraphics[width=16.8cm]{raw_data2}
-
-\vspace{0.2cm}
-\raisebox{5.3cm}{{\figtextfont B}}
-\includegraphics[width=16.8cm]{VDM_ordered}
-
-\vspace{0.2cm}
-\raisebox{0.6cm}{{\figtextfont C}}
-\includegraphics[width=16.8cm]{average_trajectory}
+\includegraphics{fig4}
 \caption{{\xfigtextfontit Drosophila} during gastrulation. {\xfigtextfontit (A)} Images of gastrulating {\xfigtextfontit Drosophila} embryos. Each image is of a different embryo in a different rotational and translational orientation. {\xfigtextfontit (B)} Data from {\xfigtextfontit A}, registered and ordered using vector diffusion maps. {\xfigtextfontit (C)} Average trajectory of the images shown in {\xfigtextfontit B}. Each image is the average of $9$ consecutive images in {\xfigtextfontit B}. }
 \customlabel{fig:data2}{4}
 \customlabel{subfig:raw_data2}{\ref{fig:data2}{\it A}}
@@ -546,7 +498,7 @@ At the end of this process, cells which were originally on the ventral side have
 \customlabel{subfig:averaged_data2}{\ref{fig:data2}{\it C}}
 \end{figure*}
 
-The dynamics in this data set are highly nonlinear, and only 22\% of the variability in the data is captured by the first principal component.
+Visually, the dynamics in this data set are highly nonlinear, and only 22\% of the variability in the data is captured by the first principal component.
 %
 We require a more sophisticated approach, such as vector diffusion maps, to temporally order the data.
 %
@@ -559,31 +511,20 @@ However, the dynamics are not immediately apparent from this set of registered a
 First, the sheer number of images makes visual assimilation of the entire data set (even after registration and ordering) difficult, and
 second, the ordered data is not entirely smooth due to noise from interembryo variability.
 %
-To highlight the developmental dynamics revealed by vector diffusion maps, we construct an average developmental trajectory.
+To highlight the developmental dynamics revealed by vector diffusion maps, we construct a movie of an averaged developmental trajectory by applying a Gaussian filter to the set of ordered images (more details are given in the {\it SI Appendix}). 
 %
-This is done by dividing the registered and ordered data into windows or classes, where each window contains a group of consecutive images in the ordered data, then calculating the average image in each window.
+This movie is included in the {\it SI Appendix},
+and representative snapshots from this movie are shown in Figure~\ref{subfig:averaged_data2}.
 %
-Figure~\ref{subfig:averaged_data2} shows the average trajectory for this data set; it is now very straightforward to see the underlying developmental dynamics.
+The stereotypic dynamics are now readily apparent.
 %
-In this example, we accomplished the same task presented in the caricature in Figure~\ref{fig:fish}, but without knowledge about the appropriate landmarks (e.g., fins) for registration or the appropriate statistic (e.g., body size) by which to order.
-
-We can further use this collection of registered and ordered snapshots to construct a smooth movie of the developmental dynamics.
+However, there are some artifacts in the movie due to size variation, the dynamics at the end of the movie are not as smooth, as we have fewer samples in this time window.
 %
-Using a Gaussian kernel, we calculate the average image for each frame of a movie which (approximately) spans the ordered images.
+We would like to note that, although this movie provides us with a representative picture of the dynamics, the speed of the movie is not constant with time, as we have no true time information about the images.
 %
-This movie is included in the {\it SI Appendix}.
-%
-The dynamics are now apparent.
-%
-There are artifacts in the movie due to size variation in the samples.
-%
-Furthermore, the dynamics at the end of the movie are not as smooth, as we have fewer samples in this window.
-%
-We would like to note that, although this movie provides a picture of the dynamics, the speed of the movie is not constant with respect to the real time dynamics.
-
+We have thus accomplished the same task presented in the caricature in Figure~\ref{fig:fish}, but without knowledge about the appropriate landmarks (e.g., fins) for registration or the appropriate statistic (e.g., body size) by which to order.
 
 \subsection{Identifying distinct developmental trajectories}
-
 
 Vector diffusion maps can not only temporally order data, but can also uncover other sources of variability.
 %
@@ -591,51 +532,32 @@ Up to this point, we have assumed that our experiments contain one main directio
 %
 However, this is not always the case.
 %
-As an example, Figure~\ref{subfig:raw_data3} shows a data set consisting of $42$ embryos undergoing cellularization during the third hour of development.
+As an example, we have collected a data set consisting of $42$ embryos undergoing cellularization during the third hour of development (see {\it SI Appendix}); $21$ of the embryos are wild type, and $21$ of the embryos are mutant embryos where dpERK is expressed in one broad peak at the ventral side.
 %
 Again, each image is an optical cross-section of an embryo fixed at a different developmental time, and the embryos have been stained for nuclei (gray), Dl (green), and dpERK (red).
 %
-In this data set, $21$ of the embryos are wild type, and $21$ of the embryos are mutant embryos where dpERK is expressed in one broad peak at the ventral side, instead of in two bimodal peaks.
-%
-We therefore expect two sources of variability in this data set: differences due to developmental time, and differences between mutant and wild type dynamics.
-
-
-
-
+We expect two sources of variability in this data set: differences due to developmental time, and differences between mutant and wild type dynamics.
 
 Figure~\ref{subfig:projection_data3} shows the data, projected onto the first two vector diffusion maps coordinates;
 each data point corresponds to one image in our data set.
 %
 For the previous examples, where we only uncovered developmental progression, we used the first vector diffusion maps coordinate (i.e., the x-axis of this plot) to order the data.
 %
-However, our data now contains two main sources of variation, and we can see two distinct trajectories, highlighted in blue and red, emerge in this two-dimensional progression.
+However, our data now contains two main sources of variation, and we can see two distinct trajectories, highlighted in blue and red, emerge in this two-dimensional projection.
 %
 Both curves originate from a common point, and then diverge.
-
-We can compute the average trajectory over each of the two curves to gain insight into the different developmental dynamics.
 %
-The average over the blue curve, shown in Figure~\ref{subfig:average_wt_data3}, shows the emergence of two distinct dpERK peaks, as expected.
+Representative images along the blue and red curves are shown in Figures~\ref{subfig:average_wt_data3}~and~\ref{subfig:average_mut_data3}.
 %
-The average over the red curve, shown in Figure~\ref{subfig:average_mut_data3}, reveals one more concentrated dpERK peak.
+Figure~\ref{subfig:average_wt_data3}, corresponding to the blue curve, shows the emergence of two distinct dpERK peaks, and Figure~\ref{subfig:average_mut_data3} reveals one more concentrated dpERK peak.
 %
-This is consistent with previously known dynamics.
+This is consistent with previously known dynamics:
+at early times, the wild type and mutant embryos both have little dpERK signal, and are therefore indistinguishable, and at later times, the two groups separate as the wild type embryos develop two distinct dpERK peaks and the mutant embryos develop only a single peak.
 %
-At early times, the wild type and mutant embryos both have little dpERK signal, and are therefore indistinguishable, whereas at later times, the two groups separate as the wild type embryos develop two distinct dpERK peaks and the mutant embryos develop only a single peak.
-%
-We have therefore demonstrated that vector diffusion maps can not only recover dynamics, but also distinguish different expression patterns and developmental trajectories.
+We have therefore shown that vector diffusion maps can not only recover dynamics, but also distinguish different expression patterns and developmental trajectories.
 
 \begin{figure}[t]
-\raisebox{5.7cm}{{\figtextfont A}}
-\begin{tikzpicture}
-     \node at (0,0)
-       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding_background}};
-     \node at (0,0)
-       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding}};
-\end{tikzpicture}
-\raisebox{0.7cm}{{\figtextfont B}}
-\includegraphics[width=8.4cm]{wt_trajectory}
-\raisebox{0.7cm}{{\figtextfont C}}
-\includegraphics[width=8.4cm]{mut_trajectory}
+\includegraphics{fig5}
 \caption{Mutant and wild type {\xfigtextfontit Drosophila}.  {\xfigtextfontit(A)} Data collected from wild type and mutant embryos (original data set is shown in {\xfigtextfontit SI Appendix}), projected onto the first two vector diffusion maps coordinates. The two distinct trajectories are highlighted in blue and red. {\xfigtextfontit (B)} dpERK signal at select wild type points in {\xfigtextfontit A} (denoted by bold symbols). {\xfigtextfontit (C)} dpERK signal at select mutant points in {\xfigtextfontit A} (denoted by bold symbols).}
 \customlabel{fig:data3}{5}
 \customlabel{subfig:projection_data3}{\ref{fig:data3}{\it A}}
@@ -643,26 +565,26 @@ We have therefore demonstrated that vector diffusion maps can not only recover d
 \customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it C}}
 \end{figure}
 
-\begin{figure*}[t]
-\raisebox{8cm}{{\figtextfont A}}
-\includegraphics[height=8.4cm]{wt_trajectory2}
-%\raisebox{8cm}{{\figtextfont B}}
-\begin{tikzpicture}
-     \node at (0,0)
-       {\includegraphics[height=8.4cm]{mut_wt_vdm_embedding_background}};
-     \node at (0,0)
-       {\includegraphics[height=8.4cm]{mut_wt_vdm_embedding}};
-     \node at (-5cm, 3.8cm)
-       {{\figtextfont B}};
-\end{tikzpicture}
-\raisebox{8cm}{{\figtextfont C}}
-\includegraphics[height=8.4cm]{mut_trajectory2}
-\caption{Mutant and wild type {\xfigtextfontit Drosophila}.  {\xfigtextfontit (A)} dpERK signal at select wild type points in {\xfigtextfontit B} (denoted by bold symbols). {\xfigtextfontit(B)} Data collected from wild type and mutant embryos (original data set is shown in {\xfigtextfontit SI Appendix}), projected onto the first two vector diffusion maps coordinates. The two distinct trajectories are highlighted in blue and red. {\xfigtextfontit (C)} dpERK signal at select mutant points in {\xfigtextfontit B} (denoted by bold symbols).}
-\customlabel{fig:data3}{5}
-\customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it A}}
-\customlabel{subfig:projection_data3}{\ref{fig:data3}{\it B}}
-\customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it C}}
-\end{figure*}
+%\begin{figure*}[t]
+%\raisebox{8cm}{{\figtextfont A}}
+%\includegraphics[height=8.4cm]{wt_trajectory2}
+%%\raisebox{8cm}{{\figtextfont B}}
+%\begin{tikzpicture}
+%     \node at (0,0)
+%       {\includegraphics[height=8.4cm]{mut_wt_vdm_embedding_background}};
+%     \node at (0,0)
+%       {\includegraphics[height=8.4cm]{mut_wt_vdm_embedding}};
+%     \node at (-5cm, 3.8cm)
+%       {{\figtextfont B}};
+%\end{tikzpicture}
+%\raisebox{8cm}{{\figtextfont C}}
+%\includegraphics[height=8.4cm]{mut_trajectory2}
+%\caption{Mutant and wild type {\xfigtextfontit Drosophila}.  {\xfigtextfontit (A)} dpERK signal at select wild type points in {\xfigtextfontit B} (denoted by bold symbols). {\xfigtextfontit(B)} Data collected from wild type and mutant embryos (original data set is shown in {\xfigtextfontit SI Appendix}), projected onto the first two vector diffusion maps coordinates. The two distinct trajectories are highlighted in blue and red. {\xfigtextfontit (C)} dpERK signal at select mutant points in {\xfigtextfontit B} (denoted by bold symbols).}
+%\customlabel{fig:data3}{5}
+%\customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it A}}
+%\customlabel{subfig:projection_data3}{\ref{fig:data3}{\it B}}
+%\customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it C}}
+%\end{figure*}
 
 \section{Conclusions}
 
@@ -672,11 +594,11 @@ We acknowledge that the tasks of both registration and ordering could have been 
 %
 We chose the algorithm outlined here, not because it is specifically tailored to our particular data sets, but rather, because it is sufficiently general and we are confident that it can be applied to a myriad of biological imaging applications.
 %
-Such algorithms are often tested on databases containing hundreds or thousands of images.
+Furthermore, such data mining algorithms are often tested on databases containing hundreds or thousands of images.
 %
-Here, we showed that we can successfully recover the underlying dynamics with relatively small data sets.
+Here, we could successfully recover the underlying dynamics with relatively small data sets.
 %
-In general, the number of images required to accurately recover the dynamics will be a function of the noise in the data, as well as the dynamic range and complexity.
+In general, the number of images required to accurately recover the dynamics will be a function of the noise in the data, as well as the dynamic range and complexity of the underlying process.
 
 The task of image registration has been widely studied \cite{zitova2003image}, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
 %
@@ -699,7 +621,7 @@ The task of temporal ordering has also been studied in a variety of biological a
 %
 Data sets such as transcriptional profiling data (where each data point is the transcriptome for a single sample, such as a cell or tissue sample from a patient) \cite{anavy2014blind, trapnell2014dynamics,gupta2008extracting, qiu2011discovering} and snapshots of cells throughout the cell cycle (where each point is a vector of features, such as the amount of DNA, which quantify the cell's state)  \cite{kafri2013dynamics} have been temporally ordered to extract representative trajectories of the underlying dynamic processes.
 %
-Most of these applications order the data by solving a traveling salesman problem (TSP) or constructing a minimum spanning tree (MST) on the data,
+Many of these applications order the data by solving a traveling salesman problem (TSP) or constructing a minimum spanning tree (MST) on the data,
 expecting that these structures (the path of the traveling salesman, or the minimum spanning tree) characterize the majority of the patterns and variability within the data and provide an accurate encoding of the dynamical progression.
 %
 These algorithms often use dimensionality reduction techniques (typically PCA or variants of) as a preprocessing step.
@@ -720,18 +642,18 @@ Diffusion maps have been shown to be more robust to noise than isomap \cite{bala
 
 Furthermore, dimensionality reduction techniques such as vector diffusion maps do not constrain us to one-dimensional parameterizations/organizations of the data, as illustrated in the mutant data set example (Figure~\ref{fig:data3}).
 %
-Other sources of variability, such as size or viewing angle, could also be uncovered using vector diffusion maps.
-%
 These techniques would also allow us to compare the developmental dynamics of several different mutations to see how mutations are developmentally related.
+%
+Other sources of variability, such as size or viewing angle, could also be uncovered using vector diffusion maps.
 
 After registering and temporally ordering images, one can perform a variety of post-processing tasks to gain further insight into the developmental processes.
 %
-We have demonstrated one such technique (window averaging) that allows us to extract a more representative developmental trajectory from the set of noisy snapshots.
+We have demonstrated one such technique (Gaussian filtering) that allows us to extract a more representative developmental trajectory from the set of noisy snapshots.
 %
-Constructing a smooth movie from the registered and ordered cross-sectional snapshots would also be of biological interest, and
-examining the top principal components in each window would allow one to visualize the main dynamical features along the trajectory.
+%Constructing a smooth movie from the registered and ordered cross-sectional snapshots would also be of biological interest, and
+Examining the top principal components in different time windows would allow one to visualize the main dynamical features along the trajectory.
 %
-These questions first require that the data be registered and temporally ordered.
+%These questions first require that the data be registered and temporally ordered.
 %
 Correlating vector diffusion maps coordinates with physical variables is another post-processing task that can give physical insight into developmental dynamics.
 %
@@ -740,19 +662,19 @@ One can test which physical variable, among a set of candidate physical variable
 We are confident that, as biological becomes easier and more robust, the dimensionality reduction techniques we present here will play an important role in the data analysis pipeline.
 
 
-%\begin{itemize}
-%\item What are other people doing  (maybe critically)
-%\item Movies  smoothness
-%\item Discrete symmetries like flips
-%\item Local information ? (features of the image) (associate with Fourier-Bessel and bispectra)
-%\item Mutant-wildtype stuff  IMPORTANT
-%\item And in general, MULTIPLE variablities is important (mutants, guys in another cycle, etc.)
+\begin{itemize}
+\item What are other people doing  (maybe critically)
+\item Movies  smoothness
+\item Discrete symmetries like flips
+\item Local information ? (features of the image) (associate with Fourier-Bessel and bispectra)
+\item Mutant-wildtype stuff  IMPORTANT
+\item And in general, MULTIPLE variablities is important (mutants, guys in another cycle, etc.)
 
 %\item size is an issue
-%\item  small tilts is an issue
-%\item   could one do three-d image processing ?  of the floating thing, without the device
-%\item how do we go about merging datasets ?
-%\end{itemize}
+\item  small tilts is an issue
+\item   could one do three-d image processing ?  of the floating thing, without the device
+\item how do we go about merging data sets ?
+\end{itemize}
 
 %% == end of paper:
 

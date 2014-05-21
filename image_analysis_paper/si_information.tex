@@ -39,7 +39,7 @@ Todo:
 \end{itemize}
 
 \begin{figure}[H]
-\includegraphics[width=8.4cm, trim=0cm 5.6cm 0cm 0cm, clip]{fig6}
+\includegraphics[width=8.4cm, trim=0cm 5.6cm 0cm 0cm, clip]{SI_fig6}
 \caption{{\it (A)} Images, stained for membranes (gray) and Dorsal (green) at different levels of development. {\it (B)} Membrane length as a function of time. The points corresponding to the images in {\it A} are indicated with arrows.}
 \label{fig:membrane_compare}
 \end{figure}
@@ -48,27 +48,33 @@ Todo:
 
 Each image is subsampled to $100 \times 100$ pixels.
 %
-For the images shown in Figures~3~and~5 of the paper, we only use the red and green channels (dpERK and Dl) in the vector diffusion maps computations.
+For the first and third data sets in the paper (images taken during cellularization), we only use the red and green channels (dpERK and Dl) in the vector diffusion maps computations, as the spatial location of the nuclei does not change appreciably during this time window.
 %
-The nuclei are shown only for visual reference.
+The nuclei in the corresponding figures are shown only for visual reference.
 %
-For the images shown in Figure~4 of the paper, we use all three channels (dpERK, Twi, and nuclei) to register the images.
+For the second data set of images during gastrulation, we use all three channels (dpERK, Twi, and nuclei) in the vector diffusion maps computations.
 %
 We blur the nuclear signal using a disc filter with a $5$~pixel radius (using the \texttt{imfilter} function in Matlab with a disc filter).
 %
 We also adjust the intensity of the nuclear signal in each image such that 1\% of the pixels are saturated (using the \texttt{imadjust} function in Matlab).
 
-\section{Principal component analysis for gastrulating images}
+When imaging, the laser settings were calibrated so that images have good dynamic range, while not saturating the detector. 
+% 
+The same laser setting is maintained within each experiment. 
+
+{\bf discuss how we choose weights of signals}
+
+\section{Principal Component Analysis for gastrulating images}
 
 We performed principal component analysis on the images shown in Figure~4 of the paper.
 %
-We first registered the images using angular synchronization, and then computed the principal components for the data set.
+We first registered the images using angular synchronization \cite{singer2011angular}, and then computed the principal components for the data set.
 %
 We ordered the images by the projection onto the first principal component; the results are shown in Figure~\ref{fig:PCA_results}.
 %
-The dynamics that we uncover are not consistent with the expected biological progression.
+The dynamics that we uncover are not consistent with the expected biological progression described in the main text.
 %
-Furthermore, the eigenvalue spectrum from PCA indicates that a significant amount of the variance is not captured by the first principal component, therefore motivating us to use nonlinear techniques. 
+Furthermore, the eigenvalue spectrum from PCA indicates that a significant amount of the variance is not captured by the first principal component, thereby motivating us to use nonlinear techniques. 
 
 \begin{figure}[H]
 \raisebox{5.2cm}{A}
@@ -76,13 +82,16 @@ Furthermore, the eigenvalue spectrum from PCA indicates that a significant amoun
 
 \raisebox{3.7cm}{B}
 \includegraphics[width=8.4cm]{data2_PCA_variance}
-\caption{{\it (A)} Images shown in Figure~4 of the paper, now ordered by the first PCA projection coefficient. The recovered ordering is not consistent with the known developmental dynamics. {\it (B)} The fraction of the variance captured by each of the first 10 principal components. Note that components 2--10 have a nonnegligible contribution to the data.}
+\raisebox{3.7cm}{C}
+\includegraphics[width=8.4cm]{data2_PCA_proj}
+
+\caption{{\it (A)} Images shown in Figure~4 of the paper, now ordered by the first PCA projection coefficient. The recovered ordering is not consistent with the known developmental dynamics. {\it (B)} The fraction of the variance captured by each of the first 10 principal components. Note that components 2--10 have a nonnegligible contribution to the data. {\it (C)} Projection onto the first two principal components.}
 \label{fig:PCA_results}
 \end{figure}
 
 \section{Mathematical Algorithms}
 
-We will demonstrate our techniques for registration and temporal ordering using a synthetic data set.
+We will demonstrate the algorithms for registration and temporal ordering using a synthetic data set.
 %
 The relatively simple dynamics of this data set will allow us to easily visualize and illustrate the main points of the different algorithms.
 %
@@ -98,10 +107,8 @@ Figure \ref{subfig:1d_unaligned_unordered} shows the entire data set; the concen
 %
 Because the profiles are unregistered and unordered, the underlying dynamics (a Gaussian whose amplitude grows in time) are not readily apparent.
 
-\subsection{Angular synchronization \cite{singer2011angular}}
-
 \begin{figure}[H]
-\includegraphics[width=8.4cm]{fig3}
+\includegraphics[width=8.4cm]{SI_fig3}
 \caption{{\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
 \label{fig:1d_demo}
 %\customlabel{fig:1d_demo}{3}
@@ -112,6 +119,8 @@ Because the profiles are unregistered and unordered, the underlying dynamics (a 
 \customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}{\it E}}
 \customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}{\it F}}
 \end{figure}
+
+\subsection{Angular synchronization \cite{singer2011angular}}
 
 Let $ x_1, \dots, x_m$ denote the signals that we wish to align with respect to rotations;
 each signal is a function defined on the unit circle (on the plane).
@@ -194,7 +203,7 @@ It follows directly from \eqref{eq:H_low_rank} that the top block eigenvector of
 Let $\phi_1, \phi_2, \dots, \phi_{md}$ denote the eigenvectors of $H$, ordered such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{md}|$, where $\lambda_i$ is the eigenvalue corresponding to $\phi_i$.
 %
 Then,
-\begin{equation}
+\begin{equation} \label{eq:R_hat}
 \hat{R} =
 \begin{bmatrix}
 \hat{R}_1 \\
@@ -248,14 +257,14 @@ The first step is to construct the matrix $W \in \mathbb{R}^{m \times m}$, where
 %
 We use a diffusion kernel,
 \begin{equation} \label{eq:dmaps_W}
-W_{ij} = \exp \left( -\frac{d^2(x_i, x_j)}{\epsilon^2} \right)
+W_{ij} = \exp \left( -\frac{d^2(x_i, x_j)}{\epsilon^2} \right),
 %W_{ij} = e^{ -\frac{d^2(x_i, x_j)}{\epsilon^2}}
 \end{equation}
-where $d(x_i, x_j)$ is the pairwise distance between $x_i$ and $x_j$ (often the Euclidean distance), and $\epsilon$ is a characteristic scale.
+where $d(x_i, x_j)$ is a pairwise distance between $x_i$ and $x_j$ (often the Euclidean distance), and $\epsilon$ is a characteristic scale.
 %
 Points less than $\epsilon$ apart are thus considered ``close'' and points farther than $\epsilon$ apart are considered ``far away''.
 %
-$\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph}); here, we take $\epsilon$ to be the median of the pairwise distances between data points.
+$\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph, rohrdanz2011determination}); here, we take $\epsilon$ to be $1/10^{th}$ of the median of the pairwise distances between data points for the first two data sets, and the median of the pairwise distances between data points for the third data set.
 
 To find this coordinate $y$, we want solve the following optimization problem \cite{Belkin2003}
 \begin{equation} \label{eq:dmaps_opt_problem}
@@ -326,14 +335,14 @@ As rotation matrices are orthonormal, many of these will be zero,
 and the nonzero inner products give us the embedding coordinates.
 %
 More specifically, the $j^{th}$ embedding coordinate will be given by
-\begin{equation}
+\begin{equation} \label{eq:vdm_coord}
 \psi_{k,l} (i) = \langle \phi_k(i), \phi_l(i) \rangle, \: 0 < k \le d, (j-1)d < l \le jd
 \end{equation}
 where $\phi_k(i) \in \mathbb{R}^d$ denotes the $i^{th}$ block of $\phi_k$, 
 and we select values of $k$ and $l$ such that the coordinate $\psi_{k, l}$ has the largest variability. 
 %
 
-\subsection{Registering images with respect to translations and rotations} \label{subsec:trans_rot_register}
+\subsection{Registering images with respect to rotations and translations} \label{subsec:trans_rot_register}
 
 
 \begin{figure}[H]
@@ -507,7 +516,7 @@ We first multiply all rotations by $R_{1, est}^T$ to ensure that all the images 
 $R_{i,est}^T$ then gives the rotation matrix which registers image $i$.
 %
 From a rotation matrix $R$, we compute the Euler angles $\alpha$, $\beta$, and $\gamma$ using the following relationships
-\begin{equation}
+\begin{equation} \label{eq:angle_invert}
 \begin{aligned}
 R_{1,1} & = \cos(\beta)\cos(\gamma) &
 R_{2,1} & = \cos(\beta)\sin(\gamma) \\
@@ -519,6 +528,77 @@ R_{3,3} & = \cos(\alpha)\cos(\beta)  &
 %
 Inverting \eqref{eq:angle_relations} yields the desired approximate translations and rotation, and we round optimal translations to the nearest integer to remove the need for interpolation when translating the images.
 
+
+\subsection{Algorithms}
+
+\subsubsection{Angular synchronization}
+
+\begin{enumerate}
+\item Compute the pairwise rotations (described in \eqref{eq:opt_angle}) or rotations + translations (described in \eqref{eq:opt_pairwise}) needed to register every pair of data points.
+\item Construct the corresponding rotation matrices $R_{ij}$ for every pair $i, j$ of images (see \eqref{eq:R_theta} for rotations or \eqref{eq:total_rot} for rotations + translations).
+\item Construct the matrix $H$ as in \eqref{eq:H_to_R}.
+\item Compute the top $2$ (for rotations) or $3$ (for rotations + translations) eigenvectors of $H$.
+\item Recover the estimates $\hat{R}_1, \dots, \hat{R}_m$ from the top 2 or 3 eigenvectors as in \eqref{eq:R_hat}.
+\item Project these estimates onto the closest proper rotation matrix using \eqref{eq:R_est}
+\item Recover the optimal rotation angle $\theta_i$ using \eqref{eq:R_theta} or rotation + translation using \eqref{eq:angle_invert} for each image
+\end{enumerate}
+
+\subsubsection{Diffusion Maps}
+
+\begin{enumerate}
+\item Construct the matrix $W$ as in \eqref{eq:dmaps_W}
+\item Construct the matrix $A$ as in \eqref{eq:dmaps_A}
+\item Compute the top few eigenvectors of $A$, ordered with decreasing eigenvalues
+\item If we only want to order the data, then sort the data by the value of the entries in the second eigenvector
+\item For higher-dimensional embeddings (e.g., the mutants), we use the entries of successive eigenvectors (the second eigenvector, the third eigenvector, etc.) as the embedding coordinates
+\end{enumerate}
+
+\subsubsection{Vector Diffusion Maps}
+
+\begin{enumerate}
+\item Compute the pairwise rotations (described in \eqref{eq:opt_angle}) or rotations + translations (described in \eqref{eq:opt_pairwise}) needed to register every pair of data points.
+%
+\item Construct the corresponding rotation matrices $R_{ij}$ for every pair $i, j$ of images (see \eqref{eq:R_theta} for rotations or \eqref{eq:total_rot} for rotations + translations).
+%
+\item Construct the matrix $W$ as in \eqref{eq:dmaps_W}, using the minimum distance obtained for each pair in step 1 as the pairwise distances in the Gaussian kernel.
+%
+\item Construct the matrix $H$ as in \eqref{eq:H_low_rank}.
+%
+\item Construct the matrix $A$ as in \eqref{eq:dmaps_A}.
+%
+\item Construct the matrix $S$ as in \eqref{eq:vdm_S}.
+%
+\item Compute the top few eigenvectors of $S$.
+%
+\item Recover the estimates $\hat{R}_1, \dots, \hat{R}_m$ from the top 2 or 3 eigenvectors as in \eqref{eq:R_hat}.
+%
+\item Project these estimates onto the closest proper rotation matrix using \eqref{eq:R_est}.
+%
+\item Recover the optimal rotation angle $\theta_i$ using \eqref{eq:R_theta} or rotation + translation using \eqref{eq:angle_invert} for each image
+%
+\item To compute the first (non-trivial) embedding coordinate for the data, compute coordinates as in \eqref{eq:vdm_coord}, taking $k=1, 2$ and $l=3, 4$ for the rotation case, or $k = 1, 2, 3$ and $l = 4, 5, 6$ for the rotation + translation case.
+%
+\item Use the $(k, l)$ pairing which gives the inner products with largest variance as the next embedding coordinate.
+%
+\item For successive coordinates, use successive blocks for $l$ (e.g., for the next coordinate, under translations and rotations, use $k=1, 2, 3$ and $l = 7, 8, 9$, compute the coordinates in \eqref{eq:vdm_coord}, and select the $(k, l)$ pairing with largest variance)
+
+\end{enumerate}
+
+\subsection{Constructing movies from registered and ordered images}
+
+Once we have registered and ordered the images, we smooth the resulting trajectory to obtain a movie of the average developmental dynamics. 
+%
+Let $x_1, \dots, x_m$ denote the set of {\em registered and ordered} images (so $x_i$ is the $i^{th}$ image in the ordered set).
+%
+We define the frame at time $\tau$, denoted $\overline{x}_{\tau}$ (where $1 \le \tau \le m$), as a (Gaussian) weighted average of the images,
+\begin{equation}
+\overline{x}_{\tau} =  \frac{\sum_i \exp \left( - \frac{|i - \tau|^2}{\sigma} \right) x_i}{\sum_i \exp \left( - \frac{|i - \tau|^2}{\sigma^2} \right) }
+\end{equation}
+where $\sigma$ is the scale of the Gaussian filter. 
+%
+For the images and movie in Figure~4, we take $\sigma^2 = 20$.
+%
+ 
 \section{Eigenvalue Spectra from VDM}
 
 
@@ -537,21 +617,21 @@ Inverting \eqref{eq:angle_relations} yields the desired approximate translations
 \end{figure}
 
 
-\begin{figure}[H]
-\begin{tikzpicture}
-     \node at (0,0)
-       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding_background}};
-     \node at (0,0)
-       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding}};  
-\end{tikzpicture}
-\begin{tikzpicture}
-     \node at (0,0)
-       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding2_background}};
-     \node at (0,0)
-       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding2}};  
-\end{tikzpicture}
-\caption{Embedding for third example using two different $\epsilon$ values. The right one (smaller $\epsilon$) has a tighter structure, but the mutants are more removed.}
-\end{figure}
+%\begin{figure}[H]
+%\begin{tikzpicture}
+%     \node at (0,0)
+%       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding_background}};
+%     \node at (0,0)
+%       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding}};  
+%\end{tikzpicture}
+%\begin{tikzpicture}
+%     \node at (0,0)
+%       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding2_background}};
+%     \node at (0,0)
+%       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding2}};  
+%\end{tikzpicture}
+%\caption{Embedding for third example using two different $\epsilon$ values. The right one (smaller $\epsilon$) has a tighter structure, but the mutants are more removed.}
+%\end{figure}
 
 
 \section{FBsPCA}
