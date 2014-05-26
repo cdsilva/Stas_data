@@ -110,7 +110,7 @@ for i=1:m
     imshow(im1);
     
 end
-saveas(gcf,sprintf('%s/raw_data1', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/raw_data1', im_save_dir), 'pdf')
 
 image_set_aligned = zeros(size(image_set), 'uint8');
 image_set_aligned_withnuclei = zeros(size(image_set), 'uint8');
@@ -165,14 +165,14 @@ set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [4 4])
 set(gcf, 'paperposition',[0 0 4 4])
 imshow(eigenimages(:, :, :, 1),'border','tight')
-saveas(gcf,sprintf('%s/PCA_eigenimage1', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/PCA_eigenimage1', im_save_dir), 'pdf')
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [4 4])
 set(gcf, 'paperposition',[0 0 4 4])
 imshow(eigenimages(:, :, :, 2),'border','tight')
-saveas(gcf,sprintf('%s/PCA_eigenimage2', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/PCA_eigenimage2', im_save_dir), 'pdf')
 
 [~, I] = sort(proj_coeff(:, 1));
 figure;
@@ -188,7 +188,7 @@ for i=1:m
     imshow(im1);
     
 end
-saveas(gcf,sprintf('%s/PCA_ordered', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/PCA_ordered', im_save_dir), 'pdf')
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -197,7 +197,7 @@ set(gcf, 'paperposition',[0 0 4 4])
 plot(mem_lengths, proj_coeff(:,1)/1000,'.')
 xlabel('membrane thickness', 'fontsize', fontsize)
 ylabel('projection onto PC1', 'fontsize', fontsize)
-saveas(gcf,sprintf('%s/PCA_corr', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/PCA_corr', im_save_dir), 'pdf')
 
 ranks_from_PCA = compute_ranks(proj_coeff(:,1));
 
@@ -210,7 +210,7 @@ set(gcf, 'paperposition',[0 0 8 4])
 plot(proj_coeff(:,1)/1000, proj_coeff(:,2)/1000,'.')
 xlabel('projection onto PC1', 'fontsize', fontsize)
 ylabel('projection onto PC2', 'fontsize', fontsize)
-saveas(gcf,sprintf('%s/PCA_12', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/PCA_12', im_save_dir), 'pdf')
 
 %%
 nstages = 7;
@@ -228,7 +228,7 @@ for i=1:nstages
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end
-saveas(gcf,sprintf('%s/average_trajectory_PCA', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/average_trajectory_PCA', im_save_dir), 'pdf')
 
 
 %% DMAPS on PCA
@@ -271,12 +271,12 @@ for i=1:nstages
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end
-saveas(gcf,sprintf('%s/average_trajectory_DMAPS', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/average_trajectory_DMAPS', im_save_dir), 'pdf')
 
 %% VDM
 
 eps = median(W(:))/10;
-neigs = 9;
+neigs = 42;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
@@ -285,11 +285,11 @@ figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [8 8])
 set(gcf, 'paperposition',[0 0 8 8])
-plot(diag(D),'.')
+plot(abs(diag(D)),'.')
 xlabel('k')
-ylabel('\lambda_k')
+ylabel('|\lambda_k|')
 saveas(gcf,sprintf('%s/data1_evals', im_save_dir), 'pdf')
-
+return
 
 figure;  
 set(gcf, 'paperunits', 'centimeters')
@@ -299,7 +299,7 @@ scatter(embed_idx(1,:), embed_idx(2, :), 500, var(embed_coord),'.')
 colorbar
 xlabel('k')
 ylabel('l')
-saveas(gcf,sprintf('%s/data1_coord_var', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/data1_coord_var', im_save_dir), 'pdf')
 
 
 theta_adjust = -55;
@@ -343,7 +343,7 @@ for i=1:m
     
     imshow(image_set_aligned_withnuclei(:,:,:,I(i)));
 end
-saveas(gcf,sprintf('%s/VDM_data1_ordered', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/VDM_data1_ordered', im_save_dir), 'pdf')
 
 corr(embed_coord(:, idx), mem_lengths, 'type', 'spearman')
 
@@ -363,7 +363,7 @@ for i=1:nstages
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end
-saveas(gcf,sprintf('%s/average_trajectory_VDM', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/average_trajectory_VDM', im_save_dir), 'pdf')
 
 %%
 

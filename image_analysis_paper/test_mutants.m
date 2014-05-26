@@ -253,8 +253,8 @@ axis equal
 
 %% VDM
 
-eps = median(W(:));
-neigs = 12;
+eps = median(W(:))/5;
+neigs = 42;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
@@ -284,10 +284,10 @@ figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [8 8])
 set(gcf, 'paperposition',[0 0 8 8])
-plot(diag(D),'.')
+plot(abs(diag(D)),'.')
 xlabel('k')
-ylabel('\lambda_k')
-saveas(gcf,sprintf('%s/data3_evals', im_save_dir), 'pdf')
+ylabel('|\lambda_k|')
+% saveas(gcf,sprintf('%s/data3_evals', im_save_dir), 'pdf')
 
 
 figure;  
@@ -298,24 +298,39 @@ scatter(embed_idx(1,:), embed_idx(2, :), 500, var(embed_coord),'.')
 colorbar
 xlabel('k')
 ylabel('l')
-saveas(gcf,sprintf('%s/data3_coord_var', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/data3_coord_var', im_save_dir), 'pdf')
 
 
 %% find relevant VDM coordinates
 
 idx1 = find(embed_idx(1,:) == 4 & embed_idx(2,:) == 1);
-idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 3);
+idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 1);
 % idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 1);
 
 if mean(embed_coord(:, idx1)) < 0
     embed_coord(:, idx1) = -embed_coord(:, idx1);
 end
-if mean(embed_coord(:, idx2)) > 0
+if mean(embed_coord(:, idx2)) < 0
     embed_coord(:, idx2) = -embed_coord(:, idx2);
 end
 
 figure;
 plot(embed_coord(:,idx1),embed_coord(:,idx2),'.')
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 6])
+set(gcf, 'paperposition',[0 0 8 6])
+plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'xk', 'markersize', 5)
+hold on
+plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'ok', 'markersize', 5)
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+xlabel('first VDM coordinate')
+ylabel('second VDM coordinate')
+lgnd = legend('wild type','mutant', 'location','northeast');
+set(lgnd,'fontsize',6);
+% saveas(gcf,sprintf('%s/data3_embed', im_save_dir), 'pdf')
 
 
 %% draw curve with select images
@@ -421,8 +436,10 @@ plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'ok', 'markersize', 5
 plot(embed_coord(wt_draw,idx1),embed_coord(wt_draw,idx2),'xk', 'markersize', 5, 'linewidth', 2)
 hold on
 plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5, 'linewidth', 2)
-curve_delta_wt = 0.1*std(embed_coord(wt_ind,idx2)-polyval(p_wt, embed_coord(wt_ind,idx2)));
-curve_delta_mut = std(embed_coord(mut_ind,idx2)-polyval(p_mut, embed_coord(mut_ind,idx2)));
+% curve_delta_wt = std(embed_coord(wt_ind,idx2)-polyval(p_wt, embed_coord(wt_ind,idx2)));
+% curve_delta_mut = std(embed_coord(mut_ind,idx2)-polyval(p_mut, embed_coord(mut_ind,idx2)));
+curve_delta_wt = 0.05;
+curve_delta_mut = 0.01;
 patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
 patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
 axis([-0.025 0.055 -0.07 0.07])
@@ -433,7 +450,7 @@ ylabel('second VDM coordinate')
 lgnd = legend('wild type','mutant', 'location','northeast');
 set(lgnd,'fontsize',6);
 
-
+return
 
 %% draw all images
 

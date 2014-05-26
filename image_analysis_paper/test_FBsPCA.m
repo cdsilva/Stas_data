@@ -69,7 +69,7 @@ for i=1:m
     make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
     imshow(uint8(data(:, :, i)));
 end
-saveas(gcf,sprintf('%s/FBsPCA_images', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/FBsPCA_images', im_save_dir), 'pdf')
 
 
 figure;
@@ -156,6 +156,9 @@ eps_dmaps = median(W_dmaps(:))/2;
 [V, D] = dmaps(W_dmaps, eps_dmaps, 10);
 
 figure;
+imshow(W_dmaps(ranks_from_membranes,ranks_from_membranes))
+
+figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [16 16])
 set(gcf, 'paperposition',[0 0 16 16 ]);
@@ -165,7 +168,7 @@ for i=2:5
     xlabel(sprintf('\\phi_%d',i));
     ylabel('membrane thickness')
 end
-saveas(gcf,sprintf('%s/FBsPCA_dmaps', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/FBsPCA_dmaps', im_save_dir), 'pdf')
 
 
 %%

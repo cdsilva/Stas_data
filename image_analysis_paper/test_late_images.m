@@ -130,7 +130,7 @@ for i=1:m
     make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
     imshow(im1);
 end
-saveas(gcf,sprintf('%s/raw_data2', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/raw_data2', im_save_dir), 'pdf')
 
 
 image_set_aligned = zeros(size(image_set), 'uint8');
@@ -214,7 +214,7 @@ for i=1:m
     imshow(im1);
     
 end
-saveas(gcf,sprintf('%s/data2_PCA_ordered', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/data2_PCA_ordered', im_save_dir), 'pdf')
 
 
 figure;
@@ -248,7 +248,7 @@ set(gcf, 'paperposition',[0 0 8 4])
 bar(diag(D_PCA(1:10, 1:10)) / sum(diag(D_PCA)))
 xlabel('k')
 ylabel('\lambda_k')
-saveas(gcf,sprintf('%s/data2_PCA_variance', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/data2_PCA_variance', im_save_dir), 'pdf')
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -257,23 +257,22 @@ set(gcf, 'paperposition',[0 0 8 4])
 plot(proj_coeff(:,1),proj_coeff(:,2),'.')
 xlabel('PCA projection 1')
 ylabel('PCA projection 2')
-saveas(gcf,sprintf('%s/data2_PCA_proj', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/data2_PCA_proj', im_save_dir), 'pdf')
 
 %% VDM
 
 eps = median(W(:))/10;
-neigs = 6;
+neigs = 42;
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [8 8])
 set(gcf, 'paperposition',[0 0 8 8])
-plot(diag(D),'.')
+plot(abs(diag(D)),'.')
 xlabel('k')
-ylabel('\lambda_k')
+ylabel('|\lambda_k|')
 saveas(gcf,sprintf('%s/data2_evals', im_save_dir), 'pdf')
-
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -283,7 +282,7 @@ scatter(embed_idx(1,:), embed_idx(2, :), 500, var(embed_coord),'.')
 colorbar
 xlabel('k')
 ylabel('l')
-saveas(gcf,sprintf('%s/data2_coord_var', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/data2_coord_var', im_save_dir), 'pdf')
 
 
 image_set_aligned = zeros(size(image_set), 'uint8');
@@ -393,7 +392,7 @@ for i=1:nstages
     imshow(im1,'initialmagnification','fit','border','tight')
     
 end
-saveas(gcf,sprintf('%s/average_trajectory', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/average_trajectory', im_save_dir), 'pdf')
 
 %%
 
@@ -442,6 +441,72 @@ for i=1:nframes
     for j=2:m
         if window_weights(j) > window_tol
             im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,I(j)));
+        end
+    end
+    im1 = uint8(im1 / sum(window_weights));
+    
+    im1 = circshift(im1,[0 0 -1]);
+    im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+    im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+    
+    %pause(0.1)
+    frame = getframe;
+    writeVideo(writerObj,frame);
+    clf
+end
+
+close(writerObj);
+
+%%
+
+writerObj = VideoWriter('gastrulation2.avi');
+writerObj.FrameRate = 10;
+open(writerObj);
+
+nframes = 100;
+frame_points = linspace(min(embed_coord(:, idx)), max(embed_coord(:, idx)), nframes);
+window_eps = 1e-5;
+window_tol = 1e-6;
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+
+i = 1;
+window_weights = exp(-(frame_points(i)-embed_coord(:, idx)).^2/window_eps);
+window_weights = window_weights / sum(window_weights);
+window_weights(window_weights < window_tol) = 0;
+im1 = window_weights(1) * double(image_set_raw_aligned(:,:,:,I(1)));
+for j=2:m
+    if window_weights(j) > window_tol
+        im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,j));
+    end
+end
+im1 = uint8(im1 / sum(window_weights));
+
+im1 = circshift(im1,[0 0 -1]);
+im1(:, :, 1) = im1(:, :, 1)  + im1(:, :, 3);
+im1(:, :, 2) = im1(:, :, 2)  + im1(:, :, 3);
+
+imshow(im1,'initialmagnification','fit','border','tight')
+set(gca,'nextplot','replacechildren');
+set(gcf,'Renderer','zbuffer');
+
+clf
+
+for i=1:nframes
+    i
+    
+    window_weights = exp(-(frame_points(i)-embed_coord(:, idx)).^2/window_eps);
+    window_weights = window_weights / sum(window_weights);
+    window_weights(window_weights < window_tol) = 0;
+    im1 = window_weights(1) * double(image_set_raw_aligned(:,:,:,I(1)));
+    for j=2:m
+        if window_weights(j) > window_tol
+            im1 = im1 + window_weights(j) * double(image_set_raw_aligned(:,:,:,j));
         end
     end
     im1 = uint8(im1 / sum(window_weights));

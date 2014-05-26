@@ -118,17 +118,36 @@ for i=1:m
     image_set_aligned(:,:,:,i) = im1;
 end
 
+image_set_raw_aligned = zeros(size(image_set_raw), 'uint8');
+for i=1:m
+    im_tmp = image_set_raw(:,:,:,i);
+    im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
+    image_set_raw_aligned(:,:,:,i) = im1;
+end
+
 figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
 set(gcf, 'paperposition',[0 0 8 8])
 for i=1:m
-    im1 = image_set_aligned(:,:,:,i);
+    im1 = image_set_raw_aligned(:, :, :, i);
+    
+    nuclei_tmp = im1(:, :, 1);
+    
+    im1(:, :, 1) = im1(:, :, 2);
+    im1(:, :, 2) = im1(:, :, 3);
+    im1(:, :, 3) = 0;
+    
+    for j=1:3
+        im1(:,:,j) = im1(:,:,j) + nuclei_tmp;
+    end
     
     %subplot(subplot_dim1, subplot_dim2, i);
     subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
     imshow(im1);
     
 end
-%print(sprintf('%s/registered_unordered_2d', im_save_dir), fmt, res);
+print(sprintf('%s/images_angsynch', im_save_dir), fmt, res);
 
 %% order
 
@@ -154,15 +173,28 @@ end
 
 [~, I] = sort(V(:,2));
 figure;
-set(gcf, 'paperposition', [0 0 8 8])
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
 for i=1:m
-    %subplot(subplot_dim1, subplot_dim2, i);
-    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1 1/subplot_dim2])
+    im1 = image_set_raw_aligned(:, :, :, I(i));
     
-    imshow(image_set_aligned(:,:,:,I(i)));
+    nuclei_tmp = im1(:, :, 1);
+    
+    im1(:, :, 1) = im1(:, :, 2);
+    im1(:, :, 2) = im1(:, :, 3);
+    im1(:, :, 3) = 0;
+    
+    for j=1:3
+        im1(:,:,j) = im1(:,:,j) + nuclei_tmp;
+    end
+    
+    %subplot(subplot_dim1, subplot_dim2, i);
+    subplot('position', [X(i)-1/subplot_dim1 Y(i)-1/subplot_dim2 1/subplot_dim1-0.01 1/subplot_dim2-0.01])
+    imshow(im1);
+    
 end
-%print(sprintf('%s/registered_ordered_2d', im_save_dir), fmt, res);
-
+print(sprintf('%s/images_dmaps', im_save_dir), fmt, res);
 
 ranks_from_membranes = compute_ranks(mem_lengths);
 ranks_from_dmaps = compute_ranks(V(:,2));
@@ -228,7 +260,8 @@ set(gcf, 'paperposition', [0 0 11/4 8.5/4])
 plot(ranks_from_membranes, ranks_from_vdm, '.')
 xlabel('rank from cellularization')
 ylabel('rank from vdm')
-%print(sprintf('%s/rank_corr_vdm', im_save_dir), fmt, res);
+print(sprintf('%s/rank_corr_vdm', im_save_dir), fmt, res);
+return
 
 %%
 

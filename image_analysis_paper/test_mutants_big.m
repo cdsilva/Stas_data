@@ -52,7 +52,7 @@ for i=1:m
     
     im1(:, :, 1) = im1(:, :, 2);
     %im1(:, :, 2) = uint8(0.5*double(im1(:, :, 3)));
-    im1(:, :, 2) = 0;
+    im1(:, :, 2) = im1(:, :, 3);
     im1(:, :, 3) = 0;
     
     %store image
@@ -69,18 +69,20 @@ shift_max = 10;
 shift_step = 2;
 dim = 3;
 
-matlabpool open 2;
-[R, W] = compute_pairwise_alignments_color(image_set, angle_proj, shift_max, shift_step);
-matlabpool close
+% matlabpool open 2;
+% [R, W] = compute_pairwise_alignments_color(image_set, angle_proj, shift_max, shift_step);
+% matlabpool close
 
 %save('pairwise_alignments_snanull.mat', 'R', 'W');
-% load('pairwise_alignments_snanull.mat');
+load('pairwise_alignments_snanull.mat');
 
 
 %% select which images to use
 
-ind = setdiff(1:m, [17]);
-
+% ind = setdiff(1:m, [17]);
+% ind = setdiff(1:m, [73 37 34 29 15 21 87 62 17 55 96 18]);
+% ind = setdiff(1:m, [37 34 29 15 21 2 4 6]);
+ind = setdiff(1:m, [37 34 29 15 21 2 4 6]);
 mutation = mutation(ind);
 
 image_set = image_set(:, :, :, ind);
@@ -97,112 +99,132 @@ m = length(ind);
 subplot_dim1 = floor(sqrt(m));
 subplot_dim2 = ceil(m / subplot_dim1);
 
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [subplot_dim1 subplot_dim2])
+set(gcf, 'paperposition',[0 0 subplot_dim1 subplot_dim2])
+for i=1:m
+    im1 = image_set(:,:,:,i);
+    
+    for j=1:3
+        im1(:,:,j) = im1(:,:,j) + nuclei(:,:,i);
+    end
+    
+    make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
+    imshow(im1);
+    
+end
+saveas(gcf,sprintf('%s/raw_data3b', im_save_dir), 'pdf')
+
 %% synchronization
 
-R_opt = ang_synch(R, dim);
-
-image_set_aligned = zeros(size(image_set), 'uint8');
-image_set_aligned_withnuclei = zeros(size(image_set), 'uint8');
-for i=1:m
-    im_tmp = image_set(:,:,:,i);
-    %         for j=1:3
-    %             im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
-    %         end
-    im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
-    image_set_aligned(:,:,:,i) = im1;
-    
-    im_tmp = image_set(:,:,:,i);
-    for j=1:3
-        im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
-    end
-    im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
-    image_set_aligned_withnuclei(:,:,:,i) = im1;
-end
-
-%% dmaps after synch
-
-figure;
-for i=1:m
-    make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
-    
-    imshow(image_set_aligned(:,:,:,i));
-end
-
-W2 = zeros(m);
-for i=1:m
-    im1 = image_set_aligned(:,:,:,i);
-    for j=1:i-1
-        im2 = image_set_aligned(:,:,:,j);
-        W2(i, j) = sum((double(im1(:)) - double(im2(:))).^2);
-        W2(j, i) = W2(i, j);
-    end
-end
-
-eps2 = median(W2(:))*10;
-
-[V2, D] = dmaps(W2, eps2, 10);
-
-figure;
-plot(V2(:,2),V2(:,3),'.');
-
-figure;
-plot(V2(~mutation,2),V2(~mutation,3),'.');
-hold on
-plot(V2(mutation,2),V2(mutation,3),'.r');
-
-figure;
-im_delta = 0.04;
-plot(V2(:,2),V2(:,3),'.')
-hold on
-for i=1:m
-    image('cdata', image_set_aligned(:, :, :, i), 'xdata', [V2(i,2) V2(i,2)+im_delta], 'ydata', [V2(i,3) V2(i,3)+im_delta])
-    hold on
-end
-axis equal
-
-figure;
-set(gcf, 'paperunits', 'centimeters')
-set(gcf, 'papersize', [8 8])
-set(gcf, 'paperposition',[0 0 8 8]);
-im_delta = 0.04;
-plot(V2(:,2),V2(:,3),'.')
-dist_in_dmaps = squareform(pdist(V2(:, 2:3)));
-draw_tol = 0.04;
-hold on
-for i=1:m
-    if i == 1 || min(dist_in_dmaps(i, 1:i-1)) > draw_tol
-        image('cdata', image_set_aligned(:, :, :, i), 'xdata', [V2(i,2) V2(i,2)+im_delta], 'ydata', [V2(i,3) V2(i,3)+im_delta])
-        %hold on
-    end
-end
-axis equal
-
-
-%%
-ranks_from_dmaps = compute_ranks(V2(:,2));
-
-figure;
-set(gcf, 'paperunits', 'centimeters')
-set(gcf, 'papersize', [8 8])
-set(gcf, 'paperposition',[0 0 8 8]);
-plot(ranks_from_dmaps,100*V2(:,3),'.')
-hold on
-%draw_tol = 0.004;
-im_delta = 2;
-hold on
-for i=1:m
-        image('cdata', image_set_aligned(:, :, :, i), 'xdata', [ranks_from_dmaps(i) ranks_from_dmaps(i)+im_delta], 'ydata', [100*V2(i,3) 100*V2(i,3)+im_delta])
-end
-axis equal
+% R_opt = ang_synch(R, dim);
+%
+% image_set_aligned = zeros(size(image_set), 'uint8');
+% image_set_aligned_withnuclei = zeros(size(image_set), 'uint8');
+% for i=1:m
+%     im_tmp = image_set(:,:,:,i);
+%     %         for j=1:3
+%     %             im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
+%     %         end
+%     im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
+%     image_set_aligned(:,:,:,i) = im1;
+%
+%     im_tmp = image_set(:,:,:,i);
+%     for j=1:3
+%         im_tmp(:,:,j) = im_tmp(:,:,j) + nuclei(:,:,i);
+%     end
+%     im1 = rotate_image(R_opt(dim*(i-1)+1:dim*i,:), im_tmp, angle_proj);
+%     image_set_aligned_withnuclei(:,:,:,i) = im1;
+% end
+%
+% %% dmaps after synch
+%
+% figure;
+% for i=1:m
+%     make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
+%
+%     imshow(image_set_aligned(:,:,:,i));
+% end
+%
+% W2 = zeros(m);
+% for i=1:m
+%     im1 = image_set_aligned(:,:,:,i);
+%     for j=1:i-1
+%         im2 = image_set_aligned(:,:,:,j);
+%         W2(i, j) = sum((double(im1(:)) - double(im2(:))).^2);
+%         W2(j, i) = W2(i, j);
+%     end
+% end
+%
+% eps2 = median(W2(:))*10;
+%
+% [V2, D] = dmaps(W2, eps2, 10);
+%
+% figure;
+% plot(V2(:,2),V2(:,3),'.');
+%
+% figure;
+% plot(V2(~mutation,2),V2(~mutation,3),'.');
+% hold on
+% plot(V2(mutation,2),V2(mutation,3),'.r');
+%
+% figure;
+% im_delta = 0.04;
+% plot(V2(:,2),V2(:,3),'.')
+% hold on
+% for i=1:m
+%     image('cdata', image_set_aligned(:, :, :, i), 'xdata', [V2(i,2) V2(i,2)+im_delta], 'ydata', [V2(i,3) V2(i,3)+im_delta])
+%     hold on
+% end
+% axis equal
+%
+% figure;
+% set(gcf, 'paperunits', 'centimeters')
+% set(gcf, 'papersize', [8 8])
+% set(gcf, 'paperposition',[0 0 8 8]);
+% im_delta = 0.04;
+% plot(V2(:,2),V2(:,3),'.')
+% dist_in_dmaps = squareform(pdist(V2(:, 2:3)));
+% draw_tol = 0.04;
+% hold on
+% for i=1:m
+%     if i == 1 || min(dist_in_dmaps(i, 1:i-1)) > draw_tol
+%         image('cdata', image_set_aligned(:, :, :, i), 'xdata', [V2(i,2) V2(i,2)+im_delta], 'ydata', [V2(i,3) V2(i,3)+im_delta])
+%         %hold on
+%     end
+% end
+% axis equal
+%
+%
+% %%
+% ranks_from_dmaps = compute_ranks(V2(:,2));
+%
+% figure;
+% set(gcf, 'paperunits', 'centimeters')
+% set(gcf, 'papersize', [8 8])
+% set(gcf, 'paperposition',[0 0 8 8]);
+% plot(ranks_from_dmaps,100*V2(:,3),'.')
+% hold on
+% %draw_tol = 0.004;
+% im_delta = 2;
+% hold on
+% for i=1:m
+%         image('cdata', image_set_aligned(:, :, :, i), 'xdata', [ranks_from_dmaps(i) ranks_from_dmaps(i)+im_delta], 'ydata', [100*V2(i,3) 100*V2(i,3)+im_delta])
+% end
+% axis equal
 
 %% VDM
 
-eps = median(W(:));
-neigs = 12;
+eps = median(W(:))/5;
+neigs = 42;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
-theta_adjust = -55;
+figure;
+plot(diag(D),'.')
+
+theta_adjust = -90;
 
 image_set_aligned = zeros(size(image_set), 'uint8');
 image_set_aligned_withnuclei = zeros(size(image_set), 'uint8');
@@ -225,44 +247,37 @@ for i=1:m
 end
 
 figure;
-bar(diag(D))
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+plot(abs(diag(D)),'.')
+xlabel('k')
+ylabel('|\lambda_k|')
+saveas(gcf,sprintf('%s/data3_evalsb', im_save_dir), 'pdf')
 
 %%
 
 idx1 = find(embed_idx(1,:) == 4 & embed_idx(2,:) == 1);
-idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 2);
+idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 1);
+
+if mean(embed_coord(:, idx1)) < 0
+    embed_coord(:, idx1) = -embed_coord(:, idx1);
+end
+if mean(embed_coord(:, idx2)) > 0
+    embed_coord(:, idx2) = -embed_coord(:, idx2);
+end
 
 figure;
 plot(embed_coord(:,idx1),embed_coord(:,idx2),'.')
 
-%%
 
 figure;
-plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'.')
+plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'x')
 hold on
-plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'.r')
+plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'o')
 
 %%
-
-ranks_from_vdm = compute_ranks(embed_coord(:,idx1));
-
-figure;
-set(gcf, 'paperunits', 'centimeters')
-set(gcf, 'papersize', [8 8])
-set(gcf, 'paperposition',[0 0 8 8]);
-plot(ranks_from_vdm,1000*embed_coord(:,idx2),'.')
-hold on
-dist_in_dmaps = squareform(pdist(embed_coord(:, [idx1 idx2])));
-%draw_tol = 0.004;
-im_delta = 10;
-hold on
-for i=1:m
-        image('cdata', image_set_aligned(:, :, :, i), 'xdata', [ranks_from_vdm(i) ranks_from_vdm(i)+im_delta], 'ydata', [1000*embed_coord(i,idx2) 1000*embed_coord(i,idx2)+im_delta])
-end
-axis equal
-
-%%
-[~, I ] =sort(embed_coord(:,idx2));
+[~, I ] =sort(embed_coord(:,idx1));
 
 figure;
 for i=1:m
@@ -271,7 +286,113 @@ for i=1:m
     make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
     imshow(im1);
 end
+
+%%
+
+mut_draw = [27 26 88 79 65];
+wt_draw = [3 20 70 58 28];
+nstages = 5;
+
+wt_ind = find(embed_coord(:, idx2) > 0);
+mut_ind = find(embed_coord(:, idx2) < 0);
+
+figure;
+plot(embed_coord(wt_ind,idx1),embed_coord(wt_ind,idx2),'.')
+hold on
+plot(embed_coord(mut_ind,idx1),embed_coord(mut_ind,idx2),'o')
+
+p_wt = polyfit(embed_coord(wt_ind,idx1),embed_coord(wt_ind,idx2),1);
+p_mut = polyfit(embed_coord(mut_ind,idx1),embed_coord(mut_ind,idx2),1);
+
+x_wt = linspace(-0.002, 0.02, 100);
+x_mut = linspace(-0.002, 0.055, 100);
+
+figure;
+plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'x')
+hold on
+plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'o')
+plot(x_wt, polyval(p_wt,x_wt), '-b')
+plot(x_mut, polyval(p_mut,x_mut), '-r')
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 6])
+set(gcf, 'paperposition',[0 0 8 6])
+plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'xk', 'markersize', 5)
+hold on
+plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'ok', 'markersize', 5)
+plot(embed_coord(wt_draw,idx1),embed_coord(wt_draw,idx2),'xk', 'markersize', 5, 'linewidth', 2)
+hold on
+plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5, 'linewidth', 2)
+% curve_delta_wt = std(embed_coord(wt_ind,idx2)-polyval(p_wt, embed_coord(wt_ind,idx2)));
+% curve_delta_mut = std(embed_coord(mut_ind,idx2)-polyval(p_mut, embed_coord(mut_ind,idx2)));
+curve_delta_wt = 0.01;
+curve_delta_mut = 0.01;
+% patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
+% patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
+axis([-0.002 0.055 -0.06 0.02])
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+xlabel('first VDM coordinate')
+ylabel('second VDM coordinate')
+lgnd = legend('wild type','mutant', 'location','northeast');
+set(lgnd,'fontsize',6);
+saveas(gcf,sprintf('%s/mut_wt_vdm_embeddingb', im_save_dir), 'pdf')
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 6])
+set(gcf, 'paperposition',[0 0 8 6])
+% plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'xk', 'markersize', 5)
+% hold on
+% plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'ok', 'markersize', 5)
+% plot(embed_coord(wt_draw,idx1),embed_coord(wt_draw,idx2),'xk', 'markersize', 5, 'linewidth', 2)
+% hold on
+% plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5, 'linewidth', 2)
+% curve_delta_wt = std(embed_coord(wt_ind,idx2)-polyval(p_wt, embed_coord(wt_ind,idx2)));
+% curve_delta_mut = std(embed_coord(mut_ind,idx2)-polyval(p_mut, embed_coord(mut_ind,idx2)));
+curve_delta_wt = 0.011;
+curve_delta_mut = 0.011;
+patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
+hold on
+patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
+axis([-0.002 0.055 -0.06 0.02])
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+% xlabel('first VDM coordinate')
+% ylabel('second VDM coordinate')
+% lgnd = legend('wild type','mutant', 'location','northeast');
+% set(lgnd,'fontsize',6);
+saveas(gcf,sprintf('%s/mut_wt_vdm_embedding_backgroundb', im_save_dir), 'pdf')
+
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
     
+    make_subplot(nstages, 1,  0.01, i);
+    im1 = image_set_aligned_withnuclei(:,:,:,wt_draw(i));
+    im1(:, :, 2) = im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+saveas(gcf,sprintf('%s/wt_trajectoryb', im_save_dir), 'pdf')
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8/nstages])
+set(gcf, 'paperposition',[0 0 8 8/nstages])
+for i=1:nstages
+    
+    make_subplot(nstages, 1,  0.01, i);
+    im1 = image_set_aligned_withnuclei(:,:,:,mut_draw(i));
+    im1(:, :, 2) = im1(:, :, 3);
+    
+    imshow(im1,'initialmagnification','fit','border','tight')
+end
+saveas(gcf,sprintf('%s/mut_trajectoryb', im_save_dir), 'pdf')
 
 
 
