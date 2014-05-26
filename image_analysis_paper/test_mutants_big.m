@@ -69,11 +69,11 @@ shift_max = 10;
 shift_step = 2;
 dim = 3;
 
-% matlabpool open 2;
+% matlabpool open 4;
 % [R, W] = compute_pairwise_alignments_color(image_set, angle_proj, shift_max, shift_step);
 % matlabpool close
-
-%save('pairwise_alignments_snanull.mat', 'R', 'W');
+% 
+% save('pairwise_alignments_snanull.mat', 'R', 'W');
 load('pairwise_alignments_snanull.mat');
 
 
