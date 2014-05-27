@@ -253,7 +253,7 @@ axis equal
 
 %% VDM
 
-eps = median(W(:))/5;
+eps = median(W(:))/2;
 neigs = 42;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
@@ -287,8 +287,7 @@ set(gcf, 'paperposition',[0 0 8 8])
 plot(abs(diag(D)),'.')
 xlabel('k')
 ylabel('|\lambda_k|')
-% saveas(gcf,sprintf('%s/data3_evals', im_save_dir), 'pdf')
-
+saveas(gcf,sprintf('%s/data3_evals', im_save_dir), 'pdf')
 
 figure;  
 set(gcf, 'paperunits', 'centimeters')
@@ -304,7 +303,7 @@ ylabel('l')
 %% find relevant VDM coordinates
 
 idx1 = find(embed_idx(1,:) == 4 & embed_idx(2,:) == 1);
-idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 1);
+idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 3);
 % idx2 = find(embed_idx(1,:) == 7 & embed_idx(2,:) == 1);
 
 if mean(embed_coord(:, idx1)) < 0
@@ -332,10 +331,11 @@ lgnd = legend('wild type','mutant', 'location','northeast');
 set(lgnd,'fontsize',6);
 % saveas(gcf,sprintf('%s/data3_embed', im_save_dir), 'pdf')
 
+return
 
 %% draw curve with select images
 
-mut_draw = [2 37 5 22 27];
+mut_draw = [ 37 32 1 22 27];
 wt_draw = [19 7 10 9 34];
 nstages = 5;
 
@@ -372,7 +372,7 @@ set(lgnd,'fontsize',6);
 
 nclusters = 3;
 
-cluster_idx = kmeans(embed_coord(:, [idx1 idx2]), nclusters, 'start', [-0.01 -0.01; 0.01 0.03; 0.03 -0.01]);
+cluster_idx = kmeans(embed_coord(:, [idx1 idx2]), nclusters, 'start', [-0.01 -0.01; 0.01 0.04; 0.04 -0.01]);
 figure;
 scatter(embed_coord(:,idx1),embed_coord(:,idx2),50, cluster_idx, '.')
 
@@ -407,6 +407,9 @@ for i=1:nclusters
         mut_ind = [mut_ind; tmp_idx(I)];
     end
 end
+
+% wt_ind = setdiff(wt_ind, 1);
+% mut_ind = [mut_ind; 1];
 
 figure;
 plot(embed_coord(wt_ind,idx1),embed_coord(wt_ind,idx2),'.')
@@ -450,8 +453,6 @@ ylabel('second VDM coordinate')
 lgnd = legend('wild type','mutant', 'location','northeast');
 set(lgnd,'fontsize',6);
 
-return
-
 %% draw all images
 
 figure;
@@ -475,9 +476,11 @@ axis equal
 %% draw with curve
     
 wt_idx = find(embed_coord(:, idx2) > 2.75*embed_coord(:,idx1)+0.005);
-mut_idx = find(embed_coord(:, idx2) < 0.01);
-p_wt = [    3.0684    0.04];
-p_mut = [  -30.6192    0.8206    0.0039];
+mut_6dx = find(embed_coord(:, idx2) < 0.01);
+% p_wt = [    3.0684    0.04];
+% p_mut = [  -30.6192    0.8206    0.0039];
+p_wt = [3.8522    0.0288];
+p_mut = [-45    1.6066    0.005];
 
 x_wt = linspace(-0.025, 0.05, 100);
 x_mut = linspace(-0.025, 0.055, 100);
@@ -503,7 +506,8 @@ plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5
 %curve_delta_mut = 0.021;
 %patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
 %patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
-axis([-0.025 0.055 -0.07 0.07])
+% axis([-0.025 0.055 -0.07 0.07])
+axis([-0.02 0.055 -0.04 0.07])
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
 xlabel('first VDM coordinate')
@@ -523,11 +527,12 @@ set(gcf, 'paperposition',[0 0 8 6])
 % hold on
 % plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5, 'linewidth', 2)
 curve_delta_wt = 0.028;
-curve_delta_mut = 0.021;
+curve_delta_mut = 0.018;
 patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
 hold on
 patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
-axis([-0.025 0.055 -0.07 0.07])
+% axis([-0.025 0.055 -0.07 0.07])
+axis([-0.02 0.055 -0.04 0.07])
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
 %xlabel('first VDM coordinate')

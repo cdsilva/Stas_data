@@ -538,7 +538,7 @@ vector diffusion maps can temporally order data; but it can also uncover multipl
 %
 %However, this is not always the case.
 %
-To illustrate this, we have collected a data set consisting of $90$ embryos undergoing cellularization during the third hour of development (see {\it SI Appendix}); $48$ of the embryos are wild type, and $42$ of the embryos are mutant embryos where dpERK is expressed in one broad peak at the ventral side.
+To illustrate this, we have collected a data set consisting of $42$ embryos undergoing cellularization during the third hour of development (see {\it SI Appendix}); $21$ of the embryos are wild type, and $21$ of the embryos are mutant embryos where dpERK is expressed in one broad peak at the ventral side.
 %
 Again, each image is an optical cross-section of an embryo fixed at a different developmental time, and the embryos have been stained for nuclei (gray), Dl (green), and dpERK (red).
 %
@@ -600,7 +600,6 @@ We have therefore demonstrated that vector diffusion maps can not only recover d
 
 \section{Conclusions}
 
-
 We presented a unified approach to temporal ordering and registration of images in cross-sectional studies of developmental dynamics. 
 %
 To the best of our knowledge, the algorithmic approaches to these tasks have been pursued relatively independently of each other. 
@@ -611,27 +610,31 @@ In parallel, ordering large-scale cross-sectional data was done in the context o
 %
 Automated temporal ordering of such datasets was done by first projecting them on a low-dimensional subspace, which can provided by principal or independent components, and then using this projection to solve a traveling salesman problem or construct a minimum spanning tree, providing in this way ordering for multiple developmental snapshots. 
 %
+In addition, the task of image registration has been widely studied \cite{zitova2003image}, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
+%
 The presented approach is different because it handles registration and ordering in a single step and orders the data without first projecting them on a low-dimensional subspace. 
 %
-Furthermore, in contrast to most of the existing approaches to image registration, which rely on the information about some landmarks in the data, such as the eyes in face recognition applications, registration algorithms based on angular synchronization (such as vector diffusion maps) can readily register images even in the absence of such information.  
+Furthermore, in contrast to most of the existing approaches to image registration, which rely on the information about some landmarks in the data, such as the eyes in face recognition applications \cite{zhao2003face}, registration algorithms based on angular synchronization (such as vector diffusion maps) can readily register images even in the absence of such information.  
 The presented approach was demonstrated by applying it to three different experimental datasets, collected specifically for this study. 
 %
-In the first case, correct orientation and temporal order of images was known a priori, providing a test case for the algorithm.  
+In the first case, correct orientation and temporal order of images was known {\it a priori}, which allowed us to validate the results of the algorithm.
 %
-Both of these features were recovered by our technique with high accuracy. For this particular dataset, a simpler approach would suffice. 
+Both the orientation and temporal order were recovered with high accuracy. 
 %
-Because of the relative simplicity of developmental dynamics (small tissue deformation and monotonic increase in the amplitude of a localized signaling pattern), temporal order of images could have been recovered by projection of registered images on the first principal component. 
+However, for this particular dataset, a simpler approach would suffice. 
 %
-This approach was clearly not sufficient for the second dataset, collected from embryos during the time window where both the tissue morphology and signaling patterns are rapidly changing.  
+Because of the relative simplicity of developmental dynamics (monotonic increase in the amplitude of a localized signaling pattern), temporal order could have been recovered by projection of registered images on the first principal component. 
+%
+However, PCA would clearly not suffice for the second dataset, collected from embryos during the time window where both the tissue morphology and signaling patterns are rapidly changing.  
 %
 However, vector diffusion maps could readily extract a highly nontrivial developmental trajectory. 
 %
 Finally, we applied our algorithm to a heterogeneous dataset, composed of images from embryos that follow distinct developmental paths. 
 %
 We found that low-dimensional projection of registered data reveals these distinct paths and can correctly identify embryos of different genotypes. 
-Angular synchronization and vector diffusion maps have been used to reconstruct molecular shapes from cryo-electron microscopy imaging data \cite{singer2012vector}. 
+Angular synchronization and vector diffusion maps have been used to reconstruct molecular shapes from cryo-electron microscopy imaging data \cite{shkolnisky2012viewing, singer2012vector}. 
 %
-Because of the high levels of noise in these images, thousands of images are needed for successful shape reconstruction. 
+Due to the high levels of noise in these images, thousands of images are needed for successful shape reconstruction. 
 %
 Based on our work, we think that a much smaller dataset may be needed for successful reconstruction of developmental trajectories, providing the first step in solving a large number of systems level tasks in studies of embryogenesis. 
 %
@@ -718,18 +721,18 @@ Given the rapidly increasing volumes of imaging data from studies of multiple de
 %We are confident that, as biological becomes easier and more robust, the dimensionality reduction techniques we present here will play an important role in the data analysis pipeline.
 
 
-%\begin{itemize}
-%\item What are other people doing  (maybe critically)
-%\item Movies  smoothness
-%\item Discrete symmetries like flips
-%\item Local information ? (features of the image) (associate with Fourier-Bessel and bispectra)
-%\item And in general, MULTIPLE variablities is important (mutants, guys in another cycle, etc.)
-%
-%%\item size is an issue
-%\item  small tilts is an issue
-%\item   could one do three-d image processing ?  of the floating thing, without the device
-%\item how do we go about merging data sets -- microscopes setting / more generally -- different observables?
-%\end{itemize}
+\begin{itemize}
+\item What are other people doing  (maybe critically)
+\item Movies  smoothness
+\item Discrete symmetries like flips
+\item Local information ? (features of the image) (associate with Fourier-Bessel and bispectra)
+\item And in general, MULTIPLE variablities is important (mutants, guys in another cycle, etc.)
+
+\item size is an issue
+\item  small tilts is an issue
+\item   could one do three-d image processing ?  of the floating thing, without the device
+\item how do we go about merging data sets -- microscopes setting / more generally -- different observables?
+\end{itemize}
 
 %% == end of paper:
 

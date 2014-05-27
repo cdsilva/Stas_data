@@ -290,7 +290,7 @@ end
 %%
 
 mut_draw = [27 26 88 79 65];
-wt_draw = [3 20 70 58 28];
+wt_draw = [3 20 70 28 2];
 nstages = 5;
 
 wt_ind = find(embed_coord(:, idx2) > 0);
@@ -302,7 +302,7 @@ hold on
 plot(embed_coord(mut_ind,idx1),embed_coord(mut_ind,idx2),'o')
 
 p_wt = polyfit(embed_coord(wt_ind,idx1),embed_coord(wt_ind,idx2),1);
-p_mut = polyfit(embed_coord(mut_ind,idx1),embed_coord(mut_ind,idx2),1);
+p_mut = polyfit(embed_coord(mut_ind,idx1),embed_coord(mut_ind,idx2),2);
 
 x_wt = linspace(-0.002, 0.02, 100);
 x_mut = linspace(-0.002, 0.055, 100);
@@ -326,11 +326,11 @@ hold on
 plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'ok', 'markersize', 5, 'linewidth', 2)
 % curve_delta_wt = std(embed_coord(wt_ind,idx2)-polyval(p_wt, embed_coord(wt_ind,idx2)));
 % curve_delta_mut = std(embed_coord(mut_ind,idx2)-polyval(p_mut, embed_coord(mut_ind,idx2)));
-curve_delta_wt = 0.01;
-curve_delta_mut = 0.01;
+% curve_delta_wt = 0.01;
+% curve_delta_mut = 0.006;
 % patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
 % patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
-axis([-0.002 0.055 -0.06 0.02])
+axis([-0.002 0.055 -0.06 0.03])
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
 xlabel('first VDM coordinate')
@@ -352,11 +352,11 @@ set(gcf, 'paperposition',[0 0 8 6])
 % curve_delta_wt = std(embed_coord(wt_ind,idx2)-polyval(p_wt, embed_coord(wt_ind,idx2)));
 % curve_delta_mut = std(embed_coord(mut_ind,idx2)-polyval(p_mut, embed_coord(mut_ind,idx2)));
 curve_delta_wt = 0.011;
-curve_delta_mut = 0.011;
+curve_delta_mut = 0.008;
 patch([x_wt fliplr(x_wt)], [polyval(p_wt,x_wt)+curve_delta_wt polyval(p_wt,fliplr(x_wt))-curve_delta_wt], 'b', 'facealpha', 0.5, 'edgecolor','none')
 hold on
 patch([x_mut fliplr(x_mut)], [polyval(p_mut,x_mut)+curve_delta_mut polyval(p_mut,fliplr(x_mut))-curve_delta_mut], 'r', 'facealpha', 0.5, 'edgecolor','none')
-axis([-0.002 0.055 -0.06 0.02])
+axis([-0.002 0.055 -0.06 0.03])
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
 % xlabel('first VDM coordinate')

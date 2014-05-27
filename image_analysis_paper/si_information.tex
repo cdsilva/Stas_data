@@ -264,7 +264,7 @@ where $d(x_i, x_j)$ is a pairwise distance between $x_i$ and $x_j$ (often the Eu
 %
 Points less than $\epsilon$ apart are thus considered ``close'' and points farther than $\epsilon$ apart are considered ``far away''.
 %
-$\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph, rohrdanz2011determination}); here, we take $\epsilon$ to be $1/10^{th}$ of the median of the pairwise distances between data points for the first two data sets, and the median of the pairwise distances between data points for the third data set.
+$\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph, rohrdanz2011determination}); here, we take $\epsilon$ to be $1/10^{th}$ of the median of the pairwise distances between data points for the first two data sets, and half of the median of the pairwise distances between data points for the third data set.
 
 To find this coordinate $y$, we want solve the following optimization problem \cite{Belkin2003}
 \begin{equation} \label{eq:dmaps_opt_problem}
@@ -323,7 +323,13 @@ We then expect subsequent eigenvectors to contain information about the main dir
 %However, the eigenvectors now also contain information about the embedding coordinates for our images.
 %
 
-If we assume that the rotations and the dynamics are uncoupled and therefore separable, then the eigenvectors of $S$ have the following structure: each block eigenvector contains estimates of the optimal rotations multiplied by the corresponding embedding coordinate.
+In general, the embedding coordinates are given by
+\begin{equation} \label{eq:vdm_coord}
+\psi_{k,l} (i) = \langle \phi_k(i), \phi_l(i) \rangle,
+\end{equation}
+where $\phi_k(i) \in \mathbb{R}^d$ denotes the $i^{th}$ block of $\phi_k$, 
+%
+If we assume that the rotations and the dynamics are uncoupled and therefore separable, then the eigenvectors of $S$ have the following structure: each block eigenvector contains estimates of the optimal rotations (up to a constant rotation) multiplied by the corresponding embedding coordinate.
 %
 As the first diffusion maps coordinate is constant, the first block eigenvector contains only the optimal rotations.
 %
@@ -331,15 +337,8 @@ The second block eigenvector (eigenvectors $d+1$ through $2d$) contains the opti
 %
 We can therefore recover this diffusion maps coordinate by taking inner products of the columns of the second block eigenvector with columns of the first block eigenvector.
 %
-As rotation matrices are orthonormal, many of these will be zero, 
-and the nonzero inner products give us the embedding coordinates.
-%
-More specifically, the $j^{th}$ embedding coordinate will be given by
-\begin{equation} \label{eq:vdm_coord}
-\psi_{k,l} (i) = \langle \phi_k(i), \phi_l(i) \rangle, \: 0 < k \le d, (j-1)d < l \le jd
-\end{equation}
-where $\phi_k(i) \in \mathbb{R}^d$ denotes the $i^{th}$ block of $\phi_k$, 
-and we select values of $k$ and $l$ such that the coordinate $\psi_{k, l}$ has the largest variability. 
+The $j^{th}$ embedding coordinate will be given by $\psi_{k,l}$ such that $0 < k \le d, jd +1 < l \le (j+1)d$,
+and we select the $(k,l)$ pair such that the coordinate $\psi_{k, l}$ has the largest variability. 
 %
 
 \subsection{Registering images with respect to rotations and translations} \label{subsec:trans_rot_register}
@@ -536,7 +535,7 @@ Inverting \eqref{eq:angle_relations} yields the desired approximate translations
 \begin{enumerate}
 \item Compute the pairwise rotations (described in \eqref{eq:opt_angle}) or rotations + translations (described in \eqref{eq:opt_pairwise}) needed to register every pair of data points.
 \item Construct the corresponding rotation matrices $R_{ij}$ for every pair $i, j$ of images (see \eqref{eq:R_theta} for rotations or \eqref{eq:total_rot} for rotations + translations).
-\item Construct the matrix $H$ as in \eqref{eq:H_to_R}.
+\item Construct the matrix $H$ as in \eqref{eq:H_to_R}, which is a block matrix with entries $R_{ij}$.
 \item Compute the top $2$ (for rotations) or $3$ (for rotations + translations) eigenvectors of $H$.
 \item Recover the estimates $\hat{R}_1, \dots, \hat{R}_m$ from the top 2 or 3 eigenvectors as in \eqref{eq:R_hat}.
 \item Project these estimates onto the closest proper rotation matrix using \eqref{eq:R_est}
@@ -549,8 +548,8 @@ Inverting \eqref{eq:angle_relations} yields the desired approximate translations
 \item Construct the matrix $W$ as in \eqref{eq:dmaps_W}
 \item Construct the matrix $A$ as in \eqref{eq:dmaps_A}
 \item Compute the top few eigenvectors of $A$, ordered with decreasing eigenvalues
-\item If we only want to order the data, then sort the data by the value of the entries in the second eigenvector
-\item For higher-dimensional embeddings (e.g., the mutants), we use the entries of successive eigenvectors (the second eigenvector, the third eigenvector, etc.) as the embedding coordinates
+\item If we only want to order the data, then sort the data by the entries in the second eigenvector.
+\item For higher-dimensional embeddings (e.g., the mutants), use the entries of successive eigenvectors (the second eigenvector, the third eigenvector, etc.) as the embedding coordinates
 \end{enumerate}
 
 \subsubsection{Vector Diffusion Maps}
@@ -560,9 +559,9 @@ Inverting \eqref{eq:angle_relations} yields the desired approximate translations
 %
 \item Construct the corresponding rotation matrices $R_{ij}$ for every pair $i, j$ of images (see \eqref{eq:R_theta} for rotations or \eqref{eq:total_rot} for rotations + translations).
 %
-\item Construct the matrix $W$ as in \eqref{eq:dmaps_W}, using the minimum distance obtained for each pair in step 1 as the pairwise distances in the Gaussian kernel.
-%
 \item Construct the matrix $H$ as in \eqref{eq:H_low_rank}.
+%
+\item Construct the matrix $W$ as in \eqref{eq:dmaps_W}, using the minimum distance obtained for each pair in step 1 as the pairwise distances in the Gaussian kernel.
 %
 \item Construct the matrix $A$ as in \eqref{eq:dmaps_A}.
 %
@@ -576,11 +575,11 @@ Inverting \eqref{eq:angle_relations} yields the desired approximate translations
 %
 \item Recover the optimal rotation angle $\theta_i$ using \eqref{eq:R_theta} or rotation + translation using \eqref{eq:angle_invert} for each image
 %
-\item To compute the first (non-trivial) embedding coordinate for the data, compute coordinates as in \eqref{eq:vdm_coord}, taking $k=1, 2$ and $l=3, 4$ for the rotation case, or $k = 1, 2, 3$ and $l = 4, 5, 6$ for the rotation + translation case.
+\item To compute the first (non-trivial) embedding coordinate for the data, compute $\psi_{k,l}$ as in \eqref{eq:vdm_coord}, taking $k=1, 2$ and $l=3, 4$ for the rotation case, or $k = 1, 2, 3$ and $l = 4, 5, 6$ for the rotation + translation case.
 %
-\item Use the $(k, l)$ pairing which gives the inner products with largest variance as the next embedding coordinate.
+Select the $(k, l)$ coordinate which has the largest variance as the embedding coordinate.
 %
-\item For successive coordinates, use successive blocks for $l$ (e.g., for the next coordinate, under translations and rotations, use $k=1, 2, 3$ and $l = 7, 8, 9$, compute the coordinates in \eqref{eq:vdm_coord}, and select the $(k, l)$ pairing with largest variance)
+\item To compute subsequent coordinates, use lower blocks for $l$ (e.g., for the next coordinate, under translations and rotations, use $k=1, 2, 3$ and $l = 7, 8, 9$). Again, compute $\psi_{k, l}$ as in \eqref{eq:vdm_coord}, and select the $(k, l)$ coordinate with largest variance.
 
 \end{enumerate}
 
@@ -592,7 +591,7 @@ Let $x_1, \dots, x_m$ denote the set of {\em registered and ordered} images (so 
 %
 We define the frame at time $\tau$, denoted $\overline{x}_{\tau}$ (where $1 \le \tau \le m$), as a (Gaussian) weighted average of the images,
 \begin{equation}
-\overline{x}_{\tau} =  \frac{\sum_i \exp \left( - \frac{|i - \tau|^2}{\sigma} \right) x_i}{\sum_i \exp \left( - \frac{|i - \tau|^2}{\sigma^2} \right) }
+\overline{x}_{\tau} =  \frac{\sum_i \exp \left( - \frac{|i - \tau|^2}{\sigma^2} \right) x_i}{\sum_i \exp \left( - \frac{|i - \tau|^2}{\sigma^2} \right) }
 \end{equation}
 where $\sigma$ is the scale of the Gaussian filter. 
 %
@@ -605,16 +604,16 @@ For the images and movie in Figure~4, we take $\sigma^2 = 20$.
 \begin{figure}[H]
 \includegraphics[width=5cm]{data1_evals}
 \includegraphics[width=5cm]{data2_evals}
-\includegraphics[width=5cm]{data3_evalsb}
+\includegraphics[width=5cm]{data3_evals}
 \caption{Eigenvalue spectra for three examples.}
 \end{figure}
 
-\begin{figure}[H]
-\includegraphics[width=5cm]{data1_coord_var}
-\includegraphics[width=5cm]{data2_coord_var}
-\includegraphics[width=5cm]{data3_coord_var}
-\caption{Variance of $\psi_{k,l}$ for three examples. We use the ones that have the largest variance.}
-\end{figure}
+%\begin{figure}[H]
+%\includegraphics[width=5cm]{data1_coord_var}
+%\includegraphics[width=5cm]{data2_coord_var}
+%\includegraphics[width=5cm]{data3_coord_var}
+%\caption{Variance of $\psi_{k,l}$ for three examples. We use the ones that have the largest variance.}
+%\end{figure}
 
 
 %\begin{figure}[H]
