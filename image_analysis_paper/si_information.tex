@@ -16,13 +16,16 @@
 \protected@write \@auxout {}{\string \newlabel {#1}{{#2}{}}}}
 \makeatother
 
+\renewcommand\thefigure{S\arabic{figure}}    
+
+
 \begin{document}
 
 \section{Raw data of mutant and wild type embryos}
 
 \begin{figure}[H]
 \includegraphics[height=9cm]{raw_data3b}
-\caption{Images of cellularizing {\it Drosophila} embryos. Each image is of a different embryo in a different rotational orientation. $48$ of the images are of wild type embryos, and $42$ of the images are of mutant embryos.}
+\caption{Images of cellularizing {\it Drosophila} embryos. Each image is of a different embryo in a different rotational orientation. Half of the images are of wild type embryos, and half of the images are of mutant embryos.}
 \end{figure}
 
 
@@ -77,12 +80,12 @@ The dynamics that we uncover are not consistent with the expected biological pro
 Furthermore, the eigenvalue spectrum from PCA indicates that a significant amount of the variance is not captured by the first principal component, thereby motivating us to use nonlinear techniques. 
 
 \begin{figure}[H]
-\raisebox{5.2cm}{A}
+\raisebox{5.2cm}{\sffamily{A}}
 \includegraphics[width=16.8cm]{data2_PCA_ordered}
 
-\raisebox{3.7cm}{B}
+\raisebox{3.7cm}{\sffamily{B}}
 \includegraphics[width=8.4cm]{data2_PCA_variance}
-\raisebox{3.7cm}{C}
+\raisebox{3.7cm}{\sffamily{C}}
 \includegraphics[width=8.4cm]{data2_PCA_proj}
 
 \caption{{\it (A)} Images shown in Figure~4 of the paper, now ordered by the first PCA projection coefficient. The recovered ordering is not consistent with the known developmental dynamics. {\it (B)} The fraction of the variance captured by each of the first 10 principal components. Note that components 2--10 have a nonnegligible contribution to the data. {\it (C)} Projection onto the first two principal components.}
@@ -337,9 +340,9 @@ The second block eigenvector (eigenvectors $d+1$ through $2d$) contains the opti
 %
 We can therefore recover this diffusion maps coordinate by taking inner products of the columns of the second block eigenvector with columns of the first block eigenvector.
 %
-The $j^{th}$ embedding coordinate will be given by $\psi_{k,l}$ such that $0 < k \le d, jd +1 < l \le (j+1)d$,
-and we select the $(k,l)$ pair such that the coordinate $\psi_{k, l}$ has the largest variability. 
-%
+The $j^{th}$ embedding coordinate will be given by $\psi_{k,1}$, where $jd +1 < k \le (j+1)d$,
+and we select $k$ such that the coordinate $\psi_{k, 1}$ has the largest variability, i.e., the $j^{th}$ coordinate is $\psi_{k,1}$, where $k$ is
+$$ \max_{jd +1 < k \le (j+1)d} \sum_i \psi_{k,1} (i)^2 $$
 
 \subsection{Registering images with respect to rotations and translations} \label{subsec:trans_rot_register}
 
@@ -349,26 +352,26 @@ and we select the $(k,l)$ pair such that the coordinate $\psi_{k, l}$ has the la
 \centering
 \includegraphics[width=\textwidth]{sphere_1}\\
 \includegraphics[width=\textwidth]{sphere2_1}\\
-A
+\sffamily{A}
 \end{minipage}
 %
 \begin{minipage}{0.2\textwidth}
 \centering
 \includegraphics[width=\textwidth]{sphere_2}\\
 \includegraphics[width=\textwidth]{sphere2_2}\\
-B
+\sffamily{B}
 \end{minipage}
 \begin{minipage}{0.2\textwidth}
 \centering
 \includegraphics[width=\textwidth]{sphere_3}\\
 \includegraphics[width=\textwidth]{sphere2_3}\\
-C
+\sffamily{C}
 \end{minipage}
 \begin{minipage}{0.2\textwidth} 
 \centering
 \includegraphics[width=\textwidth]{sphere_4}\\
 \includegraphics[width=\textwidth]{sphere2_4}\\
-D
+\sffamily{D}
 \end{minipage}
 \caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. {\it (A)} The original image. {\it (B)} Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. {\it (C)} Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. {\it (D)} Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three-dimensional spheres, and the bottom row shows the (two-dimensional) surface of the sphere in which we are interested.}
 \label{fig:SO3_picture}
@@ -528,60 +531,60 @@ R_{3,3} & = \cos(\alpha)\cos(\beta)  &
 Inverting \eqref{eq:angle_relations} yields the desired approximate translations and rotation, and we round optimal translations to the nearest integer to remove the need for interpolation when translating the images.
 
 
-\subsection{Algorithms}
-
-\subsubsection{Angular synchronization}
-
-\begin{enumerate}
-\item Compute the pairwise rotations (described in \eqref{eq:opt_angle}) or rotations + translations (described in \eqref{eq:opt_pairwise}) needed to register every pair of data points.
-\item Construct the corresponding rotation matrices $R_{ij}$ for every pair $i, j$ of images (see \eqref{eq:R_theta} for rotations or \eqref{eq:total_rot} for rotations + translations).
-\item Construct the matrix $H$ as in \eqref{eq:H_to_R}, which is a block matrix with entries $R_{ij}$.
-\item Compute the top $2$ (for rotations) or $3$ (for rotations + translations) eigenvectors of $H$.
-\item Recover the estimates $\hat{R}_1, \dots, \hat{R}_m$ from the top 2 or 3 eigenvectors as in \eqref{eq:R_hat}.
-\item Project these estimates onto the closest proper rotation matrix using \eqref{eq:R_est}
-\item Recover the optimal rotation angle $\theta_i$ using \eqref{eq:R_theta} or rotation + translation using \eqref{eq:angle_invert} for each image
-\end{enumerate}
-
-\subsubsection{Diffusion Maps}
-
-\begin{enumerate}
-\item Construct the matrix $W$ as in \eqref{eq:dmaps_W}
-\item Construct the matrix $A$ as in \eqref{eq:dmaps_A}
-\item Compute the top few eigenvectors of $A$, ordered with decreasing eigenvalues
-\item If we only want to order the data, then sort the data by the entries in the second eigenvector.
-\item For higher-dimensional embeddings (e.g., the mutants), use the entries of successive eigenvectors (the second eigenvector, the third eigenvector, etc.) as the embedding coordinates
-\end{enumerate}
-
-\subsubsection{Vector Diffusion Maps}
-
-\begin{enumerate}
-\item Compute the pairwise rotations (described in \eqref{eq:opt_angle}) or rotations + translations (described in \eqref{eq:opt_pairwise}) needed to register every pair of data points.
+%\subsection{Algorithms}
 %
-\item Construct the corresponding rotation matrices $R_{ij}$ for every pair $i, j$ of images (see \eqref{eq:R_theta} for rotations or \eqref{eq:total_rot} for rotations + translations).
+%\subsubsection{Angular synchronization}
 %
-\item Construct the matrix $H$ as in \eqref{eq:H_low_rank}.
+%\begin{enumerate}
+%\item Compute the pairwise rotations (described in \eqref{eq:opt_angle}) or rotations + translations (described in \eqref{eq:opt_pairwise}) needed to register every pair of data points.
+%\item Construct the corresponding rotation matrices $R_{ij}$ for every pair $i, j$ of images (see \eqref{eq:R_theta} for rotations or \eqref{eq:total_rot} for rotations + translations).
+%\item Construct the matrix $H$ as in \eqref{eq:H_to_R}, which is a block matrix with entries $R_{ij}$.
+%\item Compute the top $2$ (for rotations) or $3$ (for rotations + translations) eigenvectors of $H$.
+%\item Recover the estimates $\hat{R}_1, \dots, \hat{R}_m$ from the top 2 or 3 eigenvectors as in \eqref{eq:R_hat}.
+%\item Project these estimates onto the closest proper rotation matrix using \eqref{eq:R_est}
+%\item Recover the optimal rotation angle $\theta_i$ using \eqref{eq:R_theta} or rotation + translation using \eqref{eq:angle_invert} for each image
+%\end{enumerate}
 %
-\item Construct the matrix $W$ as in \eqref{eq:dmaps_W}, using the minimum distance obtained for each pair in step 1 as the pairwise distances in the Gaussian kernel.
+%\subsubsection{Diffusion Maps}
 %
-\item Construct the matrix $A$ as in \eqref{eq:dmaps_A}.
+%\begin{enumerate}
+%\item Construct the matrix $W$ as in \eqref{eq:dmaps_W}
+%\item Construct the matrix $A$ as in \eqref{eq:dmaps_A}
+%\item Compute the top few eigenvectors of $A$, ordered with decreasing eigenvalues
+%\item If we only want to order the data, then sort the data by the entries in the second eigenvector.
+%\item For higher-dimensional embeddings (e.g., the mutants), use the entries of successive eigenvectors (the second eigenvector, the third eigenvector, etc.) as the embedding coordinates
+%\end{enumerate}
 %
-\item Construct the matrix $S$ as in \eqref{eq:vdm_S}.
+%\subsubsection{Vector Diffusion Maps}
 %
-\item Compute the top few eigenvectors of $S$.
+%\begin{enumerate}
+%\item Compute the pairwise rotations (described in \eqref{eq:opt_angle}) or rotations + translations (described in \eqref{eq:opt_pairwise}) needed to register every pair of data points.
+%%
+%\item Construct the corresponding rotation matrices $R_{ij}$ for every pair $i, j$ of images (see \eqref{eq:R_theta} for rotations or \eqref{eq:total_rot} for rotations + translations).
+%%
+%\item Construct the matrix $H$ as in \eqref{eq:H_low_rank}.
+%%
+%\item Construct the matrix $W$ as in \eqref{eq:dmaps_W}, using the minimum distance obtained for each pair in step 1 as the pairwise distances in the Gaussian kernel.
+%%
+%\item Construct the matrix $A$ as in \eqref{eq:dmaps_A}.
+%%
+%\item Construct the matrix $S$ as in \eqref{eq:vdm_S}.
+%%
+%\item Compute the top few eigenvectors of $S$.
+%%
+%\item Recover the estimates $\hat{R}_1, \dots, \hat{R}_m$ from the top 2 or 3 eigenvectors as in \eqref{eq:R_hat}.
+%%
+%\item Project these estimates onto the closest proper rotation matrix using \eqref{eq:R_est}.
+%%
+%\item Recover the optimal rotation angle $\theta_i$ using \eqref{eq:R_theta} or rotation + translation using \eqref{eq:angle_invert} for each image
+%%
+%\item To compute the first (non-trivial) embedding coordinate for the data, compute $\psi_{k,l}$ as in \eqref{eq:vdm_coord}, taking $k=1, 2$ and $l=3, 4$ for the rotation case, or $k = 1, 2, 3$ and $l = 4, 5, 6$ for the rotation + translation case.
+%%
+%Select the $(k, l)$ coordinate which has the largest variance as the embedding coordinate.
+%%
+%\item To compute more coordinates, use the subsequent blocks for $l$ (e.g., for the next coordinate, under translations and rotations, use $k=1, 2, 3$ and $l = 7, 8, 9$). Again, compute $\psi_{k, l}$ as in \eqref{eq:vdm_coord}, and select the $(k, l)$ coordinate with largest variance.
 %
-\item Recover the estimates $\hat{R}_1, \dots, \hat{R}_m$ from the top 2 or 3 eigenvectors as in \eqref{eq:R_hat}.
-%
-\item Project these estimates onto the closest proper rotation matrix using \eqref{eq:R_est}.
-%
-\item Recover the optimal rotation angle $\theta_i$ using \eqref{eq:R_theta} or rotation + translation using \eqref{eq:angle_invert} for each image
-%
-\item To compute the first (non-trivial) embedding coordinate for the data, compute $\psi_{k,l}$ as in \eqref{eq:vdm_coord}, taking $k=1, 2$ and $l=3, 4$ for the rotation case, or $k = 1, 2, 3$ and $l = 4, 5, 6$ for the rotation + translation case.
-%
-Select the $(k, l)$ coordinate which has the largest variance as the embedding coordinate.
-%
-\item To compute subsequent coordinates, use lower blocks for $l$ (e.g., for the next coordinate, under translations and rotations, use $k=1, 2, 3$ and $l = 7, 8, 9$). Again, compute $\psi_{k, l}$ as in \eqref{eq:vdm_coord}, and select the $(k, l)$ coordinate with largest variance.
-
-\end{enumerate}
+%\end{enumerate}
 
 \subsection{Constructing movies from registered and ordered images}
 
@@ -635,9 +638,9 @@ For the images and movie in Figure~4, we take $\sigma^2 = 20$.
 
 \section{FBsPCA}
 
-I computed the FBsPCA basis for the set of images (using only the dpERK signal).
+I computed the FBsPCA basis for the set of images (separately for the red and green signals).
 %
-I then computed the bispectrum coefficients for each image expanded in this basis, and used these coefficients in a DMAPS calculation.
+I then computed the bispectrum coefficients for each image expanded in the FBsPCA basis, and used these coefficients in a DMAPS calculation.
 %
 The results are shown below.
 %
@@ -645,12 +648,17 @@ However, because the bispectrum is not stable to deformations, it does not seem 
 
 
 \begin{figure}[H]
-\includegraphics[width=7cm]{FBsPCA_images}
-\includegraphics[width=10cm]{FBsPCA_dmaps}
-\caption{(Left) Images used for FBsPCA. (Right) First 4 dmaps variables, computed from the bispectrum coefficeints, plotted against the membrane thickness. Note there is no appreciable correlation: each dmaps variable simply selects one image from the data set as ``abnormal''.}
+\raisebox{7.6cm}{\sffamily{A}}
+\includegraphics[width=8cm]{raw_data1}
+\hfill
+\raisebox{7.6cm}{\sffamily{B}}
+\includegraphics[width=7cm]{FBsPCA_evals}
+
+\raisebox{2.2cm}{\sffamily{C}}
+\hspace{-1cm}
+\includegraphics[width=4cm, angle=90]{FBsPCA_dmaps}
+\caption{(A) Images used for FBsPCA. (B) Eigenvalue spectrum from dmaps, using bispectrum coefficients. (C) First 4 dmaps variables, computed from the bispectrum coefficeints, plotted against the membrane thickness. Note there is no appreciable correlation: each dmaps variable simply selects one image from the data set as ``abnormal''.}
 \end{figure}
-
-
 
 
 \bibliographystyle{pnas}

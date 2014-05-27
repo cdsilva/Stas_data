@@ -151,24 +151,34 @@ fprintf('\nThe number of components is %d \n', size(Freqs, 1));
 % end
 % W_dmaps = W_dmaps + W_dmaps';
 W_dmaps = squareform(pdist([real(Coeff_b') imag(Coeff_b') real(Coeff_b2') imag(Coeff_b2')])).^2;
-eps_dmaps = median(W_dmaps(:))/2;
+eps_dmaps = median(W_dmaps(:))/4;
 
-[V, D] = dmaps(W_dmaps, eps_dmaps, 10);
+[V, D] = dmaps(W_dmaps, eps_dmaps, m);
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8]);
+plot(diag(abs(D)),'.')
+xlabel('k')
+ylabel('|\lambda_k|')
+saveas(gcf,sprintf('%s/FBsPCA_evals', im_save_dir), 'pdf')
 
 figure;
 imshow(W_dmaps(ranks_from_membranes,ranks_from_membranes))
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
-set(gcf, 'papersize', [16 16])
-set(gcf, 'paperposition',[0 0 16 16 ]);
+set(gcf, 'papersize', [16 4])
+set(gcf, 'paperposition',[0 0 16 4]);
 for i=2:5
-    subplot(2, 2, i-1)
+    subplot(1,4, i-1)
     plot(V(:,i),mem_lengths,'.')
     xlabel(sprintf('\\phi_%d',i));
-    ylabel('membrane thickness')
+    ylabel('membrane length')
+    axis([-1.1 1.1 -inf inf])
 end
-% saveas(gcf,sprintf('%s/FBsPCA_dmaps', im_save_dir), 'pdf')
+saveas(gcf,sprintf('%s/FBsPCA_dmaps', im_save_dir), 'pdf')
 
 
 %%

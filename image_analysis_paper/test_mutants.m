@@ -260,6 +260,16 @@ neigs = 42;
 
 theta_adjust = -55;
 
+% mut_draw = [ 37 32 1 22 27];
+% wt_draw = [19 7 10 9 34];
+% nstages = 5;
+% mut_draw = [ 37  1 22 27];
+% wt_draw = [19  10 9 34];
+% nstages = 4;
+mut_draw = [29 5 1 27];
+wt_draw = [21  10 9 34];
+nstages = 4;
+
 image_set_aligned = zeros(size(image_set), 'uint8');
 image_set_aligned_withnuclei = zeros(size(image_set), 'uint8');
 for i=1:m
@@ -287,7 +297,7 @@ set(gcf, 'paperposition',[0 0 8 8])
 plot(abs(diag(D)),'.')
 xlabel('k')
 ylabel('|\lambda_k|')
-saveas(gcf,sprintf('%s/data3_evals', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/data3_evals', im_save_dir), 'pdf')
 
 figure;  
 set(gcf, 'paperunits', 'centimeters')
@@ -316,13 +326,26 @@ end
 figure;
 plot(embed_coord(:,idx1),embed_coord(:,idx2),'.')
 
+
 figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [8 6])
 set(gcf, 'paperposition',[0 0 8 6])
-plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'xk', 'markersize', 5)
+plot(embed_coord(:,idx1),embed_coord(:,idx2),'.k', 'markersize', 10)
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+xlabel('first VDM coordinate')
+ylabel('second VDM coordinate')
+saveas(gcf,sprintf('%s/data3_embed_bw', im_save_dir), 'pdf')
+
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 6])
+set(gcf, 'paperposition',[0 0 8 6])
+plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'xb', 'markersize', 5)
 hold on
-plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'ok', 'markersize', 5)
+plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'or', 'markersize', 5)
 set(gca, 'xtick', [])
 set(gca, 'ytick', [])
 xlabel('first VDM coordinate')
@@ -331,13 +354,30 @@ lgnd = legend('wild type','mutant', 'location','northeast');
 set(lgnd,'fontsize',6);
 % saveas(gcf,sprintf('%s/data3_embed', im_save_dir), 'pdf')
 
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 6])
+set(gcf, 'paperposition',[0 0 8 6])
+plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'.b', 'markersize', 10)
+hold on
+plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'.',  'color', [0 0.8 0], 'markersize', 10)
+plot(embed_coord(wt_draw,idx1),embed_coord(wt_draw,idx2),'ob', 'markersize', 8)
+hold on
+plot(embed_coord(mut_draw,idx1),embed_coord(mut_draw,idx2),'o', 'color', [0 0.8 0], 'markersize', 8)
+set(gca, 'xtick', [])
+set(gca, 'ytick', [])
+xlabel('first VDM coordinate')
+ylabel('second VDM coordinate')
+lgnd = legend('wild type','mutant', 'location','northeast');
+set(lgnd,'fontsize',6);
+saveas(gcf,sprintf('%s/data3_embed_color', im_save_dir), 'pdf')
+
+
 return
 
 %% draw curve with select images
 
-mut_draw = [ 37 32 1 22 27];
-wt_draw = [19 7 10 9 34];
-nstages = 5;
+
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -514,7 +554,7 @@ xlabel('first VDM coordinate')
 ylabel('second VDM coordinate')
 lgnd = legend('wild type','mutant', 'location','northeast');
 set(lgnd,'fontsize',6);
-saveas(gcf,sprintf('%s/mut_wt_vdm_embedding', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/mut_wt_vdm_embedding', im_save_dir), 'pdf')
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -540,7 +580,7 @@ set(gca, 'ytick', [])
 %lgnd = legend('wild type','mutant', 'location','northeast');
 %set(lgnd,'fontsize',6);
 %saveas(gcf,sprintf('%s/mut_wt_vdm_embedding_background', im_save_dir), 'pdf')
-print(sprintf('%s/mut_wt_vdm_embedding_background', im_save_dir), '-dpdf', '-r600')
+% print(sprintf('%s/mut_wt_vdm_embedding_background', im_save_dir), '-dpdf', '-r600')
 
 
 %% draw images for select points
@@ -585,7 +625,7 @@ for i=1:nstages
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end
-saveas(gcf,sprintf('%s/wt_trajectory2', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/wt_trajectory2', im_save_dir), 'pdf')
 
 
 figure;
@@ -600,4 +640,4 @@ for i=1:nstages
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end
-saveas(gcf,sprintf('%s/mut_trajectory2', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/mut_trajectory2', im_save_dir), 'pdf')

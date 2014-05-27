@@ -81,8 +81,8 @@ load('pairwise_alignments_snanull.mat');
 
 % ind = setdiff(1:m, [17]);
 % ind = setdiff(1:m, [73 37 34 29 15 21 87 62 17 55 96 18]);
+ind = setdiff(1:m, [73 37 34 29 15 21 87 62 17 55]);
 % ind = setdiff(1:m, [37 34 29 15 21 2 4 6]);
-ind = setdiff(1:m, [37 34 29 15 21 2 4 6]);
 mutation = mutation(ind);
 
 image_set = image_set(:, :, :, ind);
@@ -114,7 +114,7 @@ for i=1:m
     imshow(im1);
     
 end
-saveas(gcf,sprintf('%s/raw_data3b', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/raw_data3b', im_save_dir), 'pdf')
 
 %% synchronization
 
@@ -216,7 +216,7 @@ saveas(gcf,sprintf('%s/raw_data3b', im_save_dir), 'pdf')
 
 %% VDM
 
-eps = median(W(:))/5;
+eps = median(W(:))/4;
 neigs = 42;
 
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
@@ -253,7 +253,7 @@ set(gcf, 'paperposition',[0 0 8 8])
 plot(abs(diag(D)),'.')
 xlabel('k')
 ylabel('|\lambda_k|')
-saveas(gcf,sprintf('%s/data3_evalsb', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/data3_evalsb', im_save_dir), 'pdf')
 
 %%
 
@@ -275,6 +275,8 @@ figure;
 plot(embed_coord(~mutation,idx1),embed_coord(~mutation,idx2),'x')
 hold on
 plot(embed_coord(mutation,idx1),embed_coord(mutation,idx2),'o')
+
+return
 
 %%
 [~, I ] =sort(embed_coord(:,idx1));
@@ -337,7 +339,7 @@ xlabel('first VDM coordinate')
 ylabel('second VDM coordinate')
 lgnd = legend('wild type','mutant', 'location','northeast');
 set(lgnd,'fontsize',6);
-saveas(gcf,sprintf('%s/mut_wt_vdm_embeddingb', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/mut_wt_vdm_embeddingb', im_save_dir), 'pdf')
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -363,8 +365,8 @@ set(gca, 'ytick', [])
 % ylabel('second VDM coordinate')
 % lgnd = legend('wild type','mutant', 'location','northeast');
 % set(lgnd,'fontsize',6);
-saveas(gcf,sprintf('%s/mut_wt_vdm_embedding_backgroundb', im_save_dir), 'pdf')
-
+% saveas(gcf,sprintf('%s/mut_wt_vdm_embedding_backgroundb', im_save_dir), 'pdf')
+% 
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -378,7 +380,7 @@ for i=1:nstages
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end
-saveas(gcf,sprintf('%s/wt_trajectoryb', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/wt_trajectoryb', im_save_dir), 'pdf')
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -392,7 +394,7 @@ for i=1:nstages
     
     imshow(im1,'initialmagnification','fit','border','tight')
 end
-saveas(gcf,sprintf('%s/mut_trajectoryb', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/mut_trajectoryb', im_save_dir), 'pdf')
 
 
 
