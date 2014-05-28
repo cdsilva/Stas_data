@@ -175,6 +175,9 @@ imshow(eigenimages(:, :, :, 2),'border','tight')
 % saveas(gcf,sprintf('%s/PCA_eigenimage2', im_save_dir), 'pdf')
 
 [~, I] = sort(proj_coeff(:, 1));
+if corr(I, mem_lengths) < 0 
+    I = flipud(I);
+end
 figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [8 8])
@@ -190,6 +193,7 @@ for i=1:m
 end
 % saveas(gcf,sprintf('%s/PCA_ordered', im_save_dir), 'pdf')
 
+return
 figure;
 set(gcf, 'paperunits', 'centimeters')
 set(gcf, 'papersize', [4 4])

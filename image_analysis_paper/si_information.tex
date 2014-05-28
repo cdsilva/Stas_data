@@ -1,8 +1,9 @@
-\documentclass[12pt]{article}
+\documentclass{pnastwo}
+%\documentclass[10pt,twocolumn]{article}
 
-\usepackage[margin=1in]{geometry}
 
-\usepackage{graphicx}
+%\usepackage[margin=1in]{geometry}
+%\usepackage{graphicx}
 \graphicspath{ {paper_figures2/} }
 
 \usepackage{tikz}
@@ -18,22 +19,20 @@
 
 \renewcommand\thefigure{S\arabic{figure}}    
 
+\newcommand{\fig}[0]{Fig.}
 
 \begin{document}
 
-\section{Raw data of mutant and wild type embryos}
-
-\begin{figure}[H]
-\includegraphics[height=9cm]{raw_data3b}
-\caption{Images of cellularizing {\it Drosophila} embryos. Each image is of a different embryo in a different rotational orientation. Half of the images are of wild type embryos, and half of the images are of mutant embryos.}
-\end{figure}
 
 
-\section{Experimental Methods}
+\begin{article}
+
+
+\section{Materials and Methods}
 
 \subsection{Measuring developmental time during cellularization}
 
-Todo:
+
 \begin{itemize}
 \item We need to have a supplementary figure that shows the lateral view, that makes it even more clear that we work with optical sections.
 
@@ -41,13 +40,10 @@ Todo:
 
 \end{itemize}
 
-\begin{figure}[H]
-\includegraphics[width=8.4cm, trim=0cm 5.6cm 0cm 0cm, clip]{SI_fig6}
-\caption{{\it (A)} Images, stained for membranes (gray) and Dorsal (green) at different levels of development. {\it (B)} Membrane length as a function of time. The points corresponding to the images in {\it A} are indicated with arrows.}
-\label{fig:membrane_compare}
-\end{figure}
 
-\section{Image parameters}
+
+
+\subsection{Image parameters}
 
 Each image is subsampled to $100 \times 100$ pixels.
 %
@@ -67,63 +63,29 @@ The same laser setting is maintained within each experiment.
 
 {\bf discuss how we choose weights of signals}
 
-\section{Principal Component Analysis for gastrulating images}
 
-We performed principal component analysis on the images shown in Figure~4 of the paper.
-%
-We first registered the images using angular synchronization \cite{singer2011angular}, and then computed the principal components for the data set.
-%
-We ordered the images by the projection onto the first principal component; the results are shown in Figure~\ref{fig:PCA_results}.
-%
-The dynamics that we uncover are not consistent with the expected biological progression described in the main text.
-%
-Furthermore, the eigenvalue spectrum from PCA indicates that a significant amount of the variance is not captured by the first principal component, thereby motivating us to use nonlinear techniques. 
 
-\begin{figure}[H]
-\raisebox{5.2cm}{\sffamily{A}}
-\includegraphics[width=16.8cm]{data2_PCA_ordered}
-
-\raisebox{3.7cm}{\sffamily{B}}
-\includegraphics[width=8.4cm]{data2_PCA_variance}
-\raisebox{3.7cm}{\sffamily{C}}
-\includegraphics[width=8.4cm]{data2_PCA_proj}
-
-\caption{{\it (A)} Images shown in Figure~4 of the paper, now ordered by the first PCA projection coefficient. The recovered ordering is not consistent with the known developmental dynamics. {\it (B)} The fraction of the variance captured by each of the first 10 principal components. Note that components 2--10 have a nonnegligible contribution to the data. {\it (C)} Projection onto the first two principal components.}
-\label{fig:PCA_results}
-\end{figure}
-
-\section{Mathematical Algorithms}
+\subsection{Mathematical Algorithms}
 
 We will demonstrate the algorithms for registration and temporal ordering using a synthetic data set.
 %
 The relatively simple dynamics of this data set will allow us to easily visualize and illustrate the main points of the different algorithms.
 %
-We construct concentration profiles defined on a ring, and we assume that each ring is arbitrarily rotated around its center; an example is shown in Figure~\ref{subfig:1d_example}.
+We construct concentration profiles defined on a ring, and we assume that each ring is arbitrarily rotated around its center; an example is shown in \fig~\ref{subfig:1d_example}.
 %
-Rotation of the ring corresponds to shifting (with periodic boundary conditions) the one-dimensional concentration profile shown at the bottom of Figure~\ref{subfig:1d_example} (the symmetry group is $SO(2)$, the group of all two-dimensional proper rotations).
+Rotation of the ring corresponds to shifting (with periodic boundary conditions) the one-dimensional concentration profile shown at the bottom of \fig~\ref{subfig:1d_example} (the symmetry group is $SO(2)$, the group of all two-dimensional proper rotations).
 %
-Each concentration profile is a noisy Gaussian (shown in Figure~\ref{subfig:1d_intensity}), and the Gaussians increase in intensity as  a function of time.
+Each concentration profile is a noisy Gaussian (shown in \fig~\ref{subfig:1d_intensity}), and the Gaussians increase in intensity as  a function of time.
 %
 We discretize the profiles into $100$ points, so our numerical data will be $100$-dimensional vectors (the corresponding symmetry group for the discretized profiles is $\mathbb{Z}_{100}$, the group of integers modulo $100$).
 %
-Figure \ref{subfig:1d_unaligned_unordered} shows the entire data set; the concentration profiles have been stacked in an array, so that each row corresponds to a single profile.
+\fig~\ref{subfig:1d_unaligned_unordered} shows the entire data set; the concentration profiles have been stacked in an array, so that each row corresponds to a single profile.
 %
 Because the profiles are unregistered and unordered, the underlying dynamics (a Gaussian whose amplitude grows in time) are not readily apparent.
 
-\begin{figure}[H]
-\includegraphics[width=8.4cm]{SI_fig3}
-\caption{{\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
-\label{fig:1d_demo}
-%\customlabel{fig:1d_demo}{3}
-\customlabel{subfig:1d_example}{\ref{fig:1d_demo}{\it A}}
-\customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}{\it B}}
-\customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}{\it C}}
-\customlabel{subfig:1d_aligned_unordered}{\ref{fig:1d_demo}{\it D}}
-\customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}{\it E}}
-\customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}{\it F}}
-\end{figure}
 
-\subsection{Angular synchronization \cite{singer2011angular}}
+
+\subsubsection{Angular synchronization \cite{singer2011angular}}
 
 Let $ x_1, \dots, x_m$ denote the signals that we wish to align with respect to rotations;
 each signal is a function defined on the unit circle (on the plane).
@@ -157,7 +119,7 @@ Practically, the signals are discretized in a $n$-long vector (the local intensi
 rotating the function by an angle $\theta$ then corresponds to cyclically shifting the elements of $x_i$
 by $\frac{\theta_i}{2 \pi} n$ (rounded to the nearest integer to obtain a valid shift).
 %
-For the one-dimensional discretized profiles shown in Figure~\ref{fig:1d_demo}, we exhaustively search over all $n=100$ possible shifts of the signals to compute the optimal angles in \eqref{eq:opt_angle}.
+For the one-dimensional discretized profiles shown in \fig~\ref{fig:1d_demo}, we exhaustively search over all $n=100$ possible shifts of the signals to compute the optimal angles in \eqref{eq:opt_angle}.
 %
 Alternatively, for continuous signals, an optimization algorithm
 can be used \cite{ahuja2007template}.
@@ -252,7 +214,7 @@ therefore, {\it all} information of the form in \eqref{eq:triplet_consistency} i
 %
 Because $H$ and $H^2$ have the same eigenvectors, our problem formulation accounts for not only pairwise alignment information, but also these higher-order considerations.
 
-\subsection{Diffusion maps \cite{coifman2005geometric}}
+\subsubsection{Diffusion maps \cite{coifman2005geometric}}
 
 Given $m$ data points $x_1, \dots, x_m$ (typically vectors in a high-dimensional space), we want to find a coordinate transformation $y(x)$ that preserves local information: points that are close in the original space should also be close in the coordinate $y$.
 %
@@ -293,9 +255,13 @@ In our application, we have assumed that this single direction of variability, p
 %
 Ordering the data by $\phi_2(j)$ will then, effectively, order them in time.
 %
-The procedure generalizes when the data lie on higher-dimensional manifolds (not just curves) in data space, where lower eigenvectors give subsequent embedding coordinates for the data. 
+The procedure generalizes when the data lie on higher-dimensional manifolds (not just curves) in data space, where lower eigenvectors give subsequent embedding coordinates for the data.
+%
+The magnitude of the eigenvalues, $|\lambda_i|$, gives a measure of ``importance'' of the corresponding embedding coordinate $\phi_i$.
+%
+Often, one looks for a spectral gap in the eigenvalues to determine how many dimensions are necessary to adequately describe the data. 
 
-\subsection{Vector diffusion maps\cite{singer2012vector}}
+\subsubsection{Vector diffusion maps\cite{singer2012vector}}
 
 In vector diffusion maps, given data points $x_1, \dots, x_m$, one first constructs the matrix $S \in \mathbb{R}^{md \times md}$, with the $i,j^{th}$ block of $S$, $S_{ij}$, defined as
 \begin{equation} \label{eq:vdm_S}
@@ -341,42 +307,17 @@ The second block eigenvector (eigenvectors $d+1$ through $2d$) contains the opti
 We can therefore recover this diffusion maps coordinate by taking inner products of the columns of the second block eigenvector with columns of the first block eigenvector.
 %
 The $j^{th}$ embedding coordinate will be given by $\psi_{k,1}$, where $jd +1 < k \le (j+1)d$,
-and we select $k$ such that the coordinate $\psi_{k, 1}$ has the largest variability, i.e., the $j^{th}$ coordinate is $\psi_{k,1}$, where $k$ is
-$$ \max_{jd +1 < k \le (j+1)d} \sum_i \psi_{k,1} (i)^2 $$
+and we select $k$ such that the coordinate $\psi_{k, 1}$ has the largest variability, i.e., the $j^{th}$ coordinate is $\psi_{k,1}$, where $k$ is the solution to
+$$ \max_{jd +1 < k \le (j+1)d} \sum_i \psi_{k,1} (i)^2. $$
+%
+As in diffusion maps, the magnitude of the eigenvalues is related to the importance of the coordinates and gives an indication of the inherent dimensionality of the data. 
+%
+Again, if the rotations and dynamic variation are separable, then we expect the each eigenvalue to appear with multiplicity $d$, as each block eigenvector will yield $d$ eigenvalues of approximately the same value. 
+%
+We therefore look for a spectral gap in the ``blocks'' of eigenvalues to determine how many components are necessary to describe the data.
+
 
 \subsection{Registering images with respect to rotations and translations} \label{subsec:trans_rot_register}
-
-
-\begin{figure}[H]
-\begin{minipage}{0.2\textwidth}
-\centering
-\includegraphics[width=\textwidth]{sphere_1}\\
-\includegraphics[width=\textwidth]{sphere2_1}\\
-\sffamily{A}
-\end{minipage}
-%
-\begin{minipage}{0.2\textwidth}
-\centering
-\includegraphics[width=\textwidth]{sphere_2}\\
-\includegraphics[width=\textwidth]{sphere2_2}\\
-\sffamily{B}
-\end{minipage}
-\begin{minipage}{0.2\textwidth}
-\centering
-\includegraphics[width=\textwidth]{sphere_3}\\
-\includegraphics[width=\textwidth]{sphere2_3}\\
-\sffamily{C}
-\end{minipage}
-\begin{minipage}{0.2\textwidth} 
-\centering
-\includegraphics[width=\textwidth]{sphere_4}\\
-\includegraphics[width=\textwidth]{sphere2_4}\\
-\sffamily{D}
-\end{minipage}
-\caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. {\it (A)} The original image. {\it (B)} Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. {\it (C)} Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. {\it (D)} Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three-dimensional spheres, and the bottom row shows the (two-dimensional) surface of the sphere in which we are interested.}
-\label{fig:SO3_picture}
-\end{figure}
-
 
 Using angular synchronization or vector diffusion maps to register images with respect to rotations {\it and translations} requires some additional effort.
 %
@@ -586,7 +527,7 @@ Inverting \eqref{eq:angle_relations} yields the desired approximate translations
 %
 %\end{enumerate}
 
-\subsection{Constructing movies from registered and ordered images}
+\subsection{Constructing smooth trajectories from registered and ordered images}
 
 Once we have registered and ordered the images, we smooth the resulting trajectory to obtain a movie of the average developmental dynamics. 
 %
@@ -598,56 +539,112 @@ We define the frame at time $\tau$, denoted $\overline{x}_{\tau}$ (where $1 \le 
 \end{equation}
 where $\sigma$ is the scale of the Gaussian filter. 
 %
-For the images and movie in Figure~4, we take $\sigma^2 = 20$.
-%
- 
-\section{Eigenvalue Spectra from VDM}
+For the images in \fig~4, we take $\sigma^2 = 20$.
 
 
-\begin{figure}[H]
-\includegraphics[width=5cm]{data1_evals}
-\includegraphics[width=5cm]{data2_evals}
-\includegraphics[width=5cm]{data3_evals}
-\caption{Eigenvalue spectra for three examples.}
+
+\bibliographystyle{pnas2}
+\bibliography{background_reading/references,../../references/references}
+
+\end{article}
+
+\begin{figure}
+\includegraphics[width=8.4cm, trim=0cm 5.6cm 0cm 0cm, clip]{SI_fig6}
+\caption{{\it (A)} Images, stained for membranes (gray) and Dorsal (green) at different times during development. The membrane length is indicated by the red bars. {\it (B)} Membrane length as a function of time. The points corresponding to the images in {\it A} are indicated with arrows.}
+\label{fig:membrane_compare}
 \end{figure}
 
-%\begin{figure}[H]
-%\includegraphics[width=5cm]{data1_coord_var}
-%\includegraphics[width=5cm]{data2_coord_var}
-%\includegraphics[width=5cm]{data3_coord_var}
-%\caption{Variance of $\psi_{k,l}$ for three examples. We use the ones that have the largest variance.}
-%\end{figure}
+\begin{figure}
+\includegraphics[height=9cm]{raw_data3}
+\caption{Images of mutant and wild type {\it Drosophila} embryos during cellularization, used for the analysis in \fig~5. Each image is of a different embryo in a different rotational orientation. Half of the images are of wild type embryos, and half of the images are of mutant embryos.}
+\end{figure}
 
+\begin{figure}
+\includegraphics[width=8.4cm]{SI_fig3}
+\caption{Synthetic data set used to illustrate the mathematical algorithms. {\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
+\label{fig:1d_demo}
+%\customlabel{fig:1d_demo}{3}
+\customlabel{subfig:1d_example}{\ref{fig:1d_demo}{\it A}}
+\customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}{\it B}}
+\customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}{\it C}}
+\customlabel{subfig:1d_aligned_unordered}{\ref{fig:1d_demo}{\it D}}
+\customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}{\it E}}
+\customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}{\it F}}
+\end{figure}
 
-%\begin{figure}[H]
-%\begin{tikzpicture}
-%     \node at (0,0)
-%       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding_background}};
-%     \node at (0,0)
-%       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding}};  
-%\end{tikzpicture}
-%\begin{tikzpicture}
-%     \node at (0,0)
-%       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding2_background}};
-%     \node at (0,0)
-%       {\includegraphics[width=8.4cm]{mut_wt_vdm_embedding2}};  
-%\end{tikzpicture}
-%\caption{Embedding for third example using two different $\epsilon$ values. The right one (smaller $\epsilon$) has a tighter structure, but the mutants are more removed.}
-%\end{figure}
-
-
-\section{FBsPCA}
-
-I computed the FBsPCA basis for the set of images (separately for the red and green signals).
+\begin{figure*}
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sphere_1}\\
+\includegraphics[width=\textwidth]{sphere2_1}\\
+\sffamily{A}
+\end{minipage}
 %
-I then computed the bispectrum coefficients for each image expanded in the FBsPCA basis, and used these coefficients in a DMAPS calculation.
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sphere_2}\\
+\includegraphics[width=\textwidth]{sphere2_2}\\
+\sffamily{B}
+\end{minipage}
+\begin{minipage}{0.2\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sphere_3}\\
+\includegraphics[width=\textwidth]{sphere2_3}\\
+\sffamily{C}
+\end{minipage}
+\begin{minipage}{0.2\textwidth} 
+\centering
+\includegraphics[width=\textwidth]{sphere_4}\\
+\includegraphics[width=\textwidth]{sphere2_4}\\
+\sffamily{D}
+\end{minipage}
+\caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. {\it (A)} The original image (shown in red), projected onto a portion of a sphere. {\it (B)} Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. {\it (C)} Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. {\it (D)} Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three-dimensional spheres, and the bottom row shows the (two-dimensional) surface of the sphere in which we are interested.}
+\label{fig:SO3_picture}
+\end{figure*}
+
+\begin{figure*}
+\raisebox{4.5cm}{\sffamily{A}}
+\includegraphics[width=5cm]{data1_evals}
+\raisebox{4.5cm}{\sffamily{B}}
+\includegraphics[width=5cm]{data2_evals}
+\raisebox{4.5cm}{\sffamily{C}}
+\includegraphics[width=5cm]{data3_evals}
+
+\caption{The eigenvalue spectra from vector diffusion maps analysis for the three data sets. 
 %
-The results are shown below.
+As expected, the eigenvalues appear in groups of 3, as $d=3$ when using vector diffusion maps to register with respect to translations and rotations. 
 %
-However, because the bispectrum is not stable to deformations, it does not seem to be able to identify neighboring images.
+(A) Spectrum from images during cellularization (\fig~3). As expected, there is a spectral gap after the first (non-trivial) group of eigenvalues: the first three eigenvalues correspond to the rotational and translational alignment, the second three eigenvalues correspond to the first VDM component which uncovers the developmental dynamics, and the then there is an appreciable gap before the third group of eigenvalues.
+%
+(B) Spectrum from images during gastrulation (\fig~4). Again, 
+there is a spectral gap after the first (non-trivial) group of eigenvalues.
+%
+(C) Spectrum from images of mutant and wild type embryos during cellularization (\fig~5).
+We see a group of three eigenvalues corresponding to the translational and rotational alignments, one group that is clearly significant, and then a second group that, while less important, is still above the level of noise of the subsequent eigenvalues, indicating that two components are necessary to describe the data. }
+\label{fig:eval_spectra}
+\end{figure*}
+
+\begin{figure}
+\includegraphics[width=8.7cm]{PCA_ordered}
+\caption{Images of embryos during cellularization (from \fig~3), registered using angular synchronization \cite{singer2011angular} and ordered by the first PCA projection coefficient. The recovered dynamics are qualitatively consistent with those recovered by vector diffusion maps. }
+\label{fig:PCA_data1}
+\end{figure}
+
+\begin{figure*}
+\raisebox{5.2cm}{\sffamily{A}}
+\includegraphics[width=16.8cm]{data2_PCA_ordered}
+
+\raisebox{3.7cm}{\sffamily{B}}
+\includegraphics[width=8.4cm]{data2_PCA_variance}
+\raisebox{3.7cm}{\sffamily{C}}
+\includegraphics[width=8.4cm]{data2_PCA_proj}
+
+\caption{{\it (A)} Images shown in \fig~4 of the paper, registered using angular synchronization \cite{singer2011angular} and ordered by the first PCA projection coefficient. The recovered ordering is not consistent with the known developmental dynamics. {\it (B)} The fraction of the variance captured by each of the first 10 principal components. Note that components 2--10 have a nonnegligible contribution to the data. {\it (C)} Projection onto the first two principal components.}
+\label{fig:PCA_results}
+\end{figure*}
 
 
-\begin{figure}[H]
+\begin{figure*}[t]
 \raisebox{7.6cm}{\sffamily{A}}
 \includegraphics[width=8cm]{raw_data1}
 \hfill
@@ -657,11 +654,16 @@ However, because the bispectrum is not stable to deformations, it does not seem 
 \raisebox{2.2cm}{\sffamily{C}}
 \hspace{-1cm}
 \includegraphics[width=4cm, angle=90]{FBsPCA_dmaps}
-\caption{(A) Images used for FBsPCA. (B) Eigenvalue spectrum from dmaps, using bispectrum coefficients. (C) First 4 dmaps variables, computed from the bispectrum coefficeints, plotted against the membrane thickness. Note there is no appreciable correlation: each dmaps variable simply selects one image from the data set as ``abnormal''.}
-\end{figure}
+\caption{I computed the FBsPCA basis for the set of images (separately for the red and green signals).
+%
+I then computed the bispectrum coefficients for each image expanded in the FBsPCA basis, and used these coefficients in a DMAPS calculation.
+%
+The results are shown below.
+%
+However, because the bispectrum is not stable to deformations, it does not seem to be able to identify neighboring images.
+%
+(A) Images used for FBsPCA. (B) Eigenvalue spectrum from dmaps, using bispectrum coefficients. There is no spectral gap after the first component, as would be expected for this particular data set. (C) First 4 diffusion maps variables, computed from the bispectrum coefficeints, plotted against the membrane thickness. Note there is no appreciable correlation: each dmaps variable simply selects one image from the data set as ``abnormal''.}
+\end{figure*}
 
-
-\bibliographystyle{pnas}
-\bibliography{background_reading/references,../../references/references}
 
 \end{document}
