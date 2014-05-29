@@ -1,0 +1,34 @@
+\documentclass{minimal}
+
+
+\usepackage{tikz}           %for TikZ graphics
+\usepackage{tikz-3dplot} %for 3dplot functionality
+
+%\usepackage[active,tightpage]{preview}      %generates a tightly fitting border around the work
+%\PreviewEnvironment{tikzpicture}
+%\setlength\PreviewBorder{2mm}
+
+\def\R{1}
+
+\begin{document}
+\tdplotsetmaincoords{70}{135}
+\tdplotsetrotatedcoords{45}{0}{0}
+\begin{tikzpicture}[line join=bevel,tdplot_rotated_coords, fill opacity=.7]
+
+\tdplotsphericalsurfaceplot{36}{18}%
+{\R}{black}{red}%
+    {\draw[color=black,thick,<->] (-2,0,0) -- (2,0,0) node[anchor=north east]{$y$};}%
+    {\draw[color=black,thick,<->] (0,-2,0) -- (0,2,0) node[anchor=north west]{$x$};}%
+    {\draw[color=black,thick,<->] (0,0,-2) -- (0,0,2) node[anchor=south]{$z$};}%
+    
+    \tdplotsetpolarplotrange{70}{120}{60}{120}
+\tdplotsphericalsurfaceplot{36}{18}%
+{\R}{black}{blue}%
+{}{}{}%
+
+\end{tikzpicture}
+
+
+
+
+\end{document}

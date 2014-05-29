@@ -281,6 +281,7 @@ set(gcf, 'paperposition',[0 0 8 8])
 nbins = 25;
 hist(diag(D), nbins)
 set(gca, 'xlim', [-1 1])
+set(gca, 'ylim', [0 45])
 grid on
 set(gca, 'ytick', 0:3:45)
 set(gca, 'xtick', -1:0.2:1)
@@ -290,9 +291,7 @@ ylabel('Pr(\lambda)')
 % [nelements, centers] = hist(diag(D(7:end, 7:end)), nbins);
 % [alpha, rad] = fit_semicircle(centers, nelements);
 % plot(centers, wigner_semicircle(centers, rad, alpha))
-saveas(gcf,sprintf('%s/data2_evals_dist', im_save_dir), 'pdf')
-
-return
+% saveas(gcf,sprintf('%s/data2_evals_dist', im_save_dir), 'pdf')
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
@@ -413,6 +412,8 @@ for i=1:nstages
     
 end
 % saveas(gcf,sprintf('%s/average_trajectory', im_save_dir), 'pdf')
+
+return
 
 %%
 

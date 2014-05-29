@@ -307,6 +307,7 @@ set(gcf, 'paperposition',[0 0 8 8])
 nbins = 25;
 hist(diag(D), nbins)
 set(gca, 'xlim', [-1 1])
+set(gca, 'ylim', [0 45])
 grid on
 set(gca, 'ytick', 0:3:45)
 set(gca, 'xtick', -1:0.2:1)

@@ -203,6 +203,15 @@ for i=1:m
     imshow(uint8(data(:, :, I(i))));
 end
 
+%%
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [16 16])
+set(gcf, 'paperposition',[0 0 16 16 ]);
+for i=1:m
+    make_subplot(subplot_dim1, subplot_dim2, 0.01, i);
+    imshow(uint8(data(:, :, i)));
+end
 
 
 

@@ -163,11 +163,11 @@ of the United States of America}
 
 \begin{abstract}
 
-Imaging studies provide unique insights into dynamics of developmental processes. 
+Imaging studies provide unique insights into the dynamics of developmental processes. 
 %
 A large number of imaging studies are based on a cross-sectional experimental design, where developmental progress is arrested in a population of embryos, each of which is at a different point along its developmental trajectory. 
 %
-The goal is then to temporally order the data to reconstruct a representative developmental dynamics from snapshots provided by the collection of embryos.
+The goal is then to temporally order the data to reconstruct representative developmental dynamics from snapshots provided by the collection of embryos.
 %
 Images of different biological samples must first be registered before they can be temporally ordered.
 %
@@ -254,18 +254,21 @@ Additional challenges arise from embryo-to-embryo variability, sample size, and 
 
 %%%YGK put an arrow in the disc
 
-Image registration has been studied in a variety of contexts \cite{zitova2003image, rowley1998rotation, hajnal2010medical, greenspan1994rotation, zhao2003face}.
+Image registration has been studied in a variety of contexts \cite{zitova2003image, rowley1998rotation, hajnal2010medical, greenspan1994rotation, zhao2003face}, 
+and most registration algorithms are based on landmarks, such as the head and fins in \fig~\ref{fig:fish}.
 %
-We use a manifold learning algorithm \cite{singer2012vector} which simultaneously addresses the problems of registration and temporal ordering. 
+In contrast, our approach requires no such information. 
+%
+It is based on a manifold learning algorithm \cite{singer2012vector} which simultaneously addresses the problems of registration and temporal ordering. 
 %
 This algorithm is one of many nonlinear dimensionality reduction techniques that have been developed over the past decade \cite{Belkin2003, coifman2005geometric, coifman2006geometric, tenenbaum2000global, roweis2000nonlinear}. 
 %
 This technique has been used for data mining in
-applications ranging from analysis of cryo-electron microscopy images of individual molecules to face recognition, and is sufficiently general to be applicable to a wide variety of imaging studies. 
+applications ranging from analysis of cryo-electron microscopy (cryo-EM) images of individual molecules to face recognition, and is sufficiently general to be applicable to a wide variety of biological imaging studies. 
 %
-Here it is adapted for simultaneous registration and temporal ordering of images from cross-sectional studies of developmental dynamics, with the main objective of revealing stereotypic developmental trajectories.
+Here the algorithm is adapted for simultaneous registration and temporal ordering of images from cross-sectional studies of developmental dynamics, with the main objective of revealing stereotypic developmental trajectories.
 %
-We analyze three data sets from a study of {\it Drosophila} embryogenesis, one of the best experimental models for studies of developmental dynamics \cite{jaeger2012drosophila}.
+To illustrate our approach, we analyze three data sets from a study of {\it Drosophila} embryogenesis, one of the best experimental models for studies of developmental dynamics \cite{jaeger2012drosophila}.
 %
 %The first data set, shown in Figure~\ref{subfig:raw_data1}, is relatively simple and will allow us to both illustrate and validate this approach.
 %
@@ -298,19 +301,18 @@ We analyze three data sets from a study of {\it Drosophila} embryogenesis, one o
 %
 %We will show that dimensionality reduction algorithms can simultaneously register and temporally order the images to give us a meaningful picture of the underlying developmental dynamics.
 %
-The approach is based on vector diffusion maps \cite{singer2012vector}, a manifold learning
+Our approach is based on vector diffusion maps \cite{singer2012vector}, a manifold learning
 technique developed for data sets which contain two types of sources of variability:
 geometric symmetries (such as translations and rotations of the images due to the experimental setup) which one would like to factor out,
 and ``additional" directions of variability (such as temporal dynamics) which one wants to uncover.
 %
 Vector diffusion maps combine two algorithms, {\em angular synchronization} \cite{singer2011angular} for image registration and {\em diffusion maps} \cite{coifman2005geometric} for extracting intrinsic low-dimensional structure in data, into a single computation that allows us to simultaneously register and temporally order our images.
 %
-
-Vector diffusion maps has been used to classify images from cryo-electron microscopy (cryo-EM) experiments, where each image is a projection of a randomly oriented molecule.
+%Vector diffusion maps has been used to classify images from cryo-electron microscopy (cryo-EM) experiments, where each image is a projection of a randomly oriented molecule.
 %
 %%%YGK to imply which rotations we need to have discussed it above
 %%
-Here, we will use the algorithm to register images of {\it Drosophila} embryos with respect to rotations and translations, as well as uncover the main direction of variability {\it after} removing translational and rotational symmetries.
+We will use the algorithm to register images of {\it Drosophila} embryos with respect to rotations and translations, as well as uncover the main direction of variability {\it after} removing translational and rotational symmetries.
 %
 We assume that, in these sets of images, the main direction of variability is parameterized by the developmental time of each embryo, so that uncovering this direction will allow us to recover the developmental dynamics.
 
@@ -362,7 +364,7 @@ Both angular synchronization and diffusion maps use pairwise information to unco
 %
 Angular synchronization uses pairwise alignment information to find translations and rotations which are globally consistent, and diffusion maps uses pairwise distances to find parameterizations which are globally informative.
 %
-Vector diffusion maps combines both steps into a single computation (see \SI).
+Vector diffusion maps combines both steps into a single computation (see \SI), simultaneously addressing the tasks of registration and temporal ordering.
 %
 %The algorithm uses information about pairwise alignments {\em and} pairwise distances to find a global parameterization of the data, while registering images which are ``close'' .
 %
@@ -410,7 +412,7 @@ Another signal is provided by the phosphorylated form of the extracellular signa
 
 %%%YGK say a simple thing in the caption about Dorsal-Ventral
 
-Previous studies established that throughout the third hour of development, the nuclear localization of Dl is unimodal and peaked at the ventral side of the embryo, reviewed in \cite{rushlow2012temporal}.
+Previous studies established that throughout the third hour of development, the nuclear localization of Dl is unimodal and peaked at the ventral side of the embryo (reviewed in \cite{rushlow2012temporal}).
 %
 The spatiotemporal pattern of dpERK is more complex: dpERK is first detected in two lateral stripes, which increase in intensity towards the end of the third hour of development \cite{lim2013kinetics}.
 %
@@ -423,11 +425,11 @@ For this data set, the quality of the temporal ordering provided by vector diffu
 %
 During the third hour of development, the embryo cellularizes: in this process, nuclei located under a common plasma membrane are enclosed by lateral membranes which grow inward, separating the nuclei into individual cells.
 %
-The highly reproducible kinetics of lateral membrane growth can be used to estimate the age of each embryo to within 1--3 minutes \cite{figard2013plasma} (see \fig~S2).
+The highly reproducible kinetics of lateral membrane growth can be used to estimate the age of each embryo to within 2--3 minutes \cite{figard2013plasma} (see \fig~S2).
 %
 The Spearman rank correlation coefficient between the orderings obtained based on the progress of cellularization and vector diffusion maps is 0.91, indicating that vector diffusion maps can accurately recover the temporal order.
 %
-Thus, we have validated a dimensionality reduction approach to temporal ordering and registration of data on a data set where image orientation and ordering can be assessed independently.
+Thus, we have validated a dimensionality reduction approach to temporal ordering and registration on a data set where image orientation and ordering can be assessed independently.
 
 %Although the first vector diffusion maps coordinate accurately captures the developmental dynamics, there are other sources of variability within this data set that could also be extracted using these techniques.
 %
@@ -472,7 +474,7 @@ dpERK appears as two lateral peaks at the ventral side of the embryo.
 %
 These two peaks merge together during invagination, eventually forming (together with Twi) a characteristic ``omega'' shape.
 %
-During this time window, germband extension causes cells from the ventral side to move towards the posterior pole of the embryo, and then wrap around to the dorsal side.
+During this time window, germband extension causes cells from the ventral side to move towards the posterior pole of the embryo, and then wrap around to the dorsal side \cite{leptin2005gastrulation}.
 %
 At the end of this process, cells which were originally on the ventral and posterior side of the embryo find themselves on the dorsal side, causing similar ``omega'' shaped patterns to arise on the dorsal side; these patterns are most readily seen in the last image of \fig~\ref{subfig:averaged_data2}.
 
@@ -515,7 +517,7 @@ When time is the main source of variability, we have shown vector diffusion maps
 %
 However, vector diffusion maps can also provide an organization of data which contains multiple sources of variability.
 %
-To illustrate this, we collected a data set consisting of $42$ embryos undergoing cellularization during the third hour of development (see \fig~S3).
+To illustrate this point, we collected a data set consisting of $42$ embryos undergoing cellularization during the third hour of development (see \fig~S3).
 %
 Half of the embryos are wild type, and half of the embryos are mutants where dpERK is expressed in one broad peak at the ventral side.
 %
@@ -526,7 +528,7 @@ We expect two sources of variability in this data set: differences due to develo
 
 
 
-We computed the vector diffusion maps embedding for our data, and the eigenvalue spectrum (see \fig~S6) indicates that two coordinates may be required for a thorough description of the data. 
+We computed the vector diffusion maps embedding for our data, and the eigenvalue distribution (see \fig~S6) indicates that two coordinates may be required for a thorough description of the data. 
 %
 \fig~\ref{subfig:projection_data3} shows the data projected onto the first two vector diffusion maps coordinates, where each point in this projection corresponds to one image in our data set.
 %%%
@@ -567,7 +569,7 @@ To the best of our knowledge, algorithmic approaches to these two tasks have bee
 %
 In particular, temporal ordering of imaging data sets was done with a significant amount of human supervision and using registered images as a starting point \cite{yuan2014automated, surkova2008characterization}.  
 %
-In parallel, ordering of large-scale cross-sectional data was done in the context of molecular profiling studies, in which data are vectors describing the amounts of different chemical species such as mRNA abundances \cite{anavy2014blind, trapnell2014dynamics, gupta2008extracting}. 
+In parallel, ordering of large-scale cross-sectional data was done in the context of molecular profiling studies, in which data are vectors describing the amounts of different chemical species, such as mRNA abundances \cite{anavy2014blind, trapnell2014dynamics, gupta2008extracting}. 
 %
 Automated temporal ordering of such data sets was accomplished by first projecting the data on a low-dimensional subspace spanned by the leading principal or independent components, and then solving a traveling salesman problem or constructing a minimum spanning tree on the projected data to order multiple snapshots. 
 %
@@ -584,9 +586,9 @@ In the first example, correct orientation and temporal order of images was known
 %
 For this particular data set, a simpler approach would have sufficed. 
 %
-Indeed, because of the relative simplicity of developmental dynamics (monotonic increase in the amplitude of a localized signaling pattern and relatively small tissue deformation), temporal order could have been inferred by projection of registered images on the first principal component of the data set. 
+Indeed, because of the relative simplicity of developmental dynamics (monotonic increase in the amplitude of a localized signaling pattern and relatively small tissue deformation), temporal order could have been inferred by projection of registered images on the first principal component of the data set (see \fig~S7). 
 %
-This approach was clearly not sufficient for the second data set (see \fig~S4), collected from embryos during the time window where both the tissue morphology and signaling patterns are rapidly changing.  
+This approach was clearly not sufficient for the second data set (see \fig~S8), collected from embryos during the time window where both the tissue morphology and signaling patterns are rapidly changing.  
 %
 However, vector diffusion maps could readily extract a nontrivial spatiotemporal trajectory. 
 %
@@ -727,7 +729,7 @@ Nikon A1-RS scanning confocal microscope, and the Nikon 60X Plan-Apo oil objecti
 
 \section{Development time during cellularization} 
 %
-The progression of membrane invagination during cellularization was used to assign time point to each embryo in the third hour of development. Time-lapse imaging of Sqh-GFP embryo was used to generate correlation curve between the membrane ingression length and the developmental time (n=7) (\fig S1B). The rate at which membrane invaginates was highly reproducible from embryo to embryo. In the experiments with fixed embryos, we measured the membrane length by co-staining embryos with a membrane marker (Sqh-GFP) or by taking phase-contrast images (\fig S1A). We used the correlation curve to assign each embryo to a time window of 2--3~minutes. 
+The progression of membrane invagination during cellularization was used to assign time point to each embryo in the third hour of development. Time-lapse imaging of Sqh-GFP embryo was used to generate correlation curve between the membrane ingression length and the developmental time (n=7) (\fig S2B). The rate at which membrane invaginates was highly reproducible from embryo to embryo. In the experiments with fixed embryos, we measured the membrane length by co-staining embryos with a membrane marker (Sqh-GFP) or by taking phase-contrast images (\fig S2A). We used the correlation curve to assign each embryo to a time window of 2--3~minutes. 
 
 \end{materials}
 
@@ -767,12 +769,194 @@ The progression of membrane invagination during cellularization was used to assi
 %% Enter the largest bibliography number in the facing curly brackets
 %% following \begin{thebibliography}
 
-\bibliographystyle{pnas2}
-\bibliography{background_reading/references,../../references/references}
+%\bibliographystyle{pnas2}
+%\bibliography{background_reading/references,../../references/references}
 
-%\begin{thebibliography}{}
+\begin{thebibliography}{10}
 
-%\end{thebibliography}
+\bibitem{diggle2002analysis}
+Diggle P, Heagerty P, Liang K~Y, Zeger S (2002) \textit{Analysis of
+  longitudinal data} (Oxford University Press).
+
+\bibitem{roelens2013live}
+Roelens B, Chanes J~D~L~H, Dostatni N (2013) Live imaging of bicoid-dependent
+  transcription in \textit{{D}rosophila} embryos. \textit{Curr Biol}
+  23:1--5.
+
+\bibitem{keller2013imaging}
+Keller P~J (2013) Imaging morphogenesis: technological advances and biological
+  insights. \textit{Science} 340(6137).
+
+\bibitem{jaeger2004dynamic}
+Jaeger J, Surkova S, Blagov M, Janssens H, Kosman D, \textit{et~al.} (2004)
+  Dynamic control of positional information in the early \textit{{D}rosophila}
+  embryo. \textit{Nature} 430(6997):368--371.
+
+\bibitem{fowlkes2008quantitative}
+Fowlkes C~C, Hendriks C~L~L, Ker{\"a}nen S~V, Weber G~H, R{\"u}bel O,
+  \textit{et~al.} (2008) A quantitative spatiotemporal atlas of gene expression
+  in the \textit{{D}rosophila} blastoderm. \textit{Cell} 133(2):364--374.
+
+\bibitem{ng2012large}
+Ng L~L, Sunkin S~M, Feng D, Lau C, Dang C, \textit{et~al.} (2012) Large-scale
+  neuroinformatics for in situ hybridization data in the mouse brain.
+  \textit{Int Rev Neurobiol} 104:159--182.
+
+\bibitem{richardson2014emage}
+Richardson L, Stevenson P, Venkataraman S, Yang Y, Burton N, \textit{et~al.}
+  (2014) Emage: Electronic mouse atlas of gene expression, \textit{Mouse
+  Molecular Embryology} (Springer), pp. 61--79.
+
+\bibitem{castro2009automatic}
+Castro C, Luengo-Oroz M, Desnoulez S, Duloquin L, Fernandez-de Manuel L,
+  \textit{et~al.} (2009) An automatic quantification and registration strategy
+  to create a gene expression atlas of zebrafish embryogenesis,
+  \textit{Conf Proc IEEE Eng Med Biol Soc}, pp. 1469--1472.
+
+\bibitem{zitova2003image}
+Zitova B, Flusser J (2003) Image registration methods: a survey. \textit{Image Vis Comput} 21(11):977--1000.
+
+\bibitem{rowley1998rotation}
+Rowley H~A, Baluja S, Kanade T (1998) Rotation invariant neural network-based
+  face detection, \textit{Computer Vision and Pattern Recognition, 1998.
+  Proceedings. 1998 IEEE Computer Society Conference on} (IEEE), pp. 38--44.
+
+\bibitem{hajnal2010medical}
+Hajnal J~V, Hill D~L (2010) \textit{Medical image registration} (CRC press).
+
+\bibitem{greenspan1994rotation}
+Greenspan H, Belongie S, Goodman R, Perona P (1994) Rotation invariant texture
+  recognition using a steerable pyramid, \textit{Pattern Recognition, 1994.
+  Vol. 2-Conference B: Computer Vision \& Image Processing., Proceedings of the
+  12th IAPR International. Conference on} (IEEE), volume~2, pp. 162--167.
+
+\bibitem{zhao2003face}
+Zhao W, Chellappa R, Phillips P~J, Rosenfeld A (2003) Face recognition: A
+  literature survey. \textit{ACM Computing Surveys (CSUR)} 35(4):399--458.
+
+\bibitem{singer2012vector}
+Singer A, Wu H~T (2012) Vector diffusion maps and the connection laplacian.
+  \textit{Commun Pure Appl Math} 65(8):1067--1144.
+
+\bibitem{Belkin2003}
+Belkin M, Niyogi P (2003) Laplacian eigenmaps for dimensionality reduction and
+  data representation. \textit{Neural Comput} 15:1373--1396.
+
+\bibitem{coifman2005geometric}
+Coifman R~R, Lafon S, Lee A~B, Maggioni M, Nadler B, \textit{et~al.} (2005)
+  Geometric diffusions as a tool for harmonic analysis and structure definition
+  of data: Diffusion maps. \textit{Proc Natl Acad Sci USA} 102(21):7426--7431.
+
+\bibitem{coifman2006geometric}
+Coifman R~R, Lafon S (2006) Geometric harmonics: a novel tool for multiscale
+  out-of-sample extension of empirical functions. \textit{Appl Comput Harmon Anal} 21(1):31--52.
+
+\bibitem{tenenbaum2000global}
+Tenenbaum J~B, De~Silva V, Langford J~C (2000) A global geometric framework for
+  nonlinear dimensionality reduction. \textit{Science} 290(5500):2319--2323.
+
+\bibitem{roweis2000nonlinear}
+Roweis S~T, Saul L~K (2000) Nonlinear dimensionality reduction by locally
+  linear embedding. \textit{Science} 290(5500):2323--2326.
+
+\bibitem{jaeger2012drosophila}
+Jaeger J, Manu, Reinitz J (2012) \textit{{D}rosophila} blastoderm patterning.
+  \textit{Curr Opin Genet Dev} 22(6):533 -- 541, genetics of system biology.
+
+\bibitem{singer2011angular}
+Singer A (2011) Angular synchronization by eigenvectors and semidefinite
+  programming. \textit{Appl Comput Harmon Anal}
+  30(1):20--36.
+
+\bibitem{ahuja2007template}
+Ahuja S, Kevrekidis I~G, Rowley C~W (2007) Template-based stabilization of
+  relative equilibria in systems with continuous symmetry. \textit{Journal of
+  Nonlinear Science} 17(2):109--143.
+
+\bibitem{ian1998statistical}
+Dryden I~L, Mardia K (1998) \textit{Statistical shape analysis}, Wiley series
+  in probability and statistics: Probability and statistics (J. Wiley).
+
+\bibitem{foe1983studies}
+Foe V~E, Alberts B~M (1983) Studies of nuclear and cytoplasmic behaviour during
+  the five mitotic cycles that precede gastrulation in \textit{{D}rosophila}
+  embryogenesis. \textit{J Cell Sci} 61(1):31--70.
+
+\bibitem{rushlow2012temporal}
+Rushlow C~A, Shvartsman S~Y (2012) Temporal dynamics, spatial range, and
+  transcriptional interpretation of the dorsal morphogen gradient.
+  \textit{Curr Opin Genet Dev} 22(6):542--546.
+
+\bibitem{lim2013kinetics}
+Lim B, Samper N, Lu H, Rushlow C, Jim{\'e}nez G, \textit{et~al.} (2013)
+  Kinetics of gene derepression by erk signaling. \textit{Proc Natl Acad Sci USA} 110(25):10330--10335.
+
+\bibitem{figard2013plasma}
+Figard L, Xu H, Garcia H~G, Golding I, Sokac A~M (2013) The plasma membrane
+  flattens out to fuel cell-surface growth during \textit{{D}rosophila}
+  cellularization. \textit{Dev Cell} 27(6):648--655.
+
+\bibitem{shlens2005tutorial}
+Shlens J (2005) A tutorial on principal component analysis. \textit{Systems
+  Neurobiology Laboratory, University of California at San Diego} .
+
+\bibitem{leptin2005gastrulation}
+Leptin M (2005) Gastrulation movements: the logic and the nuts and bolts.
+  \textit{Dev Cell} 8(3):305--320.
+
+\bibitem{yuan2014automated}
+Yuan L, Pan C, Ji S, McCutchan M, Zhou Z~H, \textit{et~al.} (2014) Automated
+  annotation of developmental stages of \textit{{D}rosophila} embryos in images
+  containing spatial patterns of expression. \textit{Bioinformatics}
+  30(2):266--273.
+
+\bibitem{surkova2008characterization}
+Surkova S, Kosman D, Kozlov K, Myasnikova E, Samsonova A~A, \textit{et~al.}
+  (2008) Characterization of the \textit{{D}rosophila} segment determination
+  morphome. \textit{Dev Biol} 313(2):844--862.
+
+\bibitem{anavy2014blind}
+Anavy L, Levin M, Khair S, Nakanishi N, Fernandez-Valverde S~L, \textit{et~al.}
+  (2014) Blind ordering of large-scale transcriptomic developmental
+  timecourses. \textit{Development} 141(5):1161--1166.
+
+\bibitem{trapnell2014dynamics}
+Trapnell C, Cacchiarelli D, Grimsby J, Pokharel P, Li S, \textit{et~al.} (2014)
+  The dynamics and regulators of cell fate decisions are revealed by
+  pseudotemporal ordering of single cells. \textit{Nat Biotechnol} 32(4):381--386.
+
+\bibitem{gupta2008extracting}
+Gupta A, Bar-Joseph Z (2008) Extracting dynamics from static cancer expression
+  data. \textit{IEEE/ACM Trans Comput Biol Bioinform} 5(2):172--182.
+
+\bibitem{singer2011three}
+Singer A, Shkolnisky Y (2011) Three-dimensional structure determination from
+  common lines in cryo-em by eigenvectors and semidefinite programming.
+  \textit{SIAM J Imaging Sci} 4(2):543--572.
+
+\bibitem{silverman2005functional}
+Ramsay J~O, Silverman B~W (2005) \textit{Functional Data Analysis}, Springer
+  Series in Statistics (Springer).
+
+\bibitem{krzic2012multiview}
+Krzic U, Gunther S, Saunders T~E, Streichan S~J, Hufnagel L (2012) Multiview
+  light-sheet microscope for rapid in toto imaging. \textit{Nat Methods}
+  9(7):730--733.
+
+\bibitem{ichikawa2014live}
+Ichikawa T, Nakazato K, Keller P~J, Kajiura-Kobayashi H, Stelzer E~H,
+  \textit{et~al.} (2014) Live imaging and quantitative analysis of gastrulation
+  in mouse embryos using light-sheet microscopy and 3d tracking tools.
+  \textit{Nat Protoc} 9(3):575--585.
+
+\bibitem{rubel2010coupling}
+R{\"u}bel O, Ahern S, Bethel E, Biggin M~D, Childs H, \textit{et~al.} (2010)
+  Coupling visualization and data analysis for knowledge discovery from
+  multi-dimensional scientific data. \textit{Procedia Comput Sci}
+  1(1):1757--1764.
+
+\end{thebibliography}
+
 
 
 \end{article}

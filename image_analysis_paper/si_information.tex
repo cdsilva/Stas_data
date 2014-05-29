@@ -30,19 +30,6 @@
 
 \section{Materials and Methods}
 
-\subsection{Measuring developmental time during cellularization}
-
-
-\begin{itemize}
-\item We need to have a supplementary figure that shows the lateral view, that makes it even more clear that we work with optical sections.
-
-\item Need image labeled with D/V
-
-\end{itemize}
-
-
-
-
 \subsection{Image parameters}
 
 Each image is subsampled to $100 \times 100$ pixels.
@@ -60,8 +47,6 @@ We also adjust the intensity of the nuclear signal in each image such that 1\% o
 When imaging, the laser settings were calibrated so that images have good dynamic range, while not saturating the detector. 
 % 
 The same laser setting is maintained within each experiment. 
-
-{\bf discuss how we choose weights of signals}
 
 
 
@@ -467,11 +452,17 @@ We can use the distribution of the eigenvalues from (vector) diffusion maps to h
 %
 For diffusion maps, the largest eigenvalue will always be 1 and correspond to the trivial (constant) eigenvector. 
 %
-The eigenvalues corresponding to noise in the data form a semicircle distribution centered at 0. 
+The eigenvalues corresponding to noise in the data form a semicircle distribution centered at 0 \cite{wigner1955characteristic, wigner1958distribution}. 
 %
 The eigenvalues corresponding to descriptive/meaningful embedding coordinates will be positive and removed from the semicircle. 
 %
-For vector diffusion maps, the sam structure holds, except each coordinate gives rise to $d$ eigenvalues with (approximately) the same value (as each block eigenvector corresponds to $d$ eigenvalues).
+Therefore, by counting how many eigenvalues are removed from the semicircle (excluding the trivial $\lambda=1$ eigenvalue), we can obtain an estimate of the dimensionality of the data.
+
+For vector diffusion maps, the same structure holds: we expect trivial eigenvalues, a semicircle corresponding to noise, and positive eigenvalues corresponding to meaningful embedding coordinates.
+%
+However, in vector diffusion maps, each coordinate gives rise to $d$ eigenvalues with (approximately) the same value (as each block eigenvector corresponds to $d$ eigenvalues).
+%
+Therefore, by counting how many sets of $d$ eigenvalues are removed from the semicircle (excluding the trivial set of $d$ eigenvalues, all with  $\lambda=1$), we can obtain an estimate of the dimensionality of the data.
 
 %\subsection{Algorithms}
 %
@@ -551,7 +542,7 @@ For the images in \fig~4, we take $\sigma^2 = 20$.
 
 \begin{figure}
 \includegraphics[width=8.4cm]{ap_dv}
-\caption{(Left) A lateral view of a {\it Drosophila} embryo stained with DAPI (gray), dpERK (red), and Dorsal (green). Embryo is presented so that the anterior (A) side is to the left and the posterior (P) side is to the right. The arrow indicates the position where the cross-section of an embryo is imaged. (Right) A dorsoventral view of a {\it Drosophila} embryo. The dorsal (D) side is up and the ventral (V) side is down. Images were collected at the focal plane ~18\% from either the anterior or posterior pole of an embryo (arrow in the left image). }
+\caption{(Left) A lateral view of a {\it Drosophila} embryo stained with DAPI (gray), dpERK (red), and Dorsal (green). The embryo is presented so that the anterior (A) side is to the left and the posterior (P) side is to the right. The arrow indicates the position where the cross-section of an embryo is imaged. (Right) A dorsoventral view of a {\it Drosophila} embryo. The dorsal (D) side is up and the ventral (V) side is down. Images were collected at the focal plane ~18\% from either the anterior or posterior pole of an embryo (arrow in the left image). }
 \end{figure}
 
 \begin{figure}
@@ -579,32 +570,34 @@ For the images in \fig~4, we take $\sigma^2 = 20$.
 \end{figure}
 
 \begin{figure*}
-\begin{minipage}{0.2\textwidth}
+\begin{minipage}{0.22\textwidth}
 \centering
-\includegraphics[width=\textwidth]{sphere_1}\\
+%\includegraphics[width=\textwidth]{sphere_1}\\
 \includegraphics[width=\textwidth]{sphere2_1}\\
 \sffamily{A}
 \end{minipage}
 %
-\begin{minipage}{0.2\textwidth}
+\hfill
+%
+\begin{minipage}{0.22\textwidth}
 \centering
-\includegraphics[width=\textwidth]{sphere_2}\\
+%\includegraphics[width=\textwidth]{sphere_2}\\
 \includegraphics[width=\textwidth]{sphere2_2}\\
 \sffamily{B}
 \end{minipage}
-\begin{minipage}{0.2\textwidth}
+\begin{minipage}{0.22\textwidth}
 \centering
-\includegraphics[width=\textwidth]{sphere_3}\\
+%\includegraphics[width=\textwidth]{sphere_3}\\
 \includegraphics[width=\textwidth]{sphere2_3}\\
 \sffamily{C}
 \end{minipage}
-\begin{minipage}{0.2\textwidth} 
+\begin{minipage}{0.22\textwidth} 
 \centering
-\includegraphics[width=\textwidth]{sphere_4}\\
+%\includegraphics[width=\textwidth]{sphere_4}\\
 \includegraphics[width=\textwidth]{sphere2_4}\\
 \sffamily{D}
 \end{minipage}
-\caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. {\it (A)} The original image (shown in red), projected onto a portion of a sphere. {\it (B)} Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. {\it (C)} Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. {\it (D)} Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation. The top row shows the three-dimensional spheres, and the bottom row shows the (two-dimensional) surface of the sphere in which we are interested.}
+\caption{Illustration of how rotations in three dimensions correspond to translations and rotations in two dimensions. {\it (A)} The original image (shown in red), projected onto a portion of a sphere. {\it (B)} Rotation around the x-axis (Euler angle $\alpha$) in three dimensions corresponds to rotation of the image. {\it (C)} Rotation around the y-axis (Euler angle $\beta$) in three dimensions corresponds to horizontal translation. {\it (D)} Rotation around the z-axis (Euler angle $\gamma$) in three dimensions corresponds to vertical translation.}
 \label{fig:SO3_picture}
 \end{figure*}
 
@@ -614,7 +607,8 @@ For the images in \fig~4, we take $\sigma^2 = 20$.
 \begin{tikzpicture}
 	\node at (0,0) {\includegraphics[width=5cm]{data1_evals_dist}};
 	\node at (-2.5cm, 2cm) {\sffamily{A}};
-	\draw[<->, ultra thick, cyan] (-1.4cm, -1.9cm) -- (1.7cm, -1.9cm);
+%	\draw[<->, ultra thick, cyan] (-1.4cm, -1.9cm) -- (1.7cm, -1.9cm);
+	\draw[<->, ultra thick, cyan] (-1.4cm, -1.85cm) -- (1.7cm, -1.85cm);
 	\draw[->, ultra thick, red] (1.97cm, -0.5cm) -- (1.97cm, -1cm);
 \end{tikzpicture}
 %\raisebox{4.5cm}{\sffamily{B}}
@@ -622,7 +616,7 @@ For the images in \fig~4, we take $\sigma^2 = 20$.
 \begin{tikzpicture}
 	\node at (0,0) {\includegraphics[width=5cm]{data2_evals_dist}};
 	\node at (-2.5cm, 2cm) {\sffamily{B}};
-	\draw[<->, ultra thick, cyan] (-1.2cm, -1.9cm) -- (1.5cm, -1.9cm);
+	\draw[<->, ultra thick, cyan] (-1.2cm, -1.85cm) -- (1.5cm, -1.85cm);
 	\draw[->, ultra thick, red] (1.97, -0.85cm) -- (1.97cm, -1.34cm);
 \end{tikzpicture}
 %\raisebox{4.5cm}{\sffamily{C}}
@@ -630,7 +624,7 @@ For the images in \fig~4, we take $\sigma^2 = 20$.
 \begin{tikzpicture}
 	\node at (0,0) {\includegraphics[width=5cm]{data3_evals_dist}};
 	\node at (-2.5cm, 2cm) {\sffamily{C}};
-	\draw[<->, ultra thick, cyan] (-0.25cm, -1.9cm) -- (0.35cm, -1.9cm);
+	\draw[<->, ultra thick, cyan] (-0.25cm, -1.85cm) -- (0.35cm, -1.85cm);
 	\draw[->, ultra thick, red] (1.97, -1.1cm) -- (1.97cm, -1.6cm);
 	\draw[->, ultra thick, red] (1.52, -1.1cm) -- (1.52cm, -1.6cm);
 	\draw[->, ultra thick, red] (0.64, -1.1cm) -- (0.64cm, -1.6cm);
