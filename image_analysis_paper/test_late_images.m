@@ -262,7 +262,7 @@ ylabel('PCA projection 2')
 %% VDM
 
 eps = median(W(:))/10;
-neigs = 42;
+neigs = 3*m;
 [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs);
 
 figure;
@@ -272,7 +272,27 @@ set(gcf, 'paperposition',[0 0 8 8])
 plot(abs(diag(D)),'.')
 xlabel('k')
 ylabel('|\lambda_k|')
-saveas(gcf,sprintf('%s/data2_evals', im_save_dir), 'pdf')
+% saveas(gcf,sprintf('%s/data2_evals', im_save_dir), 'pdf')
+
+figure;
+set(gcf, 'paperunits', 'centimeters')
+set(gcf, 'papersize', [8 8])
+set(gcf, 'paperposition',[0 0 8 8])
+nbins = 25;
+hist(diag(D), nbins)
+set(gca, 'xlim', [-1 1])
+grid on
+set(gca, 'ytick', 0:3:45)
+set(gca, 'xtick', -1:0.2:1)
+xlabel('\lambda')
+ylabel('Pr(\lambda)')
+% hold on
+% [nelements, centers] = hist(diag(D(7:end, 7:end)), nbins);
+% [alpha, rad] = fit_semicircle(centers, nelements);
+% plot(centers, wigner_semicircle(centers, rad, alpha))
+saveas(gcf,sprintf('%s/data2_evals_dist', im_save_dir), 'pdf')
+
+return
 
 figure;
 set(gcf, 'paperunits', 'centimeters')

@@ -257,9 +257,6 @@ Ordering the data by $\phi_2(j)$ will then, effectively, order them in time.
 %
 The procedure generalizes when the data lie on higher-dimensional manifolds (not just curves) in data space, where lower eigenvectors give subsequent embedding coordinates for the data.
 %
-The magnitude of the eigenvalues, $|\lambda_i|$, gives a measure of ``importance'' of the corresponding embedding coordinate $\phi_i$.
-%
-Often, one looks for a spectral gap in the eigenvalues to determine how many dimensions are necessary to adequately describe the data. 
 
 \subsubsection{Vector diffusion maps\cite{singer2012vector}}
 
@@ -309,13 +306,6 @@ We can therefore recover this diffusion maps coordinate by taking inner products
 The $j^{th}$ embedding coordinate will be given by $\psi_{k,1}$, where $jd +1 < k \le (j+1)d$,
 and we select $k$ such that the coordinate $\psi_{k, 1}$ has the largest variability, i.e., the $j^{th}$ coordinate is $\psi_{k,1}$, where $k$ is the solution to
 $$ \max_{jd +1 < k \le (j+1)d} \sum_i \psi_{k,1} (i)^2. $$
-%
-As in diffusion maps, the magnitude of the eigenvalues is related to the importance of the coordinates and gives an indication of the inherent dimensionality of the data. 
-%
-Again, if the rotations and dynamic variation are separable, then we expect the each eigenvalue to appear with multiplicity $d$, as each block eigenvector will yield $d$ eigenvalues of approximately the same value. 
-%
-We therefore look for a spectral gap in the ``blocks'' of eigenvalues to determine how many components are necessary to describe the data.
-
 
 \subsection{Registering images with respect to rotations and translations} \label{subsec:trans_rot_register}
 
@@ -471,6 +461,17 @@ R_{3,3} & = \cos(\alpha)\cos(\beta)  &
 %
 Inverting \eqref{eq:angle_relations} yields the desired approximate translations and rotation, and we round optimal translations to the nearest integer to remove the need for interpolation when translating the images.
 
+\subsection{Determining dimensionality from eigenvalue spectrum}
+
+We can use the distribution of the eigenvalues from (vector) diffusion maps to help determine the dimensionality of the data.
+%
+For diffusion maps, the largest eigenvalue will always be 1 and correspond to the trivial (constant) eigenvector. 
+%
+The eigenvalues corresponding to noise in the data form a semicircle distribution centered at 0. 
+%
+The eigenvalues corresponding to descriptive/meaningful embedding coordinates will be positive and removed from the semicircle. 
+%
+For vector diffusion maps, the sam structure holds, except each coordinate gives rise to $d$ eigenvalues with (approximately) the same value (as each block eigenvector corresponds to $d$ eigenvalues).
 
 %\subsection{Algorithms}
 %
@@ -529,11 +530,11 @@ Inverting \eqref{eq:angle_relations} yields the desired approximate translations
 
 \subsection{Constructing smooth trajectories from registered and ordered images}
 
-Once we have registered and ordered the images, we smooth the resulting trajectory to obtain a movie of the average developmental dynamics. 
+Once we have registered and ordered the images, we smooth the resulting trajectory to obtain a picture of the stereotypic developmental dynamics. 
 %
 Let $x_1, \dots, x_m$ denote the set of {\em registered and ordered} images (so $x_i$ is the $i^{th}$ image in the ordered set).
 %
-We define the frame at time $\tau$, denoted $\overline{x}_{\tau}$ (where $1 \le \tau \le m$), as a (Gaussian) weighted average of the images,
+We define the average image at time $\tau$, denoted $\overline{x}_{\tau}$ (where $1 \le \tau \le m$), as a (Gaussian) weighted average of the images,
 \begin{equation}
 \overline{x}_{\tau} =  \frac{\sum_i \exp \left( - \frac{|i - \tau|^2}{\sigma^2} \right) x_i}{\sum_i \exp \left( - \frac{|i - \tau|^2}{\sigma^2} \right) }
 \end{equation}
@@ -547,6 +548,11 @@ For the images in \fig~4, we take $\sigma^2 = 20$.
 \bibliography{background_reading/references,../../references/references}
 
 \end{article}
+
+\begin{figure}
+\includegraphics[width=8.4cm]{ap_dv}
+\caption{(Left) A lateral view of a {\it Drosophila} embryo stained with DAPI (gray), dpERK (red), and Dorsal (green). Embryo is presented so that the anterior (A) side is to the left and the posterior (P) side is to the right. The arrow indicates the position where the cross-section of an embryo is imaged. (Right) A dorsoventral view of a {\it Drosophila} embryo. The dorsal (D) side is up and the ventral (V) side is down. Images were collected at the focal plane ~18\% from either the anterior or posterior pole of an embryo (arrow in the left image). }
+\end{figure}
 
 \begin{figure}
 \includegraphics[width=8.4cm, trim=0cm 5.6cm 0cm 0cm, clip]{SI_fig6}
@@ -603,24 +609,56 @@ For the images in \fig~4, we take $\sigma^2 = 20$.
 \end{figure*}
 
 \begin{figure*}
-\raisebox{4.5cm}{\sffamily{A}}
-\includegraphics[width=5cm]{data1_evals}
-\raisebox{4.5cm}{\sffamily{B}}
-\includegraphics[width=5cm]{data2_evals}
-\raisebox{4.5cm}{\sffamily{C}}
-\includegraphics[width=5cm]{data3_evals}
-
-\caption{The eigenvalue spectra from vector diffusion maps analysis for the three data sets. 
+%\raisebox{4.5cm}{\sffamily{A}}
+%\includegraphics[width=5cm]{data1_evals}
+\begin{tikzpicture}
+	\node at (0,0) {\includegraphics[width=5cm]{data1_evals_dist}};
+	\node at (-2.5cm, 2cm) {\sffamily{A}};
+	\draw[<->, ultra thick, cyan] (-1.4cm, -1.9cm) -- (1.7cm, -1.9cm);
+	\draw[->, ultra thick, red] (1.97cm, -0.5cm) -- (1.97cm, -1cm);
+\end{tikzpicture}
+%\raisebox{4.5cm}{\sffamily{B}}
+%\includegraphics[width=5cm]{data2_evals}
+\begin{tikzpicture}
+	\node at (0,0) {\includegraphics[width=5cm]{data2_evals_dist}};
+	\node at (-2.5cm, 2cm) {\sffamily{B}};
+	\draw[<->, ultra thick, cyan] (-1.2cm, -1.9cm) -- (1.5cm, -1.9cm);
+	\draw[->, ultra thick, red] (1.97, -0.85cm) -- (1.97cm, -1.34cm);
+\end{tikzpicture}
+%\raisebox{4.5cm}{\sffamily{C}}
+%\includegraphics[width=5cm]{data3_evals}
+\begin{tikzpicture}
+	\node at (0,0) {\includegraphics[width=5cm]{data3_evals_dist}};
+	\node at (-2.5cm, 2cm) {\sffamily{C}};
+	\draw[<->, ultra thick, cyan] (-0.25cm, -1.9cm) -- (0.35cm, -1.9cm);
+	\draw[->, ultra thick, red] (1.97, -1.1cm) -- (1.97cm, -1.6cm);
+	\draw[->, ultra thick, red] (1.52, -1.1cm) -- (1.52cm, -1.6cm);
+	\draw[->, ultra thick, red] (0.64, -1.1cm) -- (0.64cm, -1.6cm);
+\end{tikzpicture}
+\caption{The histograms of the eigenvalues from vector diffusion maps analysis for the three data sets. 
 %
-As expected, the eigenvalues appear in groups of 3, as $d=3$ when using vector diffusion maps to register with respect to translations and rotations. 
+We expect to see an approximately symmetric semicircle distribution centered at 0, which corresponds to noise, and positive eigenvalues separated from the semicircle which correspond to meaningful coordinates. 
 %
-(A) Spectrum from images during cellularization (\fig~3). As expected, there is a spectral gap after the first (non-trivial) group of eigenvalues: the first three eigenvalues correspond to the rotational and translational alignment, the second three eigenvalues correspond to the first VDM component which uncovers the developmental dynamics, and the then there is an appreciable gap before the third group of eigenvalues.
+Each coordinate yields $d=3$ eigenvalues of (approximately) the same magnitude, and the top $d=3$ eigenvalues ($\lambda=1$) correspond to a trivial embedding coordinate.
 %
-(B) Spectrum from images during gastrulation (\fig~4). Again, 
-there is a spectral gap after the first (non-trivial) group of eigenvalues.
+(A) Histogram of eigenvalues from images during cellularization (\fig~3). As expected, we see an approximately symmetric distribution that ranges from $-0.8$ to $0.8$ (indicated by the blue arrow), and $6$ eigenvalues that are outside of this distribution (indicated by the red arrow). $3$ of these eigenvalues correspond to the eigenvector which contains the rotational and translational alignment, and the other $3$ eigenvalues correspond to the first VDM component which uncovers the developmental dynamics, and the then there is an appreciable gap before the third group of eigenvalues.
 %
-(C) Spectrum from images of mutant and wild type embryos during cellularization (\fig~5).
-We see a group of three eigenvalues corresponding to the translational and rotational alignments, one group that is clearly significant, and then a second group that, while less important, is still above the level of noise of the subsequent eigenvalues, indicating that two components are necessary to describe the data. }
+(B) Histogram of eigenvalues from images during gastrulation (\fig~4). We see an approximately symmetric distribution that ranges from $-0.7$ to $0.7$ (indicated by the blue arrow), and $6$ eigenvalues that are outside of this distribution (indicated by the red arrow). $3$ of these eigenvalues correspond to the eigenvector which contains the rotational and translational alignment, and the other $3$ eigenvalues correspond to the first VDM component which uncovers the developmental dynamics.
+%
+(C) Histogram of eigenvalues from images of mutant and wild type embryos during cellularization (\fig~5).
+We see an approximately symmetric distribution that ranges from $-0.2$ to $0.2$ (indicated by the blue arrow), and $9$ eigenvalues that are outside of this distribution (indicated by the red arrows). $3$ of these eigenvalues correspond to the eigenvector which contains the rotational and translational alignment, and the other $2$ eigenvalues correspond to the first two VDM components which uncovers the developmental dynamics of the two genotypes.}
+%there is a spectral gap after the first (non-trivial) group of eigenvalues.
+%\caption{The eigenvalue spectra from vector diffusion maps analysis for the three data sets. 
+%%
+%As expected, the eigenvalues appear in groups of 3, as $d=3$ when using vector diffusion maps to register with respect to translations and rotations. 
+%%
+%(A) Spectrum from images during cellularization (\fig~3). As expected, there is a spectral gap after the first (non-trivial) group of eigenvalues: the first three eigenvalues correspond to the rotational and translational alignment, the second three eigenvalues correspond to the first VDM component which uncovers the developmental dynamics, and the then there is an appreciable gap before the third group of eigenvalues.
+%%
+%(B) Spectrum from images during gastrulation (\fig~4). Again, 
+%there is a spectral gap after the first (non-trivial) group of eigenvalues.
+%%
+%(C) Spectrum from images of mutant and wild type embryos during cellularization (\fig~5).
+%We see a group of three eigenvalues corresponding to the translational and rotational alignments, one group that is clearly significant, and then a second group that, while less important, is still above the level of noise of the subsequent eigenvalues, indicating that two components are necessary to describe the data. }
 \label{fig:eval_spectra}
 \end{figure*}
 

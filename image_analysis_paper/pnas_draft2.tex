@@ -254,11 +254,11 @@ Additional challenges arise from embryo-to-embryo variability, sample size, and 
 
 %%%YGK put an arrow in the disc
 
-We show how recently developed dimensionality reduction techniques can successfully address these challenges and reveal developmental trajectories from collections of unregistered and unordered imaging data.
+Image registration has been studied in a variety of contexts \cite{zitova2003image, rowley1998rotation, hajnal2010medical, greenspan1994rotation, zhao2003face}.
 %
-Image registration has been studied in a variety of contexts \cite{zitova2003image, rowley1998rotation, hajnal2010medical, greenspan1994rotation, zhao2003face}, as have dimensionality reduction techniques \cite{Belkin2003, coifman2005geometric, coifman2006geometric, tenenbaum2000global, roweis2000nonlinear} and their applications \cite{anavy2014blind, trapnell2014dynamics,gupta2008extracting, qiu2011discovering, kafri2013dynamics}. 
+We use a manifold learning algorithm \cite{singer2012vector} which simultaneously addresses the problems of registration and temporal ordering. 
 %
-Here, we use a manifold learning algorithm \cite{singer2012vector} that has been recently developed for high-dimensional imaging data. 
+This algorithm is one of many nonlinear dimensionality reduction techniques that have been developed over the past decade \cite{Belkin2003, coifman2005geometric, coifman2006geometric, tenenbaum2000global, roweis2000nonlinear}. 
 %
 This technique has been used for data mining in
 applications ranging from analysis of cryo-electron microscopy images of individual molecules to face recognition, and is sufficiently general to be applicable to a wide variety of imaging studies. 
@@ -423,7 +423,7 @@ For this data set, the quality of the temporal ordering provided by vector diffu
 %
 During the third hour of development, the embryo cellularizes: in this process, nuclei located under a common plasma membrane are enclosed by lateral membranes which grow inward, separating the nuclei into individual cells.
 %
-The highly reproducible kinetics of lateral membrane growth can be used to estimate the age of each embryo to within 1--3 minutes \cite{figard2013plasma} (see \fig~S1).
+The highly reproducible kinetics of lateral membrane growth can be used to estimate the age of each embryo to within 1--3 minutes \cite{figard2013plasma} (see \fig~S2).
 %
 The Spearman rank correlation coefficient between the orderings obtained based on the progress of cellularization and vector diffusion maps is 0.91, indicating that vector diffusion maps can accurately recover the temporal order.
 %
@@ -446,7 +446,7 @@ Thus, we have validated a dimensionality reduction approach to temporal ordering
 
 %As the images in Figure~\ref{fig:data1} are relatively simple, other techniques could have been used to temporally order them.
 %
-Because the dynamics of the data set shown in \fig~\ref{fig:data1} are relatively simple, effectively consisting of a single mode (the two dpERK peaks) growing in time, established techniques such as principal component analysis (PCA) \cite{shlens2005tutorial} would uncover most of the meaningful structure in the data, and projection onto the first principal component would be sufficient to order the data in time (see \fig~S6).
+Because the dynamics of the data set shown in \fig~\ref{fig:data1} are relatively simple, effectively consisting of a single mode (the two dpERK peaks) growing in time, established techniques such as principal component analysis (PCA) \cite{shlens2005tutorial} would uncover most of the meaningful structure in the data, and projection onto the first principal component would be sufficient to order the data in time (see \fig~S7).
 %
 However, developmental dynamics are often significantly more complex, and nonlinear dimensionality reduction techniques are required to extract meaningful structure in the data.
 %
@@ -488,7 +488,7 @@ At the end of this process, cells which were originally on the ventral and poste
 
 Visually, the dynamics in this data set are much more complicated, and only 22\% of the variability in the images is captured by the first principal component.
 %
-Simple time-ordering based on this linear projection is therefore not possible (see \fig~S7).
+Simple time-ordering based on this linear projection is therefore not possible (see \fig~S8).
 %
 %Even when projecting on several leading principal components (see SI), a nonlinear approach, such as vector diffusion maps, is required to temporally order the data.
 %
@@ -515,7 +515,7 @@ When time is the main source of variability, we have shown vector diffusion maps
 %
 However, vector diffusion maps can also provide an organization of data which contains multiple sources of variability.
 %
-To illustrate this, we collected a data set consisting of $42$ embryos undergoing cellularization during the third hour of development (see \fig~S2).
+To illustrate this, we collected a data set consisting of $42$ embryos undergoing cellularization during the third hour of development (see \fig~S3).
 %
 Half of the embryos are wild type, and half of the embryos are mutants where dpERK is expressed in one broad peak at the ventral side.
 %
@@ -524,23 +524,16 @@ Again, each image is an optical cross-section of an embryo fixed at a different 
 We expect two sources of variability in this data set: differences due to developmental time, and differences between mutant and wild type dynamics.
 
 
-\begin{figure}[h!]
-\includegraphics{fig5}
-\caption{Mutant and wild type {\xfigtextfontit Drosophila}.  {\xfigtextfontit(A)} Data collected from wild type and mutant embryos (original data set is shown in \fig~S2), projected onto the first two vector diffusion maps coordinates. {\xfigtextfontit (B)} The data in {\xfigtextfontit A}, now colored by genotype. The two branches separate mutant and wild type samples. {\xfigtextfontit (C)} dpERK signal at select wild type points in {\xfigtextfontit B} (denoted by circles). The two dpERK peaks which arise during development are indicated by arrows. {\xfigtextfontit (C)} dpERK signal at select mutant points in {\xfigtextfontit B} (denoted by circles). The single dpERK peak is indicated by an arrow. }
-\customlabel{fig:data3}{5}
-\customlabel{subfig:projection_data3}{\ref{fig:data3}{\it A}}
-\customlabel{subfig:projection_colored_data3}{\ref{fig:data3}{\it B}}
-\customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it C}}
-\customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it D}}
-\end{figure}
 
-We computed the vector diffusion maps embedding for our data, and the eigenvalue spectrum (see \fig~S5) indicates that two coordinates may be required for a thorough description of the data. 
+
+We computed the vector diffusion maps embedding for our data, and the eigenvalue spectrum (see \fig~S6) indicates that two coordinates may be required for a thorough description of the data. 
 %
 \fig~\ref{subfig:projection_data3} shows the data projected onto the first two vector diffusion maps coordinates, where each point in this projection corresponds to one image in our data set.
 %%%
 %%%YGK we need something about dmap eignvalues and how many are not harmonics
 %
 Two distinct branches appear to emerge in this two-dimensional embedding space.
+
 
 
 \fig~\ref{subfig:projection_colored_data3} shows the same two-dimensional projection as \fig~\ref{subfig:projection_data3}, but the data points are colored to indicate whether they come from the wild type or mutant.
@@ -555,6 +548,15 @@ When the two paths diverge, the wild type data develops two distinct peaks, wher
 %
 Therefore, vector diffusion maps can not only recover dynamics, but also help distinguish different expression patterns and developmental trajectories.
 
+\begin{figure}[h!]
+\includegraphics{fig5}
+\caption{Mutant and wild type {\xfigtextfontit Drosophila}.  {\xfigtextfontit(A)} Data collected from wild type and mutant embryos (original data set is shown in \fig~S3), projected onto the first two vector diffusion maps coordinates. {\xfigtextfontit (B)} The data in {\xfigtextfontit A}, now colored by genotype. The two branches separate mutant and wild type samples, and the direction of the developmental trajectories are indicated by arrows. {\xfigtextfontit (C)} dpERK signal at select wild type points in {\xfigtextfontit B} (denoted by circles). The two dpERK peaks which arise during development are indicated by arrows. {\xfigtextfontit (C)} dpERK signal at select mutant points in {\xfigtextfontit B} (denoted by circles). The single dpERK peak is indicated by an arrow. }
+\customlabel{fig:data3}{5}
+\customlabel{subfig:projection_data3}{\ref{fig:data3}{\it A}}
+\customlabel{subfig:projection_colored_data3}{\ref{fig:data3}{\it B}}
+\customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it C}}
+\customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it D}}
+\end{figure}
 
 
 \section{Conclusions}
@@ -584,7 +586,7 @@ For this particular data set, a simpler approach would have sufficed.
 %
 Indeed, because of the relative simplicity of developmental dynamics (monotonic increase in the amplitude of a localized signaling pattern and relatively small tissue deformation), temporal order could have been inferred by projection of registered images on the first principal component of the data set. 
 %
-This approach was clearly not sufficient for the second data set (see \fig~S3), collected from embryos during the time window where both the tissue morphology and signaling patterns are rapidly changing.  
+This approach was clearly not sufficient for the second data set (see \fig~S4), collected from embryos during the time window where both the tissue morphology and signaling patterns are rapidly changing.  
 %
 However, vector diffusion maps could readily extract a nontrivial spatiotemporal trajectory. 
 %
