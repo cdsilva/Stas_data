@@ -46,7 +46,7 @@ We also adjust the intensity of the nuclear signal in each image such that 1\% o
 
 When imaging, the laser settings were calibrated so that images have good dynamic range, while not saturating the detector. 
 % 
-The same laser setting is maintained within each experiment. 
+The same laser setting was maintained within each experiment. 
 
 
 
@@ -452,7 +452,7 @@ We can use the distribution of the eigenvalues from (vector) diffusion maps to h
 %
 For diffusion maps, the largest eigenvalue will always be 1 and correspond to the trivial (constant) eigenvector. 
 %
-The eigenvalues corresponding to noise in the data form a semicircle distribution centered at 0 \cite{wigner1955characteristic, wigner1958distribution}. 
+The eigenvalues corresponding to noise in the data form a semicircle distribution centered at the origin \cite{wigner1955characteristic, wigner1958distribution}. 
 %
 The eigenvalues corresponding to descriptive/meaningful embedding coordinates will be positive and removed from the semicircle. 
 %
@@ -671,7 +671,7 @@ We see an approximately symmetric distribution that ranges from $-0.2$ to $0.2$ 
 \raisebox{3.7cm}{\sffamily{C}}
 \includegraphics[width=8.4cm]{data2_PCA_proj}
 
-\caption{{\it (A)} Images shown in \fig~4 of the paper, registered using angular synchronization \cite{singer2011angular} and ordered by the first PCA projection coefficient. The recovered ordering is not consistent with the known developmental dynamics. {\it (B)} The fraction of the variance captured by each of the first 10 principal components. Note that components 2--10 have a nonnegligible contribution to the data. {\it (C)} Projection onto the first two principal components.}
+\caption{{\it (A)} Images shown in \fig~4 of the paper, registered using angular synchronization \cite{singer2011angular} and ordered by the first PCA projection coefficient. The recovered ordering is not consistent with the known developmental dynamics. {\it (B)} The fraction of the variance captured by each of the first 10 principal components. Note that components 2--10 have a nonnegligible contribution to the data. {\it (C)} Projection onto the first two principal components. Each principal component is normalized to 1. }
 \label{fig:PCA_results}
 \end{figure*}
 
@@ -683,18 +683,17 @@ We see an approximately symmetric distribution that ranges from $-0.2$ to $0.2$ 
 \raisebox{7.6cm}{\sffamily{B}}
 \includegraphics[width=7cm]{FBsPCA_evals}
 
-\raisebox{2.2cm}{\sffamily{C}}
-\hspace{-1cm}
-\includegraphics[width=4cm, angle=90]{FBsPCA_dmaps}
+\raisebox{5.7cm}{\sffamily{C}}
+\includegraphics[width=16cm, trim=2cm 0cm 2cm 0cm, clip]{FBsPCA_dmaps}
 \caption{I computed the FBsPCA basis for the set of images (separately for the red and green signals).
 %
 I then computed the bispectrum coefficients for each image expanded in the FBsPCA basis, and used these coefficients in a DMAPS calculation.
 %
-The results are shown below.
+The results are shown above.
 %
 However, because the bispectrum is not stable to deformations, it does not seem to be able to identify neighboring images.
 %
-(A) Images used for FBsPCA. (B) Eigenvalue spectrum from dmaps, using bispectrum coefficients. There is no spectral gap after the first component, as would be expected for this particular data set. (C) First 4 diffusion maps variables, computed from the bispectrum coefficeints, plotted against the membrane thickness. Note there is no appreciable correlation: each dmaps variable simply selects one image from the data set as ``abnormal''.}
+(A) Images used for FBsPCA. (B) Eigenvalue spectrum from diffusion maps, computed using bispectrum coefficients. There is no spectral gap after the first component, as would be expected for this particular data set. (C, top) First 4 diffusion maps variables, computed from the bispectrum coefficients, plotted against the membrane thickness. Note there is no appreciable correlation: each diffusion maps variable simply selects one image from the data set as ``abnormal''. (C, bottom) The corresponding images that each diffusion maps mode ``selects.'' In general, these seem to be the late images with ventral furrows beginning to form. }
 \end{figure*}
 
 

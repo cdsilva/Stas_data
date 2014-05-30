@@ -91,10 +91,10 @@ for i=1:4
     h = surf(X, Y, Z, C, 'edgecolor','k');
     set(gca,'position',[0 0 1 1],'units','normalized')
     
-    camlight(45, -20);
+    camlight(-10, 30);
     lighting phong
     %material dull
-    set(h, 'diffusestrength', 1.0);
+    set(h, 'diffusestrength', 3.0);
     set(h, 'specularstrength', 1);
     %set(gca, 'ambientlightcolor', [1 0 0]);
     set(h, 'AmbientStrength', 0.7);

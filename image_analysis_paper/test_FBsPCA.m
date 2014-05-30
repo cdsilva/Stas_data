@@ -34,6 +34,8 @@ subplot_dim2 = ceil(m / subplot_dim1);
 
 data = zeros(npixels, npixels, m);
 data2 = zeros(npixels, npixels, m);
+image_set = zeros(npixels, npixels, 3, m, 'uint8');
+
 
 %% load images
 
@@ -49,6 +51,12 @@ for i=1:m
     %store image
     data(:, :, i) = im1(:, :, 2);
     data2(:, :, i) = im1(:, :, 3);
+    
+    im1 = circshift(im1, [0 0 -1]);
+    im1(:, :, 1) = im1(:, :, 1) + im1(:, :, 3);
+    im1(:, :, 2) = im1(:, :, 2) + im1(:, :, 3);
+    
+    image_set(:, :, :, i) = im1;
     
 end
 
@@ -167,16 +175,22 @@ saveas(gcf,sprintf('%s/FBsPCA_evals', im_save_dir), 'pdf')
 figure;
 imshow(W_dmaps(ranks_from_membranes,ranks_from_membranes))
 
+ncomp = 6;
 figure;
 set(gcf, 'paperunits', 'centimeters')
-set(gcf, 'papersize', [16 4])
-set(gcf, 'paperposition',[0 0 16 4]);
-for i=2:5
-    subplot(1,4, i-1)
+set(gcf, 'papersize', [24 24/ncomp*2])
+set(gcf, 'paperposition',[0 0 24 24/ncomp*2]);
+for i=2:ncomp+1
+    subplot(2, ncomp, i-1)
     plot(V(:,i),mem_lengths,'.')
     xlabel(sprintf('\\phi_%d',i));
-    ylabel('membrane length')
+    ylabel('mem. length')
     axis([-1.1 1.1 -inf inf])
+    
+    subplot(2, ncomp, ncomp+(i-1))
+    [~, idx] = max(abs(V(:,i)));
+    imshow(image_set(:, :, :, idx), 'border', 'tight')
+    
 end
 saveas(gcf,sprintf('%s/FBsPCA_dmaps', im_save_dir), 'pdf')
 
