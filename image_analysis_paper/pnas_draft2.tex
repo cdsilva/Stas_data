@@ -64,14 +64,9 @@
 
 \usepackage{amssymb,amsfonts,amsmath}
 
-%\usepackage{subcaption}
 \graphicspath{ {paper_figures2/} }
 
 \usepackage{tikz}
-
-%\usepackage{sansmath}
-
-%\usepackage[font={sf, small}]{caption}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% OPTIONAL MACRO FILES
@@ -81,9 +76,6 @@
 %\newcommand{\mfrac}[2]{\frac{\displaystyle #1}{\displaystyle #2}}
 %\def\s{\sigma}
 
-%\DeclareMathSizes{9}{8}{7}{7}
-
-%\DeclareMathOperator*{\argmin}{arg\,min}
 
 \newcommand{\SI}[0]{{\it SI Materials and Methods}}
 \newcommand{\fig}[0]{Fig.}
@@ -197,6 +189,9 @@ The approach is based on vector diffusion maps, a broadly applicable manifold le
 %Furthermore, these techniques can separate multiple trajectories within the same data set.
 %
 We use this method to extract developmental dynamics from collections of images from a cross-sectional study of cell signaling during dorsoventral patterning of the {\it Drosophila} embryo.
+%
+We show that the algorithm recovers the correct orientation and temporal order when they are independently known, reconstructs an average developmental trajectory when such information is unavailable, and can detect distinct trajectories in a heterogeneous population of embryos.
+
 \end{abstract}
 
 
@@ -227,7 +222,7 @@ We use this method to extract developmental dynamics from collections of images 
 %
 In longitudinal studies, developmental progress is monitored over time in the same embryo \cite{roelens2013live, keller2013imaging}.
 %
-In a cross-sectional study, developmental dynamics is reconstructed from multiple embryos, each of which contributes only a snapshot of a chemical or morphological process along its developmental trajectory \cite{jaeger2004dynamic, fowlkes2008quantitative}.
+In a cross-sectional study, developmental dynamics is reconstructed from multiple embryos, each of which contributes only a snapshot of a chemical or morphological process along its developmental trajectory \cite{jaeger2004dynamic, peter2012predictive, peter2011gene, fowlkes2008quantitative}.
 %
 Here we focus on cross-sectional studies, which have a time-honored history and still present the only option for most organisms.
 %
@@ -470,7 +465,7 @@ However, developmental dynamics are often significantly more complex, and nonlin
 %
 \fig~\ref{subfig:raw_data2} shows a richer data set of $108$ images of {\it Drosophila} embryos.
 %
-These images cover a thirty minute time interval and span late cellularization through gastrulation, when the two-dimensional sheet of newly formed cells begins to deform into three-dimensional structures which will form the future organs \cite{leptin2005gastrulation}.
+These images cover a thirty minute time interval and span late cellularization through gastrulation, when the arrangement of newly formed cells begins to deform into structures which will form the future organs \cite{leptin2005gastrulation}.
 %
 As before, each image is an optical cross-section of a vertically oriented embryo fixed at a different developmental time.
 %
@@ -540,16 +535,6 @@ Again, each image is an optical cross-section of an embryo fixed at a different 
 We expect two sources of variability in this data set: differences due to developmental time, and differences between mutant and wild type dynamics.
 
 
-
-
-We computed the vector diffusion maps embedding for our data, and the eigenvalue distribution (see \fig~\ref{fig:eigenvalues}) indicates that two coordinates may be required for a meaningful description of the data. 
-%
-\fig~\ref{subfig:projection_data3} shows the data projected onto the first two vector diffusion maps coordinates; each point in this projection corresponds to one image in our data set.
-%%%
-%%%YGK we need something about dmap eignvalues and how many are not harmonics
-%
-Two distinct branches appear to emerge in this two-dimensional embedding space.
-
 \begin{figure}[h]
 \includegraphics{fig5_2}
 %\caption{Wild type and mutant {\xfigtextfontit Drosophila} embryos.  {\xfigtextfontit(A)} Data collected from wild type and mutant embryos (original data set is shown in \fig~\ref{fig:raw_data3}), projected onto the first two vector diffusion maps coordinates. {\xfigtextfontit (B)} The data in {\xfigtextfontit A}, now colored by genotype. The two branches separate mutant and wild type samples, and the direction of the developmental trajectories are indicated by arrows. {\xfigtextfontit (C)} dpERK signal at select wild type points in {\xfigtextfontit B} (denoted by circles). The two dpERK peaks which arise during development are indicated by arrows. {\xfigtextfontit (C)} dpERK signal at select mutant points in {\xfigtextfontit B} (denoted by circles). The single dpERK peak is indicated by an arrow. }
@@ -560,6 +545,16 @@ Two distinct branches appear to emerge in this two-dimensional embedding space.
 \customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it B}}
 \customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it C}}
 \end{figure}
+
+
+We computed the vector diffusion maps embedding for our data, and the eigenvalue distribution (see \fig~\ref{fig:eigenvalues}) indicates that two coordinates may be required for a meaningful description of the data. 
+%
+\fig~\ref{subfig:projection_data3} shows the data projected onto the first two vector diffusion maps coordinates; each point in this projection corresponds to one image in our data set.
+%%%
+%%%YGK we need something about dmap eignvalues and how many are not harmonics
+%
+Two distinct branches appear to emerge in this two-dimensional embedding space.
+
 
 The inset of \fig~\ref{subfig:projection_data3} shows the two-dimensional projection, with the data points colored to indicate whether they come from the wild type or mutant.
 %
@@ -621,7 +616,7 @@ In the future, functional data analysis tools can be used for the quantitative e
 %
 One can also test which physical variable, among a set of candidate variables, is most correlated with the uncovered vector diffusion maps coordinate to gain insight into which physical quantities change across the developmental trajectory (e.g., total intensity of one signal, roundness of the embryo).
 %
-Here, we have used vector diffusion maps to register the images with respect to translations and rotations; however, it is conceivable that one could factor out other sources of variability, such as reflections \cite{singer2012vector, goemans1995improved} or dilations, in the images.
+Here, we have used vector diffusion maps to register the images with respect to translations and rotations; however, it is conceivable that one could factor out other sources of variability, such as reflections \cite{singer2012vector, goemans1995improved, bandeira2013cheeger} or dilations, in the images.
 %
 One might even envision automated analysis of embryos imaged in arbitrary three-dimensional orientations, in the spirit of cryo-EM image analysis.
 %
@@ -728,6 +723,14 @@ Keller P~J (2013) Imaging morphogenesis: technological advances and biological
 Jaeger J, Surkova S, Blagov M, Janssens H, Kosman D, \textit{et~al.} (2004)
   Dynamic control of positional information in the early \textit{{D}rosophila}
   embryo. \textit{Nature} 430(6997):368--371.
+
+\bibitem{peter2012predictive}
+Peter IS, Faure E, Davidson EH (2012) Predictive computation of genomic logic processing functions in embryonic development. \textit{Proc Natl Acad Sci USA} 109(41):16434--16442.
+
+\bibitem{peter2011gene}
+Peter IS, Davidson EH (2011) A gene regulatory network controlling the embryonic
+specification of endoderm. \textit{Nature} 474(7353):635--639.
+
 
 \bibitem{fowlkes2008quantitative}
 Fowlkes C~C, Hendriks C~L~L, Ker{\"a}nen S~V, Weber G~H, R{\"u}bel O,
@@ -882,6 +885,9 @@ Ramsay J~O, Silverman B~W (2005) \textit{Functional Data Analysis}, Springer
 \bibitem{goemans1995improved}
 Goemans M~X, Williamson D~P (1995) Improved approximation algorithms for maximum cut and satisfiability problems using semidefinite programming.
 \textit{Journal of the ACM} 42(6):1115--1145.
+
+\bibitem{bandeira2013cheeger}
+Bandeira A~S, Singer A, Spielman D~A (2013) A Cheeger inequality for the graph connection Laplacian. \textit{SIAM Journal on Matrix Analysis and Applications} 34(4):1611--1630.
 
 \bibitem{mallat2012group}
 Mallat, S (2012) Group invariant scattering. 

@@ -243,20 +243,39 @@ end
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
-set(gcf, 'papersize', [8 4])
-set(gcf, 'paperposition',[0 0 8 4])
+set(gcf, 'papersize', [12 12])
+set(gcf, 'paperposition',[0 0 12 12])
 bar(diag(D_PCA(1:10, 1:10)) / sum(diag(D_PCA)))
 xlabel('k')
-ylabel('\lambda_k')
+ylabel('fraction of variance captured by k^{th} PC')
 % saveas(gcf,sprintf('%s/data2_PCA_variance', im_save_dir), 'pdf')
 
 figure;
 set(gcf, 'paperunits', 'centimeters')
-set(gcf, 'papersize', [8 4])
-set(gcf, 'paperposition',[0 0 8 4])
-plot(proj_coeff(:,1),proj_coeff(:,2),'.')
-xlabel('PCA projection 1')
-ylabel('PCA projection 2')
+set(gcf, 'papersize', [12 12])
+set(gcf, 'paperposition',[0 0 12 12])
+line(proj_coeff(:,1), proj_coeff(:,2),'marker', '.','linestyle', 'none')
+xlabel('$< x, PC1 >$', 'interpreter','latex')
+ylabel('$< x, PC2 >$', 'interpreter','latex')
+xlim = get(gca, 'xlim');
+ylim = get(gca, 'ylim');
+haxes1 = gca;
+haxes1_pos = get(haxes1,'Position'); % store position of first axes
+haxes2 = axes('Position',haxes1_pos,...
+              'XAxisLocation','top',...
+              'YAxisLocation','right', 'color','none');
+%line(sqrt(D_PCA(1,1))*proj_coeff(:,1), sqrt(D_PCA(2,2))*proj_coeff(:,2),'Parent',haxes2 ,'marker', '.','color','b','linestyle', 'none')
+set(gca, 'xlim', sqrt(D_PCA(1,1))*xlim);
+set(gca, 'ylim', sqrt(D_PCA(2,2))*ylim);
+set(gca,'xticklabel',num2str(get(gca,'xtick')','%g'))
+set(gca,'yticklabel',num2str(get(gca,'ytick')','%g'))
+xlabel('$\sqrt{\lambda_1} < x, PC1 >$', 'interpreter','latex')
+ylabel('$\sqrt{\lambda_2} < x, PC2 >$', 'interpreter','latex')
+haxes1_pos = get(haxes1,'Position'); % store position of first axes
+haxes1_pos(3) = haxes1_pos(3) - 0.1;
+haxes1_pos(4) = haxes1_pos(4) - 0.05;
+set(haxes1, 'position', haxes1_pos)
+set(haxes2, 'position', haxes1_pos)
 % saveas(gcf,sprintf('%s/data2_PCA_proj', im_save_dir), 'pdf')
 
 %% VDM
