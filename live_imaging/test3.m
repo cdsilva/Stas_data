@@ -12,11 +12,24 @@ channel = 1;
 
 [train_images, train_times] = read_video(train_file_name, npixels);
 train_images = train_images(:, :, channel, :);
-
+train_images = squeeze(train_images);
 
 [test_images, test_times] = read_video(test_file_name, npixels);
 test_images = test_images(:, :, channel, :);
+test_images = squeeze(test_images);
 
+test_dir_names = {'../membrane_pictures/14_0403_dpERK_late'; '../membrane_pictures/14_0501_dpERK_late'};
+num_images = [46; 132];
+
+for j=1:length(num_images)
+    for i=1:num_images(j)
+        A = imread(sprintf('%s/emb%02d.tif', test_dir_names{j}, i));
+        A = A(:, :, channel);
+        A = imresize(A, [npixels, npixels]);
+        test_images = cat(3, test_images, A);
+        test_times = [test_times; 0];
+    end
+end
 
 %%
 % addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
@@ -76,51 +89,9 @@ test_coeff = test_sx_all * V;
 
 %% plot PCA projection
 figure;
-set(gcf, 'papersize', [8 8])
-set(gcf, 'paperposition', [0 0 8 8])
-scatter(train_coeff(:,1), train_coeff(:, 2), 200, train_times, '.')
-hold on
-ind = 35:57;
-scatter(train_coeff(ind,1), train_coeff(ind, 2), 200, train_times(ind), 'o')
-plot(test_coeff(:,1),test_coeff(:,2),'xk')
-xlabel('scattering transform coefficients projected onto first PC')
-ylabel('scattering transform coefficients projected onto second PC')
-legend('training data', 'testing data')
-
-%% kernel interpolation
-
-kernel_dist = pdist2(test_coeff, train_coeff).^2;
-eps = median(kernel_dist(:))/10;
-kernel_dist = exp(-kernel_dist/eps);
-
-for i=1:length(test_times)
-    kernel_dist(i,:) = kernel_dist(i,:) / sum(kernel_dist(i,:));
-end
-
-interp_test_times = kernel_dist * train_times;
-
-figure;
-plot(test_times, interp_test_times, '.')
-
-figure;
 scatter(train_coeff(:,1), train_coeff(:, 2), 50, train_times)
 hold on
-scatter(test_coeff(:,1),test_coeff(:,2),50, interp_test_times, '.')
-
-figure;
-scatter(train_coeff(:,1), train_coeff(:, 2), 50, train_times)
-hold on
-scatter(test_coeff(:,1),test_coeff(:,2),50, test_times, '.')
-
-%% fit linear model
-
-B = regress(train_times,[ones(length(train_times), 1) train_coeff train_coeff.^2]);
-
-figure;
-plot([ones(length(train_times), 1) train_coeff train_coeff.^2] * B, train_times, '.')
-
-figure;
-plot([ones(length(test_times), 1) test_coeff test_coeff.^2] * B, test_times, '.')
+plot(test_coeff(:,1),test_coeff(:,2),'.')
 
 %% DMAPS
 
@@ -132,9 +103,6 @@ figure;
 plot(V_dmaps(:,2),train_times,'.')
 
 corr(V_dmaps(:,2),train_times, 'type', 'spearman')
-
-figure;
-scatter(V_dmaps(:,2),V_dmaps(:,4),50, train_times)
 
 %%
 W = squareform(pdist([train_coeff; test_coeff])).^2;
@@ -150,7 +118,7 @@ plot(V_dmaps(:,2),[train_times; test_times],'.')
 Wuu = squareform(pdist(test_coeff)).^2;
 Wul = pdist2(test_coeff, train_coeff).^2;
 
-eps = median(Wuu(:));
+eps = median(Wuu(:))/20;
 Wuu = exp(-Wuu/eps);
 Wul = exp(-Wul/eps);
 
