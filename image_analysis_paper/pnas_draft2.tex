@@ -174,7 +174,7 @@ To illustrate this approach, we temporally order and register several datasets c
 
 Imaging studies provide unique insights into the dynamics of developmental processes. 
 %
-A large number of imaging studies are based on a cross-sectional experimental design, where developmental progress is arrested in a population of embryos, each of which is at a different point along its developmental trajectory. 
+Many experiments are based on a cross-sectional design, where developmental progress is arrested in a population of embryos, each of which is at a different point along its developmental trajectory. 
 %
 The goal is then to temporally order the data to reconstruct representative developmental dynamics from snapshots provided by the collection of embryos.
 %
@@ -186,9 +186,9 @@ We present an automated approach to simultaneously register and temporally order
 %
 The approach is based on vector diffusion maps, a broadly applicable manifold learning technique that does not require {\it a priori} knowledge of image features or a parametric model of the developmental dynamics.
 %
-We use this method to extract developmental dynamics from collections of images from a cross-sectional study of cell signaling during dorsoventral patterning of the {\it Drosophila} embryo.
+We use this method to extract developmental trajectories from a cross-sectional imaging study of cell signaling during dorsoventral patterning of the {\it Drosophila} embryo.
 %
-We show that the algorithm recovers the correct orientation and temporal order when they are independently known, reconstructs an average developmental trajectory when such information is unavailable, and can detect distinct trajectories in a heterogeneous population of embryos.
+We show that the algorithm recovers the correct orientation and temporal order in a data set where they are independently known, reconstructs an average developmental trajectory when such information is unavailable, and can detect distinct trajectories in a heterogeneous population of embryos.
 
 \end{abstract}
 
@@ -224,7 +224,7 @@ In a cross-sectional study, developmental dynamics is reconstructed from multipl
 %
 Here we focus on cross-sectional studies, which have a time-honored history and still present the only option for most organisms.
 %
-In a typical cross-sectional study, a group of embryos is fixed using a procedure that arrests their development and stained with chemicals that visualize a handful of cellular processes.
+In a typical cross-sectional study, a group of embryos is fixed using a procedure that arrests their development, and stained with chemicals that visualize a handful of cellular processes.
 %
 Fixed embryos are then imaged using any given number of microscopy techniques.
 %
@@ -242,17 +242,17 @@ when the number of images is small and the differences between them are visually
 %
 In this case, temporal ordering can be accomplished by arranging the fish by size, which is monotonic with the developmental progress.
 %
-Image registration is based on obvious morphological landmarks, such as the position of head and fins.
+Image registration is based on obvious morphological landmarks, such as the positions of the head and the fins.
 %
 In contrast to this example, real data poses nontrivial challenges for both registration and temporal ordering.
 %
-In general, the landmarks needed for registration (here, the heads and fins) as well as the attributes which can be used to order the data (such as the body length) are not known {\it a priori}.
+In general, the landmarks needed for registration, as well as the attributes which can be used to order the data, are not known {\it a priori}.
 %
 Additional challenges arise from embryo-to-embryo variability, sample size, and measurement noise.
 
 \begin{figure}[t]
 \includegraphics[width=8.7cm]{fig1}
-\caption{Caricature illustrating the tasks of image registration and temporal ordering. {\xfigtextfontit (A)} Images of ``samples'', each in a different orientation and a different stage of development. {\xfigtextfontit (B)} Registered and ordered samples. For this caricature, the registration and ordering is straightforward because the data set is small and the developmental changes are easy to recognize visually.}
+\caption{Caricature illustrating the tasks of image registration and temporal ordering. {\xfigtextfontit (A)} Images of ``samples'', each in a different orientation and a different stage of development. {\xfigtextfontit (B)} Registered and ordered samples. For this caricature, the registration and ordering is straightforward because the data set is small, the landmarks are visually apparent, and the developmental changes are easy to recognize.}
 %\label{fig:fish}
 \customlabel{fig:fish}{1}
 \customlabel{subfig:fish_unordered}{\ref{fig:fish}{\it A}}
@@ -260,7 +260,7 @@ Additional challenges arise from embryo-to-embryo variability, sample size, and 
 \end{figure}
 
 Image registration has been studied in a variety of contexts \cite{zitova2003image, rowley1998rotation, hajnal2010medical, greenspan1994rotation, zhao2003face}, 
-and most registration algorithms are based on landmarks, such as the head and fins in \fig~\ref{fig:fish}.
+most of which require the definition and identification of appropriate landmarks.
 %
 In contrast, our approach requires no such information. 
 %
@@ -268,7 +268,7 @@ It is based on a manifold learning algorithm (vector diffusion maps, VDM \cite{s
 %
 This algorithm is one of several influential nonlinear dimensionality reduction techniques that have been developed over the past decade \cite{Belkin2003, coifman2005geometric, coifman2006geometric, tenenbaum2000global, roweis2000nonlinear}. 
 %
-These techniques has been used for data mining in
+These techniques has been used in
 applications ranging from analysis of cryo-electron microscopy (cryo-EM) images of individual molecules  \cite{zhao2014rotationally, singer2011viewing} to face recognition \cite{lafon2006data}, and are sufficiently general to be applicable to a wide variety of biological imaging studies.
 %
 Here, the vector diffusion maps algorithm is adapted for the analysis of images from cross-sectional studies of developmental dynamics, with the main objective of revealing stereotypic developmental trajectories.
@@ -280,7 +280,7 @@ To illustrate our approach, we analyze three data sets from a study of {\it Dros
 
 \subsection{Vector diffusion maps for registration and temporal ordering}
 
-Our approach is based on vector diffusion maps \cite{singer2012vector}, a manifold learning
+Vector diffusion maps \cite{singer2012vector} is a manifold learning
 technique developed for data sets which contain two types of sources of variability:
 geometric symmetries (such as translations and rotations of the images due to the experimental setup) which one would like to factor out,
 and ``additional" directions of variability (such as temporal dynamics) which one wants to uncover.
@@ -299,7 +299,7 @@ We first compute the angles needed to align pairs of vectors (or images).
 %
 In general, this requires no template function \cite{ahuja2007template} or image landmarks \cite{ian1998statistical}.
 %
-Using the alignment angles between all pairs of vectors, angular synchronization finds the set of rotation angles (one angle for each vector) that is most consistent with {\it all} pairwise measurements (see {\it SI Materials and Methods}); this is illustrated in \fig~\ref{subfig:synch2}.
+Using the alignment angles between all pairs of vectors, angular synchronization finds the set of rotation angles (one angle for each vector) that is most consistent with {\it all} pairwise measurements (see \SI); this is illustrated in \fig~\ref{subfig:synch2}.
 %
 In this schematic, registration via angular synchronization is trivial, as the pairwise measurements contain no noise.
 %
@@ -327,7 +327,7 @@ Instead, we will use diffusion maps to automatically uncover a parametrization o
 %
 Diffusion maps generalizes directly from one-dimensional nonlinear curves to higher-dimensional manifolds.
 %
-Thus, when our experiments have additional sources of variability (such as distinct populations of embryos) in addition to developmental dynamics, diffusion maps can provide an informative organization of our data which highlights both of these variability sources.
+Thus, when our experiments have additional sources of variability (such as distinct populations of embryos) in addition to developmental dynamics, the algorithm can provide an informative organization of our data which highlights both of these variability sources.
 
 Both angular synchronization and diffusion maps use pairwise information to uncover global structure in the data.
 %
@@ -350,7 +350,7 @@ Vector diffusion maps combines both steps into a single computation (see \SI), s
 
 \begin{figure*}[t]
 \includegraphics{fig3}
-\caption{{\xfigtextfontit Drosophila} embryos during cellularization. {\xfigtextfontit (A)} Images of embryos collected during cellularization. Each image is of a different embryo arrested at a different developmental time, and in a different rotational and translational orientation. {\xfigtextfontit (B)} Images from {\xfigtextfontit A}, now registered and ordered using vector diffusion maps. The images are ordered from left to right and from top to bottom, so that the first image appears in the top left position of the array, and the last image appears in the bottom right position. The dorsal side of each embryo now appears at the top of each image, and the ventral side appears at the bottom.}
+\caption{{\xfigtextfontit Drosophila} embryos during cellularization. {\xfigtextfontit (A)} Images of embryos collected during cellularization. Each image is of a different embryo arrested at a different developmental time, and in a different rotational and translational orientation. {\xfigtextfontit (B)} Images from {\xfigtextfontit A}, now registered and ordered using vector diffusion maps. The images are ordered from left to right and from top to bottom, so that the first image appears in the top left position of the array, and the last image appears in the bottom right. The dorsal side of each embryo now appears at the top of each image, and the ventral side appears at the bottom.}
 \customlabel{fig:data1}{3}
 \customlabel{subfig:raw_data1}{\ref{fig:data1}{\it A}}
 \customlabel{subfig:ordered_data1}{\ref{fig:data1}{\it B}}
@@ -379,10 +379,12 @@ The spatiotemporal pattern of dpERK is more complex: dpERK is first detected in 
 %
 This bimodal pattern is then augmented by a peak at the dorsal side of the embryo.
 %
-Both of these features become readily apparent when images are registered and ordered using vector diffusion maps (see \fig~\ref{subfig:ordered_data1}): the peak of nuclear Dl is consistent throughout the images and the intensity of the dpERK signal in the lateral regions of the embryo increases monotonically across the data set.
+Both of these features become readily apparent when images are registered and ordered using vector diffusion maps (see \fig~\ref{subfig:ordered_data1}).
+%
+The peak of nuclear Dl is consistent throughout the images and the intensity of the dpERK signal in the lateral regions of the embryo increases monotonically across the data set.
 %
 
-For this data set, the quality of the temporal ordering provided by vector diffusion maps can be assessed by comparing with the ordering obtained through an independent approach.
+For this data, the quality of the temporal ordering provided by vector diffusion maps can be assessed by comparing with the ordering obtained through an independent approach.
 %
 During the third hour of development, the embryo cellularizes: in this process, nuclei located under a common plasma membrane are enclosed by lateral membranes which grow inward, separating the nuclei into individual cells.
 %
@@ -401,13 +403,13 @@ However, developmental dynamics are often significantly more complex, and nonlin
 %
 \fig~\ref{subfig:raw_data2} shows a richer data set of $108$ images of {\it Drosophila} embryos.
 %
-These images cover a thirty minute time interval and span late cellularization through gastrulation, when the arrangement of newly formed cells begins to deform into structures which will form the future organs \cite{leptin2005gastrulation}.
+These images cover a thirty minute time interval spanning late cellularization through gastrulation, when the arrangement of newly formed cells begins to deform into structures which will form the future organs \cite{leptin2005gastrulation}.
 %
 As before, each image is an optical cross-section of a vertically oriented embryo fixed at a different developmental time.
 %
 The nuclei (gray) are again labeled with a DNA marker.
 %
-However, during this developmental time period, the nuclei are no longer uniformly arranged around the periphery of the embryo.
+However, during this developmental time period, the nuclei no longer remain uniformly arranged around the periphery of the embryo.
 %
 Instead of Dl, which is difficult to visualize at this point, embryos were stained with the antibody that recognizes Twist (Twi, shown in green), a transcription factor that is activated by high levels of Dl, specifying the cells of the future muscle tissue.
 %
@@ -426,7 +428,7 @@ At the end of this process, cells which were originally on the ventral and poste
 
 \begin{figure*}[t]
 \includegraphics{fig4}
-\caption{{\xfigtextfontit Drosophila} embryos during gastrulation. {\xfigtextfontit (A)} Images of gastrulating embryos. Each image is of a different embryo arrested at a different developmental time, and in a different translation and rotational orientation. {\xfigtextfontit (B)} Data from {\xfigtextfontit A}, registered and ordered using vector diffusion maps. The images are ordered from left to right and from top to bottom, so that the first image appears in the top left position of the array, and the last image appears in the bottom right position. {\xfigtextfontit (C)} A representative ``developmental path'' from local averaging of the images. Each image is a (Gaussian-weighted) average of the images in {\xfigtextfontit B}. }
+\caption{{\xfigtextfontit Drosophila} embryos during gastrulation. {\xfigtextfontit (A)} Images of gastrulating embryos. Each image is of a different embryo arrested at a different developmental time, and in a different translation and rotational orientation. {\xfigtextfontit (B)} Data from {\xfigtextfontit A}, registered and ordered using vector diffusion maps. The images are ordered from left to right and from top to bottom, so that the first image appears in the top left position of the array, and the last image appears in the bottom right. {\xfigtextfontit (C)} A representative ``developmental path'' from local averaging of the images. Each image is a (Gaussian-weighted) average of the images in {\xfigtextfontit B}. }
 \customlabel{fig:data2}{4}
 \customlabel{subfig:raw_data2}{\ref{fig:data2}{\it A}}
 \customlabel{subfig:ordered_data2}{\ref{fig:data2}{\it B}}
@@ -473,7 +475,7 @@ We expect two sources of variability in this data set: differences due to develo
 
 We computed the vector diffusion maps embedding for our data, and the eigenvalue distribution (see \fig~\ref{fig:eigenvalues}) indicates that two coordinates may be required for a meaningful description of the data. 
 %
-\fig~\ref{subfig:projection_data3} shows the data projected onto the first two vector diffusion maps coordinates; each point in this projection corresponds to one image in our data set.
+\fig~\ref{subfig:projection_data3} shows the data projected onto the first two vector diffusion maps coordinates, where each point in this projection corresponds to one image in our data set.
 %%%
 %%%YGK we need something about dmap eignvalues and how many are not harmonics
 %
@@ -481,7 +483,7 @@ Two distinct branches appear to emerge in this two-dimensional embedding space.
 
 \begin{figure}[h]
 \includegraphics{fig5_2}
-\caption{Wild type and mutant {\xfigtextfontit Drosophila} embryos.  {\xfigtextfontit(A)} Data collected from wild type and mutant embryos (original data set is shown in \fig~\ref{fig:raw_data3}), projected onto the first two vector diffusion maps coordinates. The direction of the developmental trajectories are indicated by arrows. (Inset) The projected data, now colored by genotype. The two branches separate mutant and wild type samples. {\xfigtextfontit (B)} dpERK signal at select points along the wild type trajectory in {\xfigtextfontit A} (denoted by circles in the inset). The two dpERK peaks which arise during development are indicated by arrows. {\xfigtextfontit (C)} dpERK signal at select points along the mutant trajectory in {\xfigtextfontit A} (denoted by circles in the inset). The single dpERK peak is indicated by an arrow. }
+\caption{Wild type and mutant {\xfigtextfontit Drosophila} embryos.  {\xfigtextfontit(A)} Data collected from wild type and mutant embryos (original data set is shown in \fig~\ref{fig:raw_data3}), projected onto the first two vector diffusion maps coordinates. The directions of the developmental trajectories are indicated by arrows. (Inset) The projected data, now colored by genotype. The two branches separate mutant and wild type samples. {\xfigtextfontit (B)} dpERK signal at select points along the wild type trajectory in {\xfigtextfontit A} (denoted by circles in the inset). The two dpERK peaks which arise during development are indicated by arrows. {\xfigtextfontit (C)} dpERK signal at select points along the mutant trajectory in {\xfigtextfontit A} (denoted by circles in the inset). The single dpERK peak is indicated by an arrow. }
 \customlabel{fig:data3}{5}
 \customlabel{subfig:projection_data3}{\ref{fig:data3}{\it A}}
 \customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it B}}
@@ -489,13 +491,13 @@ Two distinct branches appear to emerge in this two-dimensional embedding space.
 \end{figure}
 
 
-The inset of \fig~\ref{subfig:projection_data3} shows the two-dimensional projection, with the data points colored to indicate whether they come from the wild type or mutant.
+The inset of \fig~\ref{subfig:projection_data3} shows the two-dimensional projection, with the data points now colored to indicate whether they correspond to wild type or mutant embryos.
 %
-Clearly, the two branches in the embedding help distinguish wild type and mutant embryos.
+Clearly, the two branches in the embedding help distinguish the two genotypes.
 %
 Selected images along the wild type and mutant trajectories are shown in \fig~\ref{subfig:average_wt_data3} and \fig~\ref{subfig:average_mut_data3}, respectively.
 %
-The portion of the embedding where the two genotypes are intermixed (lower-right region of the plot) contains embryos who are early in their developmental trajectory, where there is little dpERK signaling and the two groups of embryos are indistinguishable. 
+The portion of the embedding where the two genotypes are intermixed (lower-left region of the plot) contains embryos which are early in their developmental trajectory, where there is little dpERK signaling and the two groups of embryos are indistinguishable. 
 %
 When the two paths diverge, the wild type data develops two distinct peaks, whereas the mutant data develops a single peak.
 %
@@ -514,21 +516,20 @@ In particular, temporal ordering of imaging data sets was done with a significan
 %
 In parallel, ordering of large-scale cross-sectional data was done in the context of molecular profiling studies, in which data are vectors describing the amounts of different chemical species, such as mRNA abundances \cite{anavy2014blind, trapnell2014dynamics, gupta2008extracting}. 
 %
-Automated temporal ordering of such data sets was accomplished by first projecting the data on a low-dimensional subspace spanned by the leading principal or independent components, and then solving a traveling salesman problem or constructing a minimum spanning tree on the projected data to order multiple snapshots. 
+Automated temporal ordering of such data sets was accomplished by first projecting the data onto a low-dimensional subspace spanned by the leading principal or independent components, and then solving a traveling salesman problem or constructing a minimum spanning tree on the projected data to order multiple snapshots. 
 %
 The approach presented here is different because it addresses image registration and ordering in a single step and orders the data without first projecting them on a low-dimensional subspace. 
 %
 The task of image registration has also been widely studied \cite{zitova2003image}, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
 %
-In contrast to most of the existing approaches to image registration which rely on the knowledge about some landmarks in the data \cite{ian1998statistical} (such as the eyes in face recognition applications \cite{zhao2003face}), algorithms based on angular synchronization (such as vector diffusion maps) can register images even in the absence of such information. 
+In contrast to most of the existing approaches to image registration which rely on the knowledge about some landmarks in the data \cite{ian1998statistical} (such as the eyes in face recognition applications \cite{zhao2003face}), algorithms based on angular synchronization can register images even in the absence of such information. 
 
-We used the technique to analyze three different experimental data sets, collected specifically for this study. 
+We used vector diffusion maps to analyze three different experimental data sets, collected specifically for this study. 
 %
 In the first example, correct orientation and temporal order of images was known {\it a priori}, providing a test case for the algorithm in which both of these features were accurately recovered. 
 %
-For this particular data set, a simpler approach would have sufficed. 
-%
-Indeed, because of the relative simplicity of developmental dynamics (monotonic increase in the amplitude of a localized signaling pattern and relatively small tissue deformation), temporal order could have been inferred by projection of registered images on the first principal component of the data set (see \fig~\ref{fig:PCA_data1}). 
+For this particular data set, a simpler approach would have sufficed;
+because of the relative simplicity of developmental dynamics (monotonic increase in the amplitude of a localized signaling pattern and relatively small tissue deformation), temporal order could have been inferred by projection of registered images on the first principal component of the data set (see \fig~\ref{fig:PCA_data1}). 
 %
 This approach was clearly not sufficient for the second data set (see \fig~\ref{fig:PCA_data2}), collected from embryos during the time window where both the tissue morphology and signaling patterns are rapidly changing.  
 %
@@ -536,7 +537,7 @@ Vector diffusion maps could readily extract a nontrivial spatiotemporal trajecto
 %
 Finally, the algorithm was applied to a heterogeneous data set, composed of images from embryos of different genotypes. 
 %
-In this case, low-dimensional projection of registered data revealed distinct paths that correlated with the developmental trajectories of the mutant and wild type populations. 
+In this case, low-dimensional projection of the data revealed distinct paths which correlated with the developmental trajectories of the mutant and wild type populations. 
 
 {\color{red} Previously, angular synchronization and vector diffusion maps have been used to reconstruct molecular shapes from cryo-electron microscopy imaging data \cite{singer2012vector, zhao2014rotationally, singer2011viewing}.} 
 %
@@ -548,11 +549,11 @@ In the future, functional data analysis tools can be used for the quantitative e
 %
 One can also test which physical variable, among a set of candidate variables, is most correlated with the uncovered vector diffusion maps coordinate to gain insight into which physical quantities change across the developmental trajectory (e.g., total intensity of one signal, roundness of the embryo).
 %
-Here, we have used vector diffusion maps to register the images with respect to translations and rotations; however, it is conceivable that one could factor out other sources of variability, such as reflections \cite{singer2012vector, goemans1995improved, bandeira2013cheeger} or dilations, in the images.
+Here, we have used vector diffusion maps to register the images with respect to translations and rotations; however, it is conceivable that one could factor out other sources of variability, such as reflections \cite{singer2012vector, goemans1995improved, bandeira2013cheeger} or dilations.
 %
 One might even envision automated analysis of embryos imaged in arbitrary three-dimensional orientations, in the spirit of cryo-EM image analysis.
 %
-{\color{red} In these situations, vector diffusion maps is essential, as global registration is topologically impossible \cite{zhao2014rotationally}.}
+{\color{red} For these applications, vector diffusion maps is essential, as global registration of the entire imaging data set is topologically impossible \cite{zhao2014rotationally}.}
 %
 {\color{red} In addition, we believe that algorithms based on rotation- and translation-invariant image features which are stable to small deformations, such as the scattering transform \cite{mallat2012group} or the bispectrum and steerable PCA \cite{zhao2014rotationally}, are especially promising; such methods circumvent the need for registration by using invariant features of the images in the data analysis.}
 %
