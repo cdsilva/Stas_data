@@ -57,6 +57,8 @@ For the second data set of images (taken during gastrulation), we use all three 
 %
 For this particular data set, we multiply the intensity of the Twi signal by 1.5, as this channel was not completely saturated in the original imaging data.
 
+
+
 \subsection{Algorithms}
 
 We will demonstrate the algorithms for registration and temporal ordering using a synthetic data set.
@@ -223,7 +225,7 @@ where $d(x_i, x_j)$ is a pairwise distance between $x_i$ and $x_j$ (often the Eu
 %
 Points less than $\epsilon$ apart are thus considered ``close'' and points farther than $\epsilon$ apart are considered ``far away''.
 %
-$\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph, rohrdanz2011determination}); here, we take $\epsilon$ to be $1/10^{th}$ of the median of the pairwise distances between data points for the first two data sets (and half of the median of the pairwise distances between data points for the third data set).
+$\epsilon$ can be chosen using several techniques (see, for example \cite{coifman2008graph, rohrdanz2011determination}); here, we take $\epsilon^2$ to be $1/10^{th}$ of the median of the squared pairwise distances between data points for the first two data sets (and half of the median of the squared pairwise distances between data points for the third data set).
 
 To find the coordinate $y$, we want solve the following optimization problem \cite{Belkin2003}
 \begin{equation} \label{eq:dmaps_opt_problem}
@@ -301,7 +303,38 @@ We can therefore recover this diffusion maps coordinate by taking inner products
 %%
 The $j^{th}$ embedding coordinate will be given by $\psi_{k,1}$, where $jd +1 < k \le (j+1)d$,
 and we select $k$ such that the coordinate $\psi_{k, 1}$ has the largest variability, i.e., the $j^{th}$ coordinate is $\psi_{k,1}$, where $k$ is the solution to
-$$ \max_{jd +1 < k \le (j+1)d} \sum_i \psi_{k,1} (i)^2. $$
+\begin{equation} \label{eq:first_embed_vdm}
+\max_{jd +1 < k \le (j+1)d} \sum_i \psi_{k,1} (i)^2. 
+\end{equation}
+
+\begin{table}[t]
+%\caption{Outline of algorithm used to temporally order images}
+\setlength{\fboxrule}{2pt}
+\framebox[\columnwidth]{
+\begin{minipage}{0.9\columnwidth}
+{\bf Outline of algorithm used to register and order images}
+\begin{enumerate}
+\item Compute the alignments for each pair of images, as described in \eqref{eq:opt_pairwise}.
+Retain both the optimal pairwise alignments (translations and rotations) as well as the minimum distances obtained when pairs are optimally aligned.
+%
+\item Compute the corresponding pairwise three-dimensional rotations from the translations and rotations, using \eqref{eq:angle_relations}, \eqref{eq:three_rot}, and \eqref{eq:total_rot}.
+%
+\item Select $\epsilon$ for use in the diffusion maps kernel. 
+We often begin with using the median of the pairwise distances as $\epsilon$, and then adjust as needed.
+\item Compute the matrix $S$ in \eqref{eq:vdm_S}. 
+$A_{ij}$ is computed from \eqref{eq:dmaps_W} and \eqref{eq:dmaps_A}, using the pairwise distances from step 1, and $H_{ij} = R(\alpha_{ij}, \beta_{ij}, \gamma_{ij})$, which are computed in step 2.
+%
+\item Compute the eigenvalues  $\lambda_1, \lambda_2, \dots, \lambda_{3m}$ and eigenvectors $\phi_1, \phi_2, \dots, \phi_{3m}$ of $S$, ordered such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{3m}|$.
+%
+\item Estimate the optimal three-dimensional rotation for each image: stack the first three eigenvectors $\phi_1, \phi_2, \phi_3$ into a $3m \times 3$ matrix, and then divide this matrix into $m$ $3 \times 3$ blocks, $\hat{R}_1, \dots, \hat{R}_m$. Compute the estimated rotations for each of these $m$ blocks as in \eqref{eq:R_est}. If most of the rotations are improper ($det(R) = -1$), flip the sign of one of the eigenvectors.
+\item Multiply each estimated rotation $R_{i, est}$ by $R_{1, est}^T$ (so that $R_{1, est}$ will become the identity matrix).
+\item For each image $i$, compute the optimal translation and rotation to align the image by converting $R_{i, est}^T$ (note the transpose) to the corresponding translation and rotation, described in \eqref{eq:angle_invert}. 
+\item Compute the first embedding coordinate $\psi_{k,1}(i)$ as described in \eqref{eq:vdm_coord} and \eqref{eq:first_embed_vdm}, where $4 \le k \le 6$.
+\item To order the images, sort them by the values of this embedding coordinate $\psi_{k,1}(i)$.
+\end{enumerate} 
+\end{minipage}
+}
+\end{table}
 
 \subsection{Registering images with respect to rotations and translations} \label{subsec:trans_rot_register}
 
@@ -401,7 +434,7 @@ this portion of the sphere is small enough so that curvature effects are not pro
 %
 We write rotations around the three principal axes, $R^x(\alpha)$, $R^y(\beta)$, and $R^z(\gamma)$, in terms of the three Euler angles
 %\small
-\begin{equation}
+\begin{equation} \label{eq:three_rot}
 \begin{aligned}
 	R^x(\alpha) &= \begin{bmatrix}
 	1 & 0 & 0 \\
@@ -634,27 +667,27 @@ We see an approximately symmetric distribution that ranges from $-0.2$ to $0.2$ 
 \end{figure*}
 
 %
-\begin{figure*}[t]
-{\bf Item C in the figure below is our main observation.}
-
-\raisebox{7.6cm}{\sffamily{A}}
-\includegraphics[width=8cm]{raw_data1}
-\hfill
-\raisebox{7.6cm}{\sffamily{B}}
-\includegraphics[width=8cm]{FBsPCA_evals}
-
-\raisebox{5.7cm}{\sffamily{C}}
-\includegraphics[width=16cm, trim=2cm 0cm 2cm 0cm, clip]{FBsPCA_dmaps}
-\caption{I computed the FBsPCA basis for the set of images (separately for the red and green signals).
+%\begin{figure*}[t]
+%{\bf Item C in the figure below is our main observation.}
 %
-I then computed the bispectrum coefficients for each image expanded in the FBsPCA basis, and used these coefficients in a DMAPS calculation.
+%\raisebox{7.6cm}{\sffamily{A}}
+%\includegraphics[width=8cm]{raw_data1}
+%\hfill
+%\raisebox{7.6cm}{\sffamily{B}}
+%\includegraphics[width=8cm]{FBsPCA_evals}
 %
-The results are shown above.
-%
-However, (mainly, we suspect) because the bispectrum is not stable to deformations, it does not seem to be able to identify neighboring images.
-%
-(A) Images used for FBsPCA. (B) Eigenvalue spectrum from diffusion maps, computed using bispectrum coefficients. There is no visible spectral gap after the first component, as would be expected for this particular data set. (C, top) First 4 diffusion maps variables, computed from the bispectrum coefficients, plotted against the membrane thickness. Note there is no appreciable correlation: {\bf each diffusion maps variable simply selects one image from the data set as ``abnormal''.} (C, bottom) The corresponding images that each diffusion maps mode ``selects.'' In general, these seem to be the late images with ventral furrows beginning to form. }
-\end{figure*}
+%\raisebox{5.7cm}{\sffamily{C}}
+%\includegraphics[width=16cm, trim=2cm 0cm 2cm 0cm, clip]{FBsPCA_dmaps}
+%\caption{I computed the FBsPCA basis for the set of images (separately for the red and green signals).
+%%
+%I then computed the bispectrum coefficients for each image expanded in the FBsPCA basis, and used these coefficients in a DMAPS calculation.
+%%
+%The results are shown above.
+%%
+%However, (mainly, we suspect) because the bispectrum is not stable to deformations, it does not seem to be able to identify neighboring images.
+%%
+%(A) Images used for FBsPCA. (B) Eigenvalue spectrum from diffusion maps, computed using bispectrum coefficients. There is no visible spectral gap after the first component, as would be expected for this particular data set. (C, top) First 4 diffusion maps variables, computed from the bispectrum coefficients, plotted against the membrane thickness. Note there is no appreciable correlation: {\bf each diffusion maps variable simply selects one image from the data set as ``abnormal''.} (C, bottom) The corresponding images that each diffusion maps mode ``selects.'' In general, these seem to be the late images with ventral furrows beginning to form. }
+%\end{figure*}
 
 
 \end{document} 
