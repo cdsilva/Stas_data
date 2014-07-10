@@ -31,9 +31,24 @@ for j=1:length(num_images)
     end
 end
 
+%% adjust images
+
+H = fspecial('disk',5);
+
+for i=1:length(train_times)
+    train_images(:, :, i) = imadjust(train_images(:, :, i));
+    train_images(:, :, i) = imfilter(train_images(:, :, i),H,'replicate');
+end
+
+for i=1:length(test_times)
+    test_images(:, :, i) = imadjust(test_images(:, :, i));
+    test_images(:, :, i) = imfilter(test_images(:, :, i),H,'replicate');
+    
+end
+
 %%
-% addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
-addpath '../../../MATLAB/scatnet-0.2';
+addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
+% addpath '../../../MATLAB/scatnet-0.2';
 addpath_scatnet
 
 %% compute scattering coefficients
@@ -78,8 +93,10 @@ end
 
 %% mean-center
 
-train_sx_all = train_sx_all - repmat(mean(train_sx_all), length(train_times), 1);
-test_sx_all = test_sx_all - repmat(mean(test_sx_all), length(test_times), 1);
+mean_data = mean(train_sx_all);
+
+train_sx_all = train_sx_all - repmat(mean_data, length(train_times), 1);
+test_sx_all = test_sx_all - repmat(mean_data, length(test_times), 1);
 
 %% PCA
 [V, D] = PCA(train_sx_all, 2);
@@ -91,7 +108,30 @@ test_coeff = test_sx_all * V;
 figure;
 scatter(train_coeff(:,1), train_coeff(:, 2), 50, train_times)
 hold on
+idx = find(test_times > 0);
+plot(test_coeff(idx,1),test_coeff(idx,2),'.')
+
+figure;
+scatter(train_coeff(:,1), train_coeff(:, 2), 50, train_times)
+hold on
 plot(test_coeff(:,1),test_coeff(:,2),'.')
+
+return
+
+%%
+% figure;
+% for i=1:length(test_times)
+%     subplot(1,2,1)
+%     cla
+%     scatter(train_coeff(:,1), train_coeff(:, 2), 50, train_times)
+%     hold on
+%     plot(test_coeff(i,1),test_coeff(i,2),'.k','markersize', 20)
+%
+%     subplot(1,2,2)
+%     imshow(test_images(:,:,i))
+%     pause
+%
+% end
 
 %% DMAPS
 
