@@ -489,10 +489,8 @@ Selected images along the wild type and mutant trajectories are shown in \fig~\r
 %
 The portion of the embedding where the two genotypes are intermixed (lower-left region of the plot) contains embryos which are early in their developmental trajectory, where there is little dpERK signaling and the two groups of embryos are indistinguishable. 
 %
-When the two paths diverge, the wild type data develops two distinct peaks, whereas the mutant data develops a single peak.
+When the two paths diverge, the wild type data develops two distinct peaks, 
 %
-Therefore, vector diffusion maps can also help distinguish different expression patterns and developmental trajectories.
-
 \begin{figure}[h]
 \includegraphics{fig5_2}
 \caption{Wild type and mutant {\xfigtextfontit Drosophila} embryos.  {\xfigtextfontit(A)} Data collected from wild type and mutant embryos (original data set is shown in \fig~\ref{fig:raw_data3}), projected onto the first two vector diffusion maps coordinates. The directions of the developmental trajectories are indicated by arrows. (Inset) The projected data, now colored by genotype. The two branches separate mutant and wild type samples. {\xfigtextfontit (B)} dpERK signal at select points along the wild type trajectory in {\xfigtextfontit A} (denoted by circles in the inset). The two dpERK peaks which arise during development are indicated by arrows. {\xfigtextfontit (C)} dpERK signal at select points along the mutant trajectory in {\xfigtextfontit A} (denoted by circles in the inset). The single dpERK peak is indicated by an arrow. }
@@ -501,6 +499,12 @@ Therefore, vector diffusion maps can also help distinguish different expression 
 \customlabel{subfig:average_wt_data3}{\ref{fig:data3}{\it B}}
 \customlabel{subfig:average_mut_data3}{\ref{fig:data3}{\it C}}
 \end{figure}
+%
+\noindent whereas the mutant data develops a single peak.
+%
+Therefore, vector diffusion maps can also help distinguish different expression patterns and developmental trajectories.
+
+
 
 \section{Discussion}
 
@@ -516,7 +520,7 @@ Automated temporal ordering of such data sets was accomplished by first projecti
 %
 The approach presented here is different because it addresses image registration and ordering in a single step and orders the data without first projecting them on a low-dimensional subspace; vector diffusion maps can also register images when global registration of the entire data set is topologically impossible \cite{zhao2014rotationally}.
 %
-The task of image registration has also been widely studied \cite{zitova2003image}, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
+The task of image registration has been widely studied \cite{zitova2003image}, for applications such as face recognition \cite{rowley1998rotation}, medical image registration \cite{hajnal2010medical}, and texture classification \cite{greenspan1994rotation}.
 %
 In contrast to most of the existing approaches to image registration which rely on the knowledge about some landmarks in the data \cite{ian1998statistical} (such as the eyes in face recognition applications \cite{zhao2003face}), algorithms based on angular synchronization can register images even in the absence of such information. 
 
@@ -535,7 +539,6 @@ Finally, the algorithm was applied to a heterogeneous data set, composed of imag
 %
 In this case, low-dimensional projection of the data revealed distinct paths which correlated with the developmental trajectories of the mutant and wild type populations. 
 
-%%%AMIT
 Previously, angular synchronization and vector diffusion maps have been used to reconstruct molecular shapes from cryo-electron microscopy images \cite{singer2012vector, zhao2014rotationally, singer2011viewing}.
 %
 Because of high levels of instrument noise in these data, thousands of images were needed for successful shape reconstruction. 
@@ -543,10 +546,6 @@ Because of high levels of instrument noise in these data, thousands of images we
 Based on the presented results, we expect that much smaller data sets may be sufficient for successful reconstruction of developmental trajectories. 
 %
 Here, we have used vector diffusion maps to register the images with respect to translations and rotations; however, it is conceivable that one could factor out other sources of variability, such as reflections \cite{singer2012vector, goemans1995improved, bandeira2013cheeger} or dilations.
-%In the future, functional data analysis tools can be used for the %quantitative estimation of both the average trajectory and its %variability \cite{silverman2005functional}.  
-%
-%One can also test which physical variable, among a set of candidate variables, is most correlated with the uncovered vector diffusion maps coordinate to gain insight into which physical quantities change across the developmental trajectory (e.g., total intensity of one signal, roundness of the embryo).
-%
 
 For the data sets analyzed in this work, the Euclidean norm between the pixelated images was informative for identifying similar data points. 
 %
@@ -561,19 +560,6 @@ Such methods circumvent the need for registration by using invariant features of
 Another direction for future work is related to the joint analysis of data sets provided by different imaging approaches, such as merging live imaging data of tissue morphogenesis with snapshots of cell signaling and gene expression from fixed embryos \cite{krzic2012multiview, ichikawa2014live, rubel2010coupling}. 
 %
 Given the rapidly increasing volumes of imaging data from studies of multiple developmental systems, we expect that dimensionality reduction approaches discussed in this work will be increasingly useful for biologists and motivate future applications and algorithmic advances. 
-
-
-
-%Here, we have used vector diffusion maps to register the images with respect to translations and rotations; however, it is conceivable that one could factor out other sources of variability, such as reflections \cite{singer2012vector, goemans1995improved, bandeira2013cheeger} or dilations.
-%
-%One might even envision automated analysis of embryos imaged in arbitrary three-dimensional orientations, in the spirit of cryo-EM image analysis.
-%
-%%%AMIT
-%For these applications, vector diffusion maps is essential, as global registration of the entire imaging data set is topologically impossible \cite{zhao2014rotationally}.
-%
-%%%AMIT
-%In addition, we believe that algorithms based on rotation- and translation-invariant image features which are stable to small deformations, such as the scattering transform \cite{mallat2012group} or the bispectrum and steerable PCA \cite{zhao2014rotationally}, are especially promising; such methods circumvent the need for registration by using invariant features of the images in the data analysis.
-%
   
 
 %% == end of paper:
@@ -847,9 +833,9 @@ Gupta A, Bar-Joseph Z (2008) Extracting dynamics from static cancer expression
 %  common lines in cryo-em by eigenvectors and semidefinite programming.
 %  \textit{SIAM J Imaging Sci} 4(2):543--572.
 
-\bibitem{silverman2005functional}
-Ramsay J~O, Silverman B~W (2005) \textit{Functional Data Analysis}, Springer
-  Series in Statistics (Springer).
+%\bibitem{silverman2005functional}
+%Ramsay J~O, Silverman B~W (2005) \textit{Functional Data Analysis}, Springer
+%  Series in Statistics (Springer).
 
 \bibitem{goemans1995improved}
 Goemans M~X, Williamson D~P (1995) Improved approximation algorithms for maximum cut and satisfiability problems using semidefinite programming.
