@@ -1,84 +1,87 @@
 clear all
 close all
 
-% %% read in movies
-% 
-% npixels = 100;
-% channel = 1;
-% 
-% file_names = {'bomyi_emb01_gast01.avi'; 'bomyi_emb02_gast02.avi'; ...
-%     '14_0623/emb01_hisRFP_gastrulation.avi'; '14_0623/emb02_hisRFP_gastrulation.avi'; ...
-%     '14_0624/emb01_hisRFP_gastrulation.avi'; '14_0624/emb02_hisRFP_gastrulation.avi'};
-% 
-% nmovies = length(file_names);
-% images = [];
-% time = [];
-% movie_idx = [];
-% 
-% for i=1:nmovies
-% 
-%     [images_tmp, times_tmp] = read_video(file_names{i}, npixels);
-%     images_tmp = images_tmp(:, :, channel, :);
-%     images_tmp = squeeze(images_tmp);
-% 
-%     images = cat(3, images, images_tmp);
-%     time = [time; times_tmp];
-%     movie_idx = [movie_idx; i*ones(size(times_tmp))];
-% 
-% end
-% 
-% 
-% %% adjust images
-% 
-% % H = fspecial('disk',5);
-% % image_fn = @(im1) imfilter(imadjust(im1),H,'replicate');
-% 
+%% read in movies
+
+npixels = 100;
+channel = 1;
+
+file_names = {'bomyi_emb01_gast01.avi'; 'bomyi_emb02_gast02.avi'; ...
+    '14_0623/emb01_hisRFP_gastrulation.avi'; '14_0623/emb02_hisRFP_gastrulation.avi'; ...
+    '14_0624/emb01_hisRFP_gastrulation.avi'; '14_0624/emb02_hisRFP_gastrulation.avi'};
+
+nmovies = length(file_names);
+images = [];
+time = [];
+movie_idx = [];
+
+for i=1:nmovies
+
+    [images_tmp, times_tmp] = read_video(file_names{i}, npixels);
+    images_tmp = images_tmp(:, :, channel, :);
+    images_tmp = squeeze(images_tmp);
+
+    images = cat(3, images, images_tmp);
+    time = [time; times_tmp];
+    movie_idx = [movie_idx; i*ones(size(times_tmp))];
+
+end
+
+
+%% adjust images
+
+% H = fspecial('disk',5);
+% image_fn = @(im1) imfilter(imadjust(im1),H,'replicate');
+
 % image_fn = @(im1) imadjust(im1);
-% 
-% % image_fn = @(im1) double(im1) - mean(double(im1(:)));
-% 
-% %% compute scattering coefficients
-% 
+
+% image_fn = @(im1) double(im1) - mean(double(im1(:)));
+
+H = fspecial('disk', 3);
+image_fn = @(image) adapthisteq(imfilter(image, H, 'replicate'),'distribution','exponential');
+
+%% compute scattering coefficients
+
 % addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
-% % addpath '../../../MATLAB/scatnet-0.2';
-% addpath_scatnet
-% 
-% % set scattering transform parameters
-% filt_opt = struct();
-% filt_rot_opt = struct();
-% % oversampling is set to infty
-% % so that scattering of original and rotated
-% % image will be sampled at exactly the same points
-% scat_opt = struct();
-% scat_opt.oversampling = 10;
-% 
-% % compute scattering transform of first image
-% x = double(image_fn(images(:,:,1)));
-% % define wavelet transforms
-% Wop = wavelet_factory_3d(size(x), filt_opt, filt_rot_opt, scat_opt);
-% Sx = scat(x, Wop);
-% Sx_mat = format_scat(Sx);
-% 
-% % store scattering invariants (one row per image)
-% sx_all = zeros(length(time), size(Sx_mat, 1));
-% 
-% % compute scattering invariants for each image
-% for i=1:length(time)
-%     i
-%     x = double(image_fn(images(:,:,i)));
-% 
-%     Sx = scat(x, Wop);
-% 
-%     sx_all(i,:) = mean(mean(format_scat(Sx),2),3)';
-% end
-% 
+addpath '../../../MATLAB/scatnet-0.2';
+addpath_scatnet
+
+% set scattering transform parameters
+filt_opt = struct();
+filt_rot_opt = struct();
+% oversampling is set to infty
+% so that scattering of original and rotated
+% image will be sampled at exactly the same points
+scat_opt = struct();
+scat_opt.oversampling = 10;
+
+% compute scattering transform of first image
+x = double(image_fn(images(:,:,1)));
+% define wavelet transforms
+Wop = wavelet_factory_3d(size(x), filt_opt, filt_rot_opt, scat_opt);
+Sx = scat(x, Wop);
+Sx_mat = format_scat(Sx);
+
+% store scattering invariants (one row per image)
+sx_all = zeros(length(time), size(Sx_mat, 1));
+
+% compute scattering invariants for each image
+for i=1:length(time)
+    i
+    x = double(image_fn(images(:,:,i)));
+
+    Sx = scat(x, Wop);
+
+    sx_all(i,:) = mean(mean(format_scat(Sx),2),3)';
+end
+
 % save('movie_data.mat','images','time','movie_idx','sx_all','file_names','nmovies');
-%
+
 % return
 
 %% load data
 
-load('movie_data.mat');
+% load('movie_data.mat');
 
 %% remove some frames from movie 3
 
