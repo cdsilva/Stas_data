@@ -17,9 +17,9 @@ scatnet_path = 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
 % scatnet_path = '../../../MATLAB/scatnet-0.2';
 
 % directory name where images are stored
-dir_name = '../membrane_pictures/14_0501_dpERK_late';
+dir_name = '../membrane_pictures/14_0403_dpERK_late';
 
-nimages = 132;
+nimages = 46;
 
 %% define function to adjust each image
 image_fn = @(im1) adapthisteq(medfilt2(imresize(im1, [100 100]), [5 5]),'distribution','exponential');
@@ -61,40 +61,54 @@ Sx = scat(x, Wop);
 Sx_mat = format_scat(Sx);
 
 % store scattering invariants (one row per image)
-sx_all = zeros(nimages, size(Sx_mat, 1), nchannels);
+% sx_all = zeros(nimages, size(Sx_mat, 1), nchannels);
 
+% % compute scattering invariants for each image
+% for i=1:nimages
+%     i
+%     for j=1:nchannels
+%         x = double(fixed_images(:,:,j,i));
+%
+%         Sx = scat(x, Wop);
+%
+%         sx_all(i, :, j) = mean(mean(format_scat(Sx),2),3)';
+%     end
+% end
+
+sx_all = zeros(nimages, size(Sx_mat, 1));
 % compute scattering invariants for each image
 for i=1:nimages
     i
-    for j=1:nchannels
-        x = double(fixed_images(:,:,j,i));
-
-        Sx = scat(x, Wop);
-
-        sx_all(i, :, j) = mean(mean(format_scat(Sx),2),3)';
+    x = double(fixed_images(:,:,1,i));
+    for j=2:nchannels
+        x = x + 2*double(fixed_images(:,:,j,i));
     end
+    
+    Sx = scat(x, Wop);
+    
+    sx_all(i, :) = mean(mean(format_scat(Sx),2),3)';
 end
 
 %%
 
-W = zeros(nimages);
-weights = [1 0 0];
+W = squareform(pdist(sx_all)).^2;
 
-for i=1:nchannels
-    W = W + weights(i)*squareform(pdist(sx_all(:,:,i))).^2;
-end
+% W = zeros(nimages);
+% weights = [1 0.5 0.5];
+%
+% for i=1:nchannels
+%     W = W + weights(i)*squareform(pdist(sx_all(:,:,i))).^2;
+% end
 
 %%
 
-eps = median(W(:));
+eps = median(W(:))/10;
 [V, D] = dmaps(W, eps, 10);
 
 [~, I] = sort(V(:,2));
 
 figure;
 for i=1:nimages
-    subplot(11,12,i)
-    A = imread(sprintf('%s/emb%02d.tif', dir_name, I(i)));
-    A = imresize(A, [npixels npixels]);
-    imshow(A)
+    subplot(7,7,i)
+    imshow(fixed_images(:,:,:,I(i)))
 end

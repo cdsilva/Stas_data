@@ -26,8 +26,10 @@ imshow(im2);
 % H = fspecial('disk', 25);
 % image_fn = @(image) adapthisteq(imfilter(imresize(image, [1000 1000]), H, 'replicate'),'numtiles', [4 4], 'cliplimit', 0.01);
 
-H = fspecial('disk', 25);
-image_fn = @(image) adapthisteq(imfilter(imresize(image, [1000 1000]), H, 'replicate'),'distribution','exponential');
+% H = fspecial('disk', 3);
+% image_fn = @(image) adapthisteq(imfilter(imresize(image, [100 100]), H, 'replicate'),'distribution','exponential', 'numtiles', [16 16]);
+
+image_fn = @(image) adapthisteq(medfilt2(imresize(image, [100 100]), [5 5]),'distribution','exponential');
 
 figure;
 subplot(1,2,1)

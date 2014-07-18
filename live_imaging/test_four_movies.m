@@ -37,13 +37,12 @@ end
 
 % image_fn = @(im1) double(im1) - mean(double(im1(:)));
 
-H = fspecial('disk', 3);
-image_fn = @(image) adapthisteq(imfilter(image, H, 'replicate'),'distribution','exponential');
+image_fn = @(image) adapthisteq(medfilt2(imresize(image, [100 100]), [5 5]),'distribution','exponential');
 
 %% compute scattering coefficients
 
-% addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
-addpath '../../../MATLAB/scatnet-0.2';
+addpath 'C:\Users\cdsilva\Documents\MATLAB\scatnet-0.2';
+% addpath '../../../MATLAB/scatnet-0.2';
 addpath_scatnet
 
 % set scattering transform parameters
