@@ -3,8 +3,6 @@ close all
 
 %% directories where things are stored
 
-im_save_dir = 'paper_figures2';
-
 image_dir = '../membrane_pictures/14_0501_dpERK_late';
 
 m = 132;
@@ -125,6 +123,28 @@ if find(I == 10) < m/2
     I = flipud(I);
 end
 
-image_set_raw_aligned_ordered = image_set_raw_aligned(:,:,:,I);
+image_set_raw_ordered = image_set_raw_aligned(:,:,:,I);
+image_set_ordered = image_set_aligned(:,:,:,I);
 
-save('late_images_aligned.mat','image_set_raw_aligned_ordered');
+% save('late_images_aligned.mat','image_set_raw_ordered', 'image_set_ordered');
+
+return
+%%
+
+edge_tol = 1e3;
+tol_channel = 1;
+
+image_set_raw_ordered_cropped = zeros(size(image_set_raw), 'uint8');
+
+for i=1:m
+    image_set_raw_ordered_cropped(:,:,:,i) = crop_image(image_set_raw_ordered(:,:,:,i), edge_tol, tol_channel);
+end
+
+figure;
+for i=1:m
+    subplot(10,11,i)
+    imshow(image_set_raw_ordered_cropped(:,:,:,i));
+end
+
+
+
