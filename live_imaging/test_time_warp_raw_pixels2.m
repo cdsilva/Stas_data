@@ -16,7 +16,7 @@ channel = 1;
 file_name1 = 'bomyi_emb01_gast01.avi';
 file_name2 = 'bomyi_emb02_gast02.avi';
 
-image_fn = @(image) adapthisteq(crop_image(image, 100, 0));
+image_fn = @(image) medfilt2(adapthisteq(crop_image(image, 100, 0)),[5 5]);
 
 %% read in movies
 
@@ -30,12 +30,26 @@ images2 = squeeze(images2);
 
 for i=1:length(times1)
     images1(:,:,i) = image_fn(images1(:,:,i));
-    images1(:,:,i) = adapthisteq(images1(:,:,i)-uint8(0.5*mean(double(images1), 3)));
+    images1(:,:,i) = adapthisteq(images1(:,:,i)-uint8(0.75*mean(double(images1), 3)));
 end
 
 for i=1:length(times2)
     images2(:,:,i) = image_fn(images2(:,:,i));
-    images2(:,:,i) = adapthisteq(images2(:,:,i)-uint8(0.5*mean(double(images1), 3)));
+    images2(:,:,i) = adapthisteq(images2(:,:,i)-uint8(0.75*mean(double(images1), 3)));
+end
+
+%%
+
+figure;
+for i=1:length(times1)
+    subplot(10,10,i)
+    imshow(images1(:,:,i)); 
+end
+
+figure;
+for i=1:length(times2)
+    subplot(10,10,i)
+    imshow(images2(:,:,i));
 end
 
 %% compare frames of movies
@@ -51,7 +65,7 @@ imshow(images2(:,:,test_idx))
 %% rotate and shift movies to consistent frame of reference
 
 theta = 45;
-shift = [-8 -8];
+shift = [-15 -9];
 
 for i=1:length(times2)
     images2(:,:,i) = imrotate(images2(:,:,i), theta, 'crop');
