@@ -56,19 +56,6 @@ for i=1:nmovies
     imshow(images{i}(:,:, round(nimages(i)/2)));
 end
 
-for i=1:nmovies
-    figure;
-    subplot_dim1 = ceil(sqrt(nimages(i)));
-    subplot_dim2 = ceil(nimages(i) / subplot_dim1);
-
-    for j=1:nimages(i)
-        subplot(subplot_dim1, subplot_dim2, j)
-        imshow(images{i}(:,:,j));
-    end
-
-end
-
-return
 %%
 
 PCA_data = cell(nmovies, 1);
@@ -89,47 +76,16 @@ end
 
 %%
 
-bias3 = zeros(nmovies, 1);
-variance3 = zeros(nmovies, 1);
+fixed_image_dir = '../membrane_pictures/composite_108_noyolk';
+nfixed_images = 108;
+subplot_dim1 = 6;
+subplot_dim2 = 18;
 
-% figure;
-for i=1:nmovies
-    
-    data_tmp = vertcat(PCA_data{1:nmovies ~= i});
-    time_tmp = vertcat(time_adjust{1:nmovies ~= i});
-    
-    pred_time = predict_times_PCA(data_tmp, time_tmp, PCA_data{i}, nmodes);
-    
-    bias3(i) = mean(pred_time - time_adjust{i});
-    variance3(i) = mean((pred_time - time_adjust{i}).^2);
-    
-    %     subplot(3, 2, i)
-    %     plot(time_adjust{i}, pred_time, '.')
-    %     hold on
-    %     plot(time_adjust{i}, time_adjust{i}, '-r')
-    %     xlabel('true time')
-    %     ylabel('predicted time')
-    
-end
-
-figure;
-bar(bias3)
-
-figure;
-bar(variance3.^0.5)
-
-fprintf('cross validation average error : %2.2f \n', sqrt(mean(variance3)));
-
-%%
-
-fixed_image_dir = '../membrane_pictures/composite_50_noyolk';
-nfixed_images = 50;
 fixed_images = zeros(npixels, npixels, nfixed_images, 'uint8');
 fixed_image_angle = 0;
 
-
 for i=1:nfixed_images
-    im_tmp = imread(sprintf('%s/emb%02d.tif', fixed_image_dir, i));
+    im_tmp = imread(sprintf('%s/ordered%02d.tif', fixed_image_dir, i));
     im_tmp = imresize(im_tmp(:, :, channel), [npixels npixels]);
     im_tmp = image_fn(im_tmp, fixed_image_angle);
     
@@ -137,54 +93,19 @@ for i=1:nfixed_images
 end
 
 figure;
-subplot_dim1 = ceil(sqrt(nfixed_images));
-subplot_dim2 = ceil(nfixed_images / subplot_dim1);
 for i=1:nfixed_images
     subplot(subplot_dim1, subplot_dim2, i)
     imshow(fixed_images(:,:,i));
 end
 
 %%
-% figure;
-%
-% pred_time_fixed_images = zeros(nfixed_images, nmovies);
-% PCA_fixed_data = reshape(double(fixed_images), npixels^2, [])';
-%
-% for i = 1:nmovies;
-%
-%
-%     pred_time(:, i) = predict_times_PCA(PCA_data{i}, time_adjust{i}, PCA_fixed_data, nmodes);
-%
-%     subplot(3,2,i)
-%     plot(pred_time(:, i), '.')
-%     xlabel('image index (from diffusion maps)')
-%     ylabel('predicted time')
-%     title('Estimating times of fixed images')
-%
-% end
-%
-% figure;
-% for i=1:nmovies
-%     for j=1:nmovies
-%         subplot(nmovies, nmovies, (i-1)*nmovies+j)
-%         plot(pred_time(:, i), pred_time(:,j), '.')
-%         hold on
-%         plot(pred_time(:, i), pred_time(:,i), '-r')
-%     end
-% end
-
-%%
 
 PCA_fixed_data = create_PCA_data(fixed_images);
 
-data_tmp = [];
-time_tmp = [];
-for j=1:nmovies
-    data_tmp = [data_tmp; PCA_data{j}];
-    time_tmp = [time_tmp; time_adjust{j}];
-end
+PCA_data_movies = vertcat(PCA_data{:});
+time_movies = vertcat(time_adjust{:});
 
-pred_time_all = predict_times_PCA(data_tmp, time_tmp, PCA_fixed_data, nmodes);
+pred_time_all = predict_times_PCA(PCA_data_movies, time_movies, PCA_fixed_data, nmodes);
 
 figure;
 plot(pred_time_all, '.')
@@ -193,8 +114,6 @@ ylabel('predicted time')
 title('Estimating times of fixed images')
 
 figure;
-subplot_dim1 = 5;
-subplot_dim2 = 10;
 for i=1:nfixed_images
     subplot(subplot_dim1, subplot_dim2, i)
     imshow(fixed_images(:,:,i));
@@ -205,21 +124,66 @@ end
 figure;
 for i=1:nfixed_images
     subplot(subplot_dim1, subplot_dim2, i)
-    im_tmp = imread(sprintf('%s/emb%02d.tif', fixed_image_dir, i));    
+    im_tmp = imread(sprintf('%s/ordered%02d.tif', fixed_image_dir, i));
     imshow(im_tmp);
     axis tight
     title(sprintf('t = %2.2f', pred_time_all(i)))
 end
 
 %%
+
 time_monotonic = fit_monotonic_curve(pred_time_all);
 
 figure;
-subplot_dim1 = 5;
-subplot_dim2 = 10;
 for i=1:nfixed_images
     subplot(subplot_dim1, subplot_dim2, i)
     imshow(fixed_images(:,:,i));
     axis tight
     title(sprintf('t = %2.2f', time_monotonic(i)))
 end
+
+%%
+
+fixed_image_file2 = '../image_analysis_paper/late_images_aligned.mat';
+
+fixed_images2 = zeros(npixels, npixels, nfixed_images, 'uint8');
+
+
+load(fixed_image_file2);
+
+for i=1:nfixed_images
+    im_tmp = image_set_raw_aligned_ordered(:, :, :, i);
+    im_tmp = imresize(im_tmp(:, :, channel), [npixels npixels]);
+    im_tmp = image_fn(im_tmp, fixed_image_angle);
+    
+    fixed_images2(:, :, i) = im_tmp;
+end
+
+figure;
+for i=1:nfixed_images
+    subplot(subplot_dim1, subplot_dim2, i)
+    imshow(fixed_images2(:,:,i));
+end
+
+%%
+
+PCA_fixed_data2 = create_PCA_data(fixed_images2);
+
+pred_time_all2 = predict_times_PCA(PCA_data_movies, time_movies, PCA_fixed_data2, nmodes);
+
+figure;
+plot(pred_time_all2, '.')
+xlabel('image index (from diffusion maps)')
+ylabel('predicted time')
+title('Estimating times of fixed images')
+
+figure;
+for i=1:nfixed_images
+    subplot(subplot_dim1, subplot_dim2, i)
+    imshow(fixed_images2(:,:,i));
+    axis tight
+    title(sprintf('t = %2.2f', pred_time_all2(i)))
+end
+
+figure; 
+plot(pred_time_all, pred_time_all2, '.')
