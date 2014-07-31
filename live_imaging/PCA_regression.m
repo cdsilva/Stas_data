@@ -87,7 +87,6 @@ err = zeros(nmovies);
 
 for train_movie=1:nmovies
     
-    train_movie  = 1
     nmodes = 10;
     
     h1 = figure;
