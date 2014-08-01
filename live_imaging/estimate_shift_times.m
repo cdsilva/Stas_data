@@ -17,11 +17,28 @@ end
 
 %% adjust movies
 
-synch_matrix = (bias-bias')/2;
-synch_scale = 4*(max(synch_matrix(:))-min(synch_matrix(:)));
-synch_matrix = exp(sqrt(-1) * synch_matrix * (2*pi/synch_scale));
+% synch_matrix = (bias-bias')/2;
+% synch_scale = 4*(max(synch_matrix(:))-min(synch_matrix(:)));
+% synch_matrix = exp(sqrt(-1) * synch_matrix * (2*pi/synch_scale));
+% 
+% [V, ~] = eigs(synch_matrix, 1);
+% 
+% shift_times = atan2(imag(V), real(V)) * synch_scale/(2*pi);
+% shift_times = shift_times - max(shift_times);
 
-[V, ~] = eigs(synch_matrix, 1);
+C = zeros(nmovies.^2, nmovies);
+d = zeros(nmovies.^2, 1);
 
-shift_times = atan2(imag(V), real(V)) * synch_scale/(2*pi);
-shift_times = shift_times - max(shift_times);
+
+for i=1:nmovies
+    for j=1:nmovies
+        C((i-1)*nmovies+j, i) = 1;
+        C((i-1)*nmovies+j, j) = -1;
+        d((i-1)*nmovies+j) = bias(i, j);
+    end
+end
+Aeq = ones(1, nmovies);
+beq = 0;
+
+
+shift_times = lsqlin(C,d,[],[],Aeq,beq);

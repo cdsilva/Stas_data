@@ -1,4 +1,4 @@
-function zopt = fit_monotonic_curve(y)
+function zopt = fit_monotonic_curve(y, slack)
 
 n = length(y);
 
@@ -11,9 +11,10 @@ for i=1:n-1
     A(i, i) = 1;
     A(i, i+1) = -1;
 end
-b = zeros(n-1, 1);
+b = slack * ones(n-1, 1);
 
-zopt = fmincon(fun, z0, A, b);
+options = optimoptions(@fmincon, 'display','off', 'algorithm', 'interior-point');
+zopt = fmincon(fun, z0, A, b, [], [], [], [], [], options);
 
 
 

@@ -19,7 +19,8 @@ movies = {'bomyi_emb01_gast01.avi';...
     '14_0623/emb01_hisRFP_gastrulation.avi';...
     '14_0623/emb02_hisRFP_gastrulation.avi';...
     '14_0624/emb01_hisRFP_gastrulation.avi';...
-    '14_0624/emb02_hisRFP_gastrulation.avi'};
+    '14_0624/emb02_hisRFP_gastrulation.avi'; ...
+    '0709_emb02_cell_gast.avi'};
 
 nmovies = length(movies);
 
@@ -28,7 +29,12 @@ theta = [-95;
     -80;
     -80;
     -95;
-    -120];
+    -120;
+    -95];
+
+movie_start = [1; 1; 1; 1; 1; 1; 96];
+
+make_subplot = @(i) subplot(2, 4, i);
 
 images = cell(nmovies, 1);
 time = cell(nmovies, 1);
@@ -37,9 +43,11 @@ nimages = zeros(nmovies, 1);
 %%
 figure;
 for i=1:nmovies
-    [images_tmp, time{i}] = read_video(movies{i}, npixels);
-    
-    time{i} = time{i} * dt;
+    [images_tmp, time_tmp] = read_video(movies{i}, npixels);
+    images_tmp = images_tmp(:, :, :, movie_start(i):end);
+    time_tmp = time_tmp(movie_start(i):end) - time_tmp(movie_start(i));
+        
+    time{i} = time_tmp * dt;
     
     images_tmp = images_tmp(:, :, channel, :);
     images_tmp = squeeze(images_tmp);
@@ -52,9 +60,11 @@ for i=1:nmovies
     
     images{i} = images_tmp;
     
-    subplot(2, 3, i)
-    imshow(images{i}(:,:, round(nimages(i)/2)));
+    make_subplot(i);
+    imshow(images{i}(:,:, end-10));
 end
+
+
 
 for i=1:nmovies
     figure;
@@ -99,7 +109,7 @@ for train_movie=1:nmovies
         variance(train_movie, i) = mean((pred_time - time{i}).^2);
         
         figure(h1)
-        subplot(3, 2, i)
+        make_subplot(i);
         plot(time{i}, pred_time, '.')
         hold on
         plot(time{i}, time{i}, '-r')
@@ -156,7 +166,7 @@ for train_movie=1:nmovies
         variance2(train_movie, i) = mean((pred_time - time_adjust{i}).^2);
         
         figure(h1)
-        subplot(3, 2, i)
+        make_subplot(i);
         plot(time_adjust{i}, pred_time, '.')
         hold on
         plot(time_adjust{i}, time_adjust{i}, '-r')
@@ -190,21 +200,15 @@ for i=1:nmovies
     
     nmodes = 10;
     
-    data_tmp = [];
-    time_tmp = [];
-    for j=1:nmovies
-        if i ~= j
-            data_tmp = [data_tmp; PCA_data{j}];
-            time_tmp = [time_tmp; time_adjust{j}];
-        end
-    end
+    data_tmp = vertcat(PCA_data{1:nmovies ~= i});
+    time_tmp = vertcat(time_adjust{1:nmovies ~= i});
     
     pred_time = predict_times_PCA(data_tmp, time_tmp, PCA_data{i}, nmodes);
     
     bias3(i) = mean(pred_time - time_adjust{i});
     variance3(i) = mean((pred_time - time_adjust{i}).^2);
     
-    subplot(3, 2, i)
+    make_subplot(i);
     plot(time_adjust{i}, pred_time, '.')
     hold on
     plot(time_adjust{i}, time_adjust{i}, '-r')
@@ -219,6 +223,7 @@ bar(bias3)
 figure;
 bar(variance3.^0.5)
 
+return
 %%
 
 fixed_image_file = '../image_analysis_paper/late_images_aligned.mat';
