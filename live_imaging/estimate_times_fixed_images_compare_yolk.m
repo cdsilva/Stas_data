@@ -127,10 +127,16 @@ PCA_fixed_data = create_PCA_data(fixed_images);
 PCA_data_movies = vertcat(PCA_data{:});
 time_movies = vertcat(time_adjust{:});
 
-pred_time_all = predict_times_PCA(PCA_data_movies, time_movies, PCA_fixed_data, nmodes);
+[pred_time_all, pred_time_all_int] = predict_times_PCA(PCA_data_movies, time_movies, PCA_fixed_data, nmodes);
 
 figure;
 plot(pred_time_all, '.')
+xlabel('image index (from diffusion maps)')
+ylabel('predicted time')
+title('Estimating times of fixed images')
+
+figure;
+errorbar(1:nfixed_images,pred_time_all,pred_time_all-pred_time_all_int(:,1),pred_time_all_int(:,2)-pred_time_all,'bx')
 xlabel('image index (from diffusion maps)')
 ylabel('predicted time')
 title('Estimating times of fixed images')
@@ -222,3 +228,39 @@ for i=1:nfixed_images
     axis tight
     title(sprintf('t = %2.2f', pred_time_all2(i)))
 end
+
+%%
+
+bomyi_idx = [6 4 5 2 1 18 3 8 9 16 13 12 7 11 14 15 17 19 20 22 ...
+    29 38 32 27 24 25 10 21 23 26 28 30 31 33 34 36 35 37 41 40 ...
+    39 43 42 45 49 53 55 46 48 54 52 44 47 50 56 61 51 59 65 78 ...
+    72 66 58 60 70 81 64 57 67 95 98 77 76 83 90 87 82 74 73 62 ...
+    63 80 91 68 71 88 84 93 92 94 101 85 97 89 86 75 100 107 69 103 ...
+    108 79 104 106 99 96 102 105];
+
+figure; plot(pred_time_all(bomyi_idx),'.')
+xlabel('image index (Bomyi)')
+ylabel('estimated time')
+
+outlier_idx = [85 87:91 95:108];
+
+figure; plot(pred_time_all(bomyi_idx),'.')
+hold on
+plot(outlier_idx, pred_time_all(bomyi_idx(outlier_idx)),'.r')
+xlabel('image index (Bomyi)')
+ylabel('estimated time')
+
+figure;
+plot_idx = 1;
+for i=outlier_idx
+    subplot(4, 5, plot_idx)
+    plot_idx = plot_idx + 1;
+    imshow(fixed_images(:,:,bomyi_idx(i)));
+end
+
+figure;
+errorbar(1:nfixed_images,pred_time_all(bomyi_idx),pred_time_all(bomyi_idx)-pred_time_all_int(bomyi_idx,1),pred_time_all_int(bomyi_idx,2)-pred_time_all(bomyi_idx),'bx')
+xlabel('image index (from diffusion maps)')
+ylabel('predicted time')
+title('Estimating times of fixed images')
+
