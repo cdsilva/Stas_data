@@ -51,19 +51,19 @@ im1 = images_tmp(:, :, 1, 50);
 figure;
 imshow(im1)
 
-figure; 
+figure;
 imshow(imrotate(im1, theta(i), 'crop'))
 
-figure; 
+figure;
 imshow(adapthisteq(imrotate(im1, theta(i), 'crop'), 'cliplimit',0.005))
 
-figure; 
+figure;
 imshow(crop_image(adapthisteq(imrotate(im1, theta(i), 'crop'), 'cliplimit',0.005), crop_threshold, 0))
 
-figure; 
+figure;
 imshow(image_symmetrize(image_equalize(im1, theta(i))))
- 
-figure; 
+
+figure;
 imshow(image_fn(im1, theta(i)))
 
 
@@ -73,12 +73,8 @@ for i=1:nmovies
     [images_tmp, time_tmp] = read_video(movies{i}, npixels);
     images_tmp = images_tmp(:, :, :, movie_start(i):end-movie_end(i));
     time_tmp = time_tmp(movie_start(i):end-movie_end(i)) - time_tmp(movie_start(i));
-        
-    time{i} = time_tmp * dt;
     
-    if i == 6
-        time{i} = time{i} + 6;
-    end
+    time{i} = time_tmp * dt;
     
     images_tmp = images_tmp(:, :, channel, :);
     images_tmp = squeeze(images_tmp);
@@ -116,7 +112,7 @@ end
 
 %%
 
-nmodes = 8;
+nmodes = 5;
 
 
 
@@ -134,16 +130,13 @@ for train_movie=1:nmovies
         xlabel('time')
         ylabel(sprintf('predicted time using movie %d', train_movie))
         title(sprintf('Movie %d', i))
+        set(gca, 'xlim', [-inf inf])
         
         bias(train_movie, i) = mean(pred_time - time{i});
     end
 end
 
-figure; imagesc(bias)
-colorbar
-ylabel('training movie')
-xlabel('predicted movie')
-% print(gcf, 'bias.png')
+
 
 %%
 
@@ -155,29 +148,55 @@ for i=1:nmovies
 end
 
 %%
-bias = zeros(nmovies, nmovies);
+bias2 = zeros(nmovies, nmovies);
+variance2 = zeros(nmovies, nmovies);
 
 for train_movie=1:nmovies
     figure;
     for i=1:nmovies
         subplot(2, 4, i)
         pred_time = predict_times_PCA(PCA_data{train_movie}, time_adjust{train_movie}, PCA_data{i}, nmodes);
-        plot(time{i}, pred_time, '.')
+        plot(time_adjust{i}, pred_time, '.')
         hold on
-        plot(time{i}, time{i}, '-r')
+        plot(time_adjust{i}, time_adjust{i}, '-r')
         xlabel('time')
         ylabel(sprintf('predicted time using movie %d', train_movie))
         title(sprintf('Movie %d', i))
-        
-        bias(train_movie, i) = mean(pred_time - time{i});
+        set(gca, 'xlim', [-inf inf])
+        bias2(train_movie, i) = mean(pred_time - time_adjust{i});
+        variance2(train_movie, i) = mean((pred_time - time_adjust{i}).^2);
     end
 end
 
+
+%%
+cmin = min(min(bias(:)), min(bias2(:)));
+cmax = max(max(bias(:)), max(bias2(:)));
+
 figure; imagesc(bias)
-colorbar
+% caxis manual
+% caxis([cmin cmax]);
+colorbar;
 ylabel('training movie')
 xlabel('predicted movie')
-% print(gcf, 'bias.png')
+title('bias')
+print(gcf, '-djpeg', 'bias1', '-r300')
+
+figure; imagesc(bias2)
+% caxis manual
+% caxis([cmin cmax]);
+colorbar;
+ylabel('training movie')
+xlabel('predicted movie')
+title('bias')
+print(gcf,  '-djpeg','bias2', '-r300')
+
+figure; imagesc(sqrt(variance2))
+colorbar;
+ylabel('training movie')
+xlabel('predicted movie')
+title('standard deviation')
+print(gcf,  '-djpeg','variance2', '-r300')
 
 %%
 
@@ -192,21 +211,25 @@ h3 = figure;
 h4 = figure;
 h5 = figure;
 idx = 1;
-for i=[20 40 60 80 90 100]
+for i=[20 35 60 80 90 100]
+        im_tmp = image_set_raw_aligned_ordered(:, :, :, i);
+        im_tmp = imresize(im_tmp, [npixels npixels]);
+
+        
     figure(h1);
     subplot(1, 6, idx)
-    imshow(imrotate(image_set_raw_ordered(:, :, :, i), i*5, 'crop'));
-
+    imshow(imrotate(im_tmp, i*5, 'crop'));
+    
     figure(h2);
     subplot(1, 6, idx)
-    imshow(image_set_raw_ordered(:, :, :, i));
+    imshow(im_tmp);
     
     im_tmp = imread(sprintf('%s/ordered%02d.tif', fixed_image_dir, i));
-    figure(h3);
+        im_tmp = imresize(im_tmp, [npixels npixels]);
+figure(h3);
     subplot(1, 6, idx)
     imshow(im_tmp)
     
-    im_tmp = imresize(im_tmp, [npixels npixels]);
     figure(h4);
     subplot(1, 6, idx)
     imshow(im_tmp(:, :, 1))
