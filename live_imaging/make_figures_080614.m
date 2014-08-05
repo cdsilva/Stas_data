@@ -265,6 +265,20 @@ PCA_fixed_data = create_PCA_data(fixed_images);
 PCA_data_movies = vertcat(PCA_data{:});
 time_movies = vertcat(time_adjust{:});
 
+[U, S, V] = svds(PCA_data_movies - repmat(mean(PCA_data_movies), length(time_movies), 1), nmodes);
+
+for i=1:nmodes
+    figure;
+    if mean(V(:, i)) < 0
+        V(:, i) = -V(:, i);
+    end
+    imagesc(reshape(V(:, i), npixels, npixels))
+    colormap(gray)
+    axis equal
+    axis off
+end
+
+return
 [pred_time_all, pred_time_all_int] = predict_times_PCA(PCA_data_movies, time_movies, PCA_fixed_data, nmodes);
 
 %%
