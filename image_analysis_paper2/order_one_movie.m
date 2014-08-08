@@ -60,7 +60,7 @@ dim = size(R, 1) / nimages;
 
 %%
 W2 = W.^2;
-eps = median(W2(:))/5;
+eps = median(W2(:));
 neigs = 10;
 [R_opt, embed_coord, D2, D] = vdm(R, W2, eps, neigs);
 
@@ -83,7 +83,7 @@ end
 %%
 
 figure;
-plot(time, embed_coord(:,2), '.')
+plot(time, embed_coord(:,1), '.')
 
 
 %% 
