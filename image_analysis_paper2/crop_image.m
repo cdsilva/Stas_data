@@ -1,17 +1,19 @@
-function image2 = crop_image(image, edge_tol, channel)
+function image2 = crop_image(image, channel)
 % function crops the black border from an image
 % image: image to be cropped
 % edge_tol: tolerance for the black border
 % channel: channel to use for the border detection for an RGB image (if the image is grayscale, channel can be arbitrairy)
 % image2: cropped image
 
+edge_tol = 0;
+detection_type = 'canny'; 
 
 npixels = size(image, 1);
 
 if ndims(image) == 3
-    im_tmp = image(:, :, channel);
+    im_tmp = edge(image(:, :, channel), detection_type);
 else
-    im_tmp = image;
+    im_tmp = edge(image, detection_type);
 end
 
 row_sum = sum(im_tmp);

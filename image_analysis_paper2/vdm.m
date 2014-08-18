@@ -1,5 +1,5 @@
 % function [R_opt, embed_coord, embed_idx, D] = vdm(R, W, eps, neigs)
-function [R_opt, embed_coord, D2, D] = vdm(R, W, eps, neigs)
+function [R_opt, embed_coord, D2, D] = vdm(R, W, eps, neigs, alpha)
 
 dim = size(R,1) / size(W,1);
 
@@ -12,6 +12,15 @@ end
 
 R2 = zeros(size(R));
 W2 = exp(-W/eps);
+for i=1:n
+    W2(i, i) = 0;
+end
+
+D = sum(W2);
+
+if alpha > 0
+    W2 = diag(D.^(-alpha)) * W2 * diag(D.^(-alpha));
+end
 W2 = diag(1./sum(W2)) * W2;
 
 for i=1:n
@@ -21,13 +30,24 @@ for i=1:n
 end
 
 [V, D] = eigs(R2, neigs);
+imag_tol = 1e-4;
+count = 0;
+count_max = 100;
+while norm(imag(D)) < imag_tol && norm(imag(V)) > imag_tol && count < count_max
+    [V, D] = eigs(R2, neigs);
+    count = count + 1;
+end    
+if count == count_max || norm(imag(D)) > imag_tol
+    disp('ERROR: imaginary eigenvectors')
+end
+
 [~, ind] = sort(abs(diag(D)), 'descend');
 V = V(:, ind);
 D = D(ind, ind);
 for i=1:neigs
     V(:,i) = V(:,i) / norm(V(:,i));
 end
-if det(V(1:dim,1:dim)*D(1:dim,1:dim)*V(1:dim,1:dim)') < 0
+if det(V(1:dim,1:dim)) < 0
     V(:,dim) = -V(:,dim);
 end
 

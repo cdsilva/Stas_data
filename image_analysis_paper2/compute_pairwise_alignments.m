@@ -28,8 +28,9 @@ W = inf(m);
 % reference image
 RI = imref2d([npixels npixels],[-1 1],[-1 1]);
 
+h_waitbar = waitbar(0,'Computing pairwise alignments...');
 for i=1:nrot
-    i
+    waitbar(i/nrot, h_waitbar);
     theta = theta_vec(i);
     for j=1:nshifts
         for k=1:nshifts
@@ -61,6 +62,8 @@ end
 
 W = 0.5*(W + W');
 R = 0.5*(R + R');
+
+close(h_waitbar);
 
 function R = calc_rot_matrix_3d(dtheta, dx, dy, angle_proj)
 

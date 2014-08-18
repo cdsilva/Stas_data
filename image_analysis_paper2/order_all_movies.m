@@ -4,46 +4,36 @@ close all
 %%
 
 npixels = 100;
+
+nmovies = 6;
+
+idx_start = [21 31 27 24 18 17];
+% idx_start = ones(1, 6);
+idx_end = [56 60 47 44 46 42];
+
+shift_times = [1.6302 2.8781 1.0172 -1.7739 -0.9879 -4.9915];
 dt = 0.5;
 
-% [images, time] = read_video('../live_imaging/bomyi_emb01_gast01.avi', npixels);
-% save('movie1.mat', 'images','time');
-% load('movie1.mat');
-% idx = 21:56;
+images_all = [];
+time_all = [];
 
-% [images, time] = read_video('../live_imaging/bomyi_emb02_gast02.avi', npixels);
-% save('movie2.mat', 'images','time');
-% load('movie2.mat');
-% idx = 31:60;
+for k=1:nmovies
+    load(sprintf('movie%d.mat', k));
+    idx = idx_start(k):idx_end(k);
+    
+    images_all = cat(4, images_all, images(:, :, :, idx));
+    time_all = [time_all; dt*time(idx)-shift_times(k)];
+end
 
-% [images, time] = read_video('../live_imaging/14_0623/emb01_hisRFP_gastrulation.avi', npixels);
-% save('movie3.mat', 'images','time');
-% load('movie3.mat');
-% idx = 27:47;
+time = time_all;
+images = images_all;
 
-% [images, time] = read_video('../live_imaging/14_0623/emb02_hisRFP_gastrulation.avi', npixels);
-% save('movie4.mat', 'images','time');
-% load('movie4.mat');
-% idx = 24:44;    
-% FEW OUTLIERS
-
-% [images, time] = read_video('../live_imaging/14_0624/emb01_hisRFP_gastrulation.avi', npixels);
-% save('movie5.mat', 'images','time');
-% load('movie5.mat');
-% idx = 18:46;    
-
-% [images, time] = read_video('../live_imaging/14_0624/emb02_hisRFP_gastrulation.avi', npixels);
-% save('movie6.mat', 'images','time');
-% load('movie6.mat');
-% idx = 17:42;
-
+%%
 nimages = length(time);
 make_subplot = @(i) subplot(ceil(nimages/10), 10, i);
 
 image_set = zeros(npixels, npixels, nimages, 'uint8');
 channel = 1;
-
-time = time * dt;
 
 filt = fspecial('disk');
 
@@ -52,9 +42,10 @@ for i=1:nimages
     image = imresize(image, [npixels npixels]);
 
     image = crop_image(image, channel);
+    
     image = padarray(image, [10 10]);
     image = imresize(image, [npixels npixels]);
-
+    
     image = adapthisteq(image);
 
     image = imfilter(image, filt, 'replicate');
@@ -63,27 +54,12 @@ for i=1:nimages
 end
 
 %%
-
-figure;
-for i=1:nimages
-    make_subplot(i)
-    imshow(image_set(:, :, i))
-end
-
-%%
-
-image_set = image_set(:, :, idx);
-time = time(idx);
-nimages = length(time);
-make_subplot = @(i) subplot(ceil(nimages/10), 10, i);
-
-%%
-figure;
-for i=1:nimages
-    make_subplot(i)
-    imshow(image_set(:, :, i))
-end
-
+% 
+% figure;
+% for i=1:nimages
+%     make_subplot(i)
+%     imshow(image_set(:, :, i))
+% end
 
 %%
 
@@ -100,11 +76,11 @@ image_set = image_set(:, :, idx);
 time = time(idx);
 theta = theta(idx);
 
-figure;
-for i=1:nimages
-    make_subplot(i)
-    imshow(image_set(:, :, i))
-end
+% figure;
+% for i=1:nimages
+%     make_subplot(i)
+%     imshow(image_set(:, :, i))
+% end
 
 %%
 
@@ -127,13 +103,13 @@ alpha = 0;
 
 %%
 theta_opt = zeros(size(theta));
-figure;
+% figure;
 for i=1:nimages
     R_tmp = R_opt(dim*(i-1)+1:dim*i, :);
     theta_opt(i) = atan2d(R_tmp(2,1), R_tmp(1,1));
 
-    make_subplot(i)
-    imshow(rotate_image(image_set(:, :, i), R_opt(dim*(i-1)+1:dim*i, :)'))
+%     make_subplot(i)
+%     imshow(rotate_image(image_set(:, :, i), R_opt(dim*(i-1)+1:dim*i, :)'))
 end
 
 %%
@@ -170,5 +146,6 @@ ylabel('rank from vdm')
 
 %%
 
-figure;
-scatter(embed_coord(:,1),embed_coord(:,2),50, time, '.')
+% figure;
+% scatter(embed_coord(:,1),embed_coord(:,2),50, time, '.')
+
