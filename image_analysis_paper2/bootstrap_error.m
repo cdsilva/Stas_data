@@ -47,7 +47,7 @@ nimages_all = length(time_all);
 
 %%
 
-nreps = 25;
+nreps = 200;
 
 sample_vec = round(linspace(10, nimages_all, 10));
 theta_err = zeros(length(sample_vec), nreps);
