@@ -1,0 +1,61 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+%\graphicspath{ {paper_figures2/} }
+
+
+\usepackage[margin=0in, paperwidth=17.8cm, paperheight=14cm]{geometry}
+
+\hyphenpenalty=10000
+
+\begin{document}
+
+\centering	
+\raisebox{0.25cm}{\textsf{A}}
+\includegraphics{movie_unregistered_unordered}
+
+\raisebox{5.5cm}{\textsf{B}}
+\includegraphics{angle_corr}
+\hspace{0.25cm}
+\raisebox{5.5cm}{\textsf{C}}
+\includegraphics{rank_corr}
+
+\raisebox{0.25cm}{\textsf{D}}
+\includegraphics{movie_registered_ordered}
+
+\raisebox{4.75cm}{\textsf{E}}
+\raisebox{3cm}{
+\begin{tabular}{ |p{1.1cm} | p{1.5cm}| }
+\hline
+Movie Index & Average Angle Error \\
+\hline
+ 1 & 7.85$^{\circ}$ \\
+ 2 & 2.92$^{\circ}$ \\
+ 3 & 3.66$^{\circ}$ \\
+ 4 & 2.88$^{\circ}$ \\
+ 5 & 2.64$^{\circ}$ \\
+ \hline
+\end{tabular}}
+%
+\hfill
+%
+\raisebox{4.75cm}{\textsf{F}}
+\raisebox{3cm}{
+\begin{tabular}{ |p{1.1cm} | p{2.2cm} |}
+\hline
+Movie Index & Rank Correlation Coefficient \\
+\hline
+ 1 &  0.9964 \\
+ 2 & 0.9977 \\
+ 3 & 0.9771 \\
+ 4 & 0.9917 \\
+ 5 & 0.9922 \\
+ \hline
+\end{tabular}}
+%
+\hfill
+%
+\raisebox{5.35cm}{\textsf{G}}
+\includegraphics{bootstrap_rankcorr}
+
+\end{document}
