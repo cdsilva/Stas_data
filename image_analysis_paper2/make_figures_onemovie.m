@@ -23,6 +23,9 @@ channel = 1;
 
 k_print_fig = 2;
 
+theta_err = zeros(nmovies, 1);
+rank_corr = zeros(nmovies, 1);
+
 %%
 for k=1:nmovies
     load(sprintf('movie%d.mat', k));
@@ -73,7 +76,7 @@ for k=1:nmovies
         theta_opt(i) = atan2d(R_tmp(2,1), R_tmp(1,1));
     end
     fprintf('movie %d, average error = %2.2f \n', k, std(mod(theta - theta_opt, 360)))
-    
+    theta_err(k) =  std(mod(theta - theta_opt, 360));
     
     %
     if corr(time, embed_coord(:,1)) < 0
@@ -81,25 +84,33 @@ for k=1:nmovies
     end
     
     fprintf('movie %d, rank corr = %2.4f \n', k, corr(compute_ranks(time), compute_ranks(embed_coord(:,1))))
+    rank_corr(k) = corr(compute_ranks(time), compute_ranks(embed_coord(:,1)));
     
     if k == k_print_fig
         [~, max_idx] = max(mod(theta, 360));
-        make_fig(8, 6);
-        plot(mod(theta, 360), mod(theta_opt-theta_opt(max_idx), 360), '.')
-        xlabel('true angle (degrees)')
-        ylabel('recovered angle (degrees)')
+        make_fig(4,4);
+        plot(mod(theta, 360), mod(theta_opt-theta_opt(max_idx)-1, 360)+1, '.')
+        xlabel('true angle')
+        ylabel('recovered angle')
+        set(gca, 'xtick', [0 180 360]);
+        set(gca, 'ytick', [0 180 360]);
+        set(gca, 'xticklabel', {'0°'; '180°'; '360°'});
+        set(gca, 'yticklabel', {'0°'; '180°'; '360°'});
         saveas(gcf, 'angle_corr.pdf');
-        
-        make_fig(8, 6);
+         
+        make_fig(4,4);
         plot(compute_ranks(time), compute_ranks(embed_coord(:,1)),'.')
-        xlabel('rank from time')
-        ylabel('rank from vdm')
+        xlabel('true rank')
+        ylabel('recovered rank')
+        set(gca, 'xtick', [0 20 40])
+        set(gca, 'ytick', [0 20 40])
+        axis([0 50 0 50])
         saveas(gcf, 'rank_corr.pdf');
         
-        nprint_images = 20;
+        nprint_images = 10;
         subplot_dim1 = nprint_images;
         subplot_dim2 = 1;
-        plot_idx= round(linspace(1, nimages, nprint_images));
+        plot_idx = round(linspace(5, nimages, nprint_images));
         
         make_fig(17, 17/nprint_images);
         for j=1:nprint_images
@@ -114,12 +125,32 @@ for k=1:nmovies
             im_tmp = imrotate(image_set(:, :, plot_idx(I(j))), -theta_opt(plot_idx(I(j)))+88, 'crop');
             make_subplot(subplot_dim1, subplot_dim2, 0.01, j);
             imshow(im_tmp);
+            text(npixels/2, npixels/2, sprintf('%2.2f min', time(plot_idx(I(j)))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
         end
         saveas(gcf, 'movie_registered_ordered.pdf');
-        return
+        
     end
 end
 
+% make_fig(5.5, 5.5);
+% bar(theta_err([2 1 3 5 6]));
+% xlabel('movie index')
+% ylabel('average angle error (degrees)')
+% saveas(gcf, 'angle_corr_allmovies.pdf');
+% 
+% make_fig(5.5, 5.5);
+% bar(rank_corr([2 1 3 5 6]));
+% xlabel('movie index')
+% ylabel('rank correlation coefficient')
+% saveas(gcf, 'rank_corr_allmovies.pdf');
+% 
+% make_fig(5.5, 5.5)
+% bar_width = 0.15;
+% [ax,h1,h2] = plotyy((1:nmovies)-bar_width/2,theta_err,(1:nmovies)+bar_width/2,rank_corr,'bar');
+% set(ax, 'xtick', 1:nmovies)
+% set(h1, 'facecolor','r')
+% set(h1, 'barwidth', 0.5)
+% set(h2, 'barwidth', 0.5)
 
 %%
 
@@ -219,10 +250,12 @@ end
 % xlabel('number of images')
 % ylabel('average error in recovered angle')
 
-make_fig(8, 6);
+make_fig(4,4);
 plot(sample_vec, mean(rank_corr, 2), '.')
 xlabel('number of images')
-ylabel('rank correlation coefficient')
+ylabel('rank correlation')
+axis([0 50 0.5 1.0])
+set(gca, 'xtick', [0 20 40])
 saveas(gcf, 'bootstrap_rankcorr.pdf');
 
 % figure;

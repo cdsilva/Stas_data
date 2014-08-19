@@ -30,10 +30,11 @@ RI = imref2d([npixels npixels],[-1 1],[-1 1]);
 
 h_waitbar = waitbar(0,'Computing pairwise alignments...');
 for i=1:nrot
-    waitbar(i/nrot, h_waitbar);
+%     waitbar(i/nrot, h_waitbar);
     theta = theta_vec(i);
     for j=1:nshifts
         for k=1:nshifts
+            waitbar(((i-1)*nshifts^2+(j-1)*nshifts+k)/(nrot*nshifts^2), h_waitbar);
             A = affine2d([cosd(theta) -sind(theta) 0; sind(theta) cosd(theta) 0; shifts(j) shifts(k) 1]);
             images_transformed = imwarp(images, RI, A, 'outputview', RI);
             dist_tmp = pdist2(reshape(double(images), [], m)', reshape(double(images_transformed), [], m)');
