@@ -10,4 +10,5 @@ image2 = imresize(image2, [npixels npixels]);
 
 image2(:, :, channel) = adapthisteq(image2(:, :, channel));
 image2(:, :, channel) = imfilter(image2(:, :, channel), filt, 'replicate');
+% image2(:, :, channel) = imadjust(image2(:, :, channel));
 image2(:, :, channel) = immultiply(image2(:, :, channel), 0.5);

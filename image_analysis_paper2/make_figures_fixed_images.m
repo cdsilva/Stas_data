@@ -9,7 +9,7 @@ nimages = 132;
 image_dir = '../membrane_pictures/14_0501_dpERK_late';
 image_name = 'emb';
 
-nrot = 20;
+nrot = 40;
 nshifts = 0;
 shift_max = 0.1;
 
@@ -35,13 +35,18 @@ end
 
 figure;
 for i=1:nimages
-    subplot(12,11,i)
+make_subplot(10, 14, 0.01, i);
     imshow(image_set(:,:,:,i))
 end
 
 
 %%
-ind = setdiff(1:nimages, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102 101 100]);
+% ind = setdiff(1:nimages, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102 101 100]);
+% 
+% image_set = image_set(:, :, :, ind);
+% nimages = length(ind);
+
+ind = setdiff(1:nimages, [32 91 28 77 46 116]);
 
 image_set = image_set(:, :, :, ind);
 nimages = length(ind);
@@ -51,9 +56,9 @@ nimages = length(ind);
 [R, W] = compute_pairwise_alignments(image_set, nrot, nshifts, shift_max);
 dim = size(R, 1) / nimages;
 
-%
+%%
 W2 = W.^2;
-eps = median(W2(:))/20;
+eps = median(W2(:))/10;
 [R_opt, embed_coord, D2, D] = vdm(R, W2, eps, neigs, alpha);
 
 %%
@@ -72,6 +77,6 @@ end
 [~, I] = sort(embed_coord(:,1));
 figure;
 for i=1:nimages
-    subplot(6,22,i)
-    imshow(image_set_aligned(:,:,:,I(i)))
+make_subplot(9, 14, 0.01, i);
+imshow(image_set_aligned(:,:,:,I(i)))
 end
