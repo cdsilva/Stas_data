@@ -28,21 +28,18 @@ for i=1:nimages
     image_set(:, :, :, i) = image_fn_color(im_tmp, channel, npixels);
 end
 
-% image_set(:,:,2:3,:) = 0;
-
-
 %%
 
 figure;
 for i=1:nimages
-make_subplot(10, 14, 0.01, i);
+    make_subplot(10, 14, 0.01, i);
     imshow(image_set(:,:,:,i))
 end
 
 
 %%
 % ind = setdiff(1:nimages, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102 101 100]);
-% 
+%
 % image_set = image_set(:, :, :, ind);
 % nimages = length(ind);
 
@@ -50,6 +47,14 @@ ind = setdiff(1:nimages, [32 91 28 77 46 116]);
 
 image_set = image_set(:, :, :, ind);
 nimages = length(ind);
+
+%%
+make_fig(17, 9*(17/14));
+for i=1:nimages
+    make_subplot(14, 9, 0.01, i);
+    imshow(make_gray_nuclei(image_set(:,:,:,i)))
+end
+saveas(gcf, 'fixed_images_unregistered_unordered.pdf');
 
 %%
 
@@ -75,8 +80,37 @@ if embed_coord(1,1) > 0
 end
 
 [~, I] = sort(embed_coord(:,1));
+
+%%
+
+rot_angle = -35;
+
+make_fig(17, 9*(17/14));
+for i=1:nimages
+    make_subplot(14, 9, 0.01, i);
+    im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,I(i)));
+    imshow(imrotate(im_tmp, rot_angle, 'crop'))
+end
+saveas(gcf, 'fixed_images_registered_ordered.pdf');
+
+%%
+nstages = 9;
+make_fig(17, 17/nstages);
+for i=1:nstages
+    make_subplot(9, 1, 0.01, i);
+    idx = nimages/nstages*(i-1)+1:nimages/nstages*i;
+    im_tmp = mean(double(image_set_aligned(:,:,:,I(idx))), 4);
+    im_tmp = make_gray_nuclei(uint8(im_tmp));
+    imshow(imrotate(im_tmp, rot_angle, 'crop'))
+end
+saveas(gcf, 'fixed_images_average_trajectory.pdf');
+
+%%
+
 figure;
 for i=1:nimages
-make_subplot(9, 14, 0.01, i);
-imshow(image_set_aligned(:,:,:,I(i)))
+    im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,I(i)));
+    imshow(imrotate(im_tmp, rot_angle, 'crop'))
+    pause(0.1)
+    clf
 end
