@@ -48,10 +48,13 @@ ind = setdiff(1:nimages, [32 91 28 77 46 116]);
 image_set = image_set(:, :, :, ind);
 nimages = length(ind);
 
+dim1 = 7;
+dim2 = 18;
+
 %%
-make_fig(17, 9*(17/14));
+make_fig(17, dim1*(17/dim2));
 for i=1:nimages
-    make_subplot(14, 9, 0.01, i);
+    make_subplot(dim2, dim1, 0.01, i);
     imshow(make_gray_nuclei(image_set(:,:,:,i)))
 end
 saveas(gcf, 'fixed_images_unregistered_unordered.pdf');
@@ -85,19 +88,19 @@ end
 
 rot_angle = -35;
 
-make_fig(17, 9*(17/14));
+make_fig(17, dim1*(17/dim2));
 for i=1:nimages
-    make_subplot(14, 9, 0.01, i);
+    make_subplot(dim2, dim1, 0.01, i);
     im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,I(i)));
     imshow(imrotate(im_tmp, rot_angle, 'crop'))
 end
 saveas(gcf, 'fixed_images_registered_ordered.pdf');
 
 %%
-nstages = 9;
+nstages = 14;
 make_fig(17, 17/nstages);
 for i=1:nstages
-    make_subplot(9, 1, 0.01, i);
+    make_subplot(nstages, 1, 0.01, i);
     idx = nimages/nstages*(i-1)+1:nimages/nstages*i;
     im_tmp = mean(double(image_set_aligned(:,:,:,I(idx))), 4);
     im_tmp = make_gray_nuclei(uint8(im_tmp));

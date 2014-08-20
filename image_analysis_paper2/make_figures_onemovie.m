@@ -88,7 +88,7 @@ for k=1:nmovies
     
     if k == k_print_fig
         [~, max_idx] = max(mod(theta, 360));
-        make_fig(4,4);
+        make_fig(4.3,4);
         plot(mod(theta, 360), mod(theta_opt-theta_opt(max_idx)-1, 360)+1, '.')
         xlabel('true angle')
         ylabel('recovered angle')
@@ -96,8 +96,9 @@ for k=1:nmovies
         set(gca, 'ytick', [0 180 360]);
         set(gca, 'xticklabel', {'0°'; '180°'; '360°'});
         set(gca, 'yticklabel', {'0°'; '180°'; '360°'});
+        axis square
         saveas(gcf, 'angle_corr.pdf');
-         
+        
         make_fig(4,4);
         plot(compute_ranks(time), compute_ranks(embed_coord(:,1)),'.')
         xlabel('true rank')
@@ -105,6 +106,7 @@ for k=1:nmovies
         set(gca, 'xtick', [0 20 40])
         set(gca, 'ytick', [0 20 40])
         axis([0 50 0 50])
+        axis square
         saveas(gcf, 'rank_corr.pdf');
         
         nprint_images = 10;
@@ -137,13 +139,13 @@ end
 % xlabel('movie index')
 % ylabel('average angle error (degrees)')
 % saveas(gcf, 'angle_corr_allmovies.pdf');
-% 
+%
 % make_fig(5.5, 5.5);
 % bar(rank_corr([2 1 3 5 6]));
 % xlabel('movie index')
 % ylabel('rank correlation coefficient')
 % saveas(gcf, 'rank_corr_allmovies.pdf');
-% 
+%
 % make_fig(5.5, 5.5)
 % bar_width = 0.15;
 % [ax,h1,h2] = plotyy((1:nmovies)-bar_width/2,theta_err,(1:nmovies)+bar_width/2,rank_corr,'bar');
@@ -256,6 +258,7 @@ xlabel('number of images')
 ylabel('rank correlation')
 axis([0 50 0.5 1.0])
 set(gca, 'xtick', [0 20 40])
+axis square
 saveas(gcf, 'bootstrap_rankcorr.pdf');
 
 % figure;
