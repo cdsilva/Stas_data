@@ -78,7 +78,7 @@ end
 
 %%
 
-if embed_coord(1,1) > 0
+if embed_coord(1,1) < 0
     embed_coord(:,1) = -embed_coord(:,1);
 end
 
@@ -86,7 +86,7 @@ end
 
 %%
 
-rot_angle = -35;
+rot_angle = 85;
 
 make_fig(17, dim1*(17/dim2));
 for i=1:nimages

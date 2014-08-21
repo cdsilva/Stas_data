@@ -68,11 +68,15 @@ end
 %%
 
 figure;
+slope_nrot_vec = [];
 for i=1:length(npixels_vec)
     for j=1:length(nimages_vec)
         % for k=1:length(nrot_vec)
         for l=1:length(nshifts_vec)
             loglog(nrot_vec, squeeze(timing(i,j,:,l)), '-o')
+            p = polyfit(log(nrot_vec), log(squeeze(timing(i,j,:,l)))', 1);
+            slope_nrot_vec = [slope_nrot_vec; p(1)];
+            
             hold on
         end
     end
@@ -81,12 +85,16 @@ loglog([10 50], [10 50], '-r')
 xlabel('number of rotations')
 ylabel('time (sec)')
 
+slope_nimages_vec = [];
+
 figure;
 for i=1:length(npixels_vec)
     % for j=1:length(nimages_vec)
     for k=1:length(nrot_vec)
         for l=1:length(nshifts_vec)
             loglog(nimages_vec, squeeze(timing(i,:,k,l)),'-o')
+            p = polyfit(log(nimages_vec), log(squeeze(timing(i,:,k,l))), 1);
+            slope_nimages_vec = [slope_nimages_vec; p(1)];
             hold on
         end
     end
@@ -96,12 +104,16 @@ loglog([10 100], 0.1*[10 100].^1.5, '-r')
 xlabel('number of images')
 ylabel('time (sec)')
 
+slope_npixels_vec = [];
+
 figure;
 % for i=1:length(npixels_vec)
     for j=1:length(nimages_vec)
     for k=1:length(nrot_vec)
         for l=1:length(nshifts_vec)
-            loglog(npixels_vec, squeeze(timing(:,j,k,l)),'-o')
+            loglog(npixels_vec.^2, squeeze(timing(:,j,k,l)),'-o')
+             p = polyfit(log(npixels_vec.^2), log(squeeze(timing(:,j,k,l)))', 1);
+            slope_npixels_vec = [slope_npixels_vec; p(1)];
             hold on
         end
     end
