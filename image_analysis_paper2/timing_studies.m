@@ -28,8 +28,8 @@ end
 %%
 
 % npixels_vec = [50 100 200];
-npixels_vec = [50 100 200];
-nimages_vec = [20 50 100 120];
+npixels_vec = [50 100 150 200];
+nimages_vec = [20 50 75 100 120];
 nrot_vec = [10 20 30 40];
 % nshifts_vec = [0 5 10];
 nshifts_vec = [0];
@@ -91,7 +91,7 @@ for i=1:length(npixels_vec)
         end
     end
 end
-loglog([10 100], ([10 100].^2)/100, '-r')
+loglog([10 100], 0.1*[10 100].^1.5, '-r')
 
 xlabel('number of images')
 ylabel('time (sec)')
@@ -106,7 +106,10 @@ figure;
         end
     end
 end
-loglog([10 100], ([10 100].^2)/100, '-r')
-xlabel('number of images')
+loglog([50 150], ([50 150].^2)/100, '-r')
+xlabel('number of pixels')
 ylabel('time (sec)')
+
+%% 
+save('timing_data.mat','npixels_vec','nimages_vec','nrot_vec','nshifts_vec','timing')
 

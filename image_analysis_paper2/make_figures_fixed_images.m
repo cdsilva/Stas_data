@@ -9,7 +9,7 @@ nimages = 132;
 image_dir = '../membrane_pictures/14_0501_dpERK_late';
 image_name = 'emb';
 
-nrot = 40;
+nrot = 36;
 nshifts = 0;
 shift_max = 0.1;
 
@@ -43,13 +43,13 @@ end
 % image_set = image_set(:, :, :, ind);
 % nimages = length(ind);
 
-ind = setdiff(1:nimages, [32 91 28 77 46 116]);
+ind = setdiff(1:nimages, [32 91 28 77 46 116 5 17 1 2 3 29]);
 
 image_set = image_set(:, :, :, ind);
 nimages = length(ind);
 
-dim1 = 7;
-dim2 = 18;
+dim1 = 8;
+dim2 = 15;
 
 %%
 make_fig(17, dim1*(17/dim2));
@@ -97,23 +97,73 @@ end
 saveas(gcf, 'fixed_images_registered_ordered.pdf');
 
 %%
-nstages = 14;
+nstages = 15;
+frame_points = linspace(1, nimages, nstages);
+window_eps = 3^2;
+window_tol = 0.01;
+
 make_fig(17, 17/nstages);
 for i=1:nstages
+    
+    window_weights = exp(-(frame_points(i)-(1:nimages)).^2/window_eps);
+    window_weights = window_weights / sum(window_weights);
+
+    im_tmp = immultiply(image_set_aligned(:,:,:,I(1)), window_weights(1));
+    for j=2:nimages
+            im_tmp = imlincomb(1, im_tmp, window_weights(j), image_set_aligned(:,:,:,I(j)));
+    end
+    im_tmp = make_gray_nuclei(im_tmp);
+    
     make_subplot(nstages, 1, 0.01, i);
-    idx = nimages/nstages*(i-1)+1:nimages/nstages*i;
-    im_tmp = mean(double(image_set_aligned(:,:,:,I(idx))), 4);
-    im_tmp = make_gray_nuclei(uint8(im_tmp));
     imshow(imrotate(im_tmp, rot_angle, 'crop'))
+    
 end
 saveas(gcf, 'fixed_images_average_trajectory.pdf');
 
+return
 %%
 
-figure;
-for i=1:nimages
-    im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,I(i)));
+writerObj = VideoWriter('gastrulation.avi');
+writerObj.FrameRate = 50;
+open(writerObj);
+
+nframes = 1000;
+frame_points = linspace(1, nimages, nframes);
+window_eps = 3^2;
+
+make_fig(8,8);
+
+i = 1;
+window_weights = exp(-(frame_points(i)-(1:nimages)).^2/window_eps);
+window_weights = window_weights / sum(window_weights);
+
+im_tmp = immultiply(image_set_aligned(:,:,:,I(1)), window_weights(1));
+for j=2:nimages
+    im_tmp = imlincomb(1, im_tmp, window_weights(j), image_set_aligned(:,:,:,I(j)));
+end
+im_tmp = make_gray_nuclei(im_tmp);
+
+imshow(imrotate(im_tmp, rot_angle, 'crop'))
+set(gca,'nextplot','replacechildren');
+set(gcf,'Renderer','zbuffer');
+
+clf
+
+for i=1:nframes
+    
+    window_weights = exp(-(frame_points(i)-(1:nimages)).^2/window_eps);
+    window_weights = window_weights / sum(window_weights);
+    
+    im_tmp = immultiply(image_set_aligned(:,:,:,I(1)), window_weights(1));
+    for j=2:nimages
+        im_tmp = imlincomb(1, im_tmp, window_weights(j), image_set_aligned(:,:,:,I(j)));
+    end
+    im_tmp = make_gray_nuclei(im_tmp);
+    
     imshow(imrotate(im_tmp, rot_angle, 'crop'))
-    pause(0.1)
+    frame = getframe;
+    writeVideo(writerObj,frame);
     clf
 end
+
+close(writerObj);

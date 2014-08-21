@@ -12,7 +12,7 @@ nmovies = 6;
 idx_end = [56 60 47 44 46 42];
 idx_start = idx_end - 41;
 
-nrot = 40;
+nrot = 36;
 nshifts = 0;
 shift_max = 0.1;
 
@@ -43,7 +43,7 @@ for k=1:nmovies
     
     %
     image_set = image_set(:, :, idx);
-    time = time(idx);
+    time = time(idx) - time(idx(1));
     nimages = length(time);
     
     %
