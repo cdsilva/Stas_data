@@ -1,7 +1,7 @@
 clear all
 close all
 
-%%
+%% read in images
 
 fixed_image_dir = '../../membrane_pictures/composite_108_noyolk';
 nfixed_images = 108;
@@ -24,7 +24,7 @@ for i=1:nfixed_images
     imshow(fixed_images(:,:,i));
 end
 
-%%
+%% predict times
 
 pred_times = zeros(nfixed_images, 1);
 pred_times_min = zeros(nfixed_images, 1);
@@ -34,6 +34,7 @@ for i=1:nfixed_images
     [pred_times(i), pred_times_min(i), pred_times_max(i)] = predict_time_image(fixed_images(:,:,i));
 end
 
+%% plot
 figure;
 plot(pred_times,'.')
 
