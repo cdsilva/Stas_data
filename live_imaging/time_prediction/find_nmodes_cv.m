@@ -26,12 +26,13 @@ theta = [-95;
     -120;
     -95];
 
-movie_start = [1; 1; 1; 1; 1; 1; 96];
-movie_end = [20; 18; 8; 7; 0; 0; 0];
+movie_start = [20 25 15 10 15 5 110];
+  movie_end = [55 60 48 42 42 40 140];
 
 make_subplot = @(i) subplot(2, 4, i);
 
 images = cell(nmovies, 1);
+images_raw = cell(nmovies, 1);
 time = cell(nmovies, 1);
 nimages = zeros(nmovies, 1);
 
@@ -39,22 +40,25 @@ nimages = zeros(nmovies, 1);
 figure;
 for i=1:nmovies
     [images_tmp, time_tmp] = read_video(movies{i}, npixels);
-    images_tmp = images_tmp(:, :, :, movie_start(i):end-movie_end(i));
-    time_tmp = time_tmp(movie_start(i):end-movie_end(i)) - time_tmp(movie_start(i));
+    images_tmp = images_tmp(:, :, :, movie_start(i):movie_end(i));
+    time_tmp = time_tmp(movie_start(i):movie_end(i)) - time_tmp(movie_start(i));
     
     time{i} = time_tmp * dt;
     
     images_tmp = images_tmp(:, :, channel, :);
     images_tmp = squeeze(images_tmp);
+    images_tmp_raw = zeros(size(images_tmp), 'uint8');
     
     nimages(i) = length(time{i});
     
     for j=1:nimages(i)
         images_tmp(:, :, j) = image_normalize(images_tmp(:, :, j), theta(i));
+        images_tmp_raw(:, :, j) = imrotate(images_tmp(:, :, j), theta(i), 'crop');
     end
     
     images{i} = images_tmp;
-    
+        images_raw{i} = images_tmp_raw;
+
     make_subplot(i);
     imshow(images{i}(:,:, round(nimages(i)/2)));
 end

@@ -46,5 +46,8 @@ plot(pred_times_max, '-r')
 figure;
 plot(pred_times_max-pred_times_min)
 
+figure;
+errorbar(1:nfixed_images, pred_times, pred_times - pred_times_min, pred_times_max - pred_times)
+
 
 
