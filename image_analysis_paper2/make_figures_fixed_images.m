@@ -59,6 +59,15 @@ for i=1:nimages
 end
 saveas(gcf, 'fixed_images_unregistered_unordered.pdf');
 
+nsubsamples = 15;
+subsample_idx = round(linspace(1, nimages, nsubsamples));
+make_fig(17, 17/nsubsamples);
+for i=1:nsubsamples
+    make_subplot(nsubsamples, 1, 0.01, i);
+    imshow(make_gray_nuclei(image_set(:,:,:,subsample_idx(i))))
+end
+saveas(gcf, 'fixed_images_unregistered_unordered_subsampled.pdf');
+
 %%
 
 [R, W] = compute_pairwise_alignments(image_set, nrot, nshifts, shift_max);
@@ -95,6 +104,15 @@ for i=1:nimages
     imshow(imrotate(im_tmp, rot_angle, 'crop'))
 end
 saveas(gcf, 'fixed_images_registered_ordered.pdf');
+
+[~, I2] = sort(embed_coord(subsample_idx,1));
+make_fig(17, 17/nsubsamples);
+for i=1:nsubsamples
+    make_subplot(nsubsamples, 1, 0.01, i);
+    im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,subsample_idx(I2(i))));
+    imshow(imrotate(im_tmp, rot_angle, 'crop'))
+end
+saveas(gcf, 'fixed_images_registered_ordered_subsampled.pdf');
 
 %%
 nstages = 15;

@@ -127,10 +127,10 @@ for k=1:nmovies
             im_tmp = imrotate(image_set(:, :, plot_idx(I(j))), -theta_opt(plot_idx(I(j)))+88, 'crop');
             make_subplot(subplot_dim1, subplot_dim2, 0.01, j);
             imshow(im_tmp);
-            text(npixels/2, npixels/2, sprintf('%2.2f min', time(plot_idx(I(j)))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
+            text(npixels/2, npixels/2, sprintf('%2.1f min', time(plot_idx(I(j)))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
         end
         saveas(gcf, 'movie_registered_ordered.pdf');
-        
+        return
     end
 end
 
