@@ -6,7 +6,7 @@ npixels = size(images, 1);
 % only rotations
 if nshifts > 1
     dim = 3;
-    angle_proj = pi/8;
+    angle_proj = 30;
     shifts = linspace(-shift_max, shift_max, nshifts);
     % rotations + translations
 else
@@ -26,7 +26,7 @@ R = zeros(dim*m);
 W = inf(m);
 
 % reference image
-RI = imref2d([npixels npixels],[-1 1],[-1 1]);
+RI = imref2d([npixels npixels],[-0.5 0.5],[-0.5 0.5]);
 
 h_waitbar = waitbar(0,'Computing pairwise alignments...');
 for i=1:nrot
@@ -68,30 +68,28 @@ close(h_waitbar);
 
 function R = calc_rot_matrix_3d(dtheta, dx, dy, angle_proj)
 
-alpha = dtheta * pi / 180;
+alpha = dtheta;
 beta = dx * angle_proj;
 gamma = dy * angle_proj;
 
 Rx = [1 0 0;
-    0 cos(alpha) -sin(alpha);
-    0 sin(alpha) cos(alpha)];
+    0 cosd(alpha) -sind(alpha);
+    0 sind(alpha) cosd(alpha)];
 
-Ry = [cos(beta) 0 sin(beta);
+Ry = [cosd(beta) 0 sind(beta);
     0 1 0;
-    -sin(beta) 0 cos(beta)];
+    -sind(beta) 0 cosd(beta)];
 
-Rz = [cos(gamma) -sin(gamma) 0;
-    sin(gamma) cos(gamma) 0;
+Rz = [cosd(gamma) -sind(gamma) 0;
+    sind(gamma) cosd(gamma) 0;
     0  0 1];
 
 R = Rz * Ry * Rx;
 
 function R = calc_rot_matrix_2d(dtheta)
 
-alpha = dtheta * pi / 180;
-
-R = [cos(alpha) -sin(alpha);
-    sin(alpha) cos(alpha)];
+R = [cosd(dtheta) -sind(dtheta);
+    sind(dtheta) cosd(dtheta)];
 
 
 
