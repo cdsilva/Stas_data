@@ -6,7 +6,7 @@ npixels = size(images, 1);
 % only rotations
 if nshifts > 1
     dim = 3;
-    angle_proj = 30;
+    angle_proj = 20;
     shifts = linspace(-shift_max, shift_max, nshifts);
     % rotations + translations
 else

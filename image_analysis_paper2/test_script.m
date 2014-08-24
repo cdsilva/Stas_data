@@ -13,8 +13,8 @@ image = imresize(image, [npixels npixels]);
 image_set = zeros(npixels, npixels, 3, nimages, 'uint8');
 
 for i=1:nimages
-    im_tmp = imrotate(image, 360*randi(10, 1)/10, 'crop');
-    im_tmp = circshift(im_tmp, randi([-2 2], 1, 2));
+    im_tmp = imrotate(image, 360*rand, 'crop');
+    im_tmp = circshift(im_tmp, randi([-5 5], 1, 2));
     image_set(:,:,:,i) = im_tmp;
 end
 
@@ -29,8 +29,8 @@ end
 %%
 
 nrot = 10;
-nshifts = 5;
-shift_max = 0.02;
+nshifts = 11;
+shift_max = 0.05;
 
 [R, W] = compute_pairwise_alignments(image_set, nrot, nshifts, shift_max);
 dim = size(R, 1) / nimages;
@@ -43,11 +43,13 @@ alpha = 0;
 [R_opt, embed_coord, D2, D] = vdm(R, W2, eps, neigs, alpha);
 
 %%
-image_set_aligned = zeros(size(image_set), 'uint8');
-for i=1:nimages
-    R_tmp = R_opt(dim*(i-1)+1:dim*i, :);
-    image_set_aligned(:, :, :, i) = rotate_image(image_set(:,:, :,i), R_tmp');
-end
+% image_set_aligned = zeros(size(image_set), 'uint8');
+% for i=1:nimages
+%     R_tmp = R_opt(dim*(i-1)+1:dim*i, :);
+%     image_set_aligned(:, :, :, i) = rotate_image(image_set(:,:, :,i), R_tmp');
+% end
+
+image_set_aligned = register_all_images(image_set, R_opt);
 
 %%
 

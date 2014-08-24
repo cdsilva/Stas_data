@@ -1,7 +1,7 @@
 function im1 = rotate_image(im2, R)
 
 npixels = size(im2, 1);
-angle_proj = 30;
+angle_proj = 20;
 
 dim = size(R, 1);
 
@@ -24,8 +24,6 @@ alpha = atan2d(R(3,2), R(3,3));
 gamma = atan2d(R(2,1), R(1,1));
 beta = -asind(R(3,1));
 % beta = atan2(-R(3,1), R(2,1)/sind(gamma));
-
-gamma
 
 theta = alpha;
 dx = beta / angle_proj;

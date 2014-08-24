@@ -51,26 +51,16 @@ if det(V(1:dim,1:dim)) < 0
     V(:,dim) = -V(:,dim);
 end
 
+% R_opt = V(:,1:dim) * V(1:dim,1:dim)';
 R_opt = V(:,1:dim);
 for i=1:n
     [u, s, v] = svd(R_opt(dim*(i-1)+1:dim*i,:));
     %     R_opt(dim*(i-1)+1:dim*i,:) = v * u';
     R_opt(dim*(i-1)+1:dim*i,:) = u * v';
 end
-for i=n:-1:1
-    R_opt(dim*(i-1)+1:dim*i,:) = R_opt(1:dim,:)' * R_opt(dim*(i-1)+1:dim*i,:);
-end
-
-% embed_coord = zeros(n, neigs*(neigs-1)/2+neigs);
-% embed_idx = zeros(2, neigs*(neigs-1)/2+neigs);
-% curr_idx = 1;
-% for i=1:neigs
-%     for j=1:i
-%         embed_coord(:, curr_idx) = sum(reshape(V(:,i),dim, []).*reshape(V(:,j),dim, []))';
-%         embed_idx(1, curr_idx) = i;
-%         embed_idx(2, curr_idx) = j;
-%         curr_idx = curr_idx + 1;
-%     end
+R_opt = R_opt * R_opt(1:dim,1:dim)';
+% for i=n:-1:1
+%     R_opt(dim*(i-1)+1:dim*i,:) = R_opt(1:dim,:)' * R_opt(dim*(i-1)+1:dim*i,:);
 % end
 
 embed_coord = zeros(n, floor(neigs/dim)-1);
