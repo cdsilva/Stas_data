@@ -60,7 +60,7 @@ end
 saveas(gcf, 'fixed_images_unregistered_unordered.pdf');
 
 nsubsamples = 15;
-subsample_idx = round(linspace(1, nimages, nsubsamples));
+subsample_idx = round(linspace(2, nimages, nsubsamples));
 make_fig(17, 17/nsubsamples);
 for i=1:nsubsamples
     make_subplot(nsubsamples, 1, 0.01, i);

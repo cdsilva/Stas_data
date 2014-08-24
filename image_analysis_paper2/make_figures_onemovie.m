@@ -130,7 +130,6 @@ for k=1:nmovies
             text(npixels/2, npixels/2, sprintf('%2.1f min', time(plot_idx(I(j)))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
         end
         saveas(gcf, 'movie_registered_ordered.pdf');
-        return
     end
 end
 
@@ -204,7 +203,7 @@ rank_corr = zeros(length(sample_vec), nbootstrap_samples);
 for j = 1:nbootstrap_points
     nimages = sample_vec(j);
     
-    j
+%     j
     
     for j2 = 1:nbootstrap_samples
         

@@ -14,7 +14,7 @@ image_set = zeros(npixels, npixels, 3, nimages, 'uint8');
 
 for i=1:nimages
     im_tmp = imrotate(image, 360*rand, 'crop');
-    im_tmp = circshift(im_tmp, randi([-5 5], 1, 2));
+%     im_tmp = circshift(im_tmp, randi([-5 5], 1, 2));
     image_set(:,:,:,i) = im_tmp;
 end
 
@@ -29,7 +29,7 @@ end
 %%
 
 nrot = 10;
-nshifts = 11;
+nshifts = 0;
 shift_max = 0.05;
 
 [R, W] = compute_pairwise_alignments(image_set, nrot, nshifts, shift_max);
