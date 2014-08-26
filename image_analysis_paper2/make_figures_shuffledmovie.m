@@ -7,10 +7,10 @@ npixels = 100;
 
 dt = 0.5;
 
-nmovies = 6;
+nmovies = 7;
 
 nimages = 42;
-idx_end = [56 60 47 44 46 42];
+idx_end = [56 60 47 44 46 42 150];
 idx_start = idx_end - nimages + 1;
 
 image_set = zeros(npixels, npixels, nimages, nmovies, 'uint8');
@@ -54,12 +54,9 @@ end
 
 %%
 
-rng(123);
-% movies_to_use = [1 2 5 6];
+rng(333);
 movies_to_use = [1 2 3 5 6];
 idx = movies_to_use(randi(length(movies_to_use), nimages, 1));
-% idx = randi(nmovies-1, nimages, 1);
-% idx(idx==4) = nmovies;
 image_set_subsampled = zeros(npixels, npixels, nimages, 'uint8');
 for i=1:nimages
     image_set_subsampled(:, :, i) = image_set(:, :, i, idx(i));
@@ -90,7 +87,7 @@ for i=1:nimages
 end
 
 %%
-if corr(time_set(:,1), embed_coord(:,1)) < 0
+if corr(time_set(:,1), embed_coord(:,1), 'type','spearman') < 0
     embed_coord(:,1) = -embed_coord(:,1);
 end
 
@@ -103,6 +100,7 @@ end
 
 make_fig(4,4);
 plot(compute_ranks(time_set(:,1)), compute_ranks(embed_coord(:,1)),'.')
+title(sprintf('corr = %2.2f', corr(compute_ranks(time_set(:,1)), compute_ranks(embed_coord(:,1)))))
 xlabel('true rank')
 ylabel('recovered rank')
 set(gca, 'xtick', [0 20 40])

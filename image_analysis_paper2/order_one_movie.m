@@ -37,6 +37,9 @@ dt = 0.5;
 % load('movie6.mat');
 % idx = 17:42;
 
+% [images, time] = read_video('../live_imaging/0709_emb02_cell_gast.avi', 100);
+% save('movie7.mat', 'images','time');
+
 nimages = length(time);
 make_subplot = @(i) subplot(ceil(nimages/10), 10, i);
 

@@ -10,7 +10,6 @@ image2 = crop_image(image2, channel);
 image2 = padarray(image2, [10 10]);
 image2 = imresize(image2, [npixels npixels]);
 
-% image2 = imadjust(image2);
 image2 = adapthisteq(image2);
 
 image2 = imfilter(image2, filt, 'replicate');
