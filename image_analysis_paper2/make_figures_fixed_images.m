@@ -59,9 +59,9 @@ for i=1:nimages
 end
 saveas(gcf, 'fixed_images_unregistered_unordered.pdf');
 
-nsubsamples = 15;
+nsubsamples = 10;
 subsample_idx = round(linspace(2, nimages, nsubsamples));
-make_fig(17, 17/nsubsamples);
+make_fig(12, 12/nsubsamples);
 for i=1:nsubsamples
     make_subplot(nsubsamples, 1, 0.01, i);
     imshow(make_gray_nuclei(image_set(:,:,:,subsample_idx(i))))
@@ -106,7 +106,7 @@ end
 saveas(gcf, 'fixed_images_registered_ordered.pdf');
 
 [~, I2] = sort(embed_coord(subsample_idx,1));
-make_fig(17, 17/nsubsamples);
+make_fig(12, 12/nsubsamples);
 for i=1:nsubsamples
     make_subplot(nsubsamples, 1, 0.01, i);
     im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,subsample_idx(I2(i))));
@@ -115,12 +115,12 @@ end
 saveas(gcf, 'fixed_images_registered_ordered_subsampled.pdf');
 
 %%
-nstages = 15;
+nstages = 10;
 frame_points = linspace(1, nimages, nstages);
 window_eps = 3^2;
 window_tol = 0.01;
 
-make_fig(17, 17/nstages);
+make_fig(12, 12/nstages);
 for i=1:nstages
     
     window_weights = exp(-(frame_points(i)-(1:nimages)).^2/window_eps);
@@ -137,6 +137,35 @@ for i=1:nstages
     
 end
 saveas(gcf, 'fixed_images_average_trajectory.pdf');
+
+%%
+
+I_manual = [8 48 94    81 65  118  55    14 27   67    62    82    16 53 109     5      115        45        21       104        36 ...
+    33    40  91 100   26 15    51    85    97  111  28    32    61   101   105       108   112    86    23    72    93   119 ...
+    54    73     3    39    58    71    75    60       10    49    46    41    22    12    38    43    56    66    68    87    17    13 ...
+    117   113    83    90    76    34   103   107    88    98    30    25    57    70    29    19    31    89    80 ...
+   106    20    50    99     2        77    44    78    18       110  95    69     1    84   120     9    47 ...
+     4    42    96    74    92    37   116       59     7   114    24 6 35   79    52    64   102    11    63];
+
+make_fig(17, dim1*(17/dim2));
+for i=1:nimages
+    make_subplot(dim2, dim1, 0.01, i);
+    im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,I_manual(i)));
+    imshow(imrotate(im_tmp, rot_angle, 'crop'))
+    title(sprintf('%d', I_manual(i)))
+end
+
+r1(I_manual) = 1:nimages;
+r2(I) = 1:nimages;
+make_fig(4.5,4.5);
+plot(r1, r2,'.')
+xlabel('manual rank')
+ylabel('algorithm rank')
+set(gca, 'xtick', [0 50 100])
+set(gca, 'ytick', [0 50 100])
+axis([0 130 0 130])
+axis square
+saveas(gcf, 'rank_corr_fixed_images.pdf');
 
 return
 %%

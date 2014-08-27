@@ -9,7 +9,7 @@ dt = 0.5;
 
 nmovies = 6;
 
-nimages = 42;
+nimages = 40;
 idx_end = [56 60 47 44 46 42];
 idx_start = idx_end - nimages + 1;
 
@@ -43,12 +43,11 @@ end
 %%
 figure;
 for i=1:nmovies
-    for j=1:nimages/3
-        subplot(nmovies, nimages/3, (i-1)*nimages/3+j)
-        imshow(image_set(:, :, 3*j, i))
+    for j=1:nimages/4
+        subplot(nmovies, nimages/4, (i-1)*nimages/4+j)
+        imshow(image_set(:, :, 4*j, i))
     end
 end
-
 
 
 %%
@@ -79,7 +78,8 @@ for j=1:nsubsamples
     
     %
     
-    [R, W] = compute_pairwise_alignments(image_set_subsampled, nrot, nshifts, shift_max);
+    display_waitbar = false;
+    [R, W] = compute_pairwise_alignments(image_set_subsampled, nrot, nshifts, shift_max, display_waitbar);
     dim = size(R, 1) / nimages;
     
     %
@@ -120,6 +120,10 @@ for j=1:nsubsamples
     rank_corr(j) = corr(compute_ranks(time_subsampled), compute_ranks(embed_coord(:,1)));
     
 end
+
+figure;
+hist(rank_corr, 20)
+title(sprintf('median rank corr = %2.2f', median(rank_corr)))
 
 
 

@@ -1,4 +1,8 @@
-function [R, W] = compute_pairwise_alignments(images, nrot, nshifts, shift_max)
+function [R, W] = compute_pairwise_alignments(images, nrot, nshifts, shift_max, display_waitbar)
+
+if nargin < 5
+    display_waitbar = true;
+end
 
 m = size(images, ndims(images));
 npixels = size(images, 1);
@@ -28,13 +32,19 @@ W = inf(m);
 % reference image
 RI = imref2d([npixels npixels],[-0.5 0.5],[-0.5 0.5]);
 
-h_waitbar = waitbar(0,'Computing pairwise alignments...');
+if display_waitbar
+    h_waitbar = waitbar(0,'Computing pairwise alignments...');
+end
 for i=1:nrot
 %     waitbar(i/nrot, h_waitbar);
     theta = theta_vec(i);
     for j=1:nshifts
         for k=1:nshifts
-            waitbar(((i-1)*nshifts^2+(j-1)*nshifts+k)/(nrot*nshifts^2), h_waitbar);
+            
+            if display_waitbar
+                waitbar(((i-1)*nshifts^2+(j-1)*nshifts+k)/(nrot*nshifts^2), h_waitbar);
+            end
+            
             A = affine2d([cosd(theta) -sind(theta) 0; sind(theta) cosd(theta) 0; shifts(j) shifts(k) 1]);
             images_transformed = imwarp(images, RI, A, 'outputview', RI);
             dist_tmp = pdist2(reshape(double(images), [], m)', reshape(double(images_transformed), [], m)');
@@ -64,7 +74,9 @@ end
 W = 0.5*(W + W');
 R = 0.5*(R + R');
 
-close(h_waitbar);
+if display_waitbar
+    close(h_waitbar);
+end
 
 function R = calc_rot_matrix_3d(dtheta, dx, dy, angle_proj)
 

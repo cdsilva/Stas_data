@@ -9,8 +9,9 @@ dt = 0.5;
 
 nmovies = 6;
 
+nimages = 40;
 idx_end = [56 60 47 44 46 42];
-idx_start = idx_end - 41;
+idx_start = idx_end - nimages + 1;
 
 nrot = 36;
 nshifts = 0;
@@ -27,7 +28,11 @@ theta_err = zeros(nmovies, 1);
 rank_corr = zeros(nmovies, 1);
 
 %%
-for k=1:nmovies
+movies_to_use = [2 1 3 5 6];
+
+for k1 = 1:length(movies_to_use)
+    k = movies_to_use(k1);
+    
     load(sprintf('movie%d.mat', k));
     idx = idx_start(k):idx_end(k);
     
@@ -75,21 +80,22 @@ for k=1:nmovies
         R_tmp = R_opt(dim*(i-1)+1:dim*i, :);
         theta_opt(i) = atan2d(R_tmp(2,1), R_tmp(1,1));
     end
-    fprintf('movie %d, average error = %2.2f \n', k, std(mod(theta - theta_opt, 360)))
-    theta_err(k) =  std(mod(theta - theta_opt, 360));
+    %     fprintf('movie %d, average error = %2.2f \n', k, std(mod(theta - theta_opt, 360)))
+    theta_err(k) =  min(std(mod(theta - theta_opt, 360)),std(mod(theta - theta_opt+180, 360)));
     
     %
     if corr(time, embed_coord(:,1)) < 0
         embed_coord(:,1) = -embed_coord(:,1);
     end
     
-    fprintf('movie %d, rank corr = %2.4f \n', k, corr(compute_ranks(time), compute_ranks(embed_coord(:,1))))
+    %     fprintf('movie %d, rank corr = %2.4f \n', k, corr(compute_ranks(time), compute_ranks(embed_coord(:,1))))
     rank_corr(k) = corr(compute_ranks(time), compute_ranks(embed_coord(:,1)));
     
     if k == k_print_fig
+        
         [~, max_idx] = max(mod(theta, 360));
         make_fig(4.3,4);
-        plot(mod(theta, 360), mod(theta_opt-theta_opt(max_idx)-1, 360)+1, '.')
+        plot(mod(theta, 360), mod(theta_opt-theta_opt(max_idx)-10, 360)+10, '.')
         xlabel('true angle')
         ylabel('recovered angle')
         set(gca, 'xtick', [0 180 360]);
@@ -112,7 +118,7 @@ for k=1:nmovies
         nprint_images = 10;
         subplot_dim1 = nprint_images;
         subplot_dim2 = 1;
-        plot_idx = round(linspace(5, nimages, nprint_images));
+        plot_idx = round(linspace(3, nimages, nprint_images));
         
         make_fig(17, 17/nprint_images);
         for j=1:nprint_images
@@ -121,17 +127,24 @@ for k=1:nmovies
         end
         saveas(gcf, 'movie_unregistered_unordered.pdf');
         
+        
         make_fig(17, 17/nprint_images);
         [~, I] = sort(embed_coord(plot_idx, 1));
         for j=1:nprint_images
-            im_tmp = imrotate(image_set(:, :, plot_idx(I(j))), -theta_opt(plot_idx(I(j)))+88, 'crop');
+            im_tmp = imrotate(image_set(:, :, plot_idx(I(j))), -theta_opt(plot_idx(I(j)))-75, 'crop');
             make_subplot(subplot_dim1, subplot_dim2, 0.01, j);
             imshow(im_tmp);
             text(npixels/2, npixels/2, sprintf('%2.1f min', time(plot_idx(I(j)))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
         end
         saveas(gcf, 'movie_registered_ordered.pdf');
+        
     end
+    
+    fprintf('%d & %2.2f$^{\\circ}$ & %1.4f \\\\ \n', k1, theta_err(k), rank_corr(k))
+    
 end
+
+return
 
 % make_fig(5.5, 5.5);
 % bar(theta_err([2 1 3 5 6]));
@@ -203,7 +216,7 @@ rank_corr = zeros(length(sample_vec), nbootstrap_samples);
 for j = 1:nbootstrap_points
     nimages = sample_vec(j);
     
-%     j
+    %     j
     
     for j2 = 1:nbootstrap_samples
         
@@ -252,7 +265,7 @@ end
 % ylabel('average error in recovered angle')
 
 make_fig(4,4);
-plot(sample_vec, mean(rank_corr, 2), '.')
+plot(sample_vec, median(rank_corr, 2), '.')
 xlabel('number of images')
 ylabel('rank correlation')
 axis([0 50 0.5 1.0])
