@@ -33,7 +33,7 @@ for k=1:nmovies
     images = images(:, :, :, idx);
     
     for i=1:nimages
-        image_set(:, :, i, k) = imrotate(image_fn_shuffledmovie(images(:, :, channel, i), npixels), 360*rand, 'crop');
+        image_set(:, :, i, k) = imrotate(image_fn(images(:, :, channel, i), npixels), 360*rand, 'crop');
     end
     
     time_set(:,k) = dt * (time(idx) - time(idx(1)));
@@ -63,12 +63,12 @@ for j=1:nsubsamples
     % rng(333);
     rng(j);
     movies_to_use = [1 2 3 5 6];
-    idx = movies_to_use(randi(length(movies_to_use), nimages, 1));
-    image_set_subsampled = zeros(npixels, npixels, nimages, 'uint8');
-    time_subsampled = zeros(nimages, 1);
-    for i=1:nimages
-        image_set_subsampled(:, :, i) = image_set(:, :, i, idx(i));
-        time_subsampled(i) = i;
+    nimages2 = nimages;
+    idx = movies_to_use(randi(length(movies_to_use), nimages2, 1));
+    image_set_subsampled = zeros(npixels, npixels, nimages2, 'uint8');
+    time_subsampled = (1:nimages2)';
+    for i=1:nimages2
+        image_set_subsampled(:, :, i) = image_set(:, :, time_subsampled(i), idx(i));
     end
     
     % figure;
