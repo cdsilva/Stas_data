@@ -63,7 +63,6 @@ for j=1:nsubsamples
     
     j
     
-    % rng(333);
     rng(j);
     idx = randi(nmovies, nimages, 1);
     image_set_subsampled = zeros(npixels, npixels, nimages, 'uint8');
@@ -71,14 +70,6 @@ for j=1:nsubsamples
     for i=1:nimages
         image_set_subsampled(:, :, i) = image_set(:, :, i, idx(i));
     end
-    
-    % figure;
-    % for i=1:nimages
-    %     subplot(6, 7,i)
-    %     imshow(image_set_subsampled(:,:,i))
-    % end
-    
-    %
     
     display_waitbar = false;
     [R, W] = compute_pairwise_alignments(image_set_subsampled, nrot, nshifts, shift_max, display_waitbar);
@@ -103,51 +94,36 @@ for j=1:nsubsamples
     end
     
     [~, I] = sort(embed_coord(:,1));
-    % figure;
-    % for i=1:nimages
-    %     subplot(6, 7,i)
-    %     imshow(image_set_aligned(:,:,I(i)))
-    % end
-    
-    % make_fig(4,4);
-    % plot(compute_ranks(time_subsampled), compute_ranks(embed_coord(:,1)),'.')
-    % title(sprintf('corr = %2.2f', corr(compute_ranks(time_subsampled), compute_ranks(embed_coord(:,1)))))
-    % xlabel('true rank')
-    % ylabel('recovered rank')
-    % set(gca, 'xtick', [0 20 40])
-    % set(gca, 'ytick', [0 20 40])
-    % axis([0 50 0 50])
-    % axis square
     
     rank_corr(j) = corr(compute_ranks(time_subsampled), compute_ranks(embed_coord(:,1)));
     
 %     if rank_corr(j) > 0.80 && rank_corr(j) < 0.81
-%         make_fig(4,4);
-%         plot(compute_ranks(time_subsampled), compute_ranks(embed_coord(:,1)),'.')
-%         xlabel('true rank')
-%         ylabel('recovered rank')
-%         set(gca, 'xtick', [0 20 40])
-%         set(gca, 'ytick', [0 20 40])
-%         axis([0 50 0 50])
-%         axis square
-%         saveas(gcf, 'shuffled_movie_rank_corr.pdf');
-%         
-%         nprint_images = 10;
-%         
-%         make_fig(17, 17/nprint_images);
-%         [~, I] = sort(embed_coord(:, 1));
-%         for i1=1:nprint_images
-%             i = I(round(nimages*i1/nprint_images));
-%             im_tmp = image_set_aligned(:,:,i);
-%             make_subplot(nprint_images, 1, 0.01, i1);
-%             imshow(imrotate(im_tmp, 140, 'crop'));
-%             text(npixels/2, npixels/2, sprintf('%2.1f min \n movie=%d', time_subsampled(i), idx(i)),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
-%             
-%         end
-%         saveas(gcf, 'shuffled_movie_registered_ordered.pdf');
-%         
-%         return
-%     end
+    if j == 29
+        make_fig(4,4);
+        plot(compute_ranks(time_subsampled), compute_ranks(embed_coord(:,1)),'.')
+        xlabel('true rank')
+        ylabel('recovered rank')
+        set(gca, 'xtick', [0 20 40])
+        set(gca, 'ytick', [0 20 40])
+        axis([0 50 0 50])
+        axis square
+        saveas(gcf, 'shuffled_movie_rank_corr.pdf');
+        
+        nprint_images = 10;
+        
+        make_fig(17, 17/nprint_images);
+        [~, I] = sort(embed_coord(:, 1));
+        for i1=1:nprint_images
+            i = I(round(nimages*i1/nprint_images));
+            im_tmp = image_set_aligned(:,:,i);
+            make_subplot(nprint_images, 1, 0.01, i1);
+            imshow(imrotate(im_tmp, 95, 'crop'));
+            text(npixels/2, npixels/2, sprintf('movie %d \n %2.1f min', idx(i), time_subsampled(i)),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
+            
+        end
+        saveas(gcf, 'shuffled_movie_registered_ordered.pdf');
+        
+    end
 end
 
 figure;

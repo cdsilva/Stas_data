@@ -38,12 +38,9 @@ end
 
 
 %%
-% ind = setdiff(1:nimages, [1 2 3 5 12 17 19 21 29 35 57 64 71 74 76 92 93 105 54 131 32 102 101 100]);
-%
-% image_set = image_set(:, :, :, ind);
-% nimages = length(ind);
 
-ind = setdiff(1:nimages, [32 91 28 77 46 116 5 17 1 2 3 29]);
+images_to_remove = [32 91 28 77 46 116 5 17 1 2 3 29];
+ind = setdiff(1:nimages, images_to_remove);
 
 image_set = image_set(:, :, :, ind);
 nimages = length(ind);
@@ -95,6 +92,50 @@ end
 
 %%
 
+% I_manual = [17 29 92 64 5 76 71 35 12 19 74 57 93 21 105  121 54 108 130 2 ...
+% 1 62 3 44 127 20 36 9 111 49 96 120 41 26 131 112 60 123 30 70 ...
+% 102 63 34 117 124 115 104 82 48 97 83 40 81 69 85 67 7 14 58 50 ...
+% 55 27 65 22 129 75 78 18 52 119 16 94 98 125 47 109 101 86 37 114 ...
+% 33 42 110 79 59 38 66 99 24 4 6 39 13 87 90 88 8 106 103 132 ...
+% 56 95 118 80 23 100 68 45 107 126 31 25 128 51 84 53 11 43 10 73 ...
+% 77 32 116 46 122 113 61 89 91 15 72 28];
+
+I_manual = [17 5 29 64 92 35 12 71 57 76 19 74 93 21 105 54 121 130 108 127 ...
+2 3 9 44 62 1 26 20 49 36 111 131 120 123 112 117 96 60 70 30 ...
+41 124 115 102 34 104 63 48 97 82 81 83 40 69 85 67 58 7 14 50 ...
+55 27 65 129 18 22 75 52 78 16 119 47 98 94 125 101 86 114 33 37 ...
+109 42 100 110 80 99 38 59 66 24 6 4 39 90 56 8 13 106 88 87 ...
+132 95 103 118 68 107 31 25 23 79 45 126 53 11 128 51 84 10 43 73 ...
+77 32 116 46 122 15 113 61 89 91 72 28];
+
+for i=sort(images_to_remove, 'descend');
+    I_manual(I_manual == i) = [];
+    idx = find(I_manual > i);
+    I_manual(idx) = I_manual(idx) - 1;
+end
+
+make_fig(17, dim1*(17/dim2));
+for i=1:nimages
+    make_subplot(dim2, dim1, 0.01, i);
+    im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,I_manual(i)));
+    imshow(imrotate(im_tmp, rot_angle, 'crop'))
+    title(sprintf('%d', I_manual(i)))
+end
+
+rank_manual(I_manual) = 1:nimages;
+rank_algorithm(I) = 1:nimages;
+make_fig(4.5,4.5);
+plot(rank_manual, rank_algorithm,'.')
+xlabel('expert rank')
+ylabel('algorithm rank')
+set(gca, 'xtick', [0 50 100])
+set(gca, 'ytick', [0 50 100])
+axis([0 130 0 130])
+axis square
+saveas(gcf, 'rank_corr_fixed_images.pdf');
+
+%%
+
 rot_angle = 85;
 
 make_fig(17, dim1*(17/dim2));
@@ -111,6 +152,7 @@ for i=1:nsubsamples
     make_subplot(nsubsamples, 1, 0.01, i);
     im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,subsample_idx(I2(i))));
     imshow(imrotate(im_tmp, rot_angle, 'crop'))
+    text(npixels/2, npixels/2, sprintf('%d', rank_manual(subsample_idx(I2(i)))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
 end
 saveas(gcf, 'fixed_images_registered_ordered_subsampled.pdf');
 
@@ -138,34 +180,7 @@ for i=1:nstages
 end
 saveas(gcf, 'fixed_images_average_trajectory.pdf');
 
-%%
 
-I_manual = [8 48 94    81 65  118  55    14 27   67    62    82    16 53 109     5      115        45        21       104        36 ...
-    33    40  91 100   26 15    51    85    97  111  28    32    61   101   105       108   112    86    23    72    93   119 ...
-    54    73     3    39    58    71    75    60       10    49    46    41    22    12    38    43    56    66    68    87    17    13 ...
-    117   113    83    90    76    34   103   107    88    98    30    25    57    70    29    19    31    89    80 ...
-   106    20    50    99     2        77    44    78    18       110  95    69     1    84   120     9    47 ...
-     4    42    96    74    92    37   116       59     7   114    24 6 35   79    52    64   102    11    63];
-
-make_fig(17, dim1*(17/dim2));
-for i=1:nimages
-    make_subplot(dim2, dim1, 0.01, i);
-    im_tmp = make_gray_nuclei(image_set_aligned(:,:,:,I_manual(i)));
-    imshow(imrotate(im_tmp, rot_angle, 'crop'))
-    title(sprintf('%d', I_manual(i)))
-end
-
-r1(I_manual) = 1:nimages;
-r2(I) = 1:nimages;
-make_fig(4.5,4.5);
-plot(r1, r2,'.')
-xlabel('manual rank')
-ylabel('algorithm rank')
-set(gca, 'xtick', [0 50 100])
-set(gca, 'ytick', [0 50 100])
-axis([0 130 0 130])
-axis square
-saveas(gcf, 'rank_corr_fixed_images.pdf');
 
 return
 %%
