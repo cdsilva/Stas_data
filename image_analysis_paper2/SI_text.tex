@@ -125,7 +125,7 @@ Successive rotations correspond to multiplication of the corresponding rotation 
 %
 Due to the orthogonality of rotation matrices, $R(-\alpha) = R(\alpha)^T$.
 
-Let $d$ denote the dimension of the rotation matrices we are considering (for our example of planar rotations, $R(\theta_{ij}) \in \mathbb{R}^{2 \times 2}$ and $d=2$).
+Let $d$ denote the dimension of the rotation matrices we are considering (for planar rotations, $R(\theta_{ij}) \in \mathbb{R}^{2 \times 2}$ and $d=2$).
 %
 We construct the matrix $H \in \mathbb{R}^{md \times md}$, where $H$ is an $m \times m$ matrix of $d \times d$ blocks, with the $i,j^{th}$ block of $H$, $H_{ij}$, defined as
 \begin{equation} \label{eq:H_to_R}
@@ -324,13 +324,13 @@ Taking $\epsilon$ to be on the order of the median of the pairwise distances oft
 \item Compute the matrix $S$ in \eqref{eq:vdm_S}. 
 $A_{ij}$ is computed from \eqref{eq:dmaps_W} and \eqref{eq:dmaps_A}, using the pairwise distances from step 1, and $H_{ij} = R(\theta_{ij})$ are computed in step 2.
 %
-\item Compute the eigenvalues  $\lambda_1, \lambda_2, \dots, \lambda_{3m}$ and eigenvectors $\phi_1, \phi_2, \dots, \phi_{3m}$ of $S$, ordered such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{3m}|$.
+\item Compute the eigenvalues  $\lambda_1, \lambda_2, \dots, \lambda_{2m}$ and eigenvectors $\phi_1, \phi_2, \dots, \phi_{2m}$ of $S$, ordered such that $|\lambda_1| \ge |\lambda_2| \ge \dots \ge |\lambda_{2m}|$.
 %
-\item Estimate the optimal three-dimensional rotation for each image: stack the first three eigenvectors $\phi_1, \phi_2, \phi_3$ into a $3m \times 3$ matrix, and then divide this matrix into $m$ $3 \times 3$ blocks, $\hat{R}_1, \dots, \hat{R}_m$. Compute the estimated rotations for each of these $m$ blocks as in \eqref{eq:R_est}. If most of the rotations are improper ($det(R) = -1$), flip the sign of one of the eigenvectors.
+\item Estimate the optimal three-dimensional rotation for each image: stack the first two eigenvectors $\phi_1, \phi_2$ into a $2m \times 2$ matrix, and then divide this matrix into $m$ $2 \times 2$ blocks, $\hat{R}_1, \dots, \hat{R}_m$. Compute the estimated rotations for each of these $m$ blocks as in \eqref{eq:R_est}. If most of the rotations are improper ($det(R) = -1$), flip the sign of one of the eigenvectors.
 \item Multiply each estimated rotation $R_{i, est}$ by $R_{1, est}^T$ (so that $R_{1, est}$ will become the identity matrix).
 \item For each image $i$, compute the optimal rotation to align the image by converting $R_{i, est}^T$ (note the transpose) to the corresponding angle using \eqref{eq:R_theta}. 
 \item Compute the first embedding coordinate $\psi_{k,1}(i)$ as described in \eqref{eq:vdm_coord} and \eqref{eq:first_embed_vdm}, where $3 \le k \le 4$.
-\item To order the images, sort them by the values of this embedding coordinate $\psi_{k,1}(i)$.
+\item To order the images, sort them by the values of this embedding coordinate $\psi_{k,l}(i)$.
 \end{enumerate} 
 \end{minipage}
 }
@@ -377,15 +377,14 @@ The rotation matrices returned from vector diffusion maps can be used to calcula
 
 \subsection{The eigenvalue spectrum}
 
-We can use the distribution of the eigenvalues from (vector) diffusion maps to help deduce the dimensionality of the data.
+We can use the eigenvalues from (vector) diffusion maps to help deduce the dimensionality of the data.
 %
 In diffusion maps, the largest eigenvalue will always be 1 and correspond to the trivial (constant) eigenvector, and $|\lambda_k|$ gives a measure of the importance of coordinate $\phi_k$. 
 %
-Therefore, we expect to see a ``spectral gap'' in the eigenvalues which separates the meaningful coordinates from those corresponding to noise.
+We therefore expect to see a ``spectral gap'' in the eigenvalues which separates the meaningful coordinates from those corresponding to noise.
 %
-However, some embedding coordinates which appear meaningful according to the eigenvalues may be harmonics of previous coordinates \cite{ferguson2010systematic}.
-%
-Therefore, one must visually check for correlations among potential embedding coordinates before deducing the true dimensionality of the data. 
+However, some embedding coordinates which appear meaningful according to the eigenvalues may be harmonics of previous coordinates \cite{ferguson2010systematic}, 
+and one must visually check for correlations among potential embedding coordinates before deducing the true dimensionality of the data. 
 
 In vector diffusion maps, the importance of each coordinate is measured by the product of the corresponding eigenvalues (i.e., the importance of $\psi_{k,l}$ is given by $| \lambda_k \lambda_l |$). 
 %
@@ -417,7 +416,7 @@ See \cite{kemelmacher2011exploring} for a more detailed discussion.
 
 \begin{figure}
 \includegraphics{figS1}
-\caption{(Left) A lateral view of a {\it Drosophila} embryo stained with DAPI (gray), dpERK (red), and Dorsal (green). The embryo is presented so that the anterior (A) side is to the left and the posterior (P) side is to the right. The arrow indicates the position(s) where the cross-section of an embryo is imaged. (Right) A dorsoventral view of the cross-section of the {\it Drosophila} embryo. The dorsal (D) side is up and the ventral (V) side is down. Images were collected at the focal plane $\sim 18\%$ from the posterior pole of an embryo (right arrow in the left image). }
+\caption{(Left) A lateral view of a {\it Drosophila} embryo stained with DAPI (gray), dpERK (red), and Twi (green). The embryo is presented so that the anterior (A) side is to the left and the posterior (P) side is to the right. The arrow indicates the position where the cross-section of an embryo is imaged. (Right) A dorsoventral view of the cross-section of the {\it Drosophila} embryo. The dorsal (D) side is up and the ventral (V) side is down. Images were collected at the focal plane $\sim 18\%$ from the posterior pole of an embryo (arrow in the left image). }
 \label{fig:ap_dv}
 \end{figure}
 
@@ -451,7 +450,7 @@ See \cite{kemelmacher2011exploring} for a more detailed discussion.
 
 \begin{figure*}	
 \includegraphics{figS6}
-\caption{Fixed embryo imaging data set. {\it (A)} Fixed images used for the results in \fig~4. The images have been preprocessed as described above. {\it (B)} Data set from A after registration and ordering. The expert rank for each image is indicated. }
+\caption{Fixed embryo imaging data set. {\it (A)} Fixed images used for the results in \fig~4. The images have been preprocessed as described above. {\it (B)} Data set from A after registration and ordering. The rank provided by a trained embryologist for each image is indicated. }
 \end{figure*}
 
 
