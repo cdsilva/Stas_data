@@ -42,22 +42,22 @@ The same laser settings are maintained within each experiment.
 %
 The intensity of each channel is integer-valued, and ranges from $0$ (no signal) to $255$ (saturated). 
 %
-The Canny method is used to detect the edges of the nuclear signal in each image (using the \texttt{edge} function in MATLAB\textsuperscript{\textregistered}), and images are cropped to these edges to remove any size effects.
+The Canny method \cite{canny1986computational} is used to detect the edges of the nuclear signal in each image (using the \texttt{edge} function in MATLAB\textsuperscript{\textregistered}), and images are cropped to these edges to remove any size effects.
 %
-A constant $10$-pixel border is then added to each image. 
+A constant $10$-pixel-wide border is then added to each image. 
 %
 Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of the nuclear signal.
 %
 The nuclear signal is blurred using a disc filter with a $5$~pixel radius (using the \texttt{imfilter} function).
 %
-For the multichannel images, the nuclear signal is scaled by half (after normalization and blurring) relative to the other signals.
+For the multichannel images, the nuclear signal is scaled by half (after normalization and blurring) relative to the other signals, so that the total nuclear signal across the entire image is of a comparable magnitude to the other signals. 
 
 
 \subsection{Algorithms}
 
-We will demonstrate the algorithms for registration and temporal ordering using a synthetic data set.
+We demonstrate the algorithms for registration and temporal ordering using a synthetic data set.
 %
-The relatively simple dynamics of this data set will allow us to easily visualize and illustrate the main features of the different algorithms.
+The relatively simple dynamics of this data set allows us to easily visualize and illustrate the main features of the different algorithms.
 %
 Motivated by the geometry of our images, we construct a sequence of concentration profiles defined on a ring, and rotate each ring randomly around its center; an example is shown in \fig~\ref{subfig:1d_example}.
 %
@@ -435,7 +435,7 @@ See \cite{kemelmacher2011exploring} for a more detailed discussion.
 
 \begin{figure*}
 \includegraphics{figS3}
-\caption{Eigenvalue spectra. {\it (A)} Eigenvalue spectrum for the live imaging data set presented in \fig~3. Note that there is a gap after the third coordinate. {\it (B), (C)} Second and third embedding coordinates, respectively, versus the first embedding coordinate for the live imaging data set presented in \fig~3. Note that coordinates 2 and 3 are harmonics/functions of coordinate 1, and are therefore not informative about structure in the data set.  We can conclude that the data set is effectively one-dimensional. {\it (D)} Eigenvalue spectrum for the live imaging data set presented in \fig~4. Note that there is a gap after the first coordinate; we can conclude that the data set is effectively one-dimensional. }
+\caption{Eigenvalue spectra. {\it (A)} Eigenvalue spectrum for the live imaging data set presented in \fig~3. Note that there is a gap after the third eigenvalue. {\it (B), (C)} Second and third embedding coordinates, respectively, versus the first embedding coordinate for the live imaging data set presented in \fig~3. Note that coordinates 2 and 3 are higher harmonics (and thus simple functions) of coordinate 1, and are therefore not informative about structure in the data set.  We can conclude that the data set is effectively one-dimensional. {\it (D)} Eigenvalue spectrum for the live imaging data set presented in \fig~4. Note that there is a gap after the first eigenvalue; we can conclude that the data set is effectively one-dimensional. }
 \end{figure*}
 
 \begin{figure*}
