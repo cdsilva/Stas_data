@@ -15,7 +15,7 @@ end
 rot_angle = 0;
 data = (create_PCA_data(image_normalize(image, rot_angle)) - mean_train_data)*V_train;
 
-[ypred,yci] = predict(mdl,data, 'prediction','observation');
+[ypred,yci] = predict(mdl,data, 'prediction','observation', 'alpha', 1-0.682);
 
 t = ypred;
 tmin = yci(1);
