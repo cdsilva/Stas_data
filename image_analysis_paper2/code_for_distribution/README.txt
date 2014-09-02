@@ -24,3 +24,15 @@ to compute the optimal rotations (R_opt) and the embedding coordinates (embed_co
 5. Order the registerd images by sorting them by the value of the first embedding coordinate, embed_coord(:,1).
 
 6. If desired, compute an average trajectory by calling the "compute_average_trajectory" function, using the set of registered and ordered images as input. 
+
+A few notes: 
+1. The images are registered up to a constant rotation (and translation, if relevant).
+After registration, the entire set can be rotated by a constant angle if desired. 
+
+2. The sign of the embedding coordinates is not meaningful and can be switched.
+This corresponds to reversing the order of the images. 
+
+3. Higher image resolution will make the code slower, 
+and so the image resolution should be chosen as low as possible, while still retaining the important image features.
+
+4. Including translations also increases the computational cost. 
