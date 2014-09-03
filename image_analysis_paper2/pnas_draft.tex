@@ -64,8 +64,6 @@
 
 \usepackage{amssymb,amsfonts,amsmath}
 
-\graphicspath{ {paper_figures2/} }
-
 %\usepackage{tikz}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,6 +77,8 @@
 
 \newcommand{\SI}[0]{{\it SI Materials and Methods}}
 \newcommand{\fig}[0]{Fig.}
+
+\font\xfigtextfontit=\frutigeroblique at 7pt
 
 
 \makeatletter
@@ -160,7 +160,7 @@ When the number of images is small and the differences between them are easily r
 Here we show this can be automated and combined in a single
 step using recent advances in data mining. 
 %
-To illustrate this approach, we order and register data from imaging studies of {\it  Drosophila} embryogenesis. }
+To illustrate this approach, we order and register data from imaging studies of {\xfigtextfontit  Drosophila} embryogenesis. }
 
 %% The \maketitle command is necessary to build the title page.
 \maketitle
@@ -244,14 +244,14 @@ In general, the landmarks needed for registration, as well as the attributes whi
 Additional challenges arise from embryo-to-embryo variability, sample size, and measurement noise.
 
 
-\begin{figure}[t]
-\includegraphics{fig1}
-\caption{Caricature illustrating the tasks of image registration and temporal ordering. {\xfigtextfontit (A)} Images of ``samples'', each in a different orientation and a different stage of development. {\xfigtextfontit (B)} Registered and ordered samples. For this caricature, the registration and ordering is straightforward because the data set is small, the landmarks are visually apparent, and the developmental changes are easy to recognize.}
-%\label{fig:fish}
-\customlabel{fig:fish}{1}
-\customlabel{subfig:fish_unordered}{\ref{fig:fish}{\it A}}
-\customlabel{subfig:fish_ordered}{\ref{fig:fish}{\it B}}
-\end{figure}
+%\begin{figure}[t]
+%\includegraphics{fig1}
+%\caption{Caricature illustrating the tasks of image registration and temporal ordering. {\xfigtextfontit (A)} Images of ``samples'', each in a different orientation and a different stage of development. {\xfigtextfontit (B)} Registered and ordered samples. For this caricature, the registration and ordering is straightforward because the data set is small, the landmarks are visually apparent, and the developmental changes are easy to recognize.}
+%%\label{fig:fish}
+%\customlabel{fig:fish}{1}
+%\customlabel{subfig:fish_unordered}{\ref{fig:fish}{\it A}}
+%\customlabel{subfig:fish_ordered}{\ref{fig:fish}{\it B}}
+%\end{figure}
 
 
 We present a robust algorithmic approach to registration and temporal ordering.
@@ -323,29 +323,29 @@ Instead, we will use diffusion maps to automatically uncover a parameterization 
 Diffusion maps generalizes directly from one-dimensional nonlinear curves to higher-dimensional manifolds.
 
 
-\begin{figure}[t]
-\includegraphics{fig2}
-\caption{Schematic illustrating angular synchronization and diffusion maps. {\xfigtextfontit (A)} Set of vectors, each in a different orientation. The pairwise alignment angles are indicated. {\xfigtextfontit (B)} The vectors from {\xfigtextfontit A}, each rotated about their midpoint so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in {\xfigtextfontit A}: the differences between a pair of angles in {\xfigtextfontit B} is the same as the pairwise angle in {\xfigtextfontit A}. {\xfigtextfontit (C)} Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see {\xfigtextfontit \SI}), so that close data points are connected by darker (``stronger'') edges. {\xfigtextfontit (D)} The data in {\xfigtextfontit C}, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure. The color intensity is monotonic with the perceived curve arclength, thus parameterizing the curve.}
-%\label{fig:schematics}
-\customlabel{fig:schematics}{2}
-\customlabel{subfig:synch1}{\ref{fig:schematics}{\it A}}
-\customlabel{subfig:synch2}{\ref{fig:schematics}{\it B}}
-\customlabel{subfig:dmaps1}{\ref{fig:schematics}{\it C}}
-\customlabel{subfig:dmaps2}{\ref{fig:schematics}{\it D}}
-\end{figure}
+%\begin{figure}[t]
+%\includegraphics{fig2}
+%\caption{Schematic illustrating angular synchronization and diffusion maps. {\xfigtextfontit (A)} Set of vectors, each in a different orientation. The pairwise alignment angles are indicated. {\xfigtextfontit (B)} The vectors from {\xfigtextfontit A}, each rotated about their midpoint so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in {\xfigtextfontit A}: the differences between a pair of angles in {\xfigtextfontit B} is the same as the pairwise angle in {\xfigtextfontit A}. {\xfigtextfontit (C)} Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see {\xfigtextfontit \SI}), so that close data points are connected by darker (``stronger'') edges. {\xfigtextfontit (D)} The data in {\xfigtextfontit C}, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure. The color intensity is monotonic with the perceived curve arclength, thus parameterizing the curve.}
+%%\label{fig:schematics}
+%\customlabel{fig:schematics}{2}
+%\customlabel{subfig:synch1}{\ref{fig:schematics}{\it A}}
+%\customlabel{subfig:synch2}{\ref{fig:schematics}{\it B}}
+%\customlabel{subfig:dmaps1}{\ref{fig:schematics}{\it C}}
+%\customlabel{subfig:dmaps2}{\ref{fig:schematics}{\it D}}
+%\end{figure}
 
 
-\begin{figure*}[t]
-\includegraphics{fig3}
-\caption{Method validation using live imaging of {\xfigtextfontit Drosophila} embryos.{\xfigtextfontit (A)} Selected images from a live imaging study of a {\xfigtextfontit Drosophilla} embryo during gastrulation. Each frame is in an arbitrary rotational orientation, and the order of the frames has been shuffled. {\xfigtextfontit (B)} Images from {\xfigtextfontit A} after registration and ordering using vector diffusion maps. The dorsal side of each embryo now appears at the top of each image, and the ventral side appears at the bottom. {\xfigtextfontit (C)} The correlation between the recovered rotation angle (using vector diffusion maps) and the true rotation angle {\xfigtextfontit (D)} The correlation between the recovered rank (using vector diffusion maps) and the true rank. {\xfigtextfontit (E)} The average error in the recovered angle and the rank correlation coefficient for $5$ different live imaging studies. {\xfigtextfontit (F)} The median rank correlation coefficient (over $200$ samples) as a function of the number of images in the data set. }
-\customlabel{fig:movie}{3}
-\customlabel{subfig:movie_unregistered_unordered}{\ref{fig:movie}{\it A}}
-\customlabel{subfig:movie_registered_ordered}{\ref{fig:movie}{\it B}}
-\customlabel{subfig:movie_angle_corr}{\ref{fig:movie}{\it C}}
-\customlabel{subfig:movie_rank_corr}{\ref{fig:movie}{\it D}}
-\customlabel{subfig:movie_error_table}{\ref{fig:movie}{\it E}}
-\customlabel{subfig:movie_bootstrap}{\ref{fig:movie}{\it F}}
-\end{figure*}
+%\begin{figure*}[t]
+%\includegraphics{fig3}
+%\caption{Method validation using live imaging of {\xfigtextfontit Drosophila} embryos.{\xfigtextfontit (A)} Selected images from a live imaging study of a {\xfigtextfontit Drosophilla} embryo during gastrulation. Each frame is in an arbitrary rotational orientation, and the order of the frames has been shuffled. {\xfigtextfontit (B)} Images from {\xfigtextfontit A} after registration and ordering using vector diffusion maps. The dorsal side of each embryo now appears at the top of each image, and the ventral side appears at the bottom. {\xfigtextfontit (C)} The correlation between the recovered rotation angle (using vector diffusion maps) and the true rotation angle {\xfigtextfontit (D)} The correlation between the recovered rank (using vector diffusion maps) and the true rank. {\xfigtextfontit (E)} The average error in the recovered angle and the rank correlation coefficient for $5$ different live imaging studies. {\xfigtextfontit (F)} The median rank correlation coefficient (over $200$ samples) as a function of the number of images in the data set. }
+%\customlabel{fig:movie}{3}
+%\customlabel{subfig:movie_unregistered_unordered}{\ref{fig:movie}{\it A}}
+%\customlabel{subfig:movie_registered_ordered}{\ref{fig:movie}{\it B}}
+%\customlabel{subfig:movie_angle_corr}{\ref{fig:movie}{\it C}}
+%\customlabel{subfig:movie_rank_corr}{\ref{fig:movie}{\it D}}
+%\customlabel{subfig:movie_error_table}{\ref{fig:movie}{\it E}}
+%\customlabel{subfig:movie_bootstrap}{\ref{fig:movie}{\it F}}
+%\end{figure*}
 
 
 \subsection{Method validation using live imaging}
@@ -432,15 +432,15 @@ Embryos were stained with the antibody that recognizes Twist (Twi, shown in gree
 %
 Another signal is provided by the phosphorylated form of the extracellular signal regulated kinase (dpERK, shown in red), an enzyme that, in this context, specifies a subset of neuronal cells \cite{Lim2013kinetics}.
 
-\begin{figure*}[t]
-\includegraphics{fig4}
-\caption{Analyzing images of fixed {\xfigtextfontit Drosophila} embryos. {\xfigtextfontit (A)} Images of {\xfigtextfontit Drosophila} embryos, stained for nuclei (gray), Twi (green), and dpERK (red). Each image is of a different embryo arrested at a different developmental time and in a different rotational orientation. {\xfigtextfontit (B)} Data from {\xfigtextfontit A}, registered and ordered using vector diffusion maps. The expert rank for each image is indicated. {\xfigtextfontit (C)} A representative ``developmental trajectory'' obtained from local averaging of the entire set of registered and ordered images (see \SI). {\xfigtextfontit (D)} Correlation between the image ranks calculated from the vector diffusion maps algorithm and the ranks obtained from ordering by an expert. The rank correlation coefficient is $0.97$. }
-\customlabel{fig:data2}{4}
-\customlabel{subfig:fixed_images_unregistered_unordered}{\ref{fig:data2}{\it A}}
-\customlabel{subfig:fixed_images_registered_ordered}{\ref{fig:data2}{\it B}}
-\customlabel{subfig:fixed_images_average_trajectory}{\ref{fig:data2}{\it C}}
-\customlabel{subfig:fixed_images_rank_corr}{\ref{fig:data2}{\it D}}
-\end{figure*}
+%\begin{figure*}[t]
+%\includegraphics{fig4}
+%\caption{Analyzing images of fixed {\xfigtextfontit Drosophila} embryos. {\xfigtextfontit (A)} Images of {\xfigtextfontit Drosophila} embryos, stained for nuclei (gray), Twi (green), and dpERK (red). Each image is of a different embryo arrested at a different developmental time and in a different rotational orientation. {\xfigtextfontit (B)} Data from {\xfigtextfontit A}, registered and ordered using vector diffusion maps. The expert rank for each image is indicated. {\xfigtextfontit (C)} A representative ``developmental trajectory'' obtained from local averaging of the entire set of registered and ordered images (see \SI). {\xfigtextfontit (D)} Correlation between the image ranks calculated from the vector diffusion maps algorithm and the ranks obtained from ordering by an expert. The rank correlation coefficient is $0.97$. }
+%\customlabel{fig:data2}{4}
+%\customlabel{subfig:fixed_images_unregistered_unordered}{\ref{fig:data2}{\it A}}
+%\customlabel{subfig:fixed_images_registered_ordered}{\ref{fig:data2}{\it B}}
+%\customlabel{subfig:fixed_images_average_trajectory}{\ref{fig:data2}{\it C}}
+%\customlabel{subfig:fixed_images_rank_corr}{\ref{fig:data2}{\it D}}
+%\end{figure*}
 
 \fig~\ref{subfig:fixed_images_registered_ordered} shows the selected images in \fig~\ref{subfig:fixed_images_unregistered_unordered}, now registered and ordered using vector diffusion maps \cite{singer2012vector}.
 %
@@ -639,10 +639,224 @@ I.G.K. was supported by the National Science Foundation (CS\&E program).
 %% Enter the largest bibliography number in the facing curly brackets
 %% following \begin{thebibliography}
 
-\bibliographystyle{pnas2}
-\bibliography{../../references/references,../image_analysis_paper/background_reading/references}
+%\bibliographystyle{pnas2}
+%\bibliography{../../references/references,../image_analysis_paper/background_reading/references}
+
+\begin{thebibliography}{10}
+
+\bibitem{jaeger2004dynamic}
+Jaeger J, Surkova S, Blagov M, Janssens H, Kosman D, \textit{et~al.} (2004)
+  Dynamic control of positional information in the early \textit{{D}rosophila}
+  embryo. \textit{Nature} 430(6997):368--371.
+
+\bibitem{peter2011gene}
+Peter I~S, Davidson E~H (2011) A gene regulatory network controlling the
+  embryonic specification of endoderm. \textit{Nature} 474(7353):635--639.
+
+\bibitem{fowlkes2008quantitative}
+Fowlkes C~C, Hendriks C~L~L, Ker{\"a}nen S~V, Weber G~H, R{\"u}bel O,
+  \textit{et~al.} (2008) A quantitative spatiotemporal atlas of gene expression
+  in the \textit{{D}rosophila} blastoderm. \textit{Cell} 133(2):364--374.
+
+\bibitem{ng2012large}
+Ng L~L, Sunkin S~M, Feng D, Lau C, Dang C, \textit{et~al.} (2012) Large-scale
+  neuroinformatics for in situ hybridization data in the mouse brain.
+  \textit{Int Rev Neurobiol} 104:159--182.
+
+\bibitem{richardson2014emage}
+Richardson L, Stevenson P, Venkataraman S, Yang Y, Burton N, \textit{et~al.}
+  (2014) Emage: Electronic mouse atlas of gene expression, \textit{Mouse
+  Molecular Embryology} (Springer), pp. 61--79.
+
+\bibitem{castro2009automatic}
+Castro C, Luengo-Oroz M, Desnoulez S, Duloquin L, Fernandez-de Manuel L,
+  \textit{et~al.} (2009) An automatic quantification and registration strategy
+  to create a gene expression atlas of zebrafish embryogenesis,
+  \textit{Conf Proc IEEE Eng Med Biol Soc}, pp. 1469--1472.
+
+\bibitem{zitova2003image}
+Zitova B, Flusser J (2003) Image registration methods: a survey. \textit{Image
+   Vis Comput} 21(11):977--1000.
+
+\bibitem{rowley1998rotation}
+Rowley H~A, Baluja S, Kanade T (1998) Rotation invariant neural network-based
+  face detection, \textit{Conf Proc IEEE Comp Soc on Computer Vision and Pattern Recognition} (IEEE), pp. 38--44.
+
+\bibitem{hajnal2010medical}
+Hajnal J~V, Hill D~L (2010) \textit{Medical image registration} (CRC press).
+
+\bibitem{greenspan1994rotation}
+Greenspan H, Belongie S, Goodman R, Perona P (1994) Rotation invariant texture
+  recognition using a steerable pyramid, \textit{Pattern Recognition, 1994.
+  Vol. 2-Conference B: Computer Vision \& Image Processing., Proceedings of the
+  12th IAPR International. Conference on} (IEEE), volume~2, pp. 162--167.
+
+\bibitem{zhao2003face}
+Zhao W, Chellappa R, Phillips P~J, Rosenfeld A (2003) Face recognition: A
+  literature survey. \textit{ACM Computing Surveys (CSUR)} 35(4):399--458.
+
+\bibitem{singer2012vector}
+Singer A, Wu H~T (2012) Vector diffusion maps and the connection {L}aplacian.
+  \textit{Commun Pure Appl Math} 65(8):1067--1144.
+
+\bibitem{Belkin2003}
+Belkin M, Niyogi P (2003) Laplacian eigenmaps for dimensionality reduction and
+  data representation. \textit{Neural Comput} 15:1373--1396.
+
+\bibitem{coifman2005geometric}
+Coifman R~R, Lafon S, Lee A~B, Maggioni M, Nadler B, \textit{et~al.} (2005)
+  Geometric diffusions as a tool for harmonic analysis and structure definition
+  of data: Diffusion maps. \textit{Proc Natl Acad Sci USA} 102(21):7426--7431.
+
+\bibitem{coifman2006geometric}
+Coifman R~R, Lafon S (2006) Geometric harmonics: a novel tool for multiscale
+  out-of-sample extension of empirical functions. \textit{Appl Comput Harmon Anal} 21(1):31--52.
+
+\bibitem{tenenbaum2000global}
+Tenenbaum J~B, De~Silva V, Langford J~C (2000) A global geometric framework for
+  nonlinear dimensionality reduction. \textit{Science} 290(5500):2319--2323.
+
+\bibitem{roweis2000nonlinear}
+Roweis S~T, Saul L~K (2000) Nonlinear dimensionality reduction by locally
+  linear embedding. \textit{Science} 290(5500):2323--2326.
+
+\bibitem{zhao2014rotationally}
+Zhao Z, Singer A (2014) Rotationally invariant image representation for viewing
+  direction classification in cryo-em. \textit{J Struct Biol}
+  186(1):153 -- 166.
+
+\bibitem{singer2011viewing}
+Singer A, Zhao Z, Shkolnisky Y, Hadani R (2011) Viewing angle classification of
+  cryo-electron microscopy images using eigenvectors. \textit{SIAM J Imaging Sci} 4(2):723--759.
+
+\bibitem{lafon2006data}
+Lafon S, Keller Y, Coifman R~R (2006) Data fusion and multicue data matching by
+  diffusion maps. \textit{IEEE Trans Pattern Anal Mach Intell} 28(11):1784--1797.
+
+\bibitem{fernandez2014diffusion}
+Fern{\'a}ndez {\'A}, Rabin N, Coifman R~R, Eckstein J (2014) Diffusion methods
+  for aligning medical datasets: Location prediction in {CT} scan images.
+  \textit{Med Image Anal} 18(2):425--432.
+
+\bibitem{jaeger2012drosophila}
+Jaeger J, Manu, Reinitz J (2012) \textit{{D}rosophila} blastoderm patterning.
+  \textit{Curr Opin Genet Dev} 22(6):533 -- 541, genetics of system biology.
+
+\bibitem{singer2011angular}
+Singer A (2011) Angular synchronization by eigenvectors and semidefinite
+  programming. \textit{Appl Comput Harmon Anal}
+  30(1):20--36.
+
+\bibitem{ahuja2007template}
+Ahuja S, Kevrekidis I~G, Rowley C~W (2007) Template-based stabilization of
+  relative equilibria in systems with continuous symmetry. \textit{Journal of
+  Nonlinear Science} 17(2):109--143.
+
+\bibitem{ian1998statistical}
+Dryden I~L, Mardia K (1998) \textit{Statistical shape analysis}, Wiley series
+  in probability and statistics: Probability and statistics (J. Wiley).
+
+\bibitem{leptin2005gastrulation}
+Leptin M (2005) Gastrulation movements: the logic and the nuts and bolts.
+  \textit{Dev Cell} 8(3):305--320.
+
+\bibitem{Lim2013kinetics}
+Lim B, Samper N, Lu H, Rushlow C, Jim{\'e}nez G, \textit{et~al.} (2013)
+  Kinetics of gene derepression by {ERK} signaling. \textit{Proc Natl Acad Sci USA} 110(25):10330--10335.
+
+\bibitem{anavy2014blind}
+Anavy L, Levin M, Khair S, Nakanishi N, Fernandez-Valverde S~L, \textit{et~al.}
+  (2014) {BLIND} ordering of large-scale transcriptomic developmental
+  timecourses. \textit{Development} 141(5):1161--1166.
+
+\bibitem{trapnell2014dynamics}
+Trapnell C, Cacchiarelli D, Grimsby J, Pokharel P, Li S, \textit{et~al.} (2014)
+  The dynamics and regulators of cell fate decisions are revealed by
+  pseudotemporal ordering of single cells. \textit{Nat Biotechnol}
+  32(4):381--386.
+
+\bibitem{gupta2008extracting}
+Gupta A, Bar-Joseph Z (2008) Extracting dynamics from static cancer expression
+  data. \textit{IEEE/ACM Trans Comput Biol Bioinform} 5(2):172--182.
+
+\bibitem{yuan2014automated}
+Yuan L, Pan C, Ji S, McCutchan M, Zhou Z~H, \textit{et~al.} (2014) Automated
+  annotation of developmental stages of \textit{{D}rosophila} embryos in images
+  containing spatial patterns of expression. \textit{Bioinformatics}
+  30(2):266--273.
+
+\bibitem{surkova2008characterization}
+Surkova S, Kosman D, Kozlov K, Myasnikova E, Samsonova A~A, \textit{et~al.}
+  (2008) Characterization of the \textit{{D}rosophila} segment determination
+  morphome. \textit{Dev Biol} 313(2):844--862.
+
+\bibitem{krzic2012multiview}
+Krzic U, Gunther S, Saunders T~E, Streichan S~J, Hufnagel L (2012) Multiview
+  light-sheet microscope for rapid in toto imaging. \textit{Nat Methods}
+  9(7):730--733.
+
+\bibitem{ichikawa2014live}
+Ichikawa T, Nakazato K, Keller P~J, Kajiura-Kobayashi H, Stelzer E~H,
+  \textit{et~al.} (2014) Live imaging and quantitative analysis of gastrulation
+  in mouse embryos using light-sheet microscopy and 3d tracking tools.
+  \textit{Nat Protoc} 9(3):575--585.
+
+\bibitem{rubel2010coupling}
+R{\"u}bel O, Ahern S, Bethel E, Biggin M~D, Childs H, \textit{et~al.} (2010)
+  Coupling visualization and data analysis for knowledge discovery from
+  multi-dimensional scientific data. \textit{Procedia Comput Sci}
+  1(1):1757--1764.
+
+\bibitem{chung2010microfluidic}
+Chung K, Kim Y, Kanodia J~S, Gong E, Shvartsman S~Y, \textit{et~al.} (2011) A
+  microfluidic array for large-scale ordering and orientation of embryos.
+  \textit{Nat Methods} 8(2):171--176.
+
+\end{thebibliography}
 
 \end{article}
+
+\begin{figure}[t]
+\includegraphics{fig1}
+\caption{Caricature illustrating the tasks of image registration and temporal ordering. {\xfigtextfontit (A)} Images of ``samples'', each in a different orientation and a different stage of development. {\xfigtextfontit (B)} Registered and ordered samples. For this caricature, the registration and ordering is straightforward because the data set is small, the landmarks are visually apparent, and the developmental changes are easy to recognize.}
+%\label{fig:fish}
+\customlabel{fig:fish}{1}
+\customlabel{subfig:fish_unordered}{\ref{fig:fish}{\it A}}
+\customlabel{subfig:fish_ordered}{\ref{fig:fish}{\it B}}
+\end{figure}
+
+\begin{figure}[t]
+\includegraphics{fig2}
+\caption{Schematic illustrating angular synchronization and diffusion maps. {\xfigtextfontit (A)} Set of vectors, each in a different orientation. The pairwise alignment angles are indicated. {\xfigtextfontit (B)} The vectors from {\xfigtextfontit A}, each rotated about their midpoint so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in {\xfigtextfontit A}: the differences between a pair of angles in {\xfigtextfontit B} is the same as the pairwise angle in {\xfigtextfontit A}. {\xfigtextfontit (C)} Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through the diffusion kernel (see {\xfigtextfontit \SI}), so that close data points are connected by darker (``stronger'') edges. {\xfigtextfontit (D)} The data in {\xfigtextfontit C}, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure. The color intensity is monotonic with the perceived curve arclength, thus parameterizing the curve.}
+%\label{fig:schematics}
+\customlabel{fig:schematics}{2}
+\customlabel{subfig:synch1}{\ref{fig:schematics}{\it A}}
+\customlabel{subfig:synch2}{\ref{fig:schematics}{\it B}}
+\customlabel{subfig:dmaps1}{\ref{fig:schematics}{\it C}}
+\customlabel{subfig:dmaps2}{\ref{fig:schematics}{\it D}}
+\end{figure}
+
+\begin{figure*}[t]
+\includegraphics{fig3}
+\caption{Method validation using live imaging of {\xfigtextfontit Drosophila} embryos.{\xfigtextfontit (A)} Selected images from a live imaging study of a {\xfigtextfontit Drosophilla} embryo during gastrulation. Each frame is in an arbitrary rotational orientation, and the order of the frames has been shuffled. {\xfigtextfontit (B)} Images from {\xfigtextfontit A} after registration and ordering using vector diffusion maps. The dorsal side of each embryo now appears at the top of each image, and the ventral side appears at the bottom. {\xfigtextfontit (C)} The correlation between the recovered rotation angle (using vector diffusion maps) and the true rotation angle {\xfigtextfontit (D)} The correlation between the recovered rank (using vector diffusion maps) and the true rank. {\xfigtextfontit (E)} The average error in the recovered angle and the rank correlation coefficient for $5$ different live imaging studies. {\xfigtextfontit (F)} The median rank correlation coefficient (over $200$ samples) as a function of the number of images in the data set. }
+\customlabel{fig:movie}{3}
+\customlabel{subfig:movie_unregistered_unordered}{\ref{fig:movie}{\it A}}
+\customlabel{subfig:movie_registered_ordered}{\ref{fig:movie}{\it B}}
+\customlabel{subfig:movie_angle_corr}{\ref{fig:movie}{\it C}}
+\customlabel{subfig:movie_rank_corr}{\ref{fig:movie}{\it D}}
+\customlabel{subfig:movie_error_table}{\ref{fig:movie}{\it E}}
+\customlabel{subfig:movie_bootstrap}{\ref{fig:movie}{\it F}}
+\end{figure*}
+
+\begin{figure*}[t]
+\includegraphics{fig4}
+\caption{Analyzing images of fixed {\xfigtextfontit Drosophila} embryos. {\xfigtextfontit (A)} Images of {\xfigtextfontit Drosophila} embryos, stained for nuclei (gray), Twi (green), and dpERK (red). Each image is of a different embryo arrested at a different developmental time and in a different rotational orientation. {\xfigtextfontit (B)} Data from {\xfigtextfontit A}, registered and ordered using vector diffusion maps. The expert rank for each image is indicated. {\xfigtextfontit (C)} A representative ``developmental trajectory'' obtained from local averaging of the entire set of registered and ordered images (see \SI). {\xfigtextfontit (D)} Correlation between the image ranks calculated from the vector diffusion maps algorithm and the ranks obtained from ordering by an expert. The rank correlation coefficient is $0.97$. }
+\customlabel{fig:data2}{4}
+\customlabel{subfig:fixed_images_unregistered_unordered}{\ref{fig:data2}{\it A}}
+\customlabel{subfig:fixed_images_registered_ordered}{\ref{fig:data2}{\it B}}
+\customlabel{subfig:fixed_images_average_trajectory}{\ref{fig:data2}{\it C}}
+\customlabel{subfig:fixed_images_rank_corr}{\ref{fig:data2}{\it D}}
+\end{figure*}
 
 \end{document}
 
