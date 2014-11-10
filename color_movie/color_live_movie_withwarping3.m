@@ -1,9 +1,9 @@
-% clear all
+clear all
 close all
 
 %% read in images
 
-npixels = 100;
+npixels = 200;
 
 % gastrulation
 [images1, time1] = load_fixed_images1(npixels);
@@ -56,61 +56,61 @@ all_time = [time1; time2; time3];
 
 %%
 
-images_movie_colored = zeros(npixels, npixels, nchannels, nimages_movie, 'uint8');
-nfixed_per_frame = 4;
-
-images_tmp = zeros(npixels, npixels, nchannels, nfixed_per_frame, 'uint8');
-tic
-for i=1:nimages_movie
-    
-    i
-    
-    curr_idx = ones(nchannels, 1);
-    
-    [~, I] = sort((all_time - time_movie(i)).^2);
-    
-    images_to_use = zeros(all_nimages, nchannels);
-    for k=2:nchannels
-        tmp_I = find(has_channels(I, k) == 1 & I ~= 137 & I ~= 111 , nfixed_per_frame, 'first');
-        images_to_use(I(tmp_I), k) = 1;
-    end
-    
-    idx = find(sum(images_to_use, 2) > 0)';
-%     length(idx)
-    
-    for j=idx
-        
-        [cp1, cp_deltas] = optical_flow_warping(images_movie(:,:,nuclei_channel,i),adapthisteq(all_images(:,:,nuclei_channel, j)));
-        im1_warped = warp_image_rbf2(all_images(:,:,:,j), cp1, cp_deltas, 0.05);
-        
-        %             figure;
-        %             imshow(im1_warped(:,:,nuclei_channel))
-        
-        for k=2:nchannels
-            if images_to_use(j, k) == 1
-                images_tmp(:, :, k, curr_idx(k)) = im1_warped(:,:,k);
-                curr_idx(k) = curr_idx(k) + 1;
-%                 images_tmp{k} = cat(3, images_tmp{k}, im1_warped(:,:,k));
-            end
-        end
-        
-    end
-    
-    images_movie_colored(:,:,2:end,i) = uint8(mean(double(images_tmp(:,:,2:end,:)), 4));
+% images_movie_colored = zeros(npixels, npixels, nchannels, nimages_movie, 'uint8');
+% nfixed_per_frame = 4;
+% 
+% images_tmp = zeros(npixels, npixels, nchannels, nfixed_per_frame, 'uint8');
+% tic
+% for i=1:nimages_movie
+%     
+%     i
+%     
+%     curr_idx = ones(nchannels, 1);
+%     
+%     [~, I] = sort((all_time - time_movie(i)).^2);
+%     
+%     images_to_use = zeros(all_nimages, nchannels);
 %     for k=2:nchannels
-%         images_movie_colored(:,:,k,i) = median(images_tmp{k}, 3);
+%         tmp_I = find(has_channels(I, k) == 1 & I ~= 137 & I ~= 111 , nfixed_per_frame, 'first');
+%         images_to_use(I(tmp_I), k) = 1;
 %     end
-    images_movie_colored(:,:,nuclei_channel,i) = images_movie(:,:,nuclei_channel,i);
-    
-    toc
-    
-    
-end
+%     
+%     idx = find(sum(images_to_use, 2) > 0)';
+% %     length(idx)
+%     
+%     for j=idx
+%         
+%         [cp1, cp_deltas] = optical_flow_warping(images_movie(:,:,nuclei_channel,i),adapthisteq(all_images(:,:,nuclei_channel, j)));
+%         im1_warped = warp_image_rbf2(all_images(:,:,:,j), cp1, cp_deltas, 0.05);
+%         
+%         %             figure;
+%         %             imshow(im1_warped(:,:,nuclei_channel))
+%         
+%         for k=2:nchannels
+%             if images_to_use(j, k) == 1
+%                 images_tmp(:, :, k, curr_idx(k)) = im1_warped(:,:,k);
+%                 curr_idx(k) = curr_idx(k) + 1;
+% %                 images_tmp{k} = cat(3, images_tmp{k}, im1_warped(:,:,k));
+%             end
+%         end
+%         
+%     end
+%     
+%     images_movie_colored(:,:,2:end,i) = uint8(mean(double(images_tmp(:,:,2:end,:)), 4));
+% %     for k=2:nchannels
+% %         images_movie_colored(:,:,k,i) = median(images_tmp{k}, 3);
+% %     end
+%     images_movie_colored(:,:,nuclei_channel,i) = images_movie(:,:,nuclei_channel,i);
+%     
+%     toc
+%     
+%     
+% end
 
 %%
 images_movie_colored = zeros(npixels, npixels, nchannels, nimages_movie, 'uint8');
 kernel_scale = 1;
-weight_thres = 1e-3;
+weight_thres = 1e-2;
 for i=1:nimages_movie
 % for i=[120]
     i
