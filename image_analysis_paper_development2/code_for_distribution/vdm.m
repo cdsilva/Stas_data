@@ -1,4 +1,4 @@
-function [R_opt, embed_coord, D2] = vdm(R, W, eps, ncomps)
+function [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps)
 % [R_opt, embed_coord, D2, D] = vdm(R, W, eps, ncomps)
 % calculate the optimal rotations + embedding coordinates using vector
 % diffusion maps
@@ -27,10 +27,8 @@ end
 % calculate number of eigenvalues to compute
 neigs = dim*(ncomps + 1);
 
-% compute kernel scale if eps=0
-if eps == 0
-    eps = median(W(:)) / sqrt(10);
-end
+
+eps = median(W(:)) * eps_scale;
 
 % calculate kernel of distances
 W2 = exp(-(W/eps).^2);
