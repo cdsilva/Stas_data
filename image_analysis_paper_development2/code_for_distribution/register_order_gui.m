@@ -22,7 +22,7 @@ function varargout = register_order_gui(varargin)
 
 % Edit the above text to modify the response to help register_order_gui
 
-% Last Modified by GUIDE v2.5 22-Jan-2015 15:43:38
+% Last Modified by GUIDE v2.5 23-Jan-2015 12:57:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -55,6 +55,11 @@ function register_order_gui_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for register_order_gui
 handles.output = hObject;
 
+handles.reread_images = true;
+handles.reapply_image_functions = true;
+handles.recalc_pairwise_rotations = true;
+handles.rerun_dmaps = true;
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -82,7 +87,7 @@ function output_image_dir_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of output_image_dir as text
 %        str2double(get(hObject,'String')) returns contents of output_image_dir as a double
 
-handles.image_dir = get(hObject,'String');
+handles.output_image_dir = get(hObject,'String');
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -104,6 +109,57 @@ function save_images_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if handles.reread_images
+    choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
+        'Reread images', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+if handles.reapply_image_functions
+    choice = questdlg('Image function parameters have changed, but have not been reapplied. Are you sure you want to continue?', ...
+        'Repply image functions', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+if handles.recalc_pairwise_rotations 
+    choice = questdlg('Number of pairwise rotations have changed, but images have not been reanalyzed. Are you sure you want to continue?', ...
+        'Reanalyze images', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+if handles.rerun_dmaps
+    choice = questdlg('Kernel scale has changed, but images have not been reanalyzed. Are you sure you want to continue?', ...
+        'Reanalyze images', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+
+save_images(handles.images_analyzed, handles.dim, handles.output_image_dir, handles.image_name, handles.image_ext, handles.stack_name)
+
 
 function number_images_Callback(hObject, eventdata, handles)
 % hObject    handle to number_images (see GCBO)
@@ -113,11 +169,15 @@ function number_images_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of number_images as text
 %        str2double(get(hObject,'String')) returns contents of number_images as a double
 
+handles.reread_images = true;
+
 nimages = str2double(get(hObject,'String'));
 handles.nimages = nimages;
-
-handles.subplot_dim1 = round(sqrt(nimages));
-handles.subplot_dim2 = ceil(nimages/handles.subplot_dim1);
+if isnan(handles.nimages) || handles.nimages < 1 || mod(handles.nimages, 1) ~= 0
+    msgbox('Invalid number of images.')
+    handles = rmfield(handles, 'nimages');
+    set(hObject, 'String', '');
+end
 
 guidata(hObject, handles);
 
@@ -143,6 +203,8 @@ function image_extension_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of image_extension as text
 %        str2double(get(hObject,'String')) returns contents of image_extension as a double
 
+handles.reread_images = true;
+
 handles.image_ext = get(hObject,'String');
 guidata(hObject, handles);
 
@@ -165,24 +227,41 @@ function read_images_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[handles.images_raw, handles.nchannels] = read_images(handles.image_dir, handles.image_name, handles.image_ext, handles.stack_name, handles.nimages, handles.nstack, handles.npixels, handles.dim);
+%h = msgbox('Please wait...');
 
-if handles.nchannels == 1
-    
-    for i=2:3
-        
-        set(handles.weight_slider(i), 'enable','off')
-        set(handles.blur_slider(i), 'enable','off')
-        set(handles.weight_numbers(i), 'enable','off')
-        set(handles.blur_numbers(i), 'enable','off')
-        set(handles.normalize_checkbox(i), 'enable','off')
-        set(handles.mean_center_checkbox(i), 'enable','off')
-        set(handles.normalize_checkbox(i), 'value',0)
-        set(handles.mean_center_checkbox(i), 'value',0)
-        set(handles.color_label(i), 'enable','off')
+try
+    [handles.images_raw, handles.nchannels] = read_images(handles.image_dir, handles.image_name, handles.image_ext, handles.stack_name, handles.nimages, handles.nstack, handles.npixels, handles.dim);
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+        msgbox('Some required fields are not populated. Please check inputs.')
+        return
+    elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+        return
     end
 end
 
+handles.channel_weight = zeros(handles.nchannels, 1);
+handles.channel_blur = zeros(handles.nchannels, 1);
+handles.channel_mean_center = false(handles.nchannels, 1);
+handles.channel_normalize = false(handles.nchannels, 1);
+
+for i=1:handles.nchannels
+    handles.channel_weight(i) = get(handles.weight_slider(i), 'Value');
+    handles.channel_blur(i) = get(handles.blur_slider(i), 'Value');
+    handles.channel_mean_center(i) = get(handles.mean_center_checkbox(i), 'Value');
+    handles.channel_normalize(i) = get(handles.normalize_checkbox(i), 'Value');
+end
+for i=handles.nchannels+1:3
+    set(handles.weight_slider(i), 'enable','off')
+    set(handles.blur_slider(i), 'enable','off')
+    set(handles.weight_numbers(i), 'enable','off')
+    set(handles.blur_numbers(i), 'enable','off')
+    set(handles.normalize_checkbox(i), 'enable','off')
+    set(handles.mean_center_checkbox(i), 'enable','off')
+    set(handles.normalize_checkbox(i), 'value',0)
+    set(handles.mean_center_checkbox(i), 'value',0)
+    set(handles.color_label(i), 'enable','off')
+end
 
 guidata(hObject,handles);
 
@@ -198,6 +277,8 @@ function image_dim_Callback(hObject, eventdata, handles)
 
 str = get(hObject, 'String');
 val = get(hObject,'Value');
+
+handles.reread_images = true;
 
 % Set current data to the selected data set.
 switch str{val};
@@ -248,6 +329,8 @@ function image_dir_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of image_dir as text
 %        str2double(get(hObject,'String')) returns contents of image_dir as a double
 
+handles.reread_images = true;
+
 handles.image_dir = get(hObject,'String');
 guidata(hObject, handles);
 
@@ -272,6 +355,8 @@ function image_prefix_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of image_prefix as text
 %        str2double(get(hObject,'String')) returns contents of image_prefix as a double
+
+handles.reread_images = true;
 
 handles.image_name = get(hObject,'String');
 guidata(hObject, handles);
@@ -298,7 +383,14 @@ function number_stack_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of number_stack as text
 %        str2double(get(hObject,'String')) returns contents of number_stack as a double
 
+handles.reread_images = true;
+
 handles.nstack = str2double(get(hObject,'String'));
+if isnan(handles.nstack) || handles.nstack < 1 || mod(handles.nstack, 1) ~= 0
+    msgbox('Invalid number of images in stack.')
+    handles = rmfield(handles, 'nstack');
+    set(hObject, 'String', '');
+end
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -319,7 +411,6 @@ handles.nstack = 0;
 guidata(hObject,handles);
 
 
-
 function stack_prefix_Callback(hObject, eventdata, handles)
 % hObject    handle to stack_prefix (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -327,6 +418,8 @@ function stack_prefix_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of stack_prefix as text
 %        str2double(get(hObject,'String')) returns contents of stack_prefix as a double
+
+handles.reread_images = true;
 
 handles.stack_name = get(hObject,'String');
 guidata(hObject, handles);
@@ -358,7 +451,14 @@ function number_pixels_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of number_pixels as text
 %        str2double(get(hObject,'String')) returns contents of number_pixels as a double
 
+handles.reread_images = true;
+
 handles.npixels = str2double(get(hObject,'String'));
+if isnan(handles.npixels) || handles.npixels < 1 || mod(handles.npixels, 1) ~= 0
+    msgbox('Invalid number of pixels.')
+    handles = rmfield(handles, 'npixels');
+    set(hObject, 'String', '');
+end
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -380,7 +480,7 @@ function show_images1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-plot_images(handles.images_raw, handles.dim, handles.subplot_dim1, handles.subplot_dim2)
+plot_images(handles.images_raw, handles.dim)
 
 % --- Executes on button press in apply_image_functions.
 function apply_image_functions_Callback(hObject, eventdata, handles)
@@ -388,7 +488,20 @@ function apply_image_functions_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-handles.images = apply_image_functions(handles.images_raw, handles.dim, handles.channel_weight, handles.channel_blur, handles.channel_normalize, handles.channel_mean_center);
+if handles.reread_images
+    choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
+        'Reread images', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+        
+handles.images = apply_image_functions(handles.images_raw, handles.dim, handles.channel_weight, handles.channel_blur, handles.channel_normalize, handles.channel_mean_center, handles.resize_image);
 
 guidata(hObject, handles);
 
@@ -399,7 +512,7 @@ function show_images2_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-plot_images(handles.images, handles.dim, handles.subplot_dim1, handles.subplot_dim2)
+plot_images(handles.images, handles.dim)
 
 function kernel_scale_Callback(hObject, eventdata, handles)
 % hObject    handle to kernel_scale (see GCBO)
@@ -409,7 +522,20 @@ function kernel_scale_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of kernel_scale as text
 %        str2double(get(hObject,'String')) returns contents of kernel_scale as a double
 
+handles.rerun_dmaps = true;
+
 handles.eps_scale = str2double(get(hObject,'String')) ;
+
+if isnan(handles.eps_scale)
+    msgbox('Invalid kernel scale.')
+    handles = rmfield(handles, 'nrot');
+    set(hObject, 'String', '');
+elseif handles.eps_scale < 0
+    msgbox('Invalid kernel scale: kernel scale must be greater than 0.')
+    handles = rmfield(handles, 'nrot');
+    set(hObject, 'String', '');
+end
+
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -435,9 +561,34 @@ function register_order_vdm_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if handles.reread_images
+    choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
+        'Reread images', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+if handles.reapply_image_functions
+    choice = questdlg('Image function parameters have changed, but have not been reapplied. Are you sure you want to continue?', ...
+        'Repply image functions', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+
+
 if handles.recalc_pairwise_rotations
-    show_waitbar = true;
-    [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.nrot, show_waitbar);
+    [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.nrot);
     handles.recalc_pairwise_rotations = false;
 end
 
@@ -447,16 +598,7 @@ ncomps = 1;
 
 % register images using optimal rotations
 images_registered = register_all_images(handles.images, R_opt);
-
-[~, I] = sort(embed_coord);
-
-if ndims(images_registered) == 3
-    handles.images_analyzed = images_registered(:,:,I);
-elseif ndims(images_registered) == 4
-    handles.images_analyzed = images_registered(:,:,:,I);
-elseif ndims(images_registered) == 5
-    handles.images_analyzed = images_registered(:,:,:,I);
-end
+handles.images_analyzed = order_all_images(images_registered, embed_coord);
 
 guidata(hObject, handles)
 
@@ -471,6 +613,11 @@ function number_rotations_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of number_rotations as a double
 handles.nrot = str2double(get(hObject,'String'));
 handles.recalc_pairwise_rotations = true;
+if isnan(handles.nrot) || handles.nrot < 1 || mod(handles.nrot, 1) ~= 0
+    msgbox('Invalid number of rotations.')
+    handles = rmfield(handles, 'nrot');
+    set(hObject, 'String', '');
+end
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -497,21 +644,37 @@ function order_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
-W = squareform(pdist(reshape(double(images),[], handles.nimages)')).^2;
-
-ncomps = 1;
-[embed_coord, D2] = dmaps(W, median(W(:))*handles.eps_scale, ncomps);
-
-[~, I] = sort(embed_coord);
-
-if ndims(images) == 3
-    handles.images_analyzed = handles.images(:,:,I);
-elseif ndims(images) == 4
-    handles.images_analyzed = handles.images(:,:,:,I);
-elseif ndims(images) == 5
-    handles.images_analyzed = handles.images(:,:,:,I);
+if handles.reread_images
+    choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
+        'Reread images', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
 end
+if handles.reapply_image_functions
+    choice = questdlg('Image function parameters have changed, but have not been reapplied. Are you sure you want to continue?', ...
+        'Repply image functions', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+
+
+W = squareform(pdist(reshape(double(handles.images), [], handles.nimages)')).^2;
+ncomps = 1;
+[embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
+
+handles.images_analyzed = order_all_images(handles.images, embed_coord);
 
 guidata(hObject, handles)
 
@@ -521,9 +684,33 @@ function register_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if handles.reread_images
+    choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
+        'Reread images', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+if handles.reapply_image_functions
+    choice = questdlg('Image function parameters have changed, but have not been reapplied. Are you sure you want to continue?', ...
+        'Repply image functions', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+
 if handles.recalc_pairwise_rotations
-    show_waitbar = true;
-    [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.nrot, show_waitbar);
+    [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.nrot);
     handles.recalc_pairwise_rotations = false;
 end
 
@@ -543,16 +730,35 @@ function register_order_zstacks_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
-if handles.nchannels > 1
-    max_proj_images = squeeze(max(handles.images, [], 4));
-else
-    max_proj_images = squeeze(max(handles.images, [], 3));
+if handles.reread_images
+    choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
+        'Reread images', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+if handles.reapply_image_functions
+    choice = questdlg('Image function parameters have changed, but have not been reapplied. Are you sure you want to continue?', ...
+        'Repply image functions', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
 end
 
+max_proj_images = squeeze(max(handles.images, [], ndims(handles.images)-1));
+
 if handles.recalc_pairwise_rotations
-    show_waitbar = true;
-    [handles.R, handles.W] = compute_pairwise_alignments(max_proj_images, handles.nrot, show_waitbar);
+    [handles.R, handles.W] = compute_pairwise_alignments(max_proj_images, handles.nrot);
     handles.recalc_pairwise_rotations = false;
 end
 
@@ -562,16 +768,9 @@ ncomps = 1;
 images_registered = register_all_images(handles.images, R_opt);
 
 W = squareform(pdist(reshape(double(images_registered), [], handles.nimages)')).^2;
-eps = median(W(:))*handles.eps_scale;
-[V, D] = dmaps(W, eps, 10);
+[embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
 
-[~, I] = sort(V(:,2));
-
-if ndims(handles.images) == 4
-    handles.images_analyzed = images_registered(:,:,:,I);
-elseif ndims(handles.images) == 5
-    handles.images_analyzed = images_registered(:,:,:,:,I);
-end
+handles.images_analyzed = order_all_images(images_registered, embed_coord);
 
 guidata(hObject, handles)
 
@@ -584,6 +783,8 @@ function red_weight_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+handles.reapply_image_functions = true;
 
 handles.channel_weight(1) = get(hObject,'Value');
 set(handles.weight_numbers(1), 'String', sprintf('%2.2f',get(hObject,'Value')));
@@ -615,6 +816,9 @@ function green_weight_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 
+handles.reapply_image_functions = true;
+
+
 handles.channel_weight(2) = get(hObject,'Value');
 set(handles.weight_numbers(2), 'String', sprintf('%2.2f',get(hObject,'Value')));
 guidata(hObject, handles);
@@ -643,6 +847,8 @@ function blue_weight_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+handles.reapply_image_functions = true;
 
 handles.channel_weight(3) = get(hObject,'Value');
 set(handles.weight_numbers(3), 'String', sprintf('%2.2f',get(hObject,'Value')));
@@ -674,6 +880,8 @@ function red_blur_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 
+handles.reapply_image_functions = true;
+
 handles.channel_blur(1) = get(hObject,'Value');
 set(handles.blur_numbers(1), 'String', sprintf('%2.0f%%',100*get(hObject,'Value')));
 guidata(hObject, handles);
@@ -703,6 +911,8 @@ function green_blur_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+handles.reapply_image_functions = true;
 
 handles.channel_blur(2) = get(hObject,'Value');
 set(handles.blur_numbers(2), 'String', sprintf('%2.0f%%',100*get(hObject,'Value')));
@@ -735,6 +945,8 @@ function blue_blur_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 
+handles.reapply_image_functions = true;
+
 handles.channel_blur(3) = get(hObject,'Value');
 set(handles.blur_numbers(3), 'String', sprintf('%2.0f%%',100*get(hObject,'Value')));
 guidata(hObject, handles);
@@ -764,6 +976,8 @@ function red_normalize_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of red_normalize
 
+handles.reapply_image_functions = true;
+
 handles.channel_normalize(1) = get(hObject,'Value');
 guidata(hObject, handles);
 
@@ -774,6 +988,8 @@ function green_normalize_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of green_normalize
+
+handles.reapply_image_functions = true;
 
 handles.channel_normalize(2) = get(hObject,'Value');
 guidata(hObject, handles);
@@ -786,6 +1002,8 @@ function blue_normalize_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of blue_normalize
 
+handles.reapply_image_functions = true;
+
 handles.channel_normalize(3) = get(hObject,'Value');
 guidata(hObject, handles);
 
@@ -796,6 +1014,8 @@ function red_mean_center_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of red_mean_center
+
+handles.reapply_image_functions = true;
 
 handles.channel_mean_center(1) = get(hObject,'Value');
 guidata(hObject, handles);
@@ -808,6 +1028,8 @@ function green_mean_center_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of green_mean_center
 
+handles.reapply_image_functions = true;
+
 handles.channel_mean_center(2) = get(hObject,'Value');
 guidata(hObject, handles);
 
@@ -819,6 +1041,8 @@ function blue_mean_center_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of blue_mean_center
+
+handles.reapply_image_functions = true;
 
 handles.channel_mean_center(3) = get(hObject,'Value');
 guidata(hObject, handles);
@@ -1024,4 +1248,29 @@ function show_images3_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-plot_images(handles.images_analyzed, handles.dim, handles.subplot_dim1, handles.subplot_dim2)
+plot_images(handles.images_analyzed, handles.dim)
+
+
+% --- Executes on button press in resize_image.
+function resize_image_Callback(hObject, eventdata, handles)
+% hObject    handle to resize_image (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of resize_image
+
+handles.reapply_image_functions = true;
+
+handles.resize_image = get(hObject,'Value');
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function resize_image_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to resize_image (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+set(hObject, 'Value', 0)
+handles.resize_image = get(hObject,'Value');
+guidata(hObject, handles);

@@ -1,6 +1,10 @@
-function plot_images(images, image_dim, subplot_dim1, subplot_dim2)
+function plot_images(images, image_dim)
 
 nimages = size(images, ndims(images));
+
+subplot_dim1 = round(sqrt(nimages));
+subplot_dim2 = ceil(nimages/subplot_dim1);
+
 figure;
 for i=1:nimages
     subplot(subplot_dim1, subplot_dim2, i)

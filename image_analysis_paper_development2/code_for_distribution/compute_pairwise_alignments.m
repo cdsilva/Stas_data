@@ -1,4 +1,4 @@
-function [R, W] = compute_pairwise_alignments(images, nrot, display_waitbar)
+function [R, W] = compute_pairwise_alignments(images, nrot)
 % [R, W] = compute_pairwise_alignments(images, nrot, shift_max, nshifts, display_waitbar)
 % compute the pairwise alignments and distances for a set of
 % images, to be used in a vector diffusion maps calculation
@@ -11,16 +11,9 @@ function [R, W] = compute_pairwise_alignments(images, nrot, display_waitbar)
 % shift_max=0 corresponds to only rotations
 % nshifts is the number of shift discretizations to use to compute the
 % pairwise alignments; if shift_max=0, the value of nshifts is ignored
-% display_waitbar indicates whether to display a waitbar indicating the
-% progress of the computation; display_waitbar=true is the default, if no
-% value is supplied
 %
 % R is a matrix containing the pairwise rotation matrices
 % W is a matrix containing the minimum pairwise distances
-
-if nargin < 3
-    display_waitbar = true;
-end
 
 m = size(images, ndims(images));
 npixels = size(images, 1);
@@ -42,16 +35,13 @@ W = inf(m);
 % reference image
 RI = imref2d([npixels npixels],[-0.5 0.5],[-0.5 0.5]);
 
-if display_waitbar
-    h_waitbar = waitbar(0,'Computing pairwise alignments...');
-end
+h_waitbar = waitbar(0,'Computing pairwise alignments...');
+
 for i=1:nrot
     %     waitbar(i/nrot, h_waitbar);
     theta = theta_vec(i);
     
-    if display_waitbar
-        waitbar(i/nrot, h_waitbar);
-    end
+    waitbar(i/nrot, h_waitbar);
     
     % calculate affine transformation
     A = affine2d([cosd(theta) -sind(theta) 0; sind(theta) cosd(theta) 0; dx dy 1]);
@@ -71,7 +61,7 @@ for i=1:nrot
     W(idx) = dist_tmp(idx);
     
     % store new rotations and translations
-    thetas(idx) = theta; 
+    thetas(idx) = theta;
 end
 
 % compute rotation matrices from rotations+translations
@@ -85,9 +75,7 @@ end
 W = 0.5*(W + W');
 R = 0.5*(R + R');
 
-if display_waitbar
-    close(h_waitbar);
-end
+close(h_waitbar);
 
 % compute two-dimensional rotation matrix corresponding to a specific
 % rotation
