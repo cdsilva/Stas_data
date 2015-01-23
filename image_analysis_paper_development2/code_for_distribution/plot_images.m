@@ -22,3 +22,7 @@ for i=1:nimages
         end
     end
 end
+
+function image1 = max_proj(zstack)
+
+image1 = max(zstack, [], ndims(zstack));

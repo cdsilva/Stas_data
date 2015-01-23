@@ -16,10 +16,6 @@ npixels = size(image, 1);
 % compute edges in image
 if ndims(image) == 3
     im_tmp = image(:,:,channel);
-    %     im_tmp = image;
-    %     for i=1:size(image, 3)
-    %         im_tmp(:,:,i) = imadjust(im_tmp(:,:,i));
-    %     end
     if length(channel) > 1
         im_tmp = uint8(mean(double(im_tmp), 3));
     end
@@ -49,18 +45,8 @@ if resize_image
         image2 = padarray(image, [nbuffer nbuffer]);
         image2 = imresize(image2(idx3:(idx4+2*nbuffer), idx1:(idx2+2*nbuffer)), [npixels npixels]);
     end
-    %     if ndims(image) == 3
-    %         image2 = imresize(image(idx3:idx4, idx1:idx2,:), [npixels npixels]);
-    %         image2 = padarray(image2, [round(0.1*npixels) round(0.1*npixels) 0]);
-    %         image2 = imresize(image2, [npixels npixels]);
-    %     elseif ndims(image) == 2
-    %         image2 = imresize(image(idx3:idx4, idx1:idx2), [npixels npixels]);
-    %         image2 = padarray(image2, [round(0.1*npixels) round(0.1*npixels)]);
-    %         image2 = imresize(image2, [npixels npixels]);
-    %     end
 else
     RI = imref2d([npixels npixels],[1 npixels],[1 npixels]);
-    %     tform = affine2d([1 0 0; 0 1 0; (1+npixels)/2-(idx3+idx4)/2 (1+npixels)/2-(idx1+idx2)/2 1]);
     tform = affine2d([1 0 0; 0 1 0; (1+npixels)/2-(idx1+idx2)/2 (1+npixels)/2-(idx3+idx4)/2 1]);
     image2 = imwarp(image, RI, tform, 'outputview', RI);
 end

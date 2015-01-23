@@ -22,7 +22,7 @@ function varargout = register_order_gui(varargin)
 
 % Edit the above text to modify the response to help register_order_gui
 
-% Last Modified by GUIDE v2.5 23-Jan-2015 12:57:33
+% Last Modified by GUIDE v2.5 23-Jan-2015 17:05:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -134,7 +134,7 @@ if handles.reapply_image_functions
     end
 end
 if handles.recalc_pairwise_rotations 
-    choice = questdlg('Number of pairwise rotations have changed, but images have not been reanalyzed. Are you sure you want to continue?', ...
+    choice = questdlg('Number of pairwise rotations or image set/parameters have changed, but images have not been reanalyzed. Are you sure you want to continue?', ...
         'Reanalyze images', ...
         'Yes','No','No');
     % Handle response
@@ -146,7 +146,7 @@ if handles.recalc_pairwise_rotations
     end
 end
 if handles.rerun_dmaps
-    choice = questdlg('Kernel scale has changed, but images have not been reanalyzed. Are you sure you want to continue?', ...
+    choice = questdlg('Kernel scale or image set/parameters have changed, but images have not been reanalyzed. Are you sure you want to continue?', ...
         'Reanalyze images', ...
         'Yes','No','No');
     % Handle response
@@ -240,6 +240,11 @@ catch ME
     end
 end
 
+handles.reread_images = false;
+handles.reapply_image_functions = true;
+handles.recalc_pairwise_rotations = true;
+handles.rerun_dmaps = true;
+
 handles.channel_weight = zeros(handles.nchannels, 1);
 handles.channel_blur = zeros(handles.nchannels, 1);
 handles.channel_mean_center = false(handles.nchannels, 1);
@@ -250,6 +255,14 @@ for i=1:handles.nchannels
     handles.channel_blur(i) = get(handles.blur_slider(i), 'Value');
     handles.channel_mean_center(i) = get(handles.mean_center_checkbox(i), 'Value');
     handles.channel_normalize(i) = get(handles.normalize_checkbox(i), 'Value');
+    
+    set(handles.weight_slider(i), 'enable','on')
+    set(handles.blur_slider(i), 'enable','on')
+    set(handles.weight_numbers(i), 'enable','on')
+    set(handles.blur_numbers(i), 'enable','on')
+    set(handles.normalize_checkbox(i), 'enable','on')
+    set(handles.mean_center_checkbox(i), 'enable','on')
+    set(handles.color_label(i), 'enable','on')
 end
 for i=handles.nchannels+1:3
     set(handles.weight_slider(i), 'enable','off')
@@ -286,8 +299,8 @@ switch str{val};
         handles.dim = 2;
         set(handles.stack_prefix, 'enable','off')
         set(handles.number_stack, 'enable','off')
-        set(handles.stack_prefix, 'value','')
-        set(handles.number_stack, 'value','')
+        set(handles.stack_prefix, 'String','')
+        set(handles.number_stack, 'String','')
         set(handles.register_button, 'enable', 'on')
         set(handles.order_button, 'enable', 'on')
         set(handles.register_order_button, 'enable', 'on')
@@ -503,6 +516,10 @@ end
         
 handles.images = apply_image_functions(handles.images_raw, handles.dim, handles.channel_weight, handles.channel_blur, handles.channel_normalize, handles.channel_mean_center, handles.resize_image);
 
+handles.reapply_image_functions = false;
+handles.recalc_pairwise_rotations = true;
+handles.rerun_dmaps = true;
+
 guidata(hObject, handles);
 
 
@@ -600,6 +617,8 @@ ncomps = 1;
 images_registered = register_all_images(handles.images, R_opt);
 handles.images_analyzed = order_all_images(images_registered, embed_coord);
 
+handles.rerun_dmaps = false;
+
 guidata(hObject, handles)
 
 
@@ -676,6 +695,8 @@ ncomps = 1;
 
 handles.images_analyzed = order_all_images(handles.images, embed_coord);
 
+handles.rerun_dmaps = false;
+
 guidata(hObject, handles)
 
 % --- Executes on button press in register.
@@ -720,6 +741,8 @@ ncomps = 1;
 
 % register images using optimal rotations
 handles.images_analyzed = register_all_images(handles.images, R_opt);
+
+handles.rerun_dmaps = false;
 
 guidata(hObject, handles)
 
@@ -771,6 +794,8 @@ W = squareform(pdist(reshape(double(images_registered), [], handles.nimages)')).
 [embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
 
 handles.images_analyzed = order_all_images(images_registered, embed_coord);
+
+handles.rerun_dmaps = false;
 
 guidata(hObject, handles)
 
@@ -1273,4 +1298,14 @@ function resize_image_CreateFcn(hObject, eventdata, handles)
 
 set(hObject, 'Value', 0)
 handles.resize_image = get(hObject,'Value');
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function red_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to red (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+handles.color_label(1) = hObject;
 guidata(hObject, handles);
