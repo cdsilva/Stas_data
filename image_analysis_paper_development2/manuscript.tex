@@ -17,6 +17,8 @@
 \protected@write \@auxout {}{\string \newlabel {#1}{{#2}{}}}}
 \makeatother
 
+\graphicspath{{paper_figures/}}
+
 \customlabel{fig:DV_view}{S1}
 \customlabel{fig:1d_example}{S2}
 \customlabel{fig:eigenvalues}{S3}
@@ -188,8 +190,58 @@ Instead, we will use diffusion maps to automatically uncover a parameterization 
 Diffusion maps generalizes directly from one-dimensional nonlinear curves to higher-dimensional manifolds.
 
 
+\begin{figure*}[t]
+\raisebox{0.75cm}{\textsf{A}}
+\hfill
+\includegraphics[width=17.5cm]{drosophila_live_imaging_scrambled}
 
+\raisebox{0.75cm}{\textsf{B}}
+\hfill
+\includegraphics[width=17.5cm]{drosophila_live_imaging_ordered}
 
+\raisebox{4.25cm}{\textsf{C}}
+\includegraphics[width=5cm]{drosophila_live_imaging_angle_corr}
+%
+\hfill
+%
+\raisebox{4.25cm}{\textsf{D}}
+\includegraphics[width=5cm]{drosophila_live_imaging_rank_corr}
+%
+\hfill
+%
+\raisebox{4.25cm}{\textsf{E}}
+%
+\raisebox{2.75cm}{
+{ \textsf{ 
+\begin{tabular}{ |p{1cm} | p{1.25cm}|  p{1.5cm}| }
+\hline
+Movie Index & Average Angle Error & Rank Correlation Coefficient \\
+\hline
+1 & 8.37$^{\circ}$ & 0.9989 \\ 
+2 & 4.98$^{\circ}$ & 0.9994 \\ 
+3 & 6.47$^{\circ}$ & 0.9795 \\ 
+4 & 7.03$^{\circ}$ & 0.9953 \\ 
+5 & 3.04$^{\circ}$ & 0.9959 \\ 
+ \hline
+\end{tabular}}}}
+
+\end{figure*}
+
+\begin{figure*}[t]
+\begin{minipage}[b]{14cm}
+\raisebox{0.75cm}{\textsf{A}}
+\includegraphics[width=13.75cm]{zebrafish_scrambled}
+
+\raisebox{0.75cm}{\textsf{B}}
+\includegraphics[width=13.75cm]{zebrafish_ordered}
+\end{minipage}
+%
+\hfill
+%
+\raisebox{2.5cm}{\textsf{C}}
+\includegraphics[width=3.25cm]{zebrafish_rank_corr}
+
+\end{figure*}
 
 %\begin{figure*}[t]
 %\includegraphics{fig3}
