@@ -18,6 +18,10 @@ end
 
 channels = find(channel_mean_center);
 
+npixels = size(images_raw, 1);
+[X, Y] = meshgrid(1:npixels, 1:npixels);
+mask = ((X-(npixels+1)/2).^2 + (Y-(npixels+1)/2).^2 < ((npixels+1)/2)^2);
+
 h = waitbar(0, 'Applying image functions...');
 
 for i=1:nimages
@@ -34,6 +38,7 @@ for i=1:nimages
             if ~isempty(channels)
                 im_tmp = crop_zstack(im_tmp, channels, resize_image);
             end
+            im_tmp = immultiply(im_tmp, repmat(mask, 1, 1, nchannels, nstack));
             images(:,:,:,:,i) = im_tmp;
         else
             im_tmp = images(:,:,:,i);
@@ -44,6 +49,8 @@ for i=1:nimages
             if channel_mean_center == 1
                 im_tmp = crop_zstack(im_tmp, 0, resize_image);
             end
+            im_tmp = immultiply(im_tmp, repmat(mask, 1, 1, nstack));
+            
             images(:,:,:,i) = im_tmp;
         end
     else
@@ -55,13 +62,15 @@ for i=1:nimages
             if ~isempty(channels)
                 im_tmp = crop_image(im_tmp, channels, resize_image);
             end
-            images(:,:,:,i) = im_tmp;   
-        else 
+            im_tmp = immultiply(im_tmp, repmat(mask, 1, 1, nchannels));
+            images(:,:,:,i) = im_tmp;
+        else
             im_tmp = images(:,:,i);
             im_tmp = apply_image_functions_oneimage(im_tmp, channel_normalize, channel_blur, channel_weight);
             if channel_mean_center == 1
                 im_tmp = crop_image(im_tmp, 0, resize_image);
             end
+            im_tmp = immultiply(im_tmp, mask);
             images(:,:,i) = im_tmp;
         end
     end
@@ -83,3 +92,4 @@ if blur_size > 0
 end
 
 im2 = immultiply(im1, signal_scale);
+
