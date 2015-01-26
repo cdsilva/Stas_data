@@ -224,7 +224,7 @@ Movie Index & Average Angle Error & Rank Correlation Coefficient \\
 5 & 3.04$^{\circ}$ & 0.9959 \\ 
  \hline
 \end{tabular}}}}
-
+\caption{Method validation using live imaging of \textit{Drosophila} embryos. (A) Selected images from a live imaging study of a \textit{Drosophilla} embryo during gastrulation. Each frame is in an arbitrary rotational orientation, and the order of the frames has been shuffled. (B) Images from A after registration and ordering using vector diffusion maps. The dorsal side of each embryo now appears at the top of each image, and the ventral side appears at the bottom. (C) The correlation between the recovered rotation angle (using vector diffusion maps) and the true rotation angle. (D) The correlation between the recovered rank (using vector diffusion maps) and the true rank. (E) The average error in the recovered angle and the rank correlation coefficient for $5$ different live imaging studies. }
 \end{figure*}
 
 \begin{figure*}[t]
@@ -241,6 +241,30 @@ Movie Index & Average Angle Error & Rank Correlation Coefficient \\
 \raisebox{2.5cm}{\textsf{C}}
 \includegraphics[width=3.25cm]{zebrafish_rank_corr}
 
+\end{figure*}
+
+\begin{figure*}[t]
+\begin{minipage}[b]{12cm}
+\raisebox{0.5cm}{\textsf{A}}
+\includegraphics[width=12.25cm]{drosophila_fixed_images_scrambled}
+
+\raisebox{0.5cm}{\textsf{B}}
+\includegraphics[width=12.25cm]{drosophila_fixed_images_ordered}
+
+
+\raisebox{0.5cm}{\textsf{C}}
+\includegraphics[width=12.25cm]{drosophila_fixed_images_average}
+\end{minipage}
+%
+\hfill
+%
+\raisebox{3.25cm}{\textsf{D}}
+\includegraphics[width=4.25cm]{drosophila_fixed_images_rank_corr}
+
+\end{figure*}
+
+\begin{figure*}
+\includegraphics[width=\textwidth]{wing_disc_ordered}
 \end{figure*}
 
 %\begin{figure*}[t]

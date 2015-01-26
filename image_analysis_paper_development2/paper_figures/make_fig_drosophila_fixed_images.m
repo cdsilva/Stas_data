@@ -57,17 +57,31 @@ end
 
 idx_to_plot = randsample(nimages, nsubimages);
 [~, I] = sort(embed_coord(idx_to_plot));
+
 make_fig(17, 17/nsubimages);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
     imshow(make_gray_nuclei(images(:,:,:,idx_to_plot(j))));
 end
+saveas(gcf, 'drosophila_fixed_images_scrambled.pdf');
+
+
 make_fig(17, 17/nsubimages);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
     imshow(make_gray_nuclei(imrotate(images_registered(:,:,:,idx_to_plot(I(j))), -5, 'crop')));
     text(npixels/2, npixels/2, sprintf('%d', time(idx_to_plot(I(j)))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
 end
+saveas(gcf, 'drosophila_fixed_images_ordered.pdf');
+
+make_fig(17, 17/nsubimages);
+for j=1:nsubimages
+    make_subplot(nsubimages, 1, 0.01, j);
+    im_tmp = uint8(mean(images_analyzed(:,:,:,(j-1)*nimages/nsubimages+1:j*nimages/nsubimages), 4));
+    imshow(make_gray_nuclei(imrotate(im_tmp, -5, 'crop')));
+end
+saveas(gcf, 'drosophila_fixed_images_average.pdf');
+
 
 make_fig(4,4);
 plot(tiedrank(time), tiedrank(embed_coord),'.k')
@@ -77,6 +91,8 @@ set(gca, 'xtick', [0 50 100])
 set(gca, 'ytick', [0 50 100])
 axis([0 125 0 125])
 axis square
+saveas(gcf, 'drosophila_fixed_images_rank_corr.pdf');
+
 
 
 

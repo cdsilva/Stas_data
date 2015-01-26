@@ -58,7 +58,7 @@ time = fscanf(fid, '%f');
 fclose(fid);
 
 
-nsubimages = 10;
+nsubimages = 15;
 if corr(time, embed_coord) < 0
     embed_coord = -embed_coord;
 end
@@ -68,11 +68,13 @@ for j=1:nsubimages
     make_subplot(nsubimages, 3, 0.01, j);
     imshow(max(images_registered(:,:,:,:,I(j)),[], 4))
     make_subplot(nsubimages, 3, 0.01, nsubimages+j);
-    imshow(max(permute(images_registered(:,:,:,:,I(j)), [4 2 3 1]),[], 4))
-    make_subplot(nsubimages, 3, 0.01, 2*nsubimages+j);
     imshow(max(permute(images_registered(:,:,:,:,I(j)), [1 4 3 2]),[], 4))
-%     text(npixels/2, npixels/2, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
+
+    make_subplot(nsubimages, 3, 0.01, 2*nsubimages+j);
+    imshow(max(permute(images_registered(:,:,:,:,I(j)), [4 2 3 1]),[], 4))
+    text(npixels/2, npixels/2, sprintf('~%2.0f min', time(I(j))-min(time)),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
 end
+saveas(gcf, 'wing_disc_ordered.pdf');
 
 return
 
