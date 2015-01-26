@@ -53,46 +53,52 @@ plot_images(immultiply(permute(images_analyzed, [4 1 3 2 5]), 1.5), dim)
 
 %%
 
+plot_wing_disc_projections(images_registered(:,:,:,:,2), []);
+annotation('arrow', [0.1 0.2], [0.1 0.1], 'color', 0.95*ones(1,3))
+annotation('arrow', [0.1 0.1], [0.1 0.2], 'color', 0.95*ones(1,3))
+annotation('textbox', [0.15 0.05 0.1 0.1], 'string','x','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','middle','horizontalalignment','left')
+annotation('textbox', [0.05 0.15 0.1 0.1], 'string','y','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','bottom','horizontalalignment','center')
+
+annotation('arrow', [0.85 0.9], [0.1 0.1], 'color', 0.95*ones(1,3))
+annotation('arrow', [0.85 0.85], [0.1 0.15], 'color', 0.95*ones(1,3))
+annotation('textbox', [0.87 0.05 0.1 0.1], 'string','z','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','middle','horizontalalignment','left')
+annotation('textbox', [0.82 0.11 0.1 0.1], 'string','y','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','bottom','horizontalalignment','center')
+
+annotation('arrow',  [0.1 0.1], [0.85 0.89],'color', 0.95*ones(1,3))
+annotation('arrow',  [0.1 0.15],[0.85 0.85], 'color', 0.95*ones(1,3))
+annotation('textbox', [0.05 0.84 0.1 0.1], 'string','z','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','bottom','horizontalalignment','center')
+annotation('textbox', [0.12 0.8 0.1 0.1], 'string','x','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','middle','horizontalalignment','left')
+
+saveas(gcf, 'wing_disc_example.pdf');
+
+%%
 fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
 time = fscanf(fid, '%f');
 fclose(fid);
 
-
-nsubimages = 15;
 if corr(time, embed_coord) < 0
     embed_coord = -embed_coord;
 end
-[~, I] = sort(embed_coord(1:nsubimages));
-make_fig(17, 3*17/nsubimages);
-for j=1:nsubimages
-    make_subplot(nsubimages, 3, 0.01, j);
-    imshow(max(images_registered(:,:,:,:,I(j)),[], 4))
-    make_subplot(nsubimages, 3, 0.01, nsubimages+j);
-    imshow(max(permute(images_registered(:,:,:,:,I(j)), [1 4 3 2]),[], 4))
 
-    make_subplot(nsubimages, 3, 0.01, 2*nsubimages+j);
-    imshow(max(permute(images_registered(:,:,:,:,I(j)), [4 2 3 1]),[], 4))
-    text(npixels/2, npixels/2, sprintf('~%2.0f min', time(I(j))-min(time)),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
-end
+nsubimages = 10;
+[~, I] = sort(embed_coord(20+(1:nsubimages)));
+I = I + 20;
+
+plot_wing_disc_projections(images_registered(:,:,:,:,I), time(I)-min(time));
 saveas(gcf, 'wing_disc_ordered.pdf');
 
 return
 
-make_fig(8, 6);
-for i=1:6
-    make_subplot(6, 3, 0.01, i)
-    imshow(immultiply(max(images_analyzed(:,:,:,:,7*i),[], 4), 1.5))
-    make_subplot(6, 3, 0.01, i+6)
-    imshow(immultiply(max(permute(images_analyzed(:,:,:,:,7*i), [4 2 3 1]),[], 4), 1.5))
-    make_subplot(6, 3, 0.01, i+12)
-    imshow(immultiply(max(permute(images_analyzed(:,:,:,:,7*i), [1 4 3 2]),[], 4), 1.5))
-end
 
-fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
-time = fscanf(fid, '%f');
-fclose(fid);
+% make_fig(17, 3*17/nsubimages);
+% for j=1:nsubimages
+%     make_subplot(nsubimages, 3, 0.01, j);
+%     imshow(max(images_registered(:,:,:,:,I(j)),[], 4))
+%     make_subplot(nsubimages, 3, 0.01, nsubimages+j);
+%     imshow(max(permute(images_registered(:,:,:,:,I(j)), [1 4 3 2]),[], 4))
+% 
+%     make_subplot(nsubimages, 3, 0.01, 2*nsubimages+j);
+%     imshow(max(permute(images_registered(:,:,:,:,I(j)), [4 2 3 1]),[], 4))
+%     text(npixels/2, npixels/2, sprintf('~%2.0f min', time(I(j))-min(time)),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
+% end
 
-make_fig(3,3);
-plot(tiedrank(time), tiedrank(embed_coord),'.')
-axis equal
-corr(time, embed_coord,'type','spearman')

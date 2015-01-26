@@ -100,17 +100,6 @@ for i=1:nexpt
         end
         saveas(gcf, 'drosophila_live_imaging_ordered.pdf');
         
-        make_fig(4,4);
-        plot(tiedrank(time), tiedrank(embed_coord),'.k')
-        xlabel('true rank')
-        ylabel('recovered rank')
-        set(gca, 'xtick', [0 20 40])
-        set(gca, 'ytick', [0 20 40])
-        axis([0 50 0 50])
-        axis square
-        saveas(gcf, 'drosophila_live_imaging_rank_corr.pdf');
-        
-        
         make_fig(4, 4);
         plot(angles, angles_opt,'.k')
         xlabel('true angle')
@@ -123,13 +112,94 @@ for i=1:nexpt
         axis square
         saveas(gcf, 'drosophila_live_imaging_angle_corr.pdf');
         
-        return
+        make_fig(4,4);
+        plot(tiedrank(time), tiedrank(embed_coord),'.k')
+        xlabel('true rank')
+        ylabel('recovered rank')
+        set(gca, 'xtick', [0 20 40])
+        set(gca, 'ytick', [0 20 40])
+        set(gca, 'xticklabel', {'0 '; '  20 '; '  40 '});
+        set(gca, 'yticklabel', {'0 '; '  20 '; '  40 '});
+        axis([0 50 0 50])
+        axis square
+        saveas(gcf, 'drosophila_live_imaging_rank_corr.pdf');
+        
+        
+        
+        
+        
         
     end
 end
 
 rank_corr
 theta_err
+
+%%
+
+channel_weight = 1;
+channel_blur = 0.05;
+channel_normalize = 1;
+channel_mean_center = 1;
+resize_image = true;
+
+eps_scale = 0.5;
+
+% images_raw_all = zeros(npixels, npixels, nimages, nexpt);
+images_all = zeros(npixels, npixels, nimages, nexpt);
+
+for i=1:nexpt
+    image_dir = sprintf('../code_for_distribution/drosophila_live_imaging/expt%02d', i);
+    
+    [images_raw_tmp, nchannels] = read_images(image_dir, image_name, image_ext, stack_name, nimages, nstack, npixels, dim);
+    
+    fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
+    time = fscanf(fid, '%f');
+    fclose(fid);
+    
+    [~, idx] = sort(time);
+    images_raw_tmp = images_raw_tmp(:,:,idx);
+    
+    images_tmp = apply_image_functions(images_raw_tmp, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
+    
+    images_all(:,:,:,i) = images_tmp;
+    
+end
+
+time = (1:nimages)';
+
+nreps = 50;
+rank_corr = zeros(nreps, 1);
+for k=1:nreps
+    rng(21*k)
+    movie_idx = randi(nexpt, [nimages 1]);
+    
+    for i=1:nexpt
+        I = find(movie_idx == i);
+        images(:,:,I) = images_all(:,:,I,i);
+    end
+    
+    [R, W] = compute_pairwise_alignments(images, nrot);
+    
+    % compute optimal rotations + embedding coordinates using vector diffusion maps
+    ncomps = 1;
+    [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
+    
+    % register images using optimal rotations
+    %     images_registered = register_all_images(images, R_opt);
+    %
+    %     images_analyzed = order_all_images(images_registered, embed_coord);
+    %
+    %     plot_images(images_analyzed, dim)
+    %
+    %     figure;
+    %     plot(tiedrank(time), tiedrank(embed_coord),'.')
+    
+    rank_corr(k) = abs(corr(time, embed_coord,'type','spearman'));
+end
+
+median(rank_corr)
+
 
 %% bootstrap
 % rng(321);
