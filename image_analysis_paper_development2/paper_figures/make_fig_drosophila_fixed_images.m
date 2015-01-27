@@ -55,7 +55,8 @@ if corr(time, embed_coord) < 0
     embed_coord = -embed_coord;
 end
 
-idx_to_plot = randsample(nimages, nsubimages);
+% idx_to_plot = randsample(nimages, nsubimages);
+idx_to_plot = round(linspace(1, nimages, nsubimages));
 [~, I] = sort(embed_coord(idx_to_plot));
 
 make_fig(17, 17/nsubimages);

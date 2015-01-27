@@ -52,24 +52,27 @@ plot_images(immultiply(permute(images_analyzed, [2 4 3 1 5]), 1.5), dim)
 plot_images(immultiply(permute(images_analyzed, [4 1 3 2 5]), 1.5), dim)
 
 %%
+make_fig(6, 6)
+% set(gcf, 'Renderer', 'Painters')
 
-plot_wing_disc_projections(images_registered(:,:,:,:,2), []);
-annotation('arrow', [0.1 0.2], [0.1 0.1], 'color', 0.95*ones(1,3))
-annotation('arrow', [0.1 0.1], [0.1 0.2], 'color', 0.95*ones(1,3))
-annotation('textbox', [0.15 0.05 0.1 0.1], 'string','x','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','middle','horizontalalignment','left')
-annotation('textbox', [0.05 0.15 0.1 0.1], 'string','y','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','bottom','horizontalalignment','center')
+plot_wing_disc_projections(images_registered(:,:,:,:,2), [], 1, 1)
+annotation('arrow', [0.05 0.15], [0.05 0.05], 'color', 0.95*ones(1,3), 'headlength', 5, 'headwidth', 5)
+annotation('arrow', [0.05 0.05], [0.05 0.15], 'color', 0.95*ones(1,3), 'headlength', 5, 'headwidth', 5)
+annotation('textarrow', [0.15 0.05], [0.05 0.05], 'color', 0.95*ones(1,3), 'string','x', 'headstyle','none', 'fontsize', 8)
+annotation('textarrow', [0.05 0.05], [0.15 0.05], 'color', 0.95*ones(1,3), 'string','y', 'headstyle','none', 'fontsize', 8)
 
-annotation('arrow', [0.85 0.9], [0.1 0.1], 'color', 0.95*ones(1,3))
-annotation('arrow', [0.85 0.85], [0.1 0.15], 'color', 0.95*ones(1,3))
-annotation('textbox', [0.87 0.05 0.1 0.1], 'string','z','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','middle','horizontalalignment','left')
-annotation('textbox', [0.82 0.11 0.1 0.1], 'string','y','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','bottom','horizontalalignment','center')
+annotation('arrow', [0.82 0.87], [0.05 0.05], 'color', 0.95*ones(1,3), 'headlength', 5, 'headwidth', 5)
+annotation('arrow', [0.82 0.82], [0.05 0.1], 'color', 0.95*ones(1,3), 'headlength', 5, 'headwidth', 5)
+annotation('textarrow', [0.87 0.82], [0.05 0.05], 'color', 0.95*ones(1,3), 'string','z', 'headstyle','none', 'fontsize', 8)
+annotation('textarrow', [0.82 0.82], [0.1 0.05], 'color', 0.95*ones(1,3), 'string','y', 'headstyle','none', 'fontsize', 8)
 
-annotation('arrow',  [0.1 0.1], [0.85 0.89],'color', 0.95*ones(1,3))
-annotation('arrow',  [0.1 0.15],[0.85 0.85], 'color', 0.95*ones(1,3))
-annotation('textbox', [0.05 0.84 0.1 0.1], 'string','z','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','bottom','horizontalalignment','center')
-annotation('textbox', [0.12 0.8 0.1 0.1], 'string','x','color', 0.95*ones(1,3), 'edgecolor','none', 'verticalalignment','middle','horizontalalignment','left')
+annotation('arrow',  [0.05 0.05], [0.82 0.87],'color', 0.95*ones(1,3), 'headlength', 5, 'headwidth', 5)
+annotation('arrow',  [0.05 0.1],[0.82 0.82], 'color', 0.95*ones(1,3), 'headlength', 5, 'headwidth', 5)
+annotation('textarrow',  [0.05 0.05], [0.87 0.82],'color', 0.95*ones(1,3), 'string','z', 'headstyle','none', 'fontsize', 8)
+annotation('textarrow',  [0.1 0.05],[0.82 0.82], 'color', 0.95*ones(1,3), 'string','x', 'headstyle','none', 'fontsize', 8)
 
-saveas(gcf, 'wing_disc_example.pdf');
+print('wing_disc_example.eps', '-depsc', '-r300');
+
 
 %%
 fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
@@ -80,25 +83,13 @@ if corr(time, embed_coord) < 0
     embed_coord = -embed_coord;
 end
 
-nsubimages = 10;
+nsubimages = 12;
 [~, I] = sort(embed_coord(20+(1:nsubimages)));
 I = I + 20;
 
-plot_wing_disc_projections(images_registered(:,:,:,:,I), time(I)-min(time));
-saveas(gcf, 'wing_disc_ordered.pdf');
-
-return
-
-
-% make_fig(17, 3*17/nsubimages);
-% for j=1:nsubimages
-%     make_subplot(nsubimages, 3, 0.01, j);
-%     imshow(max(images_registered(:,:,:,:,I(j)),[], 4))
-%     make_subplot(nsubimages, 3, 0.01, nsubimages+j);
-%     imshow(max(permute(images_registered(:,:,:,:,I(j)), [1 4 3 2]),[], 4))
-% 
-%     make_subplot(nsubimages, 3, 0.01, 2*nsubimages+j);
-%     imshow(max(permute(images_registered(:,:,:,:,I(j)), [4 2 3 1]),[], 4))
-%     text(npixels/2, npixels/2, sprintf('~%2.0f min', time(I(j))-min(time)),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
-% end
+make_fig(8, 6);
+plot_wing_disc_projections(images_registered(:,:,:,:,I), time(I)-min(time), 4, 3)
+% plot_wing_disc_projections(images_registered(:,:,:,:,I), time(I)-min(time));
+% saveas(gcf, 'wing_disc_ordered.pdf');
+print('wing_disc_ordered.eps', '-depsc', '-r300');
 

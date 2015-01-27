@@ -79,7 +79,9 @@ make_fig(17, 17/nsubimages);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
     imshow(imrotate(images_registered(:,:,I(j)), 70, 'crop'));
-    text(npixels/2, npixels/2, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
+    text(npixels, npixels, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','right','VerticalAlignment','bottom', 'fontsize', 4)
+
+%     text(npixels/2, npixels/2, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
 end
 saveas(gcf, 'zebrafish_ordered.pdf');
 

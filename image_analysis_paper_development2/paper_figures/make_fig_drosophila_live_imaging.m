@@ -80,7 +80,7 @@ for i=1:nexpt
     theta_err(i) = mean(abs(angles - angles_opt));
     
     if i == 1
-        nsubimages = 10;
+        nsubimages = 12;
         if corr(time, embed_coord) < 0
             embed_coord = -embed_coord;
         end
@@ -96,7 +96,8 @@ for i=1:nexpt
         for j=1:nsubimages
             make_subplot(nsubimages, 1, 0.01, j);
             imshow(imrotate(images_registered(:,:,I(j)), 50, 'crop'));
-            text(npixels/2, npixels/2, sprintf('%2.1f min', time(I(j))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
+%             text(npixels/2, npixels/2, sprintf('%2.1f min', time(I(j))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
+            text(npixels, npixels, sprintf('%2.1f min', time(I(j))),'color',0.95*ones(1,3),'HorizontalAlignment','right','VerticalAlignment','bottom', 'fontsize', 4)
         end
         saveas(gcf, 'drosophila_live_imaging_ordered.pdf');
         
@@ -124,7 +125,7 @@ for i=1:nexpt
         axis square
         saveas(gcf, 'drosophila_live_imaging_rank_corr.pdf');
         
-        
+        return
         
         
         
