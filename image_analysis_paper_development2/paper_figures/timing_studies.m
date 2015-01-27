@@ -205,13 +205,18 @@ end
 
 %%
 
-make_fig(8,8);
+fontsize = 8;
+figsize = 5;
+
+make_fig(figsize, figsize);
 loglog(npixels_zebrafish, cpu_times_npixels_zebrafish, '.-b');
 hold on
 loglog(npixels_drosophila, cpu_times_npixels_drosophila, '.-r');
-xlabel('number of pixels')
-ylabel('CPU time')
-legend('grayscale','color','location','northwest')
+xlabel('number of pixels', 'fontsize', fontsize)
+ylabel('CPU time', 'fontsize', fontsize)
+h = legend('grayscale','color','location','southoutside');
+set(h, 'fontsize', fontsize);
+set(gca, 'fontsize', fontsize)
 set(gca, 'xtick', [50 100 200 400])
 set(gca, 'ytick', [10 60 360])
 set(gca, 'YTickLabel', {'10 sec'; '1 min'; '6 min'})
@@ -219,13 +224,15 @@ axis tight
 axis square
 saveas(gcf, 'timing_studies_npixels.pdf');
 
-make_fig(8,8);
+make_fig(figsize, figsize);
 loglog(nimages_zebrafish, cpu_times_nimages_zebrafish, '.-b');
 hold on
 loglog(nimages_drosophila, cpu_times_nimages_drosophila, '.-r');
-xlabel('number of images')
-ylabel('CPU time')
-legend('grayscale','color','location','northwest')
+xlabel('number of images', 'fontsize', fontsize)
+ylabel('CPU time', 'fontsize', fontsize)
+h = legend('grayscale','color','location','southoutside');
+set(h, 'fontsize', fontsize);
+set(gca, 'fontsize', fontsize)
 set(gca, 'xtick', [20 40 80 160])
 set(gca, 'ytick', [2 5 10 20])
 set(gca, 'YTickLabel', {'2 sec'; '5 sec'; '10 sec'; '20 sec'})
@@ -233,13 +240,15 @@ axis tight
 axis square
 saveas(gcf, 'timing_studies_nimages.pdf');
 
-make_fig(8,8);
+make_fig(figsize, figsize);
 loglog(nrot_zebrafish, cpu_times_nrot_zebrafish, '.-b');
 hold on
 loglog(nrot_drosophila, cpu_times_nrot_drosophila, '.-r');
-xlabel('number of rotations')
-ylabel('CPU time')
-legend('grayscale','color','location','northwest')
+xlabel('number of rotations', 'fontsize', fontsize)
+ylabel('CPU time', 'fontsize', fontsize)
+h = legend('grayscale','color','location','southoutside');
+set(h, 'fontsize', fontsize);
+set(gca, 'fontsize', fontsize)
 set(gca, 'xtick', [10 20 40 80])
 set(gca, 'ytick', [10 20 40])
 set(gca, 'YTickLabel', {'10 sec'; '20 sec'; '40 sec'})
