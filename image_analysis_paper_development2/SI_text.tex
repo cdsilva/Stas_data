@@ -413,45 +413,45 @@ See \citep{kemelmacher2011exploring} for a more detailed discussion.
 
 
 \newpage
-
-\begin{figure}
-\includegraphics{figS1}
-\caption{(Left) A lateral view of a {\it Drosophila} embryo stained with DAPI (gray), dpERK (red), and Twi (green). The embryo is presented so that the anterior (A) side is to the left and the posterior (P) side is to the right. The arrow indicates the position where the cross-section of an embryo is imaged. (Right) A dorsoventral view of the cross-section of the {\it Drosophila} embryo. The dorsal (D) side is up and the ventral (V) side is down. Images were collected at the focal plane $\sim 18\%$ from the posterior pole of an embryo (arrow in the left image). }
-\label{fig:ap_dv}
-\end{figure}
-
-\begin{figure}
-\includegraphics{figS2}
-\caption{Synthetic data set used to illustrate the data processing algorithms. {\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
-\label{fig:1d_demo}
-%\customlabel{fig:1d_demo}{3}
-\customlabel{subfig:1d_example}{\ref{fig:1d_demo}{\it A}}
-\customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}{\it B}}
-\customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}{\it C}}
-\customlabel{subfig:1d_aligned_unordered}{\ref{fig:1d_demo}{\it D}}
-\customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}{\it E}}
-\customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}{\it F}}
-\end{figure}
-
-\begin{figure*}
-\includegraphics{figS3}
-\caption{Eigenvalue spectra. {\it (A)} Eigenvalue spectrum for the live imaging data set presented in \fig~3. Note that there is a gap after the third eigenvalue. {\it (B), (C)} Second and third embedding coordinates, respectively, versus the first embedding coordinate for the live imaging data set presented in \fig~3. Note that coordinates 2 and 3 are higher harmonics (and thus simple functions) of coordinate 1, and are therefore not informative about structure in the data set.  We can conclude that the data set is effectively one-dimensional. {\it (D)} Eigenvalue spectrum for the live imaging data set presented in \fig~4. Note that there is a gap after the first eigenvalue; we can conclude that the data set is effectively one-dimensional. }
-\end{figure*}
-
-\begin{figure*}
-\includegraphics{figS4}
-\caption{Live imaging data set. {\it (A)} Live imaging data set used for the results in \fig~3. The images have been preprocessed as described above, each image has been arbitrarily rotated, and the order of the images has been shuffled. {\it (B)} Data set from A after registration and ordering. The real time for each image is indicated. }
-\end{figure*}
-
-\begin{figure*}
-\includegraphics{figS5}
-\caption{{\it (A-D)} Four additional live imaging data sets used for the analysis in \fig~3. }
-\end{figure*}
-
-\begin{figure*}	
-\includegraphics{figS6}
-\caption{Fixed embryo imaging data set. {\it (A)} Fixed images used for the results in \fig~4. The images have been preprocessed as described above. {\it (B)} Data set from A after registration and ordering. The rank provided by a trained embryologist for each image is indicated. }
-\end{figure*}
+%
+%\begin{figure}
+%\includegraphics{figS1}
+%\caption{(Left) A lateral view of a {\it Drosophila} embryo stained with DAPI (gray), dpERK (red), and Twi (green). The embryo is presented so that the anterior (A) side is to the left and the posterior (P) side is to the right. The arrow indicates the position where the cross-section of an embryo is imaged. (Right) A dorsoventral view of the cross-section of the {\it Drosophila} embryo. The dorsal (D) side is up and the ventral (V) side is down. Images were collected at the focal plane $\sim 18\%$ from the posterior pole of an embryo (arrow in the left image). }
+%\label{fig:ap_dv}
+%\end{figure}
+%
+%\begin{figure}
+%\includegraphics{figS2}
+%\caption{Synthetic data set used to illustrate the data processing algorithms. {\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
+%\label{fig:1d_demo}
+%%\customlabel{fig:1d_demo}{3}
+%\customlabel{subfig:1d_example}{\ref{fig:1d_demo}{\it A}}
+%\customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}{\it B}}
+%\customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}{\it C}}
+%\customlabel{subfig:1d_aligned_unordered}{\ref{fig:1d_demo}{\it D}}
+%\customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}{\it E}}
+%\customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}{\it F}}
+%\end{figure}
+%
+%\begin{figure*}
+%\includegraphics{figS3}
+%\caption{Eigenvalue spectra. {\it (A)} Eigenvalue spectrum for the live imaging data set presented in \fig~3. Note that there is a gap after the third eigenvalue. {\it (B), (C)} Second and third embedding coordinates, respectively, versus the first embedding coordinate for the live imaging data set presented in \fig~3. Note that coordinates 2 and 3 are higher harmonics (and thus simple functions) of coordinate 1, and are therefore not informative about structure in the data set.  We can conclude that the data set is effectively one-dimensional. {\it (D)} Eigenvalue spectrum for the live imaging data set presented in \fig~4. Note that there is a gap after the first eigenvalue; we can conclude that the data set is effectively one-dimensional. }
+%\end{figure*}
+%
+%\begin{figure*}
+%\includegraphics{figS4}
+%\caption{Live imaging data set. {\it (A)} Live imaging data set used for the results in \fig~3. The images have been preprocessed as described above, each image has been arbitrarily rotated, and the order of the images has been shuffled. {\it (B)} Data set from A after registration and ordering. The real time for each image is indicated. }
+%\end{figure*}
+%
+%\begin{figure*}
+%\includegraphics{figS5}
+%\caption{{\it (A-D)} Four additional live imaging data sets used for the analysis in \fig~3. }
+%\end{figure*}
+%
+%\begin{figure*}	
+%\includegraphics{figS6}
+%\caption{Fixed embryo imaging data set. {\it (A)} Fixed images used for the results in \fig~4. The images have been preprocessed as described above. {\it (B)} Data set from A after registration and ordering. The rank provided by a trained embryologist for each image is indicated. }
+%\end{figure*}
 
 
 

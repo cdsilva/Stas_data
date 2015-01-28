@@ -67,15 +67,20 @@ nsubimages = 10;
 if corr(time, embed_coord) < 0
     embed_coord = -embed_coord;
 end
-[~, I] = sort(embed_coord(1:nsubimages));
-make_fig(17, 17/nsubimages);
+% [~, I] = sort(embed_coord((1:nsubimages)+10));
+% I = I+10;
+[~, I] = sort(embed_coord);
+I = I([1 20 35 50 60 70 80 94 100 120]);
+I2 = sort(I);
+
+make_fig(13, 13/nsubimages);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
-    imshow(images(:,:,j));
+    imshow(images(:,:,I2(j)));
 end
 saveas(gcf, 'zebrafish_scrambled.pdf');
 
-make_fig(17, 17/nsubimages);
+make_fig(13, 13/nsubimages);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
     imshow(imrotate(images_registered(:,:,I(j)), 70, 'crop'));
@@ -85,10 +90,12 @@ for j=1:nsubimages
 end
 saveas(gcf, 'zebrafish_ordered.pdf');
 
-make_fig(4,4);
+fontsize = 8;
+make_fig(3.25,3.25);
 plot(tiedrank(time), tiedrank(embed_coord),'.k')
-xlabel('true rank')
-ylabel('recovered rank')
+xlabel('true rank', 'fontsize', fontsize)
+ylabel('recovered rank', 'fontsize', fontsize)
+set(gca, 'fontsize', fontsize)
 set(gca, 'xtick', [0 50 100])
 set(gca, 'ytick', [0 50 100])
 axis([0 125 0 125])

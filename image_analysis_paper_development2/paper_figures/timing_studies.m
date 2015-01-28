@@ -209,51 +209,73 @@ fontsize = 8;
 figsize = 5;
 
 make_fig(figsize, figsize);
-loglog(npixels_zebrafish, cpu_times_npixels_zebrafish, '.-b');
+loglog(npixels_zebrafish, cpu_times_npixels_zebrafish, '.b', 'markersize', 10);
 hold on
-loglog(npixels_drosophila, cpu_times_npixels_drosophila, '.-r');
+loglog(npixels_drosophila, cpu_times_npixels_drosophila, '.r', 'markersize', 10);
 xlabel('number of pixels', 'fontsize', fontsize)
-ylabel('CPU time', 'fontsize', fontsize)
-h = legend('grayscale','color','location','southoutside');
-set(h, 'fontsize', fontsize);
+ylabel('CPU time (seconds)', 'fontsize', fontsize)
+h = legend('grayscale','color','location','southeast');
+set(h, 'fontsize', 4);
 set(gca, 'fontsize', fontsize)
-set(gca, 'xtick', [50 100 200 400])
-set(gca, 'ytick', [10 60 360])
-set(gca, 'YTickLabel', {'10 sec'; '1 min'; '6 min'})
+set(gca, 'xtick', [100 1000])
+set(gca, 'xticklabel', {'100x100'; '1000x1000'});
+x_data = linspace(50, 1500, 10);
+P = polyfit(log(npixels_zebrafish(2:end)), log(cpu_times_npixels_zebrafish(2:end)),1);
+P(1)
+loglog(x_data, exp(polyval(P, log(x_data))), '--b');
+
+P = polyfit(log(npixels_drosophila(2:end)), log(cpu_times_npixels_drosophila(2:end)),1);
+P(1)
+loglog(x_data, exp(polyval(P, log(x_data))), '--r');
 axis tight
 axis square
 saveas(gcf, 'timing_studies_npixels.pdf');
 
 make_fig(figsize, figsize);
-loglog(nimages_zebrafish, cpu_times_nimages_zebrafish, '.-b');
+loglog(nimages_zebrafish, cpu_times_nimages_zebrafish, '.b', 'markersize', 10);
 hold on
-loglog(nimages_drosophila, cpu_times_nimages_drosophila, '.-r');
+loglog(nimages_drosophila, cpu_times_nimages_drosophila, '.r', 'markersize', 10);
 xlabel('number of images', 'fontsize', fontsize)
-ylabel('CPU time', 'fontsize', fontsize)
-h = legend('grayscale','color','location','southoutside');
-set(h, 'fontsize', fontsize);
+ylabel('CPU time (seconds)', 'fontsize', fontsize)
+h = legend('grayscale','color','location','southeast');
+set(h, 'fontsize', 4);
 set(gca, 'fontsize', fontsize)
-set(gca, 'xtick', [20 40 80 160])
-set(gca, 'ytick', [2 5 10 20])
-set(gca, 'YTickLabel', {'2 sec'; '5 sec'; '10 sec'; '20 sec'})
+
+x_data = linspace(20, 1000, 10);
+P = polyfit(log(nimages_zebrafish(2:end)), log(cpu_times_nimages_zebrafish(2:end)),1);
+P(1)
+loglog(x_data, exp(polyval(P, log(x_data))), '--b');
+
+P = polyfit(log(nimages_drosophila(2:end)), log(cpu_times_nimages_drosophila(2:end)),1);
+P(1)
+loglog(x_data, exp(polyval(P, log(x_data))), '--r');
+
 axis tight
 axis square
 saveas(gcf, 'timing_studies_nimages.pdf');
 
+
 make_fig(figsize, figsize);
-loglog(nrot_zebrafish, cpu_times_nrot_zebrafish, '.-b');
+loglog(360./nrot_zebrafish, cpu_times_nrot_zebrafish, '.b', 'markersize', 10);
 hold on
-loglog(nrot_drosophila, cpu_times_nrot_drosophila, '.-r');
-xlabel('number of rotations', 'fontsize', fontsize)
-ylabel('CPU time', 'fontsize', fontsize)
-h = legend('grayscale','color','location','southoutside');
-set(h, 'fontsize', fontsize);
+loglog(360./nrot_drosophila, cpu_times_nrot_drosophila, '.r', 'markersize', 10);
+xlabel('angular discretization', 'fontsize', fontsize)
+ylabel('CPU time (seconds)', 'fontsize', fontsize)
+h = legend('grayscale','color','location','southwest');
+set(h, 'fontsize', 4);
 set(gca, 'fontsize', fontsize)
-set(gca, 'xtick', [10 20 40 80])
-set(gca, 'ytick', [10 20 40])
-set(gca, 'YTickLabel', {'10 sec'; '20 sec'; '40 sec'})
+set(gca, 'xtick', [1 10])
+set(gca, 'xticklabel', {'1°'; '10°'})
+
+x_data = linspace(12, 360, 10);
+P = polyfit(log(nrot_zebrafish(2:end)), log(cpu_times_nrot_zebrafish(2:end)),1);
+P(1)
+loglog(360./x_data, exp(polyval(P, log(x_data))), '--b');
+
+P = polyfit(log(nrot_drosophila(2:end)), log(cpu_times_nrot_drosophila(2:end)),1);
+P(1)
+loglog(360./x_data, exp(polyval(P, log(x_data))), '--r');
 axis tight
-set(gca, 'xlim', [10 80])
 axis square
 saveas(gcf, 'timing_studies_nrot.pdf');
 

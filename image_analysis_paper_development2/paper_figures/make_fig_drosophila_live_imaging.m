@@ -81,6 +81,7 @@ for i=1:nexpt
     
     if i == 1
         nsubimages = 12;
+        fontsize = 8;
         if corr(time, embed_coord) < 0
             embed_coord = -embed_coord;
         end
@@ -101,10 +102,11 @@ for i=1:nexpt
         end
         saveas(gcf, 'drosophila_live_imaging_ordered.pdf');
         
-        make_fig(4, 4);
+        make_fig(5, 5);
         plot(angles, angles_opt,'.k')
-        xlabel('true angle')
-        ylabel('recovered angle')
+        xlabel('true angle', 'fontsize', fontsize)
+        ylabel('recovered angle', 'fontsize', fontsize)
+        set(gca, 'fontsize', fontsize)
         set(gca, 'xtick', [0 180 360]);
         set(gca, 'ytick', [0 180 360]);
         set(gca, 'xticklabel', {'0°'; '180°'; '360°'});
@@ -113,10 +115,11 @@ for i=1:nexpt
         axis square
         saveas(gcf, 'drosophila_live_imaging_angle_corr.pdf');
         
-        make_fig(4,4);
+        make_fig(5, 5);
         plot(tiedrank(time), tiedrank(embed_coord),'.k')
-        xlabel('true rank')
-        ylabel('recovered rank')
+        xlabel('true rank', 'fontsize', fontsize)
+        ylabel('recovered rank', 'fontsize', fontsize)
+        set(gca, 'fontsize', fontsize)
         set(gca, 'xtick', [0 20 40])
         set(gca, 'ytick', [0 20 40])
         set(gca, 'xticklabel', {'0 '; '  20 '; '  40 '});
