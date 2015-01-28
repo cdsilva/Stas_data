@@ -1,22 +1,34 @@
-function [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps)
-% [R_opt, embed_coord, D2, D] = vdm(R, W, eps, ncomps)
-% calculate the optimal rotations + embedding coordinates using vector
-% diffusion maps
+function [R_OPT, EMBED_COORD, D2] = vdm(R, W, EPS_SCALE, NCOMPS)
+%VDM Calculate the optimal rotations + embedding coordinates using vector
+%diffusion maps.
+% [R_OPT, EMBED_COORD, D2] = VDM(R, W, EPS_SCALE, NCOMPS) calculates the
+% vector diffusion maps embedding coordinates and optimal rotations
 % R is the matrix of pairwise rotation matrices (returned by
 % compute_pairwise_alignments.m)
+%
 % W is the matrix of pairwise distances (returned by
 % compute_pairwise_alignments.m)
-% eps is the kernel scale (eps=0 defaults to 1/10 of the median squared
-% pairwise distance)
-% ncomps is the number of embedding coordinates to calculate
-% R_opt is a matrix containing the optimal rotations
-% embed_coord contains the embedding coordinates (where the i^th column
+%
+% EPS_SCALE is the scaling of the median of the pairwise distances used for
+% the kernel; eps_scale=1 means the median of the pairwise distances are
+% used for the diffusion maps kernel
+%
+% NCOMPS is the number of embedding coordinates to calculate
+% 
+% R_OPT is a matrix containing the optimal rotations
+%
+% EMBED_COORD contains the embedding coordinates (where the i^th column
 % contains the i^th emebdding coordinate)
+% 
 % D2 are the eigenvalue products correspoinding to the embedding
 % coordinates
 
+%% store relevant parameters
+
+% dimension of rotations
 dim = size(R,1) / size(W,1);
 
+% number of data points
 [n, ~] = size(W);
 
 if mod(dim, 1) ~= 0
@@ -25,10 +37,12 @@ if mod(dim, 1) ~= 0
 end
 
 % calculate number of eigenvalues to compute
-neigs = dim*(ncomps + 1);
+neigs = dim*(NCOMPS + 1);
 
+% kernel scale for diffusion maps
+eps = median(W(:)) * EPS_SCALE;
 
-eps = median(W(:)) * eps_scale;
+%% construct relevant matrices
 
 % calculate kernel of distances
 W2 = exp(-(W/eps).^2);
@@ -46,6 +60,8 @@ for i=1:n
         R2(dim*(i-1)+1:dim*i,dim*(j-1)+1:dim*j) = W2(i,j) * R(dim*(i-1)+1:dim*i,dim*(j-1)+1:dim*j);
     end
 end
+
+%% calculate eigenvectors
 
 % compute eigenvectors
 [V, D] = eigs(R2, neigs);
@@ -71,23 +87,25 @@ for i=1:neigs
     V(:,i) = V(:,i) / norm(V(:,i));
 end
 
+%% calculate rotations
+
 % if necessary, switch eigenvector sign to get proper rotation
 if det(V(1:dim,1:dim)) < 0
     V(:,dim) = -V(:,dim);
 end
 
 % calculate optimal rotations using SVD
-R_opt = V(:,1:dim);
+R_OPT = V(:,1:dim);
 for i=1:n
-    [u, s, v] = svd(R_opt(dim*(i-1)+1:dim*i,:));
-    R_opt(dim*(i-1)+1:dim*i,:) = u * v';
+    [u, s, v] = svd(R_OPT(dim*(i-1)+1:dim*i,:));
+    R_OPT(dim*(i-1)+1:dim*i,:) = u * v';
 end
-R_opt = R_opt * R_opt(1:dim,1:dim)';
+R_OPT = R_OPT * R_OPT(1:dim,1:dim)';
 
-% calculate embedding coordinates from eigenvectors
-embed_coord = zeros(n, floor(neigs/dim)-1);
+%% calculate embedding coordinates from eigenvectors
+EMBED_COORD = zeros(n, floor(neigs/dim)-1);
 D2 = zeros(floor(neigs/dim)-1, 1);
-for i=1:size(embed_coord, 2);
+for i=1:size(EMBED_COORD, 2);
     % find coordinate with maximum variance for each block of dim
     % eignevectors
     var_coord = 0;
@@ -97,7 +115,7 @@ for i=1:size(embed_coord, 2);
             var_tmp = var(embed_coord_tmp);
             if var_tmp > var_coord
                 var_coord = var_tmp;
-                embed_coord(:, i) = embed_coord_tmp;
+                EMBED_COORD(:, i) = embed_coord_tmp;
                 D2(i) = D(j1,j1) * D(j2,j2);
             end
         end

@@ -1,78 +1,106 @@
-function [images, nchannels] = read_images(image_dir, image_name, image_ext, stack_name, nimages, nstack, npixels, dim)
-%READ_IMAGES reads in images stored in specified directory and
-%subdirectories
-% [images, nchannels] = READ_IMAGES(image_dir, image_name, image_ext, stack_name, nimages, nstack, npixels, dim)
+function [IMAGES, NCHANNELS] = read_images(IMAGE_DIR, IMAGE_NAME, IMAGE_EXT, STACK_NAME, NIMAGES, NSTACK, NPIXELS, DIM)
+%READ_IMAGES Read in images stored in specified directory and
+%subdirectories.
+% [IMAGES, NCHANNELS] = READ_IMAGES(IMAGE_DIR, IMAGE_NAME, IMAGE_EXT, STACK_NAME, NIMAGES, NSTACK, NPIXELS, DIM)
 % reads in the images stored in image_dir
-% image_name gives the image prefix (for 2D images) or folder prefix (for
+% IMAGE_DIR is the directory where the images are stored
+% 
+% IMAGE_NAME gives the image prefix (for 2D images) or folder prefix (for
 % 3D z-stacks) for the images
-% image_ext is the extension of the images (tif, jpg, etc.)
-% stack_name is the image prefix for each of the images in a z-stack; if
+% 
+% IMAGE_EXT is the extension of the images (tif, jpg, etc.)
+% 
+% STACK_NAME is the image prefix for each of the images in a z-stack; if
 % there are only 2D images, then stack_name is ignored
-% nimages is the number of 2D images, or the number of 3D z-stacks
-% nstack is the number of images in a single z-stack; if
+% 
+% NIMAGES is the number of 2D images, or the number of 3D z-stacks
+% 
+% NSTACK is the number of images in a single z-stack; if
 % there are only 2D images, then stack_name is ignored
-% npixels is the number of pixels for reading in the images (this does not
+% 
+% NPIXELS is the number of pixels for reading in the images (this does not
 % have to be the same as the actual resolutoin of the images)
-% dim is the image dimension: dim=2 for standard 2D images, dim=3 for
+% 
+% DIM is the image dimension: dim=2 for standard 2D images, dim=3 for
 % z-stacks
 %
-% images is the array of images
-% nchannels is the number of channels in the images
+% IMAGES is the array of images
+% IMAGES is an npixels x npixels x nimages array (for 2D grayscale images)
+%    npixels x npixels x nchannels x nimages array (for 2D color images)
+%    npixels x npixels x nstack x nimages array (for 3D grayscale images)
+%    npixels x npixels x nchannels x nstack x nimages array (for 3D color images)
+% NCHANNELS is the number of channels in the images
 
+%%
 try
     h = waitbar(0, 'Reading images...');
     
-    if dim == 2
+    % read in first image to see if it is grayscale or color
+    if DIM == 2
         i = 1;
-        filename = sprintf('%s/%s%02d.%s', image_dir, image_name, i, image_ext);
+        filename = sprintf('%s/%s%02d.%s', IMAGE_DIR, IMAGE_NAME, i, IMAGE_EXT);
     else
         i = 1;
         j = 1;
-        filename = sprintf('%s/%s%02d/%s%02d.%s', image_dir, image_name, i, stack_name, j, image_ext);
+        filename = sprintf('%s/%s%02d/%s%02d.%s', IMAGE_DIR, IMAGE_NAME, i, STACK_NAME, j, IMAGE_EXT);
     end
     im_tmp = imread(filename);
     if ndims(im_tmp) == 2
-        nchannels = 1;
+        NCHANNELS = 1;
     else
-        nchannels = size(im_tmp, 3);
+        NCHANNELS = size(im_tmp, 3);
     end
     
-    if dim == 2
-        if nchannels == 1
-            images = zeros(npixels, npixels, nimages, 'uint8');
+    % allocate space for images
+    if DIM == 2
+        if NCHANNELS == 1
+            IMAGES = zeros(NPIXELS, NPIXELS, NIMAGES, 'uint8');
         else
-            images = zeros(npixels, npixels, nchannels, nimages, 'uint8');
+            IMAGES = zeros(NPIXELS, NPIXELS, NCHANNELS, NIMAGES, 'uint8');
         end
     else
-        if nchannels == 1
-            images = zeros(npixels, npixels, nstack, nimages, 'uint8');
+        if NCHANNELS == 1
+            IMAGES = zeros(NPIXELS, NPIXELS, NSTACK, NIMAGES, 'uint8');
         else
-            images = zeros(npixels, npixels, nchannels, nstack, nimages, 'uint8');
+            IMAGES = zeros(NPIXELS, NPIXELS, NCHANNELS, NSTACK, NIMAGES, 'uint8');
         end
     end
     
-    for i=1:nimages
-        waitbar(i/nimages, h);
-        if dim == 2
-            filename = sprintf('%s/%s%02d.%s', image_dir, image_name, i, image_ext);
-            im_tmp = imread(filename);
-            im_tmp = imresize(im_tmp, [npixels npixels]);
+    % read in each image
+    for i=1:NIMAGES
+        waitbar(i/NIMAGES, h);
+        if DIM == 2
+            % create filename of new image
+            filename = sprintf('%s/%s%02d.%s', IMAGE_DIR, IMAGE_NAME, i, IMAGE_EXT);
             
-            if nchannels == 1
-                images(:, :, i) = im_tmp;
+            % read image
+            im_tmp = imread(filename);
+            
+            % resize image
+            im_tmp = imresize(im_tmp, [NPIXELS NPIXELS]);
+            
+            % store image
+            if NCHANNELS == 1
+                IMAGES(:, :, i) = im_tmp;
             else
-                images(:, :, :, i) = im_tmp;
+                IMAGES(:, :, :, i) = im_tmp;
             end
         else
-            for j=1:nstack
-                filename = sprintf('%s/%s%02d/%s%02d.%s', image_dir, image_name, i, stack_name, j, image_ext);
-                im_tmp = imread(filename);
-                im_tmp = imresize(im_tmp, [npixels npixels]);
+            for j=1:NSTACK
+                % create filename of new image
+                filename = sprintf('%s/%s%02d/%s%02d.%s', IMAGE_DIR, IMAGE_NAME, i, STACK_NAME, j, IMAGE_EXT);
                 
-                if nchannels == 1
-                    images(:, :, j, i) = im_tmp;
+                % read image
+                im_tmp = imread(filename);
+                
+                % resize image
+                im_tmp = imresize(im_tmp, [NPIXELS NPIXELS]);
+                
+                % store image
+                if NCHANNELS == 1
+                    IMAGES(:, :, j, i) = im_tmp;
                 else
-                    images(:, :, :, j, i) = im_tmp;
+                    IMAGES(:, :, :, j, i) = im_tmp;
                 end
             end
         end

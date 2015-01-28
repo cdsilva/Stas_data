@@ -20,7 +20,7 @@ channel_normalize = 1;
 channel_mean_center = 0;
 resize_image = false;
 
-nrot = 36;
+ang_dis = 10;
 
 eps_scale = 0.25;
 
@@ -43,7 +43,7 @@ for i=1:nexpt
     %     end
     %     continue
     
-    [R, W] = compute_pairwise_alignments(images, nrot);
+    [R, W] = compute_pairwise_alignments(images, ang_dis);
     
     % compute optimal rotations + embedding coordinates using vector diffusion maps
     ncomps = 1;

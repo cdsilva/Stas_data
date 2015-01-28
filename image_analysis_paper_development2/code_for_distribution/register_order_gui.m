@@ -22,7 +22,7 @@ function varargout = register_order_gui(varargin)
 
 % Edit the above text to modify the response to help register_order_gui
 
-% Last Modified by GUIDE v2.5 23-Jan-2015 17:05:05
+% Last Modified by GUIDE v2.5 28-Jan-2015 11:37:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,11 +54,6 @@ function register_order_gui_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for register_order_gui
 handles.output = hObject;
-
-handles.reread_images = true;
-handles.reapply_image_functions = true;
-handles.recalc_pairwise_rotations = true;
-handles.rerun_dmaps = true;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -109,6 +104,11 @@ function save_images_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if ~isfield(handles, 'images_analyzed')
+    msgbox('Images have not been analyzed.')
+    return
+end
+
 if handles.reread_images
     choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
         'Reread images', ...
@@ -148,6 +148,18 @@ end
 if handles.rerun_dmaps
     choice = questdlg('Kernel scale or image set/parameters have changed, but images have not been reanalyzed. Are you sure you want to continue?', ...
         'Reanalyze images', ...
+        'Yes','No','No');
+    % Handle response
+    switch choice
+        case 'Yes'
+            
+        case 'No'
+            return
+    end
+end
+if handles.reregister_image_set
+    choice = questdlg('The selected images to analyze (raw vs. preprocessed) has changed, but images have not been reanalyzed. Are you sure you want to continue?', ...
+        'Reread images', ...
         'Yes','No','No');
     % Handle response
     switch choice
@@ -493,6 +505,11 @@ function show_images1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if ~isfield(handles, 'images_raw')
+    msgbox('Images have not been read.')
+    return
+end
+
 plot_images(handles.images_raw, handles.dim)
 
 % --- Executes on button press in apply_image_functions.
@@ -500,6 +517,11 @@ function apply_image_functions_Callback(hObject, eventdata, handles)
 % hObject    handle to apply_image_functions (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'images_raw')
+    msgbox('No images have been read.')
+    return
+end
 
 if handles.reread_images
     choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
@@ -529,6 +551,11 @@ function show_images2_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if ~isfield(handles, 'images')
+    msgbox('Images have not been preprocessed.')
+    return
+end
+
 plot_images(handles.images, handles.dim)
 
 function kernel_scale_Callback(hObject, eventdata, handles)
@@ -545,11 +572,11 @@ handles.eps_scale = str2double(get(hObject,'String')) ;
 
 if isnan(handles.eps_scale)
     msgbox('Invalid kernel scale.')
-    handles = rmfield(handles, 'nrot');
+    handles = rmfield(handles, 'ang_dis');
     set(hObject, 'String', '');
 elseif handles.eps_scale < 0
     msgbox('Invalid kernel scale: kernel scale must be greater than 0.')
-    handles = rmfield(handles, 'nrot');
+    handles = rmfield(handles, 'ang_dis');
     set(hObject, 'String', '');
 end
 
@@ -567,8 +594,10 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-set(hObject, 'String', '1');
-handles.eps_scale = 1;
+set(hObject, 'String', '0.5');
+handles.eps_scale = 0.5;
+handles.rerun_dmaps = true;
+
 guidata(hObject, handles);
 
 
@@ -577,6 +606,11 @@ function register_order_vdm_Callback(hObject, eventdata, handles)
 % hObject    handle to register_order_vdm (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'images')
+    msgbox('Images have not been preprocessed.')
+    return
+end
 
 if handles.reread_images
     choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
@@ -605,19 +639,33 @@ end
 
 
 if handles.recalc_pairwise_rotations
-    [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.nrot);
+    [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.ang_dis);
     handles.recalc_pairwise_rotations = false;
 end
+
+h = waitbar(0, 'Registering and ordering images....') ;
 
 % compute optimal rotations + embedding coordinates using vector diffusion maps
 ncomps = 1;
 [R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
 
+waitbar(0.3, h);
+
 % register images using optimal rotations
-images_registered = register_all_images(handles.images, R_opt);
+if handles.use_raw
+    images_registered = register_all_images(handles.images_raw, R_opt);
+else
+    images_registered = register_all_images(handles.images, R_opt);
+end
+
+waitbar(0.6, h);
 handles.images_analyzed = order_all_images(images_registered, embed_coord);
 
+handles.reregister_image_set = false;
 handles.rerun_dmaps = false;
+
+waitbar(1, h);
+close(h);
 
 guidata(hObject, handles)
 
@@ -630,11 +678,11 @@ function number_rotations_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of number_rotations as text
 %        str2double(get(hObject,'String')) returns contents of number_rotations as a double
-handles.nrot = str2double(get(hObject,'String'));
+handles.ang_dis = str2double(get(hObject,'String'));
 handles.recalc_pairwise_rotations = true;
-if isnan(handles.nrot) || handles.nrot < 1 || mod(handles.nrot, 1) ~= 0
-    msgbox('Invalid number of rotations.')
-    handles = rmfield(handles, 'nrot');
+if isnan(handles.ang_dis) || handles.ang_dis < 0
+    msgbox('Invalid angular discretization.')
+    handles = rmfield(handles, 'ang_dis');
     set(hObject, 'String', '');
 end
 guidata(hObject, handles);
@@ -651,8 +699,8 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-set(hObject, 'String','36');
-handles.nrot = 36;
+set(hObject, 'String','10');
+handles.ang_dis = 10;
 handles.recalc_pairwise_rotations = true;
 guidata(hObject, handles)
 
@@ -662,6 +710,11 @@ function order_Callback(hObject, eventdata, handles)
 % hObject    handle to order (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'images')
+    msgbox('Images have not been preprocessed.')
+    return
+end
 
 if handles.reread_images
     choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
@@ -689,13 +742,25 @@ if handles.reapply_image_functions
 end
 
 
+h = waitbar(0, 'Ordering images....') ;
+
 W = squareform(pdist(reshape(double(handles.images), [], handles.nimages)')).^2;
 ncomps = 1;
 [embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
 
-handles.images_analyzed = order_all_images(handles.images, embed_coord);
+waitbar(0.5, h);
+
+if handles.use_raw
+    handles.images_analyzed = order_all_images(handles.images_raw, embed_coord);
+else
+    handles.images_analyzed = order_all_images(handles.images, embed_coord);
+end
 
 handles.rerun_dmaps = false;
+handles.reregister_image_set = false;
+
+waitbar(1, h);
+close(h);
 
 guidata(hObject, handles)
 
@@ -704,6 +769,11 @@ function register_Callback(hObject, eventdata, handles)
 % hObject    handle to register (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'images')
+    msgbox('Images have not been preprocessed.')
+    return
+end
 
 if handles.reread_images
     choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
@@ -731,18 +801,29 @@ if handles.reapply_image_functions
 end
 
 if handles.recalc_pairwise_rotations
-    [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.nrot);
+    [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.ang_dis);
     handles.recalc_pairwise_rotations = false;
 end
 
+h = waitbar(0, 'Registering images....') ;
 % compute optimal rotations + embedding coordinates using vector diffusion maps
 ncomps = 1;
 [R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
 
+waitbar(0.5, h);
+
 % register images using optimal rotations
-handles.images_analyzed = register_all_images(handles.images, R_opt);
+if handles.use_raw
+    handles.images_analyzed = register_all_images(handles.images_raw, R_opt);
+else
+    handles.images_analyzed = register_all_images(handles.images, R_opt);
+end
 
 handles.rerun_dmaps = false;
+handles.reregister_image_set = false;
+
+waitbar(1, h);
+close(h);
 
 guidata(hObject, handles)
 
@@ -752,6 +833,11 @@ function register_order_zstacks_Callback(hObject, eventdata, handles)
 % hObject    handle to register_order_zstacks (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'images')
+    msgbox('Images have not been preprocessed.')
+    return
+end
 
 if handles.reread_images
     choice = questdlg('Initial image settings have changed, but images have not been reread. Are you sure you want to continue?', ...
@@ -781,21 +867,34 @@ end
 max_proj_images = squeeze(max(handles.images, [], ndims(handles.images)-1));
 
 if handles.recalc_pairwise_rotations
-    [handles.R, handles.W] = compute_pairwise_alignments(max_proj_images, handles.nrot);
+    [handles.R, handles.W] = compute_pairwise_alignments(max_proj_images, handles.ang_dis);
     handles.recalc_pairwise_rotations = false;
 end
 
 % compute optimal rotations + embedding coordinates using vector diffusion maps
 ncomps = 1;
 [R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
-images_registered = register_all_images(handles.images, R_opt);
+
+if handles.use_raw
+    images_registered = register_all_images(handles.images_raw, R_opt);
+else
+    images_registered = register_all_images(handles.images_raw, R_opt);
+end
+
+h = waitbar(0, 'Registering and ordering images....') ;
 
 W = squareform(pdist(reshape(double(images_registered), [], handles.nimages)')).^2;
 [embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
 
+waitbar(0.5, h);
+
 handles.images_analyzed = order_all_images(images_registered, embed_coord);
 
+handles.reregister_image_set = false;
 handles.rerun_dmaps = false;
+
+waitbar(1, h);
+close(h);
 
 guidata(hObject, handles)
 
@@ -1273,6 +1372,11 @@ function show_images3_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if ~isfield(handles, 'images_analyzed')
+    msgbox('Images have not been analyzed.')
+    return
+end
+
 plot_images(handles.images_analyzed, handles.dim)
 
 
@@ -1308,4 +1412,68 @@ function red_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 handles.color_label(1) = hObject;
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function read_images_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to read_images (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+handles.reread_images = hObject;
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function apply_image_functions_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to apply_image_functions (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+handles.reapply_image_functions = true;
+guidata(hObject, handles);
+
+
+% --- Executes when selected object is changed in select_raw_or_preprocessed.
+function select_raw_or_preprocessed_SelectionChangeFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in select_raw_or_preprocessed 
+% eventdata  structure with the following fields (see UIBUTTONGROUP)
+%	EventName: string 'SelectionChanged' (read only)
+%	OldValue: handle of the previously selected object or empty if none was selected
+%	NewValue: handle of the currently selected object
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.reregister_image_set = true;
+
+switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
+    case 'raw_button'
+        handles.use_raw = true;
+    case 'preprocessed_button'
+        handles.use_raw = false;
+end
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function raw_button_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to raw_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+set(hObject,'Value',get(hObject,'Min'));
+handles.use_raw = false;
+handles.reregister_image_set = true;
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function preprocessed_button_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to preprocessed_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+set(hObject,'Value',get(hObject,'Max'));
+handles.use_raw = false;
+handles.reregister_image_set = true;
 guidata(hObject, handles);

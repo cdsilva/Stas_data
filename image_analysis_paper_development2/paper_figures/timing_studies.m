@@ -20,7 +20,7 @@ channel_normalize = 0;
 channel_mean_center = 1;
 resize_image = false;
 
-nrot = 36;
+ang_dis = 10;
 
 eps_scale = 0.25;
 
@@ -36,7 +36,7 @@ for i=1:length(npixels_zebrafish)
     tic
     images = apply_image_functions(images_raw, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
     
-    [R, W] = compute_pairwise_alignments(images, nrot);
+    [R, W] = compute_pairwise_alignments(images, ang_dis);
     
     % compute optimal rotations + embedding coordinates using vector diffusion maps
     ncomps = 1;
@@ -63,7 +63,7 @@ for i=1:length(nimages_zebrafish)
     tic
     images = apply_image_functions(images_raw, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
     
-    [R, W] = compute_pairwise_alignments(images, nrot);
+    [R, W] = compute_pairwise_alignments(images, ang_dis);
     
     % compute optimal rotations + embedding coordinates using vector diffusion maps
     ncomps = 1;
@@ -89,7 +89,7 @@ for i=1:length(nrot_zebrafish)
     tic
     images = apply_image_functions(images_raw, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
     
-    [R, W] = compute_pairwise_alignments(images, nrot_zebrafish(i));
+    [R, W] = compute_pairwise_alignments(images, 360/nrot_zebrafish(i));
     
     % compute optimal rotations + embedding coordinates using vector diffusion maps
     ncomps = 1;
@@ -117,7 +117,7 @@ channel_normalize = [1 0 0];
 channel_mean_center = [1 0 0];
 resize_image = true;
 
-nrot = 36;
+ang_dis = 10;
 
 eps_scale = 0.25;
 
@@ -133,7 +133,7 @@ for i=1:length(npixels_drosophila)
     tic
     images = apply_image_functions(images_raw, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
     
-    [R, W] = compute_pairwise_alignments(images, nrot);
+    [R, W] = compute_pairwise_alignments(images, ang_dis);
     
     % compute optimal rotations + embedding coordinates using vector diffusion maps
     ncomps = 1;
@@ -161,7 +161,7 @@ for i=1:length(nimages_drosophila)
     tic
     images = apply_image_functions(images_raw, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
     
-    [R, W] = compute_pairwise_alignments(images, nrot);
+    [R, W] = compute_pairwise_alignments(images, ang_dis);
     
     % compute optimal rotations + embedding coordinates using vector diffusion maps
     ncomps = 1;
@@ -189,7 +189,7 @@ for i=1:length(nrot_drosophila)
     tic
     images = apply_image_functions(images_raw, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
     
-    [R, W] = compute_pairwise_alignments(images, nrot_drosophila(i));
+    [R, W] = compute_pairwise_alignments(images, 360/nrot_drosophila(i));
     
     % compute optimal rotations + embedding coordinates using vector diffusion maps
     ncomps = 1;
