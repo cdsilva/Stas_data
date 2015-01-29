@@ -34,6 +34,14 @@ plot_images(images, dim)
 ncomps = 1;
 [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
 
+fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
+time = fscanf(fid, '%f');
+fclose(fid);
+
+if corr(time, embed_coord) < 0
+    embed_coord = -embed_coord;
+end
+
 % register images using optimal rotations
 images_registered = register_all_images(images, R_opt);
 images_registered = imrotate(images_registered, 90);
@@ -77,13 +85,6 @@ annotation('textarrow',  [0.1 0.05],[0.82 0.82], 'color', 0.95*ones(1,3), 'strin
 print('wing_disc_example.eps', '-depsc', '-r300');
 
 %%
-fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
-time = fscanf(fid, '%f');
-fclose(fid);
-
-if corr(time, embed_coord) < 0
-    embed_coord = -embed_coord;
-end
 
 nsubimages = 15;
 [~, I] = sort(embed_coord(20+(1:nsubimages)));
@@ -94,4 +95,13 @@ plot_wing_disc_projections(images_registered(:,:,:,:,I), time(I)-min(time), 5, 3
 % plot_wing_disc_projections(images_registered(:,:,:,:,I), time(I)-min(time));
 % saveas(gcf, 'wing_disc_ordered.pdf');
 print('wing_disc_ordered.eps', '-depsc', '-r300');
+
+%%
+
+nsubimages = 6;
+
+avg_images = compute_average_trajectory(images_analyzed, nsubimages, 4);
+make_fig(17, 17/nsubimages);
+plot_wing_disc_projections(avg_images, [], nsubimages, 1)
+print('wing_disc_average.eps', '-depsc', '-r300');
 

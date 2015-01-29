@@ -78,9 +78,11 @@ end
 saveas(gcf, 'drosophila_fixed_images_ordered.pdf');
 
 make_fig(12, 12/nsubimages);
+avg_images = compute_average_trajectory(images_analyzed, nsubimages, 4);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
-    im_tmp = uint8(mean(images_analyzed(:,:,:,(j-1)*nimages/nsubimages+1:j*nimages/nsubimages), 4));
+%     im_tmp = uint8(mean(images_analyzed(:,:,:,(j-1)*nimages/nsubimages+1:j*nimages/nsubimages), 4));
+    im_tmp = avg_images(:,:,:,j);
     imshow(make_gray_nuclei(imrotate(im_tmp, -5, 'crop')));
 end
 saveas(gcf, 'drosophila_fixed_images_average.pdf');

@@ -31,6 +31,25 @@
 
 \subsection*{Image parameters}
 
+The original image resolution is $512 \times 512$ for the live {\em Drosophila} images, $320 \times 288$ for the zebrafish images, $1024 \times 1024$ for the fixed {\em Drosophila} images, and $1024 \times 1024$ for each of the images in the wing disc z-stacks. 
+%
+Each of the original wing disc z-stacks contains 30--40 images. 
+
+All images were subsampled to $100 \times 100$ pixels for analysis, as this was found to be a sufficient resolution to retain all of the major developmental features within the data set. 
+%
+Each wing disc z-stack was reduced to a 21-image stack, consisting of the brightest image and the 10 images above and below.
+
+The relevant image operations are 
+\begin{enumerate}
+\item {\bf Intensity normalization:} Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of the nuclear signal.
+\item {\bf Blur} Using the \texttt{imfilter} function. 
+\item {\bf Intensity scaling} 
+\item {\bf Mean-centering} 
+\item {\bf Size scaling}
+\item {\bf Removing corners}
+\end{enumerate}
+
+
 The original image resolution is $1024 \times 1024$ pixels for the fixed images, and $512 \times 512$ pixels for the live images; all images are subsampled to $100 \times 100$ pixels for vector diffusion maps analysis.
 %
 A scale bar for a representative image is shown in \fig~\ref{fig:ap_dv}.

@@ -1,30 +1,25 @@
 clear all
 close all
 
-%%
-% <latex> 
+%% Basic Algorithm
 % The basic steps are as follows:
-% \begin{enumerate}
-% \item Read in images 
-% \item Preprocess the images (smooth and/or equalize channels, mean-center, etc.)
-% \item Run vector diffusion maps to register and order preprocessed images
-% \end{enumerate}
-% </latex>
+%
+% # Read in images 
+% # Preprocess the images (smooth and/or equalize channels, mean-center, etc.)
+% # Run vector diffusion maps to register and order preprocessed images
 
-%%
-% <latex> 
+%% Read Images
 % The first step is to read in images.
-% This is done using the \textt{read_images} function 
+% This is done using the |read_images| function 
 % For two-dimensional images, it requires that all the images are stored in
 % a single directory, all with a consistent prefix, and indexed with two
-% digits starting from ``01''. 
+% digits starting from |01|. 
 % For three-dimensional z-stack, it assumes each z-stack is stored in a
 % single directory. 
 % All of the z-stack directories are required to begin with a consistent prefix, and be indexed with two
-% digits starting from ``01''. 
+% digits starting from |01|. 
 % Similarly, all of the images are required to begin with a consistent prefix, and be indexed with two
-% digits starting from ``01'' for each z-stack.
-% </latex>
+% digits starting from |01| for each z-stack.
 
 % directory where images are stored
 image_dir = 'drosophila_fixed_images';
@@ -51,34 +46,30 @@ dim = 2;
 
 % read in images
 % images are stored in the variable images_raw
-[images_raw, nchannels] = read_images(image_dir, image_name, image_ext, stack_name, nimages, nstack, npixels, dim);
+[images_raw, nchannels] = read_images(image_dir, image_name, image_ext, ...
+    stack_name, nimages, nstack, npixels, dim);
 
-%%
-% <latex>
-% An optional step is to now show the images using the \texttt{plot_images}
+%% Show images
+% An optional step is to now show the images using the |plot_images|
 % function.
-% <\latex>
 
 % plot the images
-% images_raw are the images to plot (returned from the read_images
-% function)
-% dim is the dimension of the images (dim=2 indicates standard 2D images, rather than
-% z-stacks)
+% images_raw are the images to plot 
+% (returned from the read_images function)
+% dim is the dimension of the images 
+% (dim=2 indicates standard 2D images, rather than z-stacks)
 plot_images(images_raw, dim)
 
-%%
-% <latex>
+%% Preprocess Images
 % Now, we must preprocess the images before registration and ordering, to
 % remove any imaging and/or experimental artifacts.
-% We do this via the \texttt{apply_image_functions} function
+% We do this via the |apply_image_functions| function
 % For this particular imaging data set, there are three channels. 
 % DAPI, a nuclear stain, is in the first (red) channel.
 % dpERK is in the second (green) channel.
 % Dl is in the third (blue) channel.
-% <\latex>
 
-
-% the channel weights
+% channel weights
 % because the nuclear signal is wider spread throughout the image, as well
 % as noiser, we choose to scale the first channel by half
 channel_weight = [0.5 1 1];
@@ -105,25 +96,14 @@ resize_image = true;
 
 % we then apply these image functions of normalization, blurring,
 % reweighting, and mean-centering
-images = apply_image_functions(images_raw, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
+images = apply_image_functions(images_raw, dim, channel_weight, ...
+    channel_blur, channel_normalize, channel_mean_center, resize_image);
 
-%%
-% <latex>
-% An optional step is to now show the processed images using the \texttt{plot_images}
-% function.
-% <\latex>
-
-% plot the images
-% images are the images to plot (returned from the apply_image_functions
-% function)
-% dim is the dimension of the images (dim=2 indicates standard 2D images, rather than
-% z-stacks)
+% plot the images (optional)
 plot_images(images, dim)
 
-%%
-% <latex>
-% We can now use vector diffusion maps to register and order the images. 
-% <\latex>
+%% Calculate pairwise alignments
+% We now need to calculate the angles needed to align _pairs_ of images
 
 % angular discretization when computing pairwise aligments
 % this means we search for pairwise aligmemnts over 10 degree increments
@@ -136,10 +116,8 @@ ang_dis = 10;
 % vector diffusion maps
 [R, W] = compute_pairwise_alignments(images, ang_dis);
 
-%%
-% <latex>
-% compute optimal rotations + embedding coordinates using vector diffusion maps
-% <\latex>
+%% Apply vector diffusion maps
+% We can now use vector diffusion maps to register and order the images. 
 
 % ncomps is the number of components to compute
 % we only compute 1 coordinate because we only need to order the images
@@ -151,21 +129,16 @@ ncomps = 1;
 % 1/4 of the median of the pairwise distances between data points
 eps_scale = 0.25;
 
+% vector diffusion maps calculates optimal rotations and embedding
+% coordinate
 [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
 
-%%
-% <latex>
-% register and order images
-% <\latex>
-
+% register images
 images_registered = register_all_images(images, R_opt);
 
+% order registered images by embedding coordinate
 images_analyzed = order_all_images(images_registered, embed_coord);
 
-%%
-% <latex>
-% An optional step is to now show the processed images using the \texttt{plot_images}
-% function.
-% <\latex>
+% plot the images (optional)
 plot_images(images_analyzed, dim)
 

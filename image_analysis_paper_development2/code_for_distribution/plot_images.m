@@ -23,7 +23,8 @@ subplot_dim2 = ceil(nimages/subplot_dim1);
 % plot images
 figure;
 for i=1:nimages
-    subplot(subplot_dim1, subplot_dim2, i)
+%     subplot(subplot_dim1, subplot_dim2, i)
+    make_subplot(subplot_dim1, subplot_dim2, i);
     % plot maximum projection if we have z-stacks
     if IMAGE_DIM == 3
         if ndims(IMAGES) == 4
@@ -46,3 +47,16 @@ function IMAGE1 = max_proj(ZSTACK)
 % calculcates maximum projection of ZSTACK
 
 IMAGE1 = max(ZSTACK, [], ndims(ZSTACK));
+
+function h = make_subplot(SUBPLOT_DIM1, SUBPLOT_DIM2, IDX)
+% makes subplot with small margins (better for showing images)
+
+% calculate space between subplots (10% of subplot)
+subplot_space = min(0.1/SUBPLOT_DIM1, 0.1/SUBPLOT_DIM2);
+
+% calculate bottom left corner of subplot
+X_start = mod(IDX-1, SUBPLOT_DIM1) / SUBPLOT_DIM1 + subplot_space/2;
+Y_start = 1 - ceil(IDX/SUBPLOT_DIM1)/SUBPLOT_DIM2 + subplot_space/2;
+
+% return handle to subplot at specific location
+h = subplot('position', [X_start Y_start 1/SUBPLOT_DIM1-subplot_space 1/SUBPLOT_DIM2-subplot_space]);

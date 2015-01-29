@@ -22,7 +22,7 @@ function varargout = register_order_gui(varargin)
 
 % Edit the above text to modify the response to help register_order_gui
 
-% Last Modified by GUIDE v2.5 28-Jan-2015 11:37:33
+% Last Modified by GUIDE v2.5 29-Jan-2015 11:56:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -572,11 +572,11 @@ handles.eps_scale = str2double(get(hObject,'String')) ;
 
 if isnan(handles.eps_scale)
     msgbox('Invalid kernel scale.')
-    handles = rmfield(handles, 'ang_dis');
+    handles = rmfield(handles, 'eps_scale');
     set(hObject, 'String', '');
 elseif handles.eps_scale < 0
     msgbox('Invalid kernel scale: kernel scale must be greater than 0.')
-    handles = rmfield(handles, 'ang_dis');
+    handles = rmfield(handles, 'eps_scale');
     set(hObject, 'String', '');
 end
 
@@ -1477,3 +1477,102 @@ set(hObject,'Value',get(hObject,'Max'));
 handles.use_raw = false;
 handles.reregister_image_set = true;
 guidata(hObject, handles);
+
+
+
+function nimages_avg_Callback(hObject, eventdata, handles)
+% hObject    handle to nimages_avg (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of nimages_avg as text
+%        str2double(get(hObject,'String')) returns contents of nimages_avg as a double
+
+nimages = str2double(get(hObject,'String'));
+handles.nimages_avg = nimages;
+if isnan(handles.nimages) || handles.nimages < 1 || mod(handles.nimages, 1) ~= 0
+    msgbox('Invalid number of images.')
+    handles = rmfield(handles, 'nimages_avg');
+    set(hObject, 'String', '');
+end
+
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function nimages_avg_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to nimages_avg (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function avg_width_Callback(hObject, eventdata, handles)
+% hObject    handle to avg_width (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of avg_width as text
+%        str2double(get(hObject,'String')) returns contents of avg_width as a double
+
+handles.avg_width = str2double(get(hObject,'String')) ;
+
+if isnan(handles.avg_width)
+    msgbox('Invalid width of averaging window.')
+    handles = rmfield(handles, 'avg_width');
+    set(hObject, 'String', '');
+elseif handles.eps_scale < 0
+    msgbox('Invalid width of averaging window: width must be greater than 0.')
+    handles = rmfield(handles, 'avg_width');
+    set(hObject, 'String', '');
+end
+
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function avg_width_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to avg_width (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in show_avg_traj.
+function show_avg_traj_Callback(hObject, eventdata, handles)
+% hObject    handle to show_avg_traj (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'images_analyzed')
+    msgbox('Images have not been analyzed.')
+    return
+end
+
+avg_images = compute_average_trajectory(handles.images_analyzed, handles.nimages_avg, handles.avg_width);
+plot_images(avg_images, handles.dim)
+
+% --- Executes on button press in save_avg_traj.
+function save_avg_traj_Callback(hObject, eventdata, handles)
+% hObject    handle to save_avg_traj (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'images_analyzed')
+    msgbox('Images have not been analyzed.')
+    return
+end
+
+avg_images = compute_average_trajectory(handles.images_analyzed, handles.nimages_avg, handles.avg_width);
+
+save_images(avg_images, handles.dim, handles.output_image_dir, strcat({'avg_',handles.image_name}), handles.image_ext, handles.stack_name);
