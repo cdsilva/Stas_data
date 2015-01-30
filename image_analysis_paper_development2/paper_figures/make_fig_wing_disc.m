@@ -105,3 +105,16 @@ make_fig(17, 17/nsubimages);
 plot_wing_disc_projections(avg_images, [], nsubimages, 1)
 print('wing_disc_average.eps', '-depsc', '-r300');
 
+%%
+
+ncomps = 20;
+[embed_coord, D2] = dm(W, eps_scale, ncomps);
+
+make_fig(8,8)
+plot(abs(D2), '.')
+xlabel('embedding coordinate')
+ylabel('product of eigenvalues')
+axis square
+saveas(gcf, 'wing_disc_eval_spectrum.pdf');
+
+

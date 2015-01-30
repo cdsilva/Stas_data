@@ -23,10 +23,10 @@
 
 \customlabel{fig:DV_view}{S1}
 \customlabel{fig:1d_example}{S2}
-\customlabel{fig:eigenvalues}{S3}
-\customlabel{fig:full_movie_data}{S4}
-\customlabel{fig:all_movies}{S5}
-\customlabel{fig:full_fixed_data}{S6}
+\customlabel{fig:eigenvalues_drosophila_live}{S3}
+\customlabel{fig:eigenvalues_zebrafish}{S4}
+\customlabel{fig:eigenvalues_drosophila_fixed}{S5}
+\customlabel{fig:eigenvalues_wing_disc}{S6}
 
 \title{Temporal ordering and registration of images in studies of developmental dynamics}
 
@@ -249,7 +249,7 @@ Germband extension then causes cells from the ventral side to move towards the p
 %
 At the end of this process, cells which were originally on the ventral and posterior side of the embryo find themselves on the dorsal side, causing a similar ``omega'' to appear on the dorsal side.
 
-\fig~\ref{fig:drosophila_live_imaging}A shows selected images from this live imaging data set, which contains $40$ consecutive frames taken at $30$~second time intervals at a fixed position within a single embryo (see \fig~\ref{fig:full_movie_data}).
+\fig~\ref{fig:drosophila_live_imaging}A shows selected images from this live imaging data set, which contains $40$ consecutive frames taken at $30$~second time intervals at a fixed position within a single embryo.
 %
 Each image shows an optical cross-section near the posterior pole of a vertically oriented developing embryo, with the nuclei labeled by Histone-RFP.
 %
@@ -267,7 +267,7 @@ With a small number of exceptions, the recovered ordering is consistent with the
 %
 Both the angles and the ranks are recovered with a high degree of accuracy.
 
-To assess the robustness of our proposed methodology, we repeated this procedure with four additional data sets (see \fig~\ref{fig:all_movies}) extracted from independent live imaging studies spanning the same developmental time period. 
+To assess the robustness of our proposed methodology, we repeated this procedure with four additional data sets extracted from independent live imaging studies spanning the same developmental time period. 
 %
 The results are shown in \fig~\ref{fig:drosophila_live_imaging}E. 
 %
@@ -399,7 +399,7 @@ The median rank correlation coefficient when ordering such a synthetic time cour
 
 We then applied our approach to a data set where the true rotational orientation and temporal order was not known {\it a priori}.
 %
-\fig~\ref{fig:drosophila_fixed_images}A shows selected images from a set of $120$ images of developing {\em Drosophila} embryos (see \fig~\ref{fig:full_fixed_data}) which cover a thirty minute time interval spanning late cellularization through gastrulation.
+\fig~\ref{fig:drosophila_fixed_images}A shows selected images from a set of $120$ images of developing {\em Drosophila} embryos which cover a thirty minute time interval spanning late cellularization through gastrulation.
 %
 This data set is more complex than the live imaging data sets in that it contains significantly more images, each of which provides information about tissue morphology and the spatial distribution of two regulatory proteins.
 %
@@ -413,7 +413,7 @@ Another signal is provided by the phosphorylated form of the extracellular signa
 
 \fig~\ref{fig:drosophila_fixed_images}B shows the selected images in \fig~\ref{fig:drosophila_fixed_images}A, now registered and ordered using vector diffusion maps \citep{singer2012vector}.
 %
-However, because of interembryo variability, these selected images are not entirely representative of the developmental dynamics across the entire data set (see \ref{fig:full_fixed_data}).
+However, because of interembryo variability, these selected images are not entirely representative of the developmental dynamics across the entire data set.
 %
 To highlight the developmental dynamics revealed by vector diffusion maps, we computed an average developmental trajectory across the set of registered and ordered images (see \SI). 
 %
@@ -466,32 +466,56 @@ The ranks from the ordering provided by the embryologist, which we will refer to
 \label{fig:wing_disc}
 \end{figure*}
 
-Up to this point, we have focused on two-dimensional imaging studies. 
+We have demonstrated that our algorithm can recover the underlying developmental dynamics in several different types of imaging data sets, including ones containing interembryo variability. 
 %
-However, it is not uncommon to encounter three-dimensional imaging data in the form of z-stacks. 
+Thus far, we have only looked at two-dimensional data sets where biological samples are imaged as a single confocal slice or as a phase contrast image. 
 %
-To illustrate how our methods can be extended to three-dimensional data, we analyzed a wing disc data set.
+However, many developmental processes are inherently three-dimensional, and the z-axis often contains interesting dynamics which are independent of the dynamics in the x-y plane. 
+%
+Researchers often take multiple z-slices to visualize the three-dimensional structure of a sample;
+with advances in imaging techniques, such three-dimensional data will be more common, and it is important to validtate that our algorithm can be applied to such data. 
 
+We used an existing three-dimensional data set of fixed {\em Drosophila} wing imaginal discs, which was published in \citet{hamaratoglu2011dpp}.  
+%
+Imaginal discs are groups of progenitor cells in fly larva that will transform into a specific organ, such as wings, legs, and eyes, in the adult fly during the pupal transformation. 
+%
+The wing disc is an imaginal disc that turns into a fly wing. 
+%
+The data set is composed of 46 fixed wing discs, whose developmental time range from 72 to 112~hours after fertilization. 
+%
+Each disc contains 21 z-slices taken at 1~$\mu$m intervals. 
+%
+The discs were stained with antibodies that recognize Spalt (red), Dad-GFP (green), and Wingless/Patched (gray) (\fig~\ref{fig:wing_disc}A). 
+%
+The disc grows in time; at long times, the disc becomes too large to fit completely within the frame and only a partial disc is imaged. 
 
-Although the theory of vector diffusion maps readily extends to three-dimensional data, calculation of the pairwise alignments rapidly becomes computational prohibitive for three dimensional data, as one must now search over three Euler angles, rather than a single rotation angle. 
+Although the theory of vector diffusion maps readily extends to three-dimensional data, calculation of the pairwise alignments rapidly becomes computational prohibitive for three dimensional data, as one must now search over all three-dimensional rotations (which are parameterized by three Euler angles), rather than over two-dimensional rotations (which are parameterized by a {\em single} rotation angle). 
 %
 However, ordering data via diffusion maps is readily possible for (registered) three-dimensional data. 
 %
-Therefore, we can apply our methodology to three-dimensional data by first registering the data using an alternative methodology (such as registering max projections, or aligning a single feature of the data), and then ordering the registered data using diffusion maps. 
-
-For the wing disc data, we first registered the three-dimensional data by computing the optimal rotations to align the maximum projections of the data using vector diffusion maps.
+Therefore, we can apply our methodology to three-dimensional data by first registering the data using an alternative methodology (such as registering maximum intensity projection, or aligning a single feature of the data), and then ordering the registered data using diffusion maps. 
 %
-Because the maximum projections are two-dimensional images, this step is no more computationally intensive than the previous examples. 
+Instead, we used maximum intensity projection and converted the image into 2D, and then used the angular synchronization on 2D data. 
 %
-We then used the computed alignments to register the full three-dimensional data, and then computed the diffusion maps embedding of the three-dimensional registered data. 
+For the wing disc data, we first registered the three-dimensional data by computing the optimal rotations to align the maximum intensity projections of the data using vector diffusion maps.
 %
-The results of ordering the data using the first (non-trivial) diffusion maps coordinate are shown in \fig~\ref{fig:wing_disc}. 
-
-The data was sorted into $6$ time cohorts by an expert; the time cohort for each image in \fig~\ref{fig:wing_disc}B are indicated. 
+Because the maximum intensity projections are two-dimensional images, this step is no more computationally intensive than the previous examples. 
 %
-The rank correlation coefficient between the ordering from diffusion maps and the expert cohort sorting is 0.9427, indicating that our ordering is consistent with the expert. 
+Other options for registering samples include using a specific localized signal (such as Twi in \fig~\ref{fig:drosophila_fixed_images}) as a marker, or using other {\em a priori} knowledge.
+%
+We then used diffusion maps to order the registered three-dimensional images. 
+%
+\fig~\ref{fig:wing_disc}B shows selected images from the data set ordered by diffusion maps. 
+%
+In the original data set, each disc was assigned to 6 time classes (72--73~hr, 76.5--77.5~hr, 79--80~hr, 89--90~hr, 100--101~hr, and 110.5--111.5~hr after fertilization); these times are indicated in \fig~\ref{fig:wing_disc}B. 
+%
+In the ordered set, the size of wing disc grows, and the intensity of proteins increases as a function of time. 
+%
+The rank correlation coefficient based on the time class is 0.9427. 
 %
 Furthermore, we can extract a stereotypical developmental trajectory by averaging; this trajectory is shown in \fig~\ref{fig:wing_disc}.
+%
+Thus, this result shows that the algorithm can successfully order a three-dimensional data set.
 
 
 \subsection*{Computational requirements}
@@ -551,7 +575,7 @@ As a first step, images must be preprocessed so that the Euclidean distance betw
 %
 Our software provides several preprocessing options (such as blurring, rescaling, and mean-centering), as well as some guidance for what options to select depending on the system of interest. 
 %
-Two algorithmic parameters, the angular discretization to compute the pairwise alignments and the diffusion maps kernel scale which determines which data points are ``close'' (see ~\fig~\ref{subfig:dmaps1} and \SI), must also be defined; we also provide some guidance on selecting these parameters.
+Two algorithmic parameters, the angular discretization to compute the pairwise alignments and the diffusion maps kernel scale which determines which data points are ``close'' (see ~\fig~\ref{fig:schematics}A and \SI), must also be defined; we also provide some guidance on selecting these parameters.
 %
 We found that the results are robust to both of these parameters, and that consistent parameter values served well for all data sets presented here. 
 %
@@ -642,9 +666,9 @@ Given the rapidly increasing volumes of imaging data from studies of multiple de
 
 \section*{Materials and Methods}
 
-\subsection*{Experiments}
+\subsection*{{\em Drosophila} Experiments}
 %
-Oregon-R was used as wild type strains. 
+Oregon-R was used as wild type {\em Drosophila} strains. 
 %
 Embryos were collected and fixed at 22$^\circ$C. 
 %
@@ -656,7 +680,7 @@ Histone-RFP strain was used to obtain time-lapse movie of gastrulating embryos a
 %
 Embryos were loaded to the microfluidic device with PBST to keep them oxidized. 
 
-\subsection*{Microscopy}
+\subsection*{{\em Drosophila} Microscopy}
 %
 Nikon A1-RS scanning confocal microscope, and the Nikon 60x Plan-Apo oil objective was used to image embryos. 
 %
@@ -667,12 +691,11 @@ End-on imaging was performed by using the microfluidics device described previou
 Images were collected at the focal plane $\sim$90~$\mathrm{\mu m}$ from the posterior pole of an embryo (see \fig~\ref{fig:DV_view}).  
 
 \subsection*{Image preprocessing}
+
+Images were subsampled, normalized, blurred, and centered prior to diffusion maps analysis to remove any variations due to the epxperimental and imaging framework. 
 %
-Image resolution was subsampled to $100 \times 100$ pixels for vector diffusion maps analysis.
-%
-Borders were cropped from the images using a Canny edge detector applied to the nuclear signal. 
-%
-Contrast-limited adaptive histogram equalization and a a 5-pixel radius disc filter were used to normalize and blur the nuclear signal.
+Details about the preprocessing operations applied to each imging data set are given in \SI. 
+
 
 \subsection*{Software}
 %
@@ -686,7 +709,9 @@ Code is available at \texttt{genomics.princeton.edu/stas/publications.html} unde
 
 \subsubsection*{Acknowledgements}
 
-The authors thank Adam Finkelstein,  Thomas Funkhouser, and John Storey for helpful discussions. 
+The authors thank Fisun Hamaratoglu and Markus Affolter for providing the wing disc data. 
+%
+The authors thank Angela DePace, Granton Jindal, Adam Finkelstein,  Thomas Funkhouser, and John Storey for helpful discussions. 
 
 
 \subsubsection*{Author contributions}

@@ -12,6 +12,8 @@
 \protected@write \@auxout {}{\string \newlabel {#1}{{#2}{}}}}
 \makeatother
 
+\graphicspath{{paper_figures/}}
+
 \renewcommand{\figurename}{Fig.}
 \renewcommand\thefigure{S\arabic{figure}}
 
@@ -29,46 +31,104 @@
 
 \section*{Materials and Methods}
 
-\subsection*{Image parameters}
+\subsection*{Image preprocessing}
 
-The original image resolution is $512 \times 512$ for the live {\em Drosophila} images, $320 \times 288$ for the zebrafish images, $1024 \times 1024$ for the fixed {\em Drosophila} images, and $1024 \times 1024$ for each of the images in the wing disc z-stacks. 
+Before applying vector diffusion maps, images must be preprocessed so that the Euclidean distance between time image pixels is informative.
 %
-Each of the original wing disc z-stacks contains 30--40 images. 
-
-All images were subsampled to $100 \times 100$ pixels for analysis, as this was found to be a sufficient resolution to retain all of the major developmental features within the data set. 
+We want images who are developmentally similar to have relatively small Euclidean distances, and images who are at disparate developmental time points to have relatively large distances. 
 %
-Each wing disc z-stack was reduced to a 21-image stack, consisting of the brightest image and the 10 images above and below.
+We therefore must adjust images to remove any experimental and imaging artifacts, so that most of the variation is relevant to the developmental dynamics. 
 
 The relevant image operations are 
 \begin{enumerate}
-\item {\bf Intensity normalization:} Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of the nuclear signal.
-\item {\bf Blur} Using the \texttt{imfilter} function. 
-\item {\bf Intensity scaling} 
-\item {\bf Mean-centering} 
-\item {\bf Size scaling}
-\item {\bf Removing corners}
+\item {\bf Intensity normalization:} Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of signals whose absolute intensity is not meaningful/informative.
+%
+\item {\bf Blur:} The \texttt{imfilter} function with a disc filter is used to blur signals whose small-scale structure is not informative. 
+%
+\item {\bf Intensity scaling (multichannel images only):} The \texttt{immultiply} function is used to scale signal intensities. This is important for multichannel images, and it determines the (relative) contributions of the various signals.  
+%
+\item {\bf Mean-centering:}  The Canny method \citep{canny1986computational} is used to detect the edges of the object in each image (using the \texttt{edge} function). The image is then translated so that the object (as determined by extremeties of the detected edges) is centered.
+%
+\item {\bf Size scaling:} For images whose relative size is unimportant to the developmental dynamics, the images are rescaled/dialated so that the object size (as determined by extremeties of the detected edges) is constant (we set this to be 80\% of the total image).
+%
+\item {\bf Removing corners:} The image is cropped/filtered using a disc centered in the middle of the image and whose diameter is equal to the number of pixels; any pixels outside of this disc are set to 0 (no intensity). This removes any corner effects under rotations. 
 \end{enumerate}
 
 
-The original image resolution is $1024 \times 1024$ pixels for the fixed images, and $512 \times 512$ pixels for the live images; all images are subsampled to $100 \times 100$ pixels for vector diffusion maps analysis.
+
+\subsubsection*{{\em Drosophila} live imaging}
+
 %
-A scale bar for a representative image is shown in \fig~\ref{fig:ap_dv}.
+The original image resolution is $512 \times 512$ for the live {\em Drosophila} images.
 %
-When imaging, the laser settings are calibrated so that images have good dynamic range, while not saturating the detector.
+All images were subsampled to $100 \times 100$ pixels for analysis, as this was found to be a sufficient resolution to retain all of the major developmental features within the data set. 
 %
-The same laser settings are maintained within each experiment.
+Images were normalized, and then blurred with a filter of radius 5\% of the total image (5 pixels). 
 %
-The intensity of each channel is integer-valued, and ranges from $0$ (no signal) to $255$ (saturated). 
+Images were not mean-centered or rescaled, as the entire live imaging data set was approximately centered already.
+
+\subsubsection*{Zebrafish images}
+
+The original image resolution was $320 \times 288$ for the zebrafish images.
 %
-The Canny method \citep{canny1986computational} is used to detect the edges of the nuclear signal in each image (using the \texttt{edge} function in MATLAB\textsuperscript{\textregistered}), and images are cropped to these edges to remove any size effects.
+All images were subsampled to $100 \times 100$ pixels for analysis, as this was found to be a sufficient resolution to retain all of the major developmental features within the data set. 
 %
-A constant $10$-pixel-wide border is then added to each image. 
+Images were not normalized or blurred.
 %
-Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of the nuclear signal.
+Images were mean-centered so that the embryo in each frame was (approximately) centered. 
 %
-The nuclear signal is blurred using a disc filter with a $5$~pixel radius (using the \texttt{imfilter} function).
+Images were not rescaled for size, as changes in overall were are important. 
+
+\subsubsection*{{\em Drosophila} fixed images}
+
+The original image resolution was $1024 \times 1024$ for the fixed {\em Drosophila} images.
 %
-For the multichannel images, the nuclear signal is scaled by half (after normalization and blurring) relative to the other signals, so that the total nuclear signal across the entire image is of a comparable magnitude to the other signals. 
+All images were subsampled to $100 \times 100$ pixels for analysis, as this was found to be a sufficient resolution to retain all of the major developmental features within the data set. 
+%
+The nuclear channel was normalized, and all channels blurred with a filter of radius 5\% of the total image (5 pixels) to remove the effects of individual nuclei. 
+%
+The nuclear channel was scaled by half; because this signal occupies a larger fraction of the image relative to the other signals, its overall contribution is large, and so we downscaled it so that each signal would have more comparable weight in the algorithm. 
+%
+The images were mean-centered and scaled to have a constant size using the nuclear signal to detect the edges of the embryo within the frame.
+
+
+
+\subsubsection*{Wing disc images}
+
+The original image resolution was $1024 \times 1024$ for the wing disc z-stacks.
+%
+Each of the original wing disc z-stacks contains 30--40 images. 
+%
+All images were subsampled to $100 \times 100$ pixels for analysis, as this was found to be a sufficient resolution to retain all of the major developmental features within the data set. 
+%
+Each wing disc z-stack was reduced to a 21-image stack, consisting of the brightest image and the 10 images above and below.
+%
+No channels were normalized or blurred in the images, and the channel intensities were kept at their imaging values. 
+%
+Images were mean-centered using the Wingless/Patched signal to detect the edges of the sample. 
+%
+Images were not rescaled for size, as changes in overall were are important. 
+
+
+%The original image resolution is $1024 \times 1024$ pixels for the fixed images, and $512 \times 512$ pixels for the live images; all images are subsampled to $100 \times 100$ pixels for vector diffusion maps analysis.
+%%
+%A scale bar for a representative image is shown in \fig~\ref{fig:ap_dv}.
+%%
+%When imaging, the laser settings are calibrated so that images have good dynamic range, while not saturating the detector.
+%%
+%The same laser settings are maintained within each experiment.
+%%
+%The intensity of each channel is integer-valued, and ranges from $0$ (no signal) to $255$ (saturated). 
+%%
+%The Canny method \citep{canny1986computational} is used to detect the edges of the nuclear signal in each image (using the \texttt{edge} function in MATLAB\textsuperscript{\textregistered}), and images are cropped to these edges to remove any size effects.
+%%
+%A constant $10$-pixel-wide border is then added to each image. 
+%%
+%Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of the nuclear signal.
+%%
+%The nuclear signal is blurred using a disc filter with a $5$~pixel radius (using the \texttt{imfilter} function).
+%%
+%For the multichannel images, the nuclear signal is scaled by half (after normalization and blurring) relative to the other signals, so that the total nuclear signal across the entire image is of a comparable magnitude to the other signals. 
 
 
 \subsection*{Algorithms}
@@ -432,25 +492,55 @@ See \citep{kemelmacher2011exploring} for a more detailed discussion.
 
 
 \newpage
-%
-%\begin{figure}
-%\includegraphics{figS1}
-%\caption{(Left) A lateral view of a {\it Drosophila} embryo stained with DAPI (gray), dpERK (red), and Twi (green). The embryo is presented so that the anterior (A) side is to the left and the posterior (P) side is to the right. The arrow indicates the position where the cross-section of an embryo is imaged. (Right) A dorsoventral view of the cross-section of the {\it Drosophila} embryo. The dorsal (D) side is up and the ventral (V) side is down. Images were collected at the focal plane $\sim 18\%$ from the posterior pole of an embryo (arrow in the left image). }
-%\label{fig:ap_dv}
-%\end{figure}
-%
-%\begin{figure}
-%\includegraphics{figS2}
-%\caption{Synthetic data set used to illustrate the data processing algorithms. {\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
-%\label{fig:1d_demo}
-%%\customlabel{fig:1d_demo}{3}
-%\customlabel{subfig:1d_example}{\ref{fig:1d_demo}{\it A}}
-%\customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}{\it B}}
-%\customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}{\it C}}
-%\customlabel{subfig:1d_aligned_unordered}{\ref{fig:1d_demo}{\it D}}
-%\customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}{\it E}}
-%\customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}{\it F}}
-%\end{figure}
+
+\begin{figure}
+\includegraphics{figS1}
+\caption{(Left) A lateral view of a {\it Drosophila} embryo stained with DAPI (gray), dpERK (red), and Twi (green). The embryo is presented so that the anterior (A) side is to the left and the posterior (P) side is to the right. The arrow indicates the position where the cross-section of an embryo is imaged. (Right) A dorsoventral view of the cross-section of the {\it Drosophila} embryo. The dorsal (D) side is up and the ventral (V) side is down. Images were collected at the focal plane $\sim 18\%$ from the posterior pole of an embryo (arrow in the left image). }
+\label{fig:ap_dv}
+\end{figure}
+
+\begin{figure}
+\includegraphics{figS2}
+\caption{Synthetic data set used to illustrate the data processing algorithms. {\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
+\label{fig:1d_demo}
+%\customlabel{fig:1d_demo}{3}
+\customlabel{subfig:1d_example}{\ref{fig:1d_demo}{\it A}}
+\customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}{\it B}}
+\customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}{\it C}}
+\customlabel{subfig:1d_aligned_unordered}{\ref{fig:1d_demo}{\it D}}
+\customlabel{subfig:1d_aligned_ordered}{\ref{fig:1d_demo}{\it E}}
+\customlabel{subfig:1d_aligned_ordered_vdm}{\ref{fig:1d_demo}{\it F}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=8cm]{drosophila_live_eval_spectrum}
+
+\includegraphics[width=2.5cm]{drosophila_live_evec_corr1}
+\includegraphics[width=2.5cm]{drosophila_live_evec_corr2}
+\includegraphics[width=2.5cm]{drosophila_live_evec_corr3}
+\caption{Eigenvalue spectra for the {\em Drosophila} live imaging data set presented in \fig~3. Note that there is a gap after the fourth eigenvalue product. Below are the second, third, and fourth embedding coordinate plotted versus the first embedding coordinate. Note that coordinates 2--4 are higher harmonics (and thus simple functions) of coordinate 1, and are therefore not informative about structure in the data set.  We can conclude that the data set is effectively one-dimensional and can be parameterized/ordered by coordinate 1.}
+\end{figure}
+
+
+\begin{figure}
+\includegraphics[width=8cm]{zebrafish_eval_spectrum}
+
+\includegraphics[width=2.5cm]{zebrafish_evec_corr1}
+\includegraphics[width=2.5cm]{zebrafish_evec_corr2}
+\includegraphics[width=2.5cm]{zebrafish_evec_corr3}
+\caption{Eigenvalue spectra for the zebrafish data set presented in \fig~4. Note that there is a gap after the fourth eigenvalue product. Below are the second, third, and fourth embedding coordinate plotted versus the first embedding coordinate. Note that coordinates 2--4 are higher harmonics (and thus simple functions) of coordinate 1, and are therefore not informative about structure in the data set.  It is not immediately obvious that coordinate 3 is a harmonic of coordinate 1; the distortion in the plot is due to density effects in the data (the developmental changes are slower towards the beginning of the trajectory, and so there is a higher density of images in this portion of the one-dimensional curve), We can conclude that the data set is effectively one-dimensional and can be parameterized/ordered by coordinate 1.}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=8cm]{drosophila_fixed_eval_spectrum}
+\caption{Eigenvalue spectra for the fixed {\em Drosophila} images presented in \fig~5. Note that there is a gap after the first eigenvalue product. We can conclude that the data set is effectively one-dimensional and can be parameterized/ordered by coordinate 1.}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=8cm]{wing_disc_eval_spectrum}
+\caption{Eigenvalue spectra for the wing disc data set presented in \fig~6. Note that there is a gap after the first eigenvalue product. We can conclude that the data set is effectively one-dimensional and can be parameterized/ordered by coordinate 1.}
+\end{figure}
+
 %
 %\begin{figure*}
 %\includegraphics{figS3}

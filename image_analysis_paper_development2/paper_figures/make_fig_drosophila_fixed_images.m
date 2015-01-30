@@ -99,6 +99,19 @@ axis([0 125 0 125])
 axis square
 saveas(gcf, 'drosophila_fixed_images_rank_corr.pdf');
 
+%%
+
+ncomps = 20;
+[R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
+
+make_fig(8,8)
+plot(abs(D2), '.')
+xlabel('embedding coordinate')
+ylabel('product of eigenvalues')
+axis square
+saveas(gcf, 'drosophila_fixed_eval_spectrum.pdf');
+
+
 
 
 

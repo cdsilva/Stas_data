@@ -85,8 +85,8 @@ for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
     imshow(imrotate(images_registered(:,:,I(j)), 70, 'crop'));
     text(npixels, npixels, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','right','VerticalAlignment','bottom', 'fontsize', 4)
-
-%     text(npixels/2, npixels/2, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
+    
+    %     text(npixels/2, npixels/2, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
 end
 saveas(gcf, 'zebrafish_ordered.pdf');
 
@@ -112,6 +112,31 @@ set(gca, 'xticklabel', {'0°'; '180°'; '360°'});
 set(gca, 'yticklabel', {'0°'; '180°'; '360°'});
 axis([0 400 0 400])
 axis square
+
+%%
+
+ncomps = 20;
+[R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
+
+make_fig(8,8)
+plot(abs(D2), '.')
+xlabel('embedding coordinate')
+ylabel('product of eigenvalues')
+axis square
+saveas(gcf, 'zebrafish_eval_spectrum.pdf');
+
+
+for k = 2:4
+    make_fig(3,3)
+    plot(embed_coord(:,1), embed_coord(:,k), '.')
+    xlabel('embed coord 1')
+    ylabel(sprintf('embed coord %d', k))
+    axis tight
+    axis square
+    set(gca, 'xtick', [])
+    set(gca, 'ytick', [])
+    saveas(gcf, sprintf('zebrafish_evec_corr%d.pdf', k-1));
+end
 
 %% bootstrap
 % nsamples = 10;
