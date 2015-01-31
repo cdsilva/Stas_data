@@ -37,9 +37,6 @@ nstack = 0;
 % number of images
 nimages = 120;
 
-% number of pixels
-npixels = 100;
-
 % dimension of images (dim=2 indicates standard 2D images, rather than
 % z-stacks)
 dim = 2;
@@ -47,7 +44,7 @@ dim = 2;
 % read in images
 % images are stored in the variable images_raw
 [images_raw, nchannels] = read_images(image_dir, image_name, image_ext, ...
-    stack_name, nimages, nstack, npixels, dim);
+    stack_name, nimages, nstack, dim);
 
 %% Show images
 % An optional step is to now show the images using the |plot_images|
@@ -68,6 +65,9 @@ plot_images(images_raw, dim)
 % DAPI, a nuclear stain, is in the first (red) channel.
 % dpERK is in the second (green) channel.
 % Dl is in the third (blue) channel.
+
+% number of pixels (fewer pixels means a shorter runtime)
+npixels = 100;
 
 % channel weights
 % because the nuclear signal is wider spread throughout the image, as well
@@ -96,7 +96,7 @@ resize_image = true;
 
 % we then apply these image functions of normalization, blurring,
 % reweighting, and mean-centering
-images = apply_image_functions(images_raw, dim, channel_weight, ...
+images = apply_image_functions(images_raw, npixels, dim, channel_weight, ...
     channel_blur, channel_normalize, channel_mean_center, resize_image);
 
 % plot the images (optional)

@@ -31,10 +31,10 @@ theta_err = zeros(nexpt, 1);
 for i=1:nexpt
     image_dir = sprintf('../code_for_distribution/drosophila_live_imaging/expt%02d', i);
     
-    [images_raw, nchannels] = read_images(image_dir, image_name, image_ext, stack_name, nimages, nstack, npixels, dim);
-    %         plot_images(images_raw, dim)
-    
-    images = apply_image_functions(images_raw, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
+    [images_raw, nchannels] = read_images(image_dir, image_name, image_ext, stack_name, nimages, nstack, dim);
+    % plot_images(images_raw, dim)
+
+    images = apply_image_functions(images_raw, npixels, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
     %         plot_images(images, dim)
     %     figure;
     %     for j=1:nimages

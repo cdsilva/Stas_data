@@ -1,4 +1,4 @@
-function IMAGES = apply_image_functions(IMAGES_RAW, DIM, CHANNEL_WEIGHT, CHANNEL_BLUR, CHANNEL_NORMALIZE, CHANNEL_MEAN_CENTER, RESIZE_IMAGE)
+function IMAGES = apply_image_functions(IMAGES_RAW, NPIXELS, DIM, CHANNEL_WEIGHT, CHANNEL_BLUR, CHANNEL_NORMALIZE, CHANNEL_MEAN_CENTER, RESIZE_IMAGE)
 %APPLY_IMAGE_FUNCTIONS Apply relevant preprocessing to image set.
 % IMAGES = APPLY_IMAGE_FUNCTIONS(IMAGES_RAW, DIM, CHANNEL_WEIGHT, CHANNEL_BLUR, CHANNEL_NORMALIZE, CHANNEL_MEAN_CENTER, RESIZE_IMAGE)
 % applies several different preprocessing procedures to the images in IMAGES_RAW
@@ -9,6 +9,10 @@ function IMAGES = apply_image_functions(IMAGES_RAW, DIM, CHANNEL_WEIGHT, CHANNEL
 %    npixels x npixels x nstack x nimages array (for 3D grayscale images)
 %    npixels x npixels x nchannels x nstack x nimages array (for 3D color images)
 % 
+% NPIXELS is resolution of the preprocessed images
+% Images are assumed to be square, such that each preprocessed image will
+% be NPIXELSxNPIXELS
+%
 % DIM is the dimension of each image
 % DIM=2 means that the imgaes are each 2D
 % DIM=3 means that the imgaes are 3-D z-stacks
@@ -36,14 +40,13 @@ function IMAGES = apply_image_functions(IMAGES_RAW, DIM, CHANNEL_WEIGHT, CHANNEL
 % should be resized; RESIZE_IMAGE=true means that each image is scale so
 % that the object occupies 80% of the total image. 
 % 
-% IMAGES is the image set after processing; IMAGES is the same dimensions
-% as the input array IMAGES_RAW
+% IMAGES is the image set after processing
 
 
 %% store necessary parameters
 
 % allocate new images
-IMAGES = IMAGES_RAW;
+IMAGES = imresize(IMAGES_RAW, [NPIXELS NPIXELS]);
 
 % number of images
 nimages = size(IMAGES_RAW, ndims(IMAGES_RAW));
@@ -67,14 +70,11 @@ end
 % find the channels that should be used for mean-centering
 channels = find(CHANNEL_MEAN_CENTER);
 
-%number of pixels
-npixels = size(IMAGES_RAW, 1);
-
 % create circular mask
 % this will be applied to each image at the end (since the images are going
 % to be rotated we will negelect the corners of the images)
-[X, Y] = meshgrid(1:npixels, 1:npixels);
-mask = ((X-(npixels+1)/2).^2 + (Y-(npixels+1)/2).^2 < ((npixels+1)/2)^2);
+[X, Y] = meshgrid(1:NPIXELS, 1:NPIXELS);
+mask = ((X-(NPIXELS+1)/2).^2 + (Y-(NPIXELS+1)/2).^2 < ((NPIXELS+1)/2)^2);
 
 %% apply image functions to each image
 

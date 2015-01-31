@@ -22,10 +22,10 @@ ang_dis = 10;
 
 eps_scale = 0.5;
 
-[images_raw, nchannels] = read_images(image_dir, image_name, image_ext, stack_name, nimages, nstack, npixels, dim);
+[images_raw, nchannels] = read_images(image_dir, image_name, image_ext, stack_name, nimages, nstack, dim);
 plot_images(images_raw, dim)
 
-images = apply_image_functions(images_raw, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
+images = apply_image_functions(images_raw, npixels, dim, channel_weight, channel_blur, channel_normalize, channel_mean_center, resize_image);
 plot_images(images, dim)
 
 [R, W] = compute_pairwise_alignments(squeeze(max(images, [], ndims(images)-1)), ang_dis);

@@ -133,7 +133,7 @@ if handles.reapply_image_functions
             return
     end
 end
-if handles.recalc_pairwise_rotations 
+if handles.recalc_pairwise_rotations
     choice = questdlg('Number of pairwise rotations or image set/parameters have changed, but images have not been reanalyzed. Are you sure you want to continue?', ...
         'Reanalyze images', ...
         'Yes','No','No');
@@ -170,8 +170,18 @@ if handles.reregister_image_set
     end
 end
 
-save_images(handles.images_analyzed, handles.dim, handles.output_image_dir, handles.image_name, handles.image_ext, handles.stack_name)
-
+try
+    save_images(handles.images_analyzed, handles.dim, handles.output_image_dir, handles.image_name, handles.image_ext, handles.stack_name)
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+        msgbox('Some required fields are not populated. Please check inputs.')
+        return
+        %     elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+    else
+        msgbox(sprintf('ERROR: %s', ME.identifier))
+        return
+    end
+end
 
 function number_images_Callback(hObject, eventdata, handles)
 % hObject    handle to number_images (see GCBO)
@@ -242,12 +252,14 @@ function read_images_Callback(hObject, eventdata, handles)
 %h = msgbox('Please wait...');
 
 try
-    [handles.images_raw, handles.nchannels] = read_images(handles.image_dir, handles.image_name, handles.image_ext, handles.stack_name, handles.nimages, handles.nstack, handles.npixels, handles.dim);
+    [handles.images_raw, handles.nchannels] = read_images(handles.image_dir, handles.image_name, handles.image_ext, handles.stack_name, handles.nimages, handles.nstack, handles.dim);
 catch ME
     if strcmp(ME.identifier, 'MATLAB:nonExistentField')
         msgbox('Some required fields are not populated. Please check inputs.')
         return
-    elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+        %     elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+    else
+        msgbox(sprintf('ERROR: %s', ME.identifier))
         return
     end
 end
@@ -476,7 +488,7 @@ function number_pixels_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of number_pixels as text
 %        str2double(get(hObject,'String')) returns contents of number_pixels as a double
 
-handles.reread_images = true;
+handles.reapply_image_functions = true;
 
 handles.npixels = str2double(get(hObject,'String'));
 if isnan(handles.npixels) || handles.npixels < 1 || mod(handles.npixels, 1) ~= 0
@@ -535,15 +547,24 @@ if handles.reread_images
             return
     end
 end
-        
-handles.images = apply_image_functions(handles.images_raw, handles.dim, handles.channel_weight, handles.channel_blur, handles.channel_normalize, handles.channel_mean_center, handles.resize_image);
 
-handles.reapply_image_functions = false;
-handles.recalc_pairwise_rotations = true;
-handles.rerun_dmaps = true;
-
-guidata(hObject, handles);
-
+try
+    handles.images = apply_image_functions(handles.images_raw, handles.npixels, handles.dim, handles.channel_weight, handles.channel_blur, handles.channel_normalize, handles.channel_mean_center, handles.resize_image);
+    
+    handles.reapply_image_functions = false;
+    handles.recalc_pairwise_rotations = true;
+    handles.rerun_dmaps = true;
+    
+    guidata(hObject, handles);
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+        msgbox('Some required fields are not populated. Please check inputs.')
+        return
+    else
+        msgbox(sprintf('ERROR: %s', ME.identifier))
+        return
+    end
+end
 
 % --- Executes on button press in show_images2.
 function show_images2_Callback(hObject, eventdata, handles)
@@ -643,32 +664,43 @@ if handles.recalc_pairwise_rotations
     handles.recalc_pairwise_rotations = false;
 end
 
-h = waitbar(0, 'Registering and ordering images....') ;
-
-% compute optimal rotations + embedding coordinates using vector diffusion maps
-ncomps = 1;
-[R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
-
-waitbar(0.3, h);
-
-% register images using optimal rotations
-if handles.use_raw
-    images_registered = register_all_images(handles.images_raw, R_opt);
-else
-    images_registered = register_all_images(handles.images, R_opt);
+try
+    h = waitbar(0, 'Registering and ordering images....') ;
+    
+    % compute optimal rotations + embedding coordinates using vector diffusion maps
+    ncomps = 1;
+    [R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
+    
+    waitbar(0.3, h);
+    
+    % register images using optimal rotations
+    if handles.use_raw
+        images_registered = register_all_images(handles.images_raw, R_opt);
+    else
+        images_registered = register_all_images(handles.images, R_opt);
+    end
+    
+    waitbar(0.6, h);
+    handles.images_analyzed = order_all_images(images_registered, embed_coord);
+    
+    handles.reregister_image_set = false;
+    handles.rerun_dmaps = false;
+    
+    waitbar(1, h);
+    close(h);
+    
+    guidata(hObject, handles)
+    
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+        msgbox('Some required fields are not populated. Please check inputs.')
+        return
+        %     elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+    else
+        msgbox(sprintf('ERROR: %s', ME.identifier))
+        return
+    end
 end
-
-waitbar(0.6, h);
-handles.images_analyzed = order_all_images(images_registered, embed_coord);
-
-handles.reregister_image_set = false;
-handles.rerun_dmaps = false;
-
-waitbar(1, h);
-close(h);
-
-guidata(hObject, handles)
-
 
 
 function number_rotations_Callback(hObject, eventdata, handles)
@@ -741,28 +773,39 @@ if handles.reapply_image_functions
     end
 end
 
-
-h = waitbar(0, 'Ordering images....') ;
-
-W = squareform(pdist(reshape(double(handles.images), [], handles.nimages)')).^2;
-ncomps = 1;
-[embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
-
-waitbar(0.5, h);
-
-if handles.use_raw
-    handles.images_analyzed = order_all_images(handles.images_raw, embed_coord);
-else
-    handles.images_analyzed = order_all_images(handles.images, embed_coord);
+try
+    h = waitbar(0, 'Ordering images....') ;
+    
+    W = squareform(pdist(reshape(double(handles.images), [], handles.nimages)')).^2;
+    ncomps = 1;
+    [embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
+    
+    waitbar(0.5, h);
+    
+    if handles.use_raw
+        handles.images_analyzed = order_all_images(handles.images_raw, embed_coord);
+    else
+        handles.images_analyzed = order_all_images(handles.images, embed_coord);
+    end
+    
+    handles.rerun_dmaps = false;
+    handles.reregister_image_set = false;
+    
+    waitbar(1, h);
+    close(h);
+    
+    guidata(hObject, handles)
+    
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+        msgbox('Some required fields are not populated. Please check inputs.')
+        return
+        %     elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+    else
+        msgbox(sprintf('ERROR: %s', ME.identifier))
+        return
+    end
 end
-
-handles.rerun_dmaps = false;
-handles.reregister_image_set = false;
-
-waitbar(1, h);
-close(h);
-
-guidata(hObject, handles)
 
 % --- Executes on button press in register.
 function register_Callback(hObject, eventdata, handles)
@@ -800,32 +843,44 @@ if handles.reapply_image_functions
     end
 end
 
-if handles.recalc_pairwise_rotations
-    [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.ang_dis);
-    handles.recalc_pairwise_rotations = false;
+try
+    if handles.recalc_pairwise_rotations
+        [handles.R, handles.W] = compute_pairwise_alignments(handles.images, handles.ang_dis);
+        handles.recalc_pairwise_rotations = false;
+    end
+    
+    h = waitbar(0, 'Registering images....') ;
+    % compute optimal rotations + embedding coordinates using vector diffusion maps
+    ncomps = 1;
+    [R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
+    
+    waitbar(0.5, h);
+    
+    % register images using optimal rotations
+    if handles.use_raw
+        handles.images_analyzed = register_all_images(handles.images_raw, R_opt);
+    else
+        handles.images_analyzed = register_all_images(handles.images, R_opt);
+    end
+    
+    handles.rerun_dmaps = false;
+    handles.reregister_image_set = false;
+    
+    waitbar(1, h);
+    close(h);
+    
+    guidata(hObject, handles)
+    
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+        msgbox('Some required fields are not populated. Please check inputs.')
+        return
+        %     elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+    else
+        msgbox(sprintf('ERROR: %s', ME.identifier))
+        return
+    end
 end
-
-h = waitbar(0, 'Registering images....') ;
-% compute optimal rotations + embedding coordinates using vector diffusion maps
-ncomps = 1;
-[R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
-
-waitbar(0.5, h);
-
-% register images using optimal rotations
-if handles.use_raw
-    handles.images_analyzed = register_all_images(handles.images_raw, R_opt);
-else
-    handles.images_analyzed = register_all_images(handles.images, R_opt);
-end
-
-handles.rerun_dmaps = false;
-handles.reregister_image_set = false;
-
-waitbar(1, h);
-close(h);
-
-guidata(hObject, handles)
 
 
 % --- Executes on button press in register_order_zstacks.
@@ -864,39 +919,51 @@ if handles.reapply_image_functions
     end
 end
 
-max_proj_images = squeeze(max(handles.images, [], ndims(handles.images)-1));
-
-if handles.recalc_pairwise_rotations
-    [handles.R, handles.W] = compute_pairwise_alignments(max_proj_images, handles.ang_dis);
-    handles.recalc_pairwise_rotations = false;
+try
+    max_proj_images = squeeze(max(handles.images, [], ndims(handles.images)-1));
+    
+    if handles.recalc_pairwise_rotations
+        [handles.R, handles.W] = compute_pairwise_alignments(max_proj_images, handles.ang_dis);
+        handles.recalc_pairwise_rotations = false;
+    end
+    
+    % compute optimal rotations + embedding coordinates using vector diffusion maps
+    ncomps = 1;
+    [R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
+    
+    if handles.use_raw
+        images_registered = register_all_images(handles.images_raw, R_opt);
+    else
+        images_registered = register_all_images(handles.images_raw, R_opt);
+    end
+    
+    h = waitbar(0, 'Registering and ordering images....') ;
+    
+    W = squareform(pdist(reshape(double(images_registered), [], handles.nimages)')).^2;
+    [embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
+    
+    waitbar(0.5, h);
+    
+    handles.images_analyzed = order_all_images(images_registered, embed_coord);
+    
+    handles.reregister_image_set = false;
+    handles.rerun_dmaps = false;
+    
+    waitbar(1, h);
+    close(h);
+    
+    guidata(hObject, handles)
+    
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+        msgbox('Some required fields are not populated. Please check inputs.')
+        return
+        %     elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+    else
+        msgbox(sprintf('ERROR: %s', ME.identifier))
+        return
+    end
 end
-
-% compute optimal rotations + embedding coordinates using vector diffusion maps
-ncomps = 1;
-[R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
-
-if handles.use_raw
-    images_registered = register_all_images(handles.images_raw, R_opt);
-else
-    images_registered = register_all_images(handles.images_raw, R_opt);
-end
-
-h = waitbar(0, 'Registering and ordering images....') ;
-
-W = squareform(pdist(reshape(double(images_registered), [], handles.nimages)')).^2;
-[embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
-
-waitbar(0.5, h);
-
-handles.images_analyzed = order_all_images(images_registered, embed_coord);
-
-handles.reregister_image_set = false;
-handles.rerun_dmaps = false;
-
-waitbar(1, h);
-close(h);
-
-guidata(hObject, handles)
 
 
 % --- Executes on slider movement.
@@ -1437,7 +1504,7 @@ guidata(hObject, handles);
 
 % --- Executes when selected object is changed in select_raw_or_preprocessed.
 function select_raw_or_preprocessed_SelectionChangeFcn(hObject, eventdata, handles)
-% hObject    handle to the selected object in select_raw_or_preprocessed 
+% hObject    handle to the selected object in select_raw_or_preprocessed
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
 %	EventName: string 'SelectionChanged' (read only)
 %	OldValue: handle of the previously selected object or empty if none was selected
@@ -1559,8 +1626,19 @@ if ~isfield(handles, 'images_analyzed')
     return
 end
 
-avg_images = compute_average_trajectory(handles.images_analyzed, handles.nimages_avg, handles.avg_width);
-plot_images(avg_images, handles.dim)
+try
+    avg_images = compute_average_trajectory(handles.images_analyzed, handles.nimages_avg, handles.avg_width);
+    plot_images(avg_images, handles.dim)
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+        msgbox('Some required fields are not populated. Please check inputs.')
+        return
+        %     elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+    else
+        msgbox(sprintf('ERROR: %s', ME.identifier))
+        return
+    end
+end
 
 % --- Executes on button press in save_avg_traj.
 function save_avg_traj_Callback(hObject, eventdata, handles)
@@ -1573,6 +1651,17 @@ if ~isfield(handles, 'images_analyzed')
     return
 end
 
-avg_images = compute_average_trajectory(handles.images_analyzed, handles.nimages_avg, handles.avg_width);
-
-save_images(avg_images, handles.dim, handles.output_image_dir, strcat({'avg_',handles.image_name}), handles.image_ext, handles.stack_name);
+try
+    avg_images = compute_average_trajectory(handles.images_analyzed, handles.nimages_avg, handles.avg_width);
+    
+    save_images(avg_images, handles.dim, handles.output_image_dir, strcat('avg_',handles.image_name), handles.image_ext, handles.stack_name);
+catch ME
+    if strcmp(ME.identifier, 'MATLAB:nonExistentField')
+        msgbox('Some required fields are not populated. Please check inputs.')
+        return
+        %     elseif strcmp(ME.identifier, 'MATLAB:imagesci:imread:fileDoesNotExist')
+    else
+        msgbox(sprintf('ERROR: %s', ME.identifier))
+        return
+    end
+end

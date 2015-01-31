@@ -1,4 +1,4 @@
-function [IMAGES, NCHANNELS] = read_images(IMAGE_DIR, IMAGE_NAME, IMAGE_EXT, STACK_NAME, NIMAGES, NSTACK, NPIXELS, DIM)
+function [IMAGES, NCHANNELS] = read_images(IMAGE_DIR, IMAGE_NAME, IMAGE_EXT, STACK_NAME, NIMAGES, NSTACK, DIM)
 %READ_IMAGES Read in images stored in specified directory and
 %subdirectories.
 % [IMAGES, NCHANNELS] = READ_IMAGES(IMAGE_DIR, IMAGE_NAME, IMAGE_EXT, STACK_NAME, NIMAGES, NSTACK, NPIXELS, DIM)
@@ -17,9 +17,6 @@ function [IMAGES, NCHANNELS] = read_images(IMAGE_DIR, IMAGE_NAME, IMAGE_EXT, STA
 % 
 % NSTACK is the number of images in a single z-stack; if
 % there are only 2D images, then stack_name is ignored
-% 
-% NPIXELS is the number of pixels for reading in the images (this does not
-% have to be the same as the actual resolutoin of the images)
 % 
 % DIM is the image dimension: dim=2 for standard 2D images, dim=3 for
 % z-stacks
@@ -45,6 +42,12 @@ try
         filename = sprintf('%s/%s%02d/%s%02d.%s', IMAGE_DIR, IMAGE_NAME, i, STACK_NAME, j, IMAGE_EXT);
     end
     im_tmp = imread(filename);
+    npixels = size(im_tmp, 1);
+    if npixels ~= size(im_tmp, 2)
+        close(h);
+        msgbox('Images are not square');
+        return
+    end
     if ndims(im_tmp) == 2
         NCHANNELS = 1;
     else
@@ -54,15 +57,15 @@ try
     % allocate space for images
     if DIM == 2
         if NCHANNELS == 1
-            IMAGES = zeros(NPIXELS, NPIXELS, NIMAGES, 'uint8');
+            IMAGES = zeros(npixels, npixels, NIMAGES, 'uint8');
         else
-            IMAGES = zeros(NPIXELS, NPIXELS, NCHANNELS, NIMAGES, 'uint8');
+            IMAGES = zeros(npixels, npixels, NCHANNELS, NIMAGES, 'uint8');
         end
     else
         if NCHANNELS == 1
-            IMAGES = zeros(NPIXELS, NPIXELS, NSTACK, NIMAGES, 'uint8');
+            IMAGES = zeros(npixels, npixels, NSTACK, NIMAGES, 'uint8');
         else
-            IMAGES = zeros(NPIXELS, NPIXELS, NCHANNELS, NSTACK, NIMAGES, 'uint8');
+            IMAGES = zeros(npixels, npixels, NCHANNELS, NSTACK, NIMAGES, 'uint8');
         end
     end
     
@@ -77,7 +80,7 @@ try
             im_tmp = imread(filename);
             
             % resize image
-            im_tmp = imresize(im_tmp, [NPIXELS NPIXELS]);
+            im_tmp = imresize(im_tmp, [npixels npixels]);
             
             % store image
             if NCHANNELS == 1
@@ -94,7 +97,7 @@ try
                 im_tmp = imread(filename);
                 
                 % resize image
-                im_tmp = imresize(im_tmp, [NPIXELS NPIXELS]);
+                im_tmp = imresize(im_tmp, [npixels npixels]);
                 
                 % store image
                 if NCHANNELS == 1

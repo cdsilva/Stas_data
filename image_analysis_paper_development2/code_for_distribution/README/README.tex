@@ -38,7 +38,7 @@ The basic steps are as follows:
 
 \subsection{Interactive GUI}
 
-\includegraphics[width=10cm, trim=0cm 2cm 5cm 0cm, clip]{gui_screenshot_initial.jpg}
+\includegraphics[width=\textwidth, trim=0cm 3cm 12cm 0cm, clip]{gui_screenshot_initial.jpg}
 
 There are five steps
 %
@@ -54,11 +54,108 @@ There are five steps
 
 The fields are as follows
 \begin{description}
+%
 \item[2D/3D] Select ``2D'' if your images are traditional 2D images. Select ``3D'' if your images are z-stacks.
 %
 \item[Image Directory] Enter the directory where your images or z-stacks are stored. This directory can be an absolute path (e.g. \texttt{C:/Documents/Images}) or a path relative to the directory where this code is stored (e.g. \texttt{../images})
 %
+\item[Image Prefix] The prefix for all image file names. The images are assumed to named as the image prefix, followed by a number. 
+%
+\item[Stack Prefix] (only for 3D z-stacks) The prefix for all stack folder names. Each stack is assumed to be stored in a single folder, named as the stack prefix, followed by a number. 
+%
+\item[Image Extension] The extension of the images (e.g., tif, jpg)
+%
+\item[Number of Images] The number of images or z-stacks. Images are assumed to be stored as the image prefix, followed by a two-digit index, where the indices run from 1 to the number of images (e.g., image\_prefix01.tif, image\_prefix02.tif, etc.). For three-dimensional images, the z-stacks are assumed to be stored in individual folders whose names are the stack prefix, followed by a two-digit index, where the indices run from 1 to the number of stacks (e.g., z\_stack\_prefix01, z\_stack\_prefix02, etc.)
+%
+\item[Number of Images in Stack] (only for z-stacks) The number of images per z-stack. Images are assumed to be stored in the individual stack directories as the stack prefix, followed by a two-digit index, where the indices run from 1 to the number of images in the stack (e.g., stack\_prefix01.tif, stack\_prefix02.tif, etc.). 
+%
 \end{description}
+
+After populating the required fields, select the ``Read Images'' button to read in the images (a wait par will appear to show the progress of image reading).
+%
+After reading the images, select the ``Show Images'' button to display the images (z-stacks will be displayed as maximum intensity projections). This step is optional.
+
+\subsubsection{Preprocess Images}
+
+\begin{description}
+\item[Weight] Each channel in the images is scaled by the weight factor, where all weights at 1 does not adjust the channel intensities. For grayscale images, only the first weight is used. 
+%
+\item[Blur] Each channel in the images is blurred using a disc factor with radius equal to a fraction of the image as indicated by the ``blur'' field. For example, setting the blur to 5\% means that the image is blurred using a disc filter with radius $0.5 \times$ the number of pixels. 
+%
+\item[Normalize] If the normalize option is selected for a specific channel, then Contrast-Limited Adaptive Histogram Equalization is applied to that channel to normalize the intensities across the image. This is important for signals whose absolute intensity is not meaningful or informative. 
+%
+\item[Use to Mean-Center] If the mean-center option is selected for any of the channels, then the object is centered in the image by detecting the edges of the object given by the selected channels. If no mean-center options are selected, then the object is not mean-centered.
+%
+\item[Resize Images] If the resize images option is selected, then each image is scaled/dialated so that the object occupies 80\% of the total image frame. This removes any size effects/variations in the images. 
+%
+\item[Number of Pixels] The number of pixels wanted in the images for analysis. This does {\em not} have to be the same number of pixels as the true resolution of the images. The images are assumed to be square. 
+%
+\end{description}
+
+After populating the required fields, select the ``Apply Image'' button to apply the selected preprocessing options (a wait bar will appear to show the progress).
+%
+After preprocessing the images, select the ``Show Images'' button to display the preprocessed images (z-stacks will be displayed as maximum intensity projections). This step is optional.
+
+\subsubsection{Analyze Images}
+
+After preprocessing the images, one can apply various analysis algorithms. 
+%
+There are three parameters
+%
+\begin{description}
+%
+\item[Angular Discretization (degrees)] (required for image registration) This is the angular discretization used to search for the pairwise alignments between images. For example, if the angular discretization is 10$^\circ$, then the pairwise alignments are computed by computing the image discrepancy after 10$^\circ$ rotation, after a 20$^\circ$ rotation, ..., up to a 360$^\circ$ rotation, and then selecting the rotation which minimizes the discrepancy. Lower values of the angular discretization increase the accuracy of the method, but also increase the computational cost. 
+%
+\item[Kernel Scale] This is the scaling of the diffusion maps kernel. This parameter should be $\mathcal{O}(1)$, and we have empirically found for our data sets that values of $0.25-0.5$ often yield good results. 
+%
+\end{description}
+
+After this, select the ``Apply to Raw Images'' option to apply the computed registration and/or ordering to the original images; select the ``Apply to Preprocessed Images'' option to apply the computed registration and/or ordering to the preprocessed images (after blurring, normalization, etc.)
+
+There are four analysis options
+\begin{description}
+%
+\item[Register] (this option is only for two-dimensional images) This registers the imaging data set using vector diffusion maps to compute the optimal rotations. 
+%
+\item[Order] This orders the imaging data set using diffusion maps. {\em Important:} This option assumes that the imaging data set is preregistered! This option can be used for imaging data sets that were preregistered using some {\em a priori} knowledge about the system. 
+%
+\item[Register + Order] (this option is only for two-dimensional images) This registers and orders the imaging data set using vector diffusion maps to compute the optimal rotations and the temporal ordering. 
+%
+\item[Register + Order z-stacks] (this option is only for three-dimensional z-stacks) This registers and orders the imaging data set. It first registers the z-stacks by computing the optimal rotations to align the (two-dimensional) maximum intensity projections using vector diffusion maps.  It then orders the data using diffusion maps on the (now registered) three-dimensional z-stacks. 
+%
+\end{description}
+
+After analysis select the ``Show Images'' button to display the registered and/or images (z-stacks will be displayed as maximum intensity projections). This step is optional.
+
+
+\subsubsection{Save Images}
+
+This is the (optional) step of saving the analyzed images.
+%
+The ``Output Image Directory'' field is where the analyzed images will be stored; this directory will be created if it does not exist. 
+%
+The images will be stored in the output directory; the name format will be the same as in the input directory. 
+
+\subsubsection{Average Trajectory}
+
+An (optional) step is to compute the average trajectory of the registered and ordered images.
+
+There are two parameters
+\begin{description}
+\item[Number of Images in Average Trajectory] This is the desired number of images in the average trajectory. 
+%
+\item[Width of Averaging Window] This is the (approximate) width of the averaging window. Each snapshot in the average trajectory will be the (weighted) average of approximately the width number of images. Increasing this value will result in a smoother average trajectory; decreasing this value will reveal more finer-scale detail. 
+% 
+\end{description}
+
+The ``Show Average Trajectory'' option will then display the average trajectory images. 
+%
+The ``Save Average Trajectory'' option will save the average trajectory images. 
+%
+The images will be saved in the ''Output Image Directory'' folder. 
+%
+The name format will be the same as the input file format, but with the prefix ``avg\_''.
+
 \subsection{Script}
 
 \subsection*{Read Images}
