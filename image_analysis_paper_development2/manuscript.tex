@@ -196,7 +196,9 @@ The color in \fig~\ref{fig:schematics}D depicts the one-dimensional parameteriza
 %
 In our working examples, each data point will be of much higher dimension (e.g., a pixelated image or three-dimensional voxel data), and so we cannot extract this low-dimensional structure visually.
 %
-Instead, we will use diffusion maps to automatically uncover a parameterization of our high-dimensional data (see \SI).
+Instead, we will use diffusion maps to automatically uncover a parameterization of our high-dimensional data from the eigenvectors of the appropriate matrix (see \SI).
+%
+Furthermore, the corresponding eigenvalues will allow us to confirm our assumption that our data lie on a one-dimensional manifold. 
 %
 Diffusion maps generalizes directly from one-dimensional nonlinear curves to higher-dimensional manifolds.
 
@@ -631,7 +633,7 @@ Unlike traditional statistical methods, our algorithms do not provide confidence
 %
 Furthermore, although our methods provide a temporal ordering for images, the provide no real-time information, neither do they provide a direction for the proposed ordering.
 %
-Determining which ``end'' of the trajectory is early and which is late is a post-processing task which requires {\em a priori} knowledge of the developmental dynamics. 
+Determining the trajectory rate and direction are post-processing tasks which requires {\em a priori} knowledge of the developmental dynamics. 
 %
 Furthermore, real-time information can only be extracted from either {\em a priori} knowledge of the rates of relevant developmental processes, or by making some assumption about the temporal sampling of the data set (e.g., the data set uniformly samples some given time window). 
 

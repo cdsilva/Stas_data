@@ -33,17 +33,15 @@
 
 \subsection*{Image preprocessing}
 
-Before applying vector diffusion maps, images must be preprocessed so that the Euclidean distance between time image pixels is informative.
+Before applying vector diffusion maps, images must be preprocessed so that the Euclidean distance between the image pixels is informative: we want images who are developmentally similar to have relatively small Euclidean distances, and images who are at disparate developmental time points to have relatively large distances. 
 %
-We want images who are developmentally similar to have relatively small Euclidean distances, and images who are at disparate developmental time points to have relatively large distances. 
-%
-We therefore must adjust images to remove any experimental and imaging artifacts, so that most of the variation is relevant to the developmental dynamics. 
+We must preprocess images to remove any experimental and imaging artifacts, so that most of the variation is relevant to the developmental dynamics. 
 
-The relevant image operations are 
+For our general purposes, the relevant image operations are 
 \begin{enumerate}
 \item {\bf Intensity normalization:} Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of signals whose absolute intensity is not meaningful/informative.
 %
-\item {\bf Blur:} The \texttt{imfilter} function with a disc filter is used to blur signals whose small-scale structure is not informative. 
+\item {\bf Blur:} The \texttt{imfilter} function with a disc filter is used to blur signals whose small-scale structure is not informative. For example, 
 %
 \item {\bf Intensity scaling (multichannel images only):} The \texttt{immultiply} function is used to scale signal intensities. This is important for multichannel images, and it determines the (relative) contributions of the various signals.  
 %
@@ -297,7 +295,7 @@ where $d(x_i, x_j)$ is a pairwise distance between $x_i$ and $x_j$ (often the Eu
 %
 Points less than $\epsilon$ apart are thus considered ``close'' and points farther than $\epsilon$ apart are considered ``far away''.
 %
-$\epsilon$ can be chosen using several techniques (see, for example \citep{coifman2008graph, rohrdanz2011determination}); here, we take $\epsilon^2$ to be $1/10^{th}$ of the median of the squared pairwise distances.
+$\epsilon$ can be chosen using several techniques (see, for example \citep{coifman2008graph, rohrdanz2011determination}); here, we take $\epsilon$ to be $1/4-1/2$ of the median of the pairwise distances.
 
 To find the coordinate $y$, we want solve the following optimization problem \citep{Belkin2003}
 \begin{equation} \label{eq:dmaps_opt_problem}
@@ -432,7 +430,7 @@ where $g(I_j, \theta)$ is image $I_j$ rotated around the center of the square by
 %
 The norm, $\| \cdot \|$, is the Euclidean norm between the pixel intensities of the channels.
 %
-The domain of the image (a square) is not invariant to our rotations; however, the pixels near the corners of the square have zero intensity, and so the norm can be meaningfully computed as long as the main image does not ``move out of'' the original square.
+The domain of the image (a square) is not invariant to our rotations; however, the pixels near the corners of the square are preprocessed to have zero intensity, and so the norm can be meaningfully computed as long as the main image does not ``move out of'' the original square.
 %
 Image rotation is performed with the \texttt{imwarp} function in Matlab, using linear interpolation to estimate the pixel intensities after rotation.
 %
@@ -481,7 +479,7 @@ We define the average image at time $\tau$, denoted $\overline{I}_{\tau}$ (where
 \end{equation}
 where $\sigma$ is the scale of the Gaussian filter.
 %
-For the images in \fig~4, we take $\sigma = 3$.
+For the images in \fig~5~and~6, we take $\sigma = 2$.
 %
 See \citep{kemelmacher2011exploring} for a more detailed discussion.
 
