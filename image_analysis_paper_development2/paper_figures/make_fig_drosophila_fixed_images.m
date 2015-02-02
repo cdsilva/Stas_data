@@ -38,6 +38,12 @@ plot_images(images, dim)
 ncomps = 1;
 [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
 
+time = (1:nimages)';
+if corr(time, embed_coord) < 0
+    embed_coord = -embed_coord;
+end
+corr(time, embed_coord,'type','spearman')
+
 % register images using optimal rotations
 images_registered = register_all_images(images, R_opt);
 
@@ -46,16 +52,9 @@ images_analyzed = order_all_images(images_registered, embed_coord);
 plot_images(images_analyzed, dim)
 
 %%
-time = (1:nimages)';
-
-corr(time, embed_coord,'type','spearman')
-
-nsubimages = 10;
-if corr(time, embed_coord) < 0
-    embed_coord = -embed_coord;
-end
 
 fontsize = 8;
+nsubimages = 10;
 
 % idx_to_plot = randsample(nimages, nsubimages);
 idx_to_plot = round(linspace(1, nimages, nsubimages));

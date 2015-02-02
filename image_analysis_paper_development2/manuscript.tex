@@ -366,7 +366,7 @@ Provided there exist significant dynamics within the data set and that the devel
 
 \subsection*{Data sets with intersample variability}
 
-\subsubsection*{Fixed {\em Drosophila} images}
+\subsubsection*{Fixed images of {\em Drosophila} gastrulation}
 
 \begin{figure*}[t]
 \begin{minipage}[b]{12cm}
@@ -451,7 +451,7 @@ We compared the ordering obtained from vector diffusion maps to the ordering pro
 The ranks from the ordering provided by the embryologist, which we will refer to as the ``expert rank'', are indicated for the images in \fig~\ref{fig:drosophila_fixed_images}B , and the rank correlation (see \fig~\ref{fig:drosophila_fixed_images}D) shows that our ordering is consistent with the expert ordering. 
 
 
-\subsubsection*{Wing disc data}
+\subsubsection*{Fixed z-stacks of {\em Drosophila} wing discs}
 
 \begin{figure*}[t]
 \raisebox{5.5cm}{\textsf{A}}
@@ -601,7 +601,7 @@ To the best of our knowledge, algorithmic approaches to these two tasks have bee
 %
 Temporal ordering of large-scale data which did not require registration was done in the context of molecular profiling studies, in which data are vectors describing the expression levels of different mRNA \citep{anavy2014blind, trapnell2014dynamics, gupta2008extracting}.
 %
-At the same time, temporal ordering of imaging data sets was done with a significant amount of human supervision and using registered images as a starting point \citep{yuan2014automated, surkova2008characterization}.  
+At the same time, temporal ordering of imaging data sets was done with a significant amount of human supervision and using registered images as a starting point \citep{yuan2014automated, surkova2008characterization}, or using some {\em a priori} knowledge of the relevant developmental processes \citep{dubuis2013accurate}.  
 %
 %The task of image registration has been widely studied \citep{zitova2003image}, for applications such as face recognition \citep{rowley1998rotation}, medical image registration \citep{hajnal2010medical}, and texture classification \citep{greenspan1994rotation}.
 %
@@ -623,7 +623,7 @@ This means that the Euclidean distance is a good measure of similarity between i
 %
 Our algorithms will fail for other imaging data sets which contain very fine scale structures,  as small perturbations in these fine-scale structures will result in large changes in the Euclidean distances. 
 %
-In such cases, one requires a more sophisticated distance metric, such as the Earth Mover's Distance \citep{...}, or image description, such as scattering transform coefficients \citep{...}, which are insensitive to such perturbations. 
+In such cases, one requires a more sophisticated distance metric, such as the Earth Mover's Distance \citep{rubner2000earth}, or image description, such as scattering transform coefficients \citep{mallat2012group}, which are insensitive to such perturbations. 
 %
 Furthermore, as we have acknowledged, our methods as implemented cannot register full three-dimensional data with respect to rotations due to computational limitations. 
 %
@@ -675,7 +675,7 @@ Given the rapidly increasing volumes of imaging data from studies of multiple de
 
 \section*{Materials and Methods}
 
-\subsection*{{\em Drosophila} Experiments}
+\subsection*{{\em Drosophila} experiments}
 %
 Oregon-R was used as wild type {\em Drosophila} strains. 
 %
@@ -689,7 +689,7 @@ Histone-RFP strain was used to obtain time-lapse movie of gastrulating embryos a
 %
 Embryos were loaded to the microfluidic device with PBST to keep them oxidized. 
 
-\subsection*{{\em Drosophila} Microscopy}
+\subsection*{{\em Drosophila} microscopy}
 %
 Nikon A1-RS scanning confocal microscope, and the Nikon 60x Plan-Apo oil objective was used to image embryos. 
 %
@@ -706,11 +706,11 @@ Images were subsampled, normalized, blurred, and centered prior to diffusion map
 Details about the preprocessing operations applied to each imging data set are given in \SI. 
 
 
-\subsection*{Software}
+\subsection*{Software and imaging data}
 %
 All algorithms and analysis were implemented in MATLAB\textsuperscript{\textregistered} (R2013b, The MathWorks, Natick, Massachusetts).
 %
-Code is available at \texttt{genomics.princeton.edu/stas/publications.html} under ``Codes and Data''. 
+Software, including documentation and tutorials, along with the full imaging data sets used in this paper are available at \texttt{genomics.princeton.edu/stas/publications.html} under ``Codes and Data''. 
 
 %\end{materials}
 

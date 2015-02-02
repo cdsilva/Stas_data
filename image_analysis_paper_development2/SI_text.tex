@@ -38,19 +38,20 @@ Before applying vector diffusion maps, images must be preprocessed so that the E
 We must preprocess images to remove any experimental and imaging artifacts, so that most of the variation is relevant to the developmental dynamics. 
 
 For our general purposes, the relevant image operations are 
-\begin{enumerate}
-\item {\bf Intensity normalization:} Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of signals whose absolute intensity is not meaningful/informative.
+\begin{description}
+
+\item[Intensity normalization] Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of signals whose absolute intensity is not meaningful/informative.
 %
-\item {\bf Blur:} The \texttt{imfilter} function with a disc filter is used to blur signals whose small-scale structure is not informative. For example, 
+\item[Blur] The \texttt{imfilter} function with a disc filter is used to blur signals whose small-scale structure is not informative. For example, 
 %
-\item {\bf Intensity scaling (multichannel images only):} The \texttt{immultiply} function is used to scale signal intensities. This is important for multichannel images, and it determines the (relative) contributions of the various signals.  
+\item[Intensity scaling (multichannel images only)] The \texttt{immultiply} function is used to scale signal intensities. This is important for multichannel images, and it determines the (relative) contributions of the various signals.  
 %
-\item {\bf Mean-centering:}  The Canny method \citep{canny1986computational} is used to detect the edges of the object in each image (using the \texttt{edge} function). The image is then translated so that the object (as determined by extremeties of the detected edges) is centered.
+\item[Mean-centering]  The Canny method \citep{canny1986computational} is used to detect the edges of the object in each image (using the \texttt{edge} function). The image is then translated so that the object (as determined by extremeties of the detected edges) is centered.
 %
-\item {\bf Size scaling:} For images whose relative size is unimportant to the developmental dynamics, the images are rescaled/dialated so that the object size (as determined by extremeties of the detected edges) is constant (we set this to be 80\% of the total image).
+\item[Size scaling] For images whose relative size is unimportant to the developmental dynamics, the images are rescaled/dialated so that the object size (as determined by extremeties of the detected edges) is constant (we set this to be 80\% of the total image).
 %
-\item {\bf Removing corners:} The image is cropped/filtered using a disc centered in the middle of the image and whose diameter is equal to the number of pixels; any pixels outside of this disc are set to 0 (no intensity). This removes any corner effects under rotations. 
-\end{enumerate}
+\item[Removing corners] The image is cropped/filtered using a disc centered in the middle of the image and whose diameter is equal to the number of pixels; any pixels outside of this disc are set to 0 (no intensity). This removes any corner effects under rotations. 
+\end{description}
 
 
 
@@ -396,7 +397,7 @@ Retain both the optimal pairwise rotations as well as the minimum distances obta
 %
 \item Select $\epsilon$ for use in the diffusion maps kernel. 
 %
-Taking $\epsilon$ to be on the order of the median of the pairwise distances often yields good results. 
+Taking $\epsilon$ to be $25-50\%$ of the median of the pairwise distances often yields good results. 
 \item Compute the matrix $S$ in \eqref{eq:vdm_S}. 
 $A_{ij}$ is computed from \eqref{eq:dmaps_W} and \eqref{eq:dmaps_A}, using the pairwise distances from step 1, and $H_{ij} = R(\theta_{ij})$ are computed in step 2.
 %

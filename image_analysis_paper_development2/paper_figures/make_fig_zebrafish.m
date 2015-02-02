@@ -38,6 +38,15 @@ plot_images(images, dim)
 ncomps = 1;
 [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
 
+fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
+time = fscanf(fid, '%f');
+fclose(fid);
+if corr(time, embed_coord) < 0
+    embed_coord = -embed_coord;
+end
+
+corr(time, embed_coord,'type','spearman')
+
 % register images using optimal rotations
 images_registered = register_all_images(images, R_opt);
 
@@ -45,14 +54,11 @@ images_analyzed = order_all_images(images_registered, embed_coord);
 
 plot_images(images_analyzed, dim)
 
-fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
-time = fscanf(fid, '%f');
-fclose(fid);
+
 
 figure;
 plot(tiedrank(time), tiedrank(embed_coord),'.')
 
-corr(time, embed_coord,'type','spearman')
 
 fid = fopen(sprintf('%s/angles.txt', image_dir), 'r');
 angles = fscanf(fid, '%f');
@@ -64,9 +70,7 @@ angles_opt = R_to_theta(R_opt);
 %%
 
 nsubimages = 10;
-if corr(time, embed_coord) < 0
-    embed_coord = -embed_coord;
-end
+
 % [~, I] = sort(embed_coord((1:nsubimages)+10));
 % I = I+10;
 [~, I] = sort(embed_coord);

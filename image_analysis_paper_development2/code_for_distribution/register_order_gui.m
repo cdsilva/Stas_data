@@ -22,7 +22,7 @@ function varargout = register_order_gui(varargin)
 
 % Edit the above text to modify the response to help register_order_gui
 
-% Last Modified by GUIDE v2.5 29-Jan-2015 11:56:10
+% Last Modified by GUIDE v2.5 02-Feb-2015 10:19:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1557,7 +1557,7 @@ function nimages_avg_Callback(hObject, eventdata, handles)
 
 nimages = str2double(get(hObject,'String'));
 handles.nimages_avg = nimages;
-if isnan(handles.nimages) || handles.nimages < 1 || mod(handles.nimages, 1) ~= 0
+if isnan(handles.nimages_avg) || handles.nimages_avg < 1 || mod(handles.nimages_avg, 1) ~= 0
     msgbox('Invalid number of images.')
     handles = rmfield(handles, 'nimages_avg');
     set(hObject, 'String', '');
@@ -1593,7 +1593,7 @@ if isnan(handles.avg_width)
     msgbox('Invalid width of averaging window.')
     handles = rmfield(handles, 'avg_width');
     set(hObject, 'String', '');
-elseif handles.eps_scale < 0
+elseif handles.avg_width < 0
     msgbox('Invalid width of averaging window: width must be greater than 0.')
     handles = rmfield(handles, 'avg_width');
     set(hObject, 'String', '');

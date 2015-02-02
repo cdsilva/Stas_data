@@ -49,6 +49,13 @@ for i=1:nexpt
     ncomps = 1;
     [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
     
+    fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
+    time = fscanf(fid, '%f');
+    fclose(fid);
+    if corr(time, embed_coord) < 0
+            embed_coord = -embed_coord;
+    end
+        
     % register images using optimal rotations
     images_registered = register_all_images(images, R_opt);
     
@@ -56,9 +63,7 @@ for i=1:nexpt
     
     %         plot_images(images_analyzed, dim)
     
-    fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
-    time = fscanf(fid, '%f');
-    fclose(fid);
+    
     
     %     figure;
     %     plot(tiedrank(time), tiedrank(embed_coord),'.')
@@ -82,9 +87,7 @@ for i=1:nexpt
     if i == 1
         nsubimages = 12;
         fontsize = 8;
-        if corr(time, embed_coord) < 0
-            embed_coord = -embed_coord;
-        end
+        
         [~, I] = sort(embed_coord(1:nsubimages));
         make_fig(17, 17/nsubimages);
         for j=1:nsubimages

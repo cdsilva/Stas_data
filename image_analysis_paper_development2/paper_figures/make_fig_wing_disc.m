@@ -34,14 +34,6 @@ plot_images(images, dim)
 ncomps = 1;
 [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
 
-fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
-time = fscanf(fid, '%f');
-fclose(fid);
-
-if corr(time, embed_coord) < 0
-    embed_coord = -embed_coord;
-end
-
 % register images using optimal rotations
 images_registered = register_all_images(images, R_opt);
 images_registered = imrotate(images_registered, 90);
@@ -50,6 +42,14 @@ plot_images(images_registered, dim)
 
 W = squareform(pdist(reshape(double(images_registered), [], nimages)')).^2;
 [embed_coord, D2] = dm(W, eps_scale, ncomps);
+
+fid = fopen(sprintf('%s/times.txt', image_dir), 'r');
+time = fscanf(fid, '%f');
+fclose(fid);
+
+if corr(time, embed_coord) < 0
+    embed_coord = -embed_coord;
+end
 
 images_analyzed = order_all_images(images_registered, embed_coord);
 

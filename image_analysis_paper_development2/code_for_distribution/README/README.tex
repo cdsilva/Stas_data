@@ -3,7 +3,7 @@
 \usepackage{amsmath, amsfonts, amssymb}
 \usepackage{graphicx}
 
-\usepackage{epstopdf}
+%\usepackage{epstopdf}
 
 \newcommand{\SI}[0]{\textit{SI Materials and Methods}}
 
@@ -18,18 +18,15 @@ The code reads in a set of two-dimensional images or three-dimensional z-stacks,
 
 \section{Requirements}
 
-All algorithms and analysis were implemented in MATLAB\textsuperscript{\textregistered} (R2013b, The MathWorks, Natick, Massachusetts).
+All algorithms and analysis are implemented in MATLAB\textsuperscript{\textregistered} (R2013b, The MathWorks, Natick, Massachusetts).
 %
 The code requires MATLAB along with the Image Processing Toolbox. 
 
 \section{How To Use}
 
-There are two ways to use the code
-\begin{enumerate}
-\item Interactive GUI.
-\item Program a simple script.
-\end{enumerate}
-
+The code can be used either via an interactive GUI
+or by writing a simple script.
+%
 The basic steps are as follows:
 \begin{enumerate}
    \item Read in images
@@ -41,20 +38,17 @@ The basic steps are as follows:
 
 \subsection{Interactive GUI}
 
+Open ``register\_order\_gui.fig'', which is available in the downloaded code directory.
+%
+A window should appear (see below)
+
 \includegraphics[width=\textwidth, trim=0cm 3cm 12cm 0cm, clip]{gui_screenshot_initial.jpg}
 
-There are five steps
-%
-\begin{enumerate}
-\item Read Images
-\item Preprocess Images
-\item Analyze Images
-\item Save Images
-\item Average Trajectory
-\end{enumerate}
 
 \subsubsection{Read Images}
 
+First populate the relevant parameters for where the images are stored.
+%
 The fields are as follows
 \begin{description}
 %
@@ -80,6 +74,10 @@ After reading the images, (optional) select the ``Show Images'' button to displa
 
 \subsubsection{Preprocess Images}
 
+Define the relevant preprocessing operations. 
+%
+The options are as follows
+%
 \begin{description}
 \item[Weight] Each channel in the images is scaled by the weight factor, where all weights at 1 does not adjust the channel intensities. For grayscale images, only the first weight is used. 
 %
@@ -161,10 +159,12 @@ The name format will be the same as the input file format, but with the prefix `
 
 \subsection{Script}
 
-\subsection*{Read Images}
+First, make sure that the directory which stores the downloaded code is on your MATLAB path, or that you are in that directory in MATLAB. 
+
+\subsubsection{Read Images}
 
 \begin{par}
-The first step is to read in images. This is done using the \texttt{read\_images} function For two-dimensional images, it requires that all the images are stored in a single directory, all with a consistent prefix, and indexed with two digits starting from \texttt{01}. For three-dimensional z-stack, it assumes each z-stack is stored in a single directory. All of the z-stack directories are required to begin with a consistent prefix, and be indexed with two digits starting from \texttt{01}. Similarly, all of the images are required to begin with a consistent prefix, and be indexed with two digits starting from \texttt{01} for each z-stack.
+The first step is to read in images, using the \texttt{read\_images} function. For two-dimensional images, it requires that all the images are stored in a single directory, all with a consistent prefix, and indexed with two digits starting from \texttt{01}. For three-dimensional z-stack, it assumes each z-stack is stored in a single directory. All of the z-stack directories are required to begin with a consistent prefix, and be indexed with two digits starting from \texttt{01}. Similarly, all of the images are required to begin with a consistent prefix, and be indexed with two digits starting from \texttt{01} for each z-stack.
 \end{par} \vspace{1em}
 \begin{verbatim}
 % directory where images are stored
@@ -183,21 +183,19 @@ nstack = 0;
 % number of images
 nimages = 120;
 
-% number of pixels
-npixels = 100;
-
 % dimension of images (dim=2 indicates standard 2D images, rather than
 % z-stacks)
 dim = 2;
 
 % read in images
 % images are stored in the variable images_raw
+% nchannels stores the number of channels per image
 [images_raw, nchannels] = read_images(image_dir, image_name, image_ext, ...
-    stack_name, nimages, nstack, npixels, dim);
+    stack_name, nimages, nstack, dim);
 \end{verbatim}
 
 
-\subsection*{Show images}
+\subsubsection{Show images}
 
 \begin{par}
 An optional step is to now show the images using the \texttt{plot\_images} function.
@@ -211,53 +209,56 @@ An optional step is to now show the images using the \texttt{plot\_images} funct
 plot_images(images_raw, dim)
 \end{verbatim}
 
-\includegraphics [width=4in]{sample_input_file_01.eps}
+\includegraphics [width=4in]{sample_input_file_01.jpg}
 
 
-\subsection*{Preprocess Images}
+\subsubsection{Preprocess Images}
 
 \begin{par}
-Now, we must preprocess the images before registration and ordering, to remove any imaging and/or experimental artifacts. We do this via the \texttt{apply\_image\_functions} function For this particular imaging data set, there are three channels. DAPI, a nuclear stain, is in the first (red) channel. dpERK is in the second (green) channel. Dl is in the third (blue) channel.
+Now, we must preprocess the images using the \texttt{apply\_image\_functions} function before registration and ordering, to remove any imaging and/or experimental artifacts.
 \end{par} \vspace{1em}
 \begin{verbatim}
+% number of pixels
+% images will be reduced to npixels x npixels resolution
+npixels = 100;
+
 % channel weights
-% because the nuclear signal is wider spread throughout the image, as well
-% as noiser, we choose to scale the first channel by half
+% we scale the first (red) channel by half, and keep the second (green) and
+% third (blue) channels at their input values
 channel_weight = [0.5 1 1];
 
-% we blur the image slightly (5%) so that small-scale effects of individual
-% nuclei are smoothened
+% channel blur
+% we blur each of the channels by 5%
 channel_blur = [0.05 0.05 0.05];
 
-% because the absolute intensity of the nuclear signal is not informative
-% or important (only the presence or absence of signal is important,
-% indicating the presence or absence of nuclei), we normalize the first channel
-% We do not normalize the other two channels, as changes in intensity are
-% informative to the developmental processes.
+% channel normalization
+% we normalize the first (red) channel using histogram equalization
+% we do not normalize the second (green) or third (blue) channels
 channel_normalize = [1 0 0];
 
-% we use the nuclear channel to mean center the images, as this channel
-% parameterizes/captures the entire embryo
+% mean-center
+% we use the first (red) channel to detect the edges of the object in order
+% to mean center the object
 channel_mean_center = [1 0 0];
 
-% we resize the images to all be (approximately) the same size, to remove
-% any variations due to size effects, as size effects are known to not be
-% important for this developmental system
+% resize
+% we choose to resize the images so all objects are (approximately)
+% the same size, to remove any variations due to size effects
 resize_image = true;
 
 % we then apply these image functions of normalization, blurring,
 % reweighting, and mean-centering
-images = apply_image_functions(images_raw, dim, channel_weight, ...
+images = apply_image_functions(images_raw, npixels, dim, channel_weight, ...
     channel_blur, channel_normalize, channel_mean_center, resize_image);
 
 % plot the images (optional)
 plot_images(images, dim)
 \end{verbatim}
 
-\includegraphics [width=4in]{sample_input_file_02.eps}
+\includegraphics [width=4in]{sample_input_file_02.jpg}
 
 
-\subsection*{Calculate pairwise alignments}
+\subsubsection{Calculate pairwise alignments}
 
 \begin{par}
 We now need to calculate the angles needed to align \textit{pairs} of images
@@ -276,7 +277,7 @@ ang_dis = 10;
 \end{verbatim}
 
 
-\subsection*{Apply vector diffusion maps}
+\subsubsection{Apply vector diffusion maps}
 
 \begin{par}
 We can now use vector diffusion maps to register and order the images.
@@ -306,8 +307,157 @@ images_analyzed = order_all_images(images_registered, embed_coord);
 plot_images(images_analyzed, dim)
 \end{verbatim}
 
-\includegraphics [width=4in]{sample_input_file_03.eps}
+\includegraphics [width=4in]{sample_input_file_03.jpg}
 
+\subsubsection{Calculate average trajectory}
+
+\begin{par}
+We can calculate an average trajectory from our set of (registered and ordered) images
+\end{par} \vspace{1em}
+\begin{verbatim}
+% nsubimages is the desired number of images in the average trajectory
+nsubimages = 10;
+
+% avg_width is the (approximate) width of the averaging window used to
+% compute each of the images in the average trajectory
+avg_width = 4;
+
+% compute the average trajectory
+avg_images = compute_average_trajectory(images_analyzed, nsubimages, avg_width);
+
+% plot the images (optional)
+plot_images(avg_images, dim)
+\end{verbatim}
+
+\includegraphics [width=4in]{sample_input_file_04.jpg}
+
+\section{Parameters for Data Sets}
+
+The four data sets used in the paper are available with the code in the relevant subdirectories. The parameters used (as defined in the script in the previous section) are defined below. 
+
+\subsection{{\em Drosophila} live imaging}
+
+\begin{verbatim}
+
+image_dir = 'drosophila_live_imaging/expt01';
+image_name = 'image';
+image_ext = 'tif';
+stack_name = '';
+nimages = 40;
+nstack = 0;
+dim = 2;
+
+npixels = 100;
+channel_weight = 1;
+channel_blur = 0.05;
+channel_normalize = 1;
+channel_mean_center = 0;
+resize_image = false;
+
+ang_dis = 10;
+
+eps_scale = 0.25;
+
+\end{verbatim}
+
+
+\subsection{Zebrafish}
+
+\begin{verbatim}
+
+image_dir = 'zebrafish';
+image_name = 'image';
+image_ext = 'tif';
+stack_name = '';
+nimages = 120;
+nstack = 0;
+dim = 2;
+
+npixels = 100;
+channel_weight = 1;
+channel_blur = 0;
+channel_normalize = 0;
+channel_mean_center = 1;
+resize_image = false;
+
+ang_dis = 10;
+
+eps_scale = 0.25;
+
+\end{verbatim}
+
+
+\subsection{{\em Drosophila} fixed images}
+
+\begin{verbatim}
+
+image_dir = 'drosophila_fixed_images';
+image_name = 'emb';
+image_ext = 'tif';
+stack_name = '';
+nimages = 120;
+nstack = 0;
+dim = 2;
+
+npixels = 100;
+channel_weight = [0.5 1 1];
+channel_blur = [0.05 0.05 0.05];
+channel_normalize = [1 0 0];
+channel_mean_center = [1 0 0];
+resize_image = true;
+
+ang_dis = 10;
+
+eps_scale = 0.25;
+
+\end{verbatim}
+
+
+\subsection{Wing disc}
+
+\begin{verbatim}
+
+image_dir = 'wing_disc_stacks';
+image_name = 'disc';
+image_ext = 'tif';
+stack_name = 'z';
+nimages = 46;
+nstack = 21;
+dim = 3;
+
+npixels = 100;
+channel_weight = [1 1 1];
+channel_blur = [0 0 0];
+channel_normalize = [0 0 0];
+channel_mean_center = [0 0 1];
+resize_image = false;
+
+ang_dis = 10;
+
+eps_scale = 0.5;
+\end{verbatim}
+
+\section{Parameter Values and Guidance}
+
+\begin{description}
+
+\item[Weight] The relative weights of the channels in multichannel images in important for computing meaningful distances for diffusion maps. The total intensity for each channel should be of the same order if all channels are to be considered as ``equally important.'' If the channels have dramatically different intensities in the raw images, they should be adjusted via the weight functions.
+%
+\item[Blur] The image should be blurred to remove fine-scale noise and variations. Typically, blur of 5\%-10\% are appropriate for removing such variability. In some cases, blurring is not necessary to recover an accurate registration and ordering. 
+%
+\item[Normalize] Channels should be normalized if the absolute intensity of a specific signal is not meaningful. For example, DAPI, a DNA marker, identifies the nuclei in the {\em Drosophila} embryo, but the absolute intensity of the signal is not important. 
+%
+\item[Use to Mean-Center] Objects should be (approximately) mean-centered in the frame prior to registration. The channel(s) that best identify/delineate the periphery of the object should be selected for use in the mean-centering procedure.
+%
+\item[Resize Images] Object should be resized if size differences are not meaningful/informative about the underlying developmental dynamics. 
+%
+\item[Number of Pixels] The image resolution should be chosen as low as possible such that the relevant developmental structures and patterns are still discernible/evident. A higher image resolution will result in a higher computational cost. 
+%
+\item[Kernel Scale] The kernel scale defines how similar two images have to be to be considered developmentally close. Small values of the kernel will preserve finer scale patternds and structure in the ordering algorihtm, but will also be more sensitive to noise. We have found values of 0.25-0.5 to often be suitable for our studies. Noisy data with a lower temporal resolution (such as the wing disc data) often requires a larger value of the kernel scale than clean data with a high temporal resolution (such as the zebrafish live imaging data). 
+%
+\item[Angular Discretization] The angular discretization sets the resolution for computing the pairwise alignments. For example, if the angular discretization is 10$^\circ$, then the pairwise alignments are computed by computing the image discrepancy after 10$^\circ$ rotation, after a 20$^\circ$ rotation, ..., up to a 360$^\circ$ rotation, and then selecting the rotation which minimizes the discrepancy. Lower values of the angular discretization increase the accuracy of the method, but also increase the computational cost. We have found that $10^\circ$ is often a good value of the angular discretization, which balances computational cost and accuracy.
+
+\end{description}
 
 \end{document}
 

@@ -43,6 +43,7 @@ dim = 2;
 
 % read in images
 % images are stored in the variable images_raw
+% nchannels stores the number of channels per image
 [images_raw, nchannels] = read_images(image_dir, image_name, image_ext, ...
     stack_name, nimages, nstack, dim);
 
@@ -58,40 +59,36 @@ dim = 2;
 plot_images(images_raw, dim)
 
 %% Preprocess Images
-% Now, we must preprocess the images before registration and ordering, to
+% Now, we must preprocess the images using the |apply_image_functions| 
+% function before registration and ordering, to
 % remove any imaging and/or experimental artifacts.
-% We do this via the |apply_image_functions| function
-% For this particular imaging data set, there are three channels. 
-% DAPI, a nuclear stain, is in the first (red) channel.
-% dpERK is in the second (green) channel.
-% Dl is in the third (blue) channel.
 
-% number of pixels (fewer pixels means a shorter runtime)
+% number of pixels
+% images will be reduced to npixels x npixels resolution
 npixels = 100;
 
 % channel weights
-% because the nuclear signal is wider spread throughout the image, as well
-% as noiser, we choose to scale the first channel by half
+% we scale the first (red) channel by half, and keep the second (green) and
+% third (blue) channels at their input values
 channel_weight = [0.5 1 1];
 
-% we blur the image slightly (5%) so that small-scale effects of individual
-% nuclei are smoothened
+% channel blur
+% we blur each of the channels by 5%
 channel_blur = [0.05 0.05 0.05];
 
-% because the absolute intensity of the nuclear signal is not informative
-% or important (only the presence or absence of signal is important, 
-% indicating the presence or absence of nuclei), we normalize the first channel
-% We do not normalize the other two channels, as changes in intensity are
-% informative to the developmental processes.
+% channel normalization
+% we normalize the first (red) channel using histogram equalization
+% we do not normalize the second (green) or third (blue) channels
 channel_normalize = [1 0 0];
 
-% we use the nuclear channel to mean center the images, as this channel
-% parameterizes/captures the entire embryo
+% mean-center
+% we use the first (red) channel to detect the edges of the object in order
+% to mean center the object
 channel_mean_center = [1 0 0];
 
-% we resize the images to all be (approximately) the same size, to remove
-% any variations due to size effects, as size effects are known to not be
-% important for this developmental system
+% resize
+% we choose to resize the images so all objects are (approximately) 
+% the same size, to remove any variations due to size effects 
 resize_image = true;
 
 % we then apply these image functions of normalization, blurring,
@@ -142,3 +139,19 @@ images_analyzed = order_all_images(images_registered, embed_coord);
 % plot the images (optional)
 plot_images(images_analyzed, dim)
 
+%% Calculate average trajectory
+% We can calculate an average trajectory from our set of (registered and
+% ordered) images
+
+% nsubimages is the desired number of images in the average trajectory
+nsubimages = 10;
+
+% avg_width is the (approximate) width of the averaging window used to
+% compute each of the images in the average trajectory
+avg_width = 4;
+
+% compute the average trajectory
+avg_images = compute_average_trajectory(images_analyzed, nsubimages, avg_width);
+
+% plot the images (optional)
+plot_images(avg_images, dim)
