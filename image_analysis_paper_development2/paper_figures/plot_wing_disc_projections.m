@@ -12,7 +12,15 @@ for i=1:nimages
     subplot('position', [X_start Y_start 0.75/subplot_dim1 0.75/subplot_dim2]);
     imshow(recolor_wing_disc(max(images(:,:,:,:,i),[], 4)));
     if ~isempty(time)
-        text(npixels, npixels, sprintf('~%2.0f hr', time(i)),'color',0.95*ones(1,3),'HorizontalAlignment','right','VerticalAlignment','bottom', 'fontsize', 4)
+        str1 = sprintf('%0.1f', time(i)-0.5);
+        str2 = sprintf('%0.1f', time(i)+0.5);
+        if strcmp(str1(end), '0');
+            str1 = str1(1:end-2);
+        end
+        if strcmp(str2(end), '0');
+            str2 = str2(1:end-2);
+        end
+        text(npixels, npixels, sprintf('%s-%s hr', str1, str2),'color',0.95*ones(1,3),'HorizontalAlignment','right','VerticalAlignment','bottom', 'fontsize', 6)
     end
     
     subplot('position', [X_start Y_start+0.8/subplot_dim2 0.75/subplot_dim1 0.1/subplot_dim2]);
@@ -64,9 +72,9 @@ function image2 = recolor_wing_disc(image)
 
 image2 = image;
 
-scale = 1;
+scale = 0.65;
 
 image2(:,:,3) = immultiply(image2(:,:,3), scale);
 for i=1:2
-    image2(:,:,i) = imlincomb(1, image2(:,:,i), scale, image2(:,:,3));
+    image2(:,:,i) = imlincomb(scale, image2(:,:,i), 1, image2(:,:,3));
 end

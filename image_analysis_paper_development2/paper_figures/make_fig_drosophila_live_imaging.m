@@ -101,7 +101,7 @@ for i=1:nexpt
             make_subplot(nsubimages, 1, 0.01, j);
             imshow(imrotate(images_registered(:,:,I(j)), 50, 'crop'));
             %             text(npixels/2, npixels/2, sprintf('%2.1f min', time(I(j))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
-            text(npixels, npixels, sprintf('%2.1f min', time(I(j))),'color',0.95*ones(1,3),'HorizontalAlignment','right','VerticalAlignment','bottom', 'fontsize', 4)
+            text(0, 0, sprintf('%2.1f min', time(I(j))),'color',0.95*ones(1,3),'HorizontalAlignment','left','VerticalAlignment','top', 'fontsize', 6)
         end
         saveas(gcf, 'drosophila_live_imaging_ordered.pdf');
         
@@ -152,6 +152,8 @@ for i=1:nexpt
             set(gca, 'ytick', [])
             saveas(gcf, sprintf('drosophila_live_evec_corr%d.pdf', k-1));
         end
+        
+
         return
         
         

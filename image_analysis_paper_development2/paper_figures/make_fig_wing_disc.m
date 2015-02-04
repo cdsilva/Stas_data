@@ -32,7 +32,8 @@ plot_images(images, dim)
 
 % compute optimal rotations + embedding coordinates using vector diffusion maps
 ncomps = 1;
-[R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
+% [R_opt, embed_coord, D2] = vdm(R, ones(nimages), eps_scale, ncomps);
+R_opt = ang_synch(R, 2);
 
 % register images using optimal rotations
 images_registered = register_all_images(images, R_opt);
@@ -53,6 +54,7 @@ end
 
 images_analyzed = order_all_images(images_registered, embed_coord);
 
+return
 %%
 
 plot_images(immultiply(images_analyzed, 1.5), dim)
@@ -91,7 +93,7 @@ nsubimages = 15;
 I = I + 20;
 
 make_fig(10, 6);
-plot_wing_disc_projections(images_registered(:,:,:,:,I), time(I)-min(time), 5, 3)
+plot_wing_disc_projections(images_registered(:,:,:,:,I), time(I), 5, 3)
 % plot_wing_disc_projections(images_registered(:,:,:,:,I), time(I)-min(time));
 % saveas(gcf, 'wing_disc_ordered.pdf');
 print('wing_disc_ordered.eps', '-depsc', '-r300');

@@ -88,7 +88,7 @@ make_fig(13, 13/nsubimages);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
     imshow(imrotate(images_registered(:,:,I(j)), 70, 'crop'));
-    text(npixels, npixels, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','right','VerticalAlignment','bottom', 'fontsize', 4)
+    text(npixels, npixels, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','right','VerticalAlignment','bottom', 'fontsize', 6)
     
     %     text(npixels/2, npixels/2, sprintf('%2.0f min', time(I(j))-min(time)),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 6)
 end
@@ -141,6 +141,16 @@ for k = 2:4
     set(gca, 'ytick', [])
     saveas(gcf, sprintf('zebrafish_evec_corr%d.pdf', k-1));
 end
+
+%%
+
+PCA_data = reshape(double(images_registered), [], nimages);
+PCA_data = PCA_data - repmat(mean(PCA_data, 2), 1, nimages);
+
+[u, s, v] = svd(PCA_data, 0);
+
+images_analyzed_PCA = order_all_images(images_registered, PCA_data'*u(:,1));
+corr(PCA_data'*u(:,1), time, 'type','spearman')
 
 %% bootstrap
 % nsamples = 10;

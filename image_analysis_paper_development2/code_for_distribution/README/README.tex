@@ -16,6 +16,39 @@ This is code for the registration and ordering algorithms described in \\
 
 The code reads in a set of two-dimensional images or three-dimensional z-stacks, can perform a number of preprocessing operations, and then registers and/or orders the images using the algorithms described in the paper. 
 
+\section{License}
+
+This code is covered under the BSD License.\\
+Copyright (c) 2015, Carmeline Dsilva\\
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+\begin{enumerate}
+
+    \item Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    \item Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in
+      the documentation and/or other materials provided with the distribution
+    \item Neither the name of the Princeton University nor the names
+      of its contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+\end{enumerate}
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
 \section{Requirements}
 
 All algorithms and analysis are implemented in MATLAB\textsuperscript{\textregistered} (R2013b, The MathWorks, Natick, Massachusetts).
@@ -122,7 +155,7 @@ There are four analysis options
 %
 \item[Register + Order] (this option is only for two-dimensional images) This registers and orders the imaging data set using vector diffusion maps to compute the optimal rotations and the temporal ordering. 
 %
-\item[Register + Order z-stacks] (this option is only for three-dimensional z-stacks) This registers and orders the imaging data set. It first registers the z-stacks by computing the optimal rotations to align the (two-dimensional) maximum intensity projections using vector diffusion maps.  It then orders the data using diffusion maps on the (now registered) three-dimensional z-stacks. 
+\item[Register + Order z-stacks] (this option is only for three-dimensional z-stacks) This registers and orders the imaging data set. It first registers the z-stacks by computing the optimal rotations to align the (two-dimensional) maximum intensity projections along the z-axis using angular synchronization. It then orders the data using diffusion maps on the (now registered) three-dimensional z-stacks. 
 %
 \end{description}
 
@@ -335,7 +368,7 @@ plot_images(avg_images, dim)
 
 The four data sets used in the paper are available with the code in the relevant subdirectories. The parameters used (as defined in the script in the previous section) are defined below. 
 
-\subsection{{\em Drosophila} live imaging}
+\subsection{{\em Drosophila} gastrulation (live)}
 
 \begin{verbatim}
 
@@ -361,7 +394,7 @@ eps_scale = 0.25;
 \end{verbatim}
 
 
-\subsection{Zebrafish}
+\subsection{Zebrafish epiboly}
 
 \begin{verbatim}
 
@@ -387,7 +420,7 @@ eps_scale = 0.25;
 \end{verbatim}
 
 
-\subsection{{\em Drosophila} fixed images}
+\subsection{{\em Drosophila} gastrulation (fixed)}
 
 \begin{verbatim}
 
@@ -413,7 +446,7 @@ eps_scale = 0.25;
 \end{verbatim}
 
 
-\subsection{Wing disc}
+\subsection{{\em Drosophila} wing discs}
 
 \begin{verbatim}
 

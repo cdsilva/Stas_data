@@ -72,7 +72,7 @@ make_fig(12, 12/nsubimages);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
     imshow(make_gray_nuclei(imrotate(images_registered(:,:,:,idx_to_plot(I(j))), -5, 'crop')));
-    text(npixels/2, npixels/2, sprintf('%d', time(idx_to_plot(I(j)))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 4)
+    text(npixels/2, npixels/2, sprintf('%d', time(idx_to_plot(I(j)))),'color',0.95*ones(1,3),'HorizontalAlignment','center','VerticalAlignment','middle', 'fontsize', 8)
 end
 saveas(gcf, 'drosophila_fixed_images_ordered.pdf');
 
@@ -109,6 +109,35 @@ xlabel('embedding coordinate')
 ylabel('product of eigenvalues')
 axis square
 saveas(gcf, 'drosophila_fixed_eval_spectrum.pdf');
+
+%%
+
+[Y, X] = meshgrid(1:npixels, 1:npixels);
+X = X - (npixels+1)/2;
+Y = Y - (npixels+1)/2;
+
+theta = atan2d(Y, X);
+
+nslices = 36;
+theta_vec = linspace(-180, 180, nslices + 1);
+twi_peaks = zeros(nimages, nslices);
+for i=1:nslices
+    idx = find(theta < theta_vec(i+1) & theta >= theta_vec(i));
+    for j=1:nimages
+        im_tmp = images_registered(:,:,3,j);
+        twi_peaks(j, i) = mean(im_tmp(idx));
+    end
+end
+
+std((twi_peaks * theta_vec(1:end-1)')./sum(twi_peaks, 2))
+
+
+
+
+
+
+
+
 
 
 

@@ -928,8 +928,8 @@ try
     end
     
     % compute optimal rotations + embedding coordinates using vector diffusion maps
-    ncomps = 1;
-    [R_opt, embed_coord, D2] = vdm(handles.R, handles.W, handles.eps_scale, ncomps);
+    max_proj_dim = 2;
+    R_opt = ang_synch(handles.R, max_proj_dim);
     
     if handles.use_raw
         images_registered = register_all_images(handles.images_raw, R_opt);
@@ -940,6 +940,7 @@ try
     h = waitbar(0, 'Registering and ordering images....') ;
     
     W = squareform(pdist(reshape(double(images_registered), [], handles.nimages)')).^2;
+    ncomps = 1;
     [embed_coord, D2] = dm(W, handles.eps_scale, ncomps);
     
     waitbar(0.5, h);
