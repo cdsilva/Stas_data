@@ -2,7 +2,7 @@ clear all
 close all
 
 %% Create Data Set
-% First, we create an artifical data set |x| of $n=7$ data points which lie 
+% First, we create an artificial data set |x| of $n=7$ data points which lie 
 % on a one-dimensional curve in two dimensions.
 % This data set can be parameterized by t he angular direction $\theta$.
 
@@ -41,7 +41,7 @@ W = exp(-dist_matrix.^2/eps.^2)
 
 
 %% Compute Diffusion Matrix
-% We then compute the $n \times n$ diaganol matrix $D$, with 
+% We then compute the $n \times n$ diagonal matrix $D$, with 
 % $$ D_{ii} = \sum_{j=1}^n W_{ij} $$ and
 % the $n \times n$ matrix $$A = D^{-1}W. $$
 
