@@ -81,6 +81,11 @@ make_fig(13, 13/nsubimages);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
     imshow(images(:,:,I2(j)));
+    if j == 1
+        hold on
+        plot([0.1*npixels (0.1+2/9)*npixels], [0.1*npixels 0.1*npixels], 'color', 0.95*ones(1,3))
+%         text((0.95-1/9)*npixels, 0.95*npixels, '200 \mu m', 'color', 0.95*ones(1,3), 'HorizontalAlignment','center','VerticalAlignment','bottom', 'fontsize', 2)
+    end
 end
 saveas(gcf, 'zebrafish_scrambled.pdf');
 

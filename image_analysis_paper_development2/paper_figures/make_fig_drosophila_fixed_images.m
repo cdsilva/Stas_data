@@ -64,9 +64,12 @@ make_fig(12, 12/nsubimages);
 for j=1:nsubimages
     make_subplot(nsubimages, 1, 0.01, j);
     imshow(make_gray_nuclei(images(:,:,:,idx_to_plot(j))));
+    if j == 1
+        hold on
+        plot([0.1*npixels (0.1+0.8/3)*npixels], [0.05*npixels 0.05*npixels], 'color', 0.95*ones(1,3))
+    end
 end
 saveas(gcf, 'drosophila_fixed_images_scrambled.pdf');
-
 
 make_fig(12, 12/nsubimages);
 for j=1:nsubimages

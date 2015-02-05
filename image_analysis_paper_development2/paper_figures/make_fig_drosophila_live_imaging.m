@@ -88,11 +88,16 @@ for i=1:nexpt
         nsubimages = 12;
         fontsize = 8;
         
+        
         [~, I] = sort(embed_coord(1:nsubimages));
         make_fig(17, 17/nsubimages);
         for j=1:nsubimages
             make_subplot(nsubimages, 1, 0.01, j);
             imshow(images(:,:,j));
+            if j == 1
+                hold on
+                plot([0.1*npixels (0.1+0.8/3)*npixels], [0.05*npixels 0.05*npixels], 'color', 0.95*ones(1,3))
+            end
         end
         saveas(gcf, 'drosophila_live_imaging_scrambled.pdf');
         

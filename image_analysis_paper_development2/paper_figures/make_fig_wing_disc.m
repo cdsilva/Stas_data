@@ -84,6 +84,18 @@ annotation('arrow',  [0.05 0.1],[0.82 0.82], 'color', 0.95*ones(1,3), 'headlengt
 annotation('textarrow',  [0.05 0.05], [0.87 0.82],'color', 0.95*ones(1,3), 'string','z', 'headstyle','none', 'fontsize', fontsize)
 annotation('textarrow',  [0.1 0.05],[0.82 0.82], 'color', 0.95*ones(1,3), 'string','x', 'headstyle','none', 'fontsize', fontsize)
 
+annotation('doublearrow',  [0 0.75], [0.76 0.76],'color', 'k', 'headlength', 5, 'headwidth', 5)
+annotation('textbox', [0.75/2-0.25 0.77 0.5 0.2], 'string', '380 \mum', 'fontsize', 5, 'VerticalAlignment','bottom','HorizontalAlignment','center', 'Margin',0, 'EdgeColor','none')
+
+annotation('doublearrow',  [0.8 0.9], [0.76 0.76],'color', 'k', 'headlength', 5, 'headwidth', 5)
+annotation('textbox', [0.85-0.25 0.77 0.5 0.2], 'string', '21 \mum', 'fontsize', 5, 'VerticalAlignment','bottom','HorizontalAlignment','center', 'Margin',0, 'EdgeColor','none')
+
+annotation('doublearrow', [0.79 0.79], [0.8 0.9],'color', 'k', 'headlength', 5, 'headwidth', 5)
+annotation('textarrow', [0.81 0.81], [0.85 0.85], 'string', '21 \mum', 'fontsize', 5, 'VerticalAlignment','bottom','HorizontalAlignment','center', 'textrotation',90, 'linestyle','none','headstyle','none','color', 0.99*ones(1,3), 'textcolor','k')
+
+annotation('doublearrow', [0.79 0.79], [0 0.75],'color', 'k', 'headlength', 5, 'headwidth', 5)
+annotation('textarrow', [0.81 0.81], [0.75/2 0.75/2], 'string', '380 \mum', 'fontsize', 5, 'VerticalAlignment','bottom','HorizontalAlignment','center', 'textrotation',90, 'linestyle','none','headstyle','none','color', 0.99*ones(1,3), 'textcolor','k')
+
 print('wing_disc_example.eps', '-depsc', '-r300');
 
 %%

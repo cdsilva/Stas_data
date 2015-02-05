@@ -1,6 +1,5 @@
 function h = plot_wing_disc_projections(images, time, subplot_dim1, subplot_dim2)
 
-
 nimages = size(images, 5);
 npixels = size(images, 1);
 nstack = size(images, 4);
