@@ -48,7 +48,7 @@ Stanislav~Y.~Shvartsman \footnotemark[1] \thanks{Lewis-Sigler Institute for Inte
 
 \begin{abstract}
 
-Dynamics of developmental progress is commonly reconstructed from imaging snapshots of chemical or mechanical processes in fixed embryos.
+Dynamics of developmental progress are commonly reconstructed from imaging snapshots of chemical or mechanical processes in fixed embryos.
 %
 As a first step in these reconstructions, snapshots must be spatially registered and ordered in time.
 %
@@ -62,7 +62,7 @@ The approach is based on vector diffusion maps, a broadly applicable manifold le
 %
 We illustrate this approach by registering and ordering data from imaging studies of pattern formation and morphogenesis in three different model systems.
 %
-We also provide a software implementation of our methodology to aid in the application of our techniques to other experimental data sets. 
+We also provide a software implementation of our methodology to aid in the application of our techniques to other experimental data sets.
 \vspace{1em}
 
 \noindent
@@ -148,7 +148,7 @@ and ``additional" directions of variability (such as temporal dynamics) which on
 %
 Vector diffusion maps combine two algorithms, {\em angular synchronization} \citep{singer2011angular} for image registration and {\em diffusion maps} \citep{coifman2005geometric} for extracting intrinsic low-dimensional structure in data, into a single computation.
 %
-We will use the algorithm to register images of developing tissues with respect to rotations, as well as uncover the main direction of variability {\it after} removing rotational symmetries.
+We will use the algorithm to register images of developing tissues with respect to planar rotations, as well as uncover the main direction of variability {\it after} removing rotational symmetries.
 %
 Although in general, images may contain variations due to rotations, translations, and scaling, we will remove the relevant translational and/or scaling symmetries via relatively simple image preprocessing, and focus only on factoring out rotations using the vector diffusion maps algorithm.
 %
@@ -160,7 +160,7 @@ As a consequence, uncovering this direction should reveal the underlying develop
 
 \begin{figure}[t]
 \includegraphics{fig2}
-\caption{Schematic illustrating angular synchronization and diffusion maps. (A) Set of vectors, each in a different orientation. The pairwise alignment angles are indicated. (B) The vectors from A, each rotated about their midpoint so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in A: the difference between a pair of angles in B is the same as the pairwise angle in A. (C) Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through a Gaussian kernel (see \SI), so that pairs of data point which are close are connected by darker (``stronger'') edges. (D) The data in C, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure. The color intensity is monotonic with the perceived curve arclength, thus parameterizing the curve.}
+\caption{Schematic illustrating angular synchronization and diffusion maps. (A) Set of vectors, each in a different orientation. The pairwise alignment angles are indicated. (B) The vectors from A, each rotated about their midpoint so that the set is globally aligned. Note that the chosen rotation angles are consistent with the pairwise alignments in A: the difference between a pair of angles in B is the same as the pairwise angle in A. (C) Data points (in black) which lie on a one-dimensional nonlinear curve in two dimensions. Each pair of points is connected by an edge, and the edge weight is related to the Euclidean distance between the points through a Gaussian kernel (see \SI), so that pairs of data point which are close are connected by darker (``stronger'') edges. (D) The data in C, colored by the first (non-trivial) eigenvector from the diffusion map computational procedure. The color intensity is monotonic with the perceived curve arclength, thus parametrizing the curve.}
 \label{fig:schematics}
 \end{figure}
 
@@ -188,7 +188,7 @@ Such a curve can be discovered using diffusion maps \citep{coifman2005geometric}
 %
 The idea is illustrated in \fig~\ref{fig:schematics}C, where the data are two-dimensional points which lie on a one-dimensional (nonlinear) curve.
 %
-We use {\it local} information about the data to find a parametrization which respects the underlying manifold geometry, so that points which are close in high-dimensional space (e.g., images which look similar) are close in our parameterization.
+We use {\it local} information about the data to find a parametrization which respects the underlying manifold geometry, so that points which are close in high-dimensional space (e.g., images which look similar) are close in our parametrization.
 %
 This idea of locality is denoted by the color of the edges in \fig~\ref{fig:schematics}C:
 data points which are close are connected by dark edges, and clearly, the dark edges are more ``informative" about the low-dimensional structure of the data.
@@ -201,7 +201,7 @@ In our working examples, each data point will be of much higher dimension (e.g.,
 %
 Instead, we will use diffusion maps which automatically uncovers a parametrization of our high-dimensional data from the eigenvectors of the appropriate matrix (see \SI).
 %
-Furthermore, the corresponding eigenvalues will allow us to confirm our assumption that our data lie on a one-dimensional manifold (see \fig~\ref{fig:eigenvalues_drosophila_live}--\ref{fig:eigenvalues_wing_disc}).
+Furthermore, the corresponding eigenvalues will allow us to confirm our assumption that our data approximately lie on a one-dimensional manifold (see \fig~\ref{fig:eigenvalues_drosophila_live}--\ref{fig:eigenvalues_wing_disc}).
 %
 %Diffusion maps generalizes directly from one-dimensional nonlinear curves to higher-dimensional manifolds.
 
@@ -321,7 +321,7 @@ At the same time, the accuracy of the recovered alignments is a function of the 
 %
 \includegraphics[width=3.25cm]{zebrafish_rank_corr}
 \end{minipage}
-\caption{Method validation using live imaging of a zebrafish embryo. (A) Selected images from a movie of zebrafish epiboly. Each frame is in an arbitrary rotational orientation, and the order of the frames has been shuffled. (B) Images from A after registration and ordering using vector diffusion maps. The real time of each frame is also indicated. (C) Correlation between the rank recovered using vector diffusion maps and the true rank.  The rank correlation coefficient is $0.9954$. The larger errors in the recovered ranks towards the beginning of the trajectory are due to the slow cell movement within that time window. }
+\caption{Method validation using live imaging of a zebrafish embryo. (A) Selected images from a movie of zebrafish epiboly. Scale bar indicates 200$\mu$m. Each frame is in an arbitrary rotational orientation, and the order of the frames has been shuffled. (B) Images from A after registration and ordering using vector diffusion maps. The real time of each frame is also indicated. (C) Correlation between the rank recovered using vector diffusion maps and the true rank.  The rank correlation coefficient is $0.9954$. The larger errors in the recovered ranks towards the beginning of the trajectory are due to the slow cell movement within that time window. }
 \label{fig:zebrafish}
 \end{figure*}
 
@@ -332,6 +332,8 @@ We used a publicly available live imaging data of zebrafish embryogenesis (\text
 Taken with a differential interference contrast (DIC) microscope, the movie records the first $17$~hours of zebrafish development, from a single cell stage to a 16-somite stage.
 %
 We selected $120$ consecutive frames from this movie which capture 5.5~hours of epiboly (3.5--9~hours after fertilization).
+%
+In this experiment, embryos were immobilized for imaging so that the position and orientation remained fixed \cite{kane1996zebrafish}.
 %
 At the start of the time window, cells have divided 10--11 times and are accumulated in a cell mass above the yolk.
 %
@@ -345,7 +347,7 @@ With time, this cell layer then spreads over across the yolk and expands toward 
 %
 At the end of epiboly, the blastoderm completely engulfs the yolk.
 
-As in the example of {\em Drosophila} embryo live imaging, the frames were randomly rotated and shuffled (\fig~\ref{fig:zebrafish}A).
+As in the example of {\em Drosophila} embryo live imaging, the two-dimensional frames were randomly rotated and shuffled (\fig~\ref{fig:zebrafish}A).
 %
 We then used vector diffusion maps to register and order the frames.
 %
@@ -373,7 +375,7 @@ Provided there exist significant dynamics within the data set and that the devel
 
 We have analyzed how our algorithm performs on two model data sets where all images come from a single embryo.
 %
-In practice, we are interested in cases where image comes from a different embryo, and the largest source of noise in the considered data set arises from embryo-to-embryo variability.
+In practice, we are interested in cases where each image comes from a different embryo, and the largest source of noise in the considered data set arises from embryo-to-embryo variability.
 %
 To demonstrate that our methods are robust to such variations,
 we constructed a synthetic time course data set by selecting a random image from one of five {\em Drosophila} live imaging data sets (those data sets used in \fig~\ref{fig:drosophila_live_imaging}) at each time point.
@@ -471,7 +473,7 @@ The ranks from the ordering provided by the embryologist, which we will refer to
 \raisebox{2.25cm}{\textsf{C}}
 \includegraphics[width=17.5cm]{wing_disc_average}
 
-\caption{Analysis of three-dimensional {\em Drosophila} wing disc z-stacks. (A) Maximum projections of an example three-dimensional {\em Drosophila} wing disc z-stack. Discs express the Dad-GFP reporter construct (green), and are stained for Spalt (red), Wingless (gray), and Patched (gray). Projections along the $x$-, $y$-, and $z$-axes are shown. (B) Example three-dimensional images, ordered using diffusion maps. The time cohort, as assessed by an expert, is indicated for each image, and the rank correlation coefficient between the diffusion maps ordering and the expert timing is 0.9427. (C) The average developmental trajectory for the registered and ordered images. }
+\caption{Analysis of three-dimensional {\em Drosophila} wing disc z-stacks. (A) Maximum projections of an example three-dimensional {\em Drosophila} wing disc z-stack. The anterior-posterior (A-P) and dorsal-ventral (D-V) axes are indicated. Discs express the Dad-GFP reporter construct (green), and are stained for Spalt (red), Wingless (gray), and Patched (gray). Projections along the $x$-, $y$-, and $z$-axes are shown. (B) Example three-dimensional images, ordered using diffusion maps. The time cohort, as assessed by an expert, is indicated for each image, and the rank correlation coefficient between the diffusion maps ordering and the expert timing is 0.9427. (C) The average developmental trajectory for the registered and ordered images. }
 \label{fig:wing_disc}
 \end{figure*}
 
@@ -481,9 +483,9 @@ The ranks from the ordering provided by the embryologist, which we will refer to
 %
 %However, with advances in imaging techniques, taking multiple z-slices to visualize the three-dimensional structure of a sample will become more common, and it is important to validate that our algorithm can be applied to such data.
 
-Although the theory of vector diffusion maps readily extends to three-dimensional data with full three-dimensional rotations, calculation of the pairwise alignments rapidly becomes computational prohibitive for such applications, as one must now search over all three-dimensional rotations (which are parameterized by three Euler angles), rather than over two-dimensional rotations (which are parameterized by a {\em single} rotation angle).
+Although the theory of vector diffusion maps readily extends to three-dimensional data with full three-dimensional rotations, calculation of the pairwise alignments rapidly becomes computationally prohibitive for such applications, as one must now search over all three-dimensional rotations (which are parameterized by three Euler angles), rather than over two-dimensional rotations (which are parameterized by a {\em single} rotation angle).
 %
-However, ordering data via diffusion maps is readily possible for registered three-dimensional data.
+However, ordering data via diffusion maps is readily possible for pre-registered three-dimensional data.
 %
 Therefore, we can apply our methodology to three-dimensional data, such as a stack of confocal images taken at different depths within the sample, by first registering the data using an alternative method, and then ordering the registered data using diffusion maps.
 
@@ -501,13 +503,15 @@ The discs were dissected from larvae expressing the Dad-GFP reporter construct (
 %
 %The disc grows in time; at long times, the disc becomes too large to fit completely within the frame and only a partial disc is imaged.
 
-For this particular system, the face of the imaginal disc is significantly larger than the edge of the disc, so that images will always be taken with the face towards the microscope.
+In the wing disc, the anterior-posterior and dorsal-ventral axes are significantly larger than the third principal axis (see \fig~\ref{fig:wing_disc}A). 
 %
-Therefore, we need not consider registration in all three dimensions, as the z-axis will always be aligned with the short axis of the disc.
+Therefore, we need not consider registration in all three dimensions, as the z-axis for imaging (the axis perpendicular to the imaging plane) will always be aligned with the short axis of the wing disc.
 %
-We can instead focus on registering the discs with respect to rotations only in the x-y plane.
+We can instead focus on registering the wing discs with respect to rotations only in the x-y plane.
 %
-We aligned the maximum intensity projections using angular synchronization, and then used these rotations to register the full three-dimensional in the x-y plane.
+To register the data, we first aligned the maximum intensity projections using angular synchronization.
+%
+We then used these rotations to register the full three-dimensional data in the x-y plane.
 %
 Because the maximum intensity projections are two-dimensional images, this step is no more computationally intensive than the previous examples.
 %
