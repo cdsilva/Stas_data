@@ -168,9 +168,9 @@ Angular synchronization uses pairwise alignment information to register a set of
 %
 A schematic illustration of angular synchronization is shown in \fig~\ref{fig:schematics}A, where each image is represented as a vector, and the goal is to align the entire set of vectors given pairwise alignment measurements.
 %
-We first compute the angles needed to align pairs of vectors (or images), which in general requires no notion of a template function \citep{ahuja2007template}.
+We first compute the angles needed to align pairs of vectors (or images), which in general requires no notion of a template function \citep{ahuja2007template, sonday2013noisy}.
 %
-In this work, we aligned pairs of images with respect to rotations by exhaustively searching over a discretized space of rotation angles.
+In this work, we aligned pairs of images with respect to rotations by exhaustively searching over a discretized space of rotation angles to minimize the Euclidean distance between the pixels.
 %
 However, pairwise alignments can be computed by aligning appropriate image landmarks or features \citep{ian1998statistical}.
 %
@@ -282,7 +282,7 @@ The errors in the recovered angles are all less than 10$^\circ$, and the rank co
 %
 In general, to accurately recover the temporal order, the vector diffusion maps algorithm requires a sufficient amount of data so that the underlying one-dimensional curve (i.e., the curve in \fig~\ref{fig:schematics}C) is well-sampled.
 %
-At the same time, the accuracy of the recovered alignments is a function of the signal-to-noise ratio in the pairwise alignments, as well as the size of the data set \citep{singer2011angular}.
+At the same time, the accuracy of the recovered alignments is a function of the signal-to-noise ratio in the pairwise alignments of the images, as well as the size of the data set \citep{singer2011angular}.
 %
 %Clearly, $40$ images are sufficient to accurately recover the rotational orientation and temporal order in this specific developmental time frame.
 %%
@@ -333,7 +333,7 @@ Taken with a differential interference contrast (DIC) microscope, the movie reco
 %
 We selected $120$ consecutive frames from this movie which capture 5.5~hours of epiboly (3.5--9~hours after fertilization).
 %
-In this experiment, embryos were immobilized for imaging so that the position and orientation remained fixed \cite{kane1996zebrafish}.
+In this experiment, embryos were immobilized for imaging so that the position and orientation remained fixed \citep{kane1996zebrafish}.
 %
 At the start of the time window, cells have divided 10--11 times and are accumulated in a cell mass above the yolk.
 %
@@ -398,7 +398,7 @@ Embryos were stained with the antibody that recognizes Twist (Twi, shown in gree
 %
 Another signal is provided by the phosphorylated form of the extracellular signal regulated kinase (dpERK, shown in red), an enzyme that, in this context, specifies a subset of neuronal cells \citep{Lim2013kinetics}.
 
-\fig~\ref{fig:drosophila_fixed_images}B shows the selected images in \fig~\ref{fig:drosophila_fixed_images}A, now registered and ordered using vector diffusion maps \citep{singer2012vector}.
+\fig~\ref{fig:drosophila_fixed_images}B shows the selected images in \fig~\ref{fig:drosophila_fixed_images}A, now registered and ordered using vector diffusion maps.
 %
 However, because of interembryo variability, these selected images are not entirely representative of the developmental dynamics across the entire data set.
 %
@@ -483,11 +483,19 @@ The ranks from the ordering provided by the embryologist, which we will refer to
 %
 %However, with advances in imaging techniques, taking multiple z-slices to visualize the three-dimensional structure of a sample will become more common, and it is important to validate that our algorithm can be applied to such data.
 
-Although the theory of vector diffusion maps readily extends to three-dimensional data with full three-dimensional rotations, calculation of the pairwise alignments rapidly becomes computationally prohibitive for such applications, as one must now search over all three-dimensional rotations (which are parameterized by three Euler angles), rather than over two-dimensional rotations (which are parameterized by a {\em single} rotation angle).
+In this section we show that the approach can readily be applied to three-dimensional data. 
 %
-However, ordering data via diffusion maps is readily possible for pre-registered three-dimensional data.
+We restrict ourselves to the case where an obvious fixed axis exists, so that only rotations of the three-dimensional data around this axis need be taken into account.  
 %
-Therefore, we can apply our methodology to three-dimensional data, such as a stack of confocal images taken at different depths within the sample, by first registering the data using an alternative method, and then ordering the registered data using diffusion maps.
+This does not constitute an inherent limitation for vector diffusion maps. 
+%
+While for simplicity here we will not discuss the general  case, incorporating general 3D symmetries is possible \citep{arie2012global, wang2013exact, cucuringu2012eigenvector}. 
+
+%Although the theory of vector diffusion maps readily extends to three-dimensional data with full three-dimensional rotations, calculation of the pairwise alignments rapidly becomes computationally prohibitive for such applications, as one must now search over all three-dimensional rotations (which are parameterized by three Euler angles), rather than over two-dimensional rotations (which are parameterized by a {\em single} rotation angle).
+%
+%However, ordering data via diffusion maps is readily possible for pre-registered three-dimensional data.
+%
+%Therefore, we can apply our methodology to three-dimensional data, such as a stack of confocal images taken at different depths within the sample, by first registering the data using an alternative method, and then ordering the registered data using diffusion maps.
 
 To demonstrate this approach, we used an existing three-dimensional data set of fixed {\em Drosophila} wing imaginal discs, which was published in \citet{hamaratoglu2011dpp}.
 %
@@ -531,11 +539,11 @@ The rank correlation coefficient based on the time class is 0.9436.
 %
 There are some registration errors in the early images, which are primarily due to some wing discs having extra tissue attached to them (such as the image in \fig~\ref{fig:wing_disc}A and the fourth image in \fig~\ref{fig:wing_disc}B).
 %
-Even with such obstructions, we can order the images with high accuracy and extract a stereotypical developmental trajectory, shown in \fig~\ref{fig:wing_disc}C, by averaging (see \SI).
+Even with such obstructions, we can accurately order the images and extract a stereotypical developmental trajectory, shown in \fig~\ref{fig:wing_disc}C, by averaging (see \SI).
 %
-We can now easily see the growth of the wing disc; however, averaging several images blurs the finer scale structures within the images
+We can now easily see the growth of the wing disc, even though averaging somewhat blurs some finer scale structures.
 %
-Thus, this result shows that the algorithm can successfully order a three-dimensional data set.
+%Thus, this result shows that the algorithm can successfully order a three-dimensional data set.
 
 %The vector diffusion maps algorithm has been previously used for a different type of three-dimensional data: to reconstruct a three-dimensional object (in this case, a molecule) from two-dimensional (cryo-electron microscopy) pictures \citep{singer2011viewing}.
 %
@@ -618,7 +626,7 @@ Overall, the tasks of image preprocessing and parameter selection are relatively
 %
 %To the best of our knowledge, algorithmic approaches to these two tasks have been explored largely independently of each other.
 %
-Temporal ordering of large-scale data was done in the context of molecular profiling studies, in which data are vectors describing the expression levels of different mRNA \citep{anavy2014blind, trapnell2014dynamics, gupta2008extracting}.
+Temporal ordering of large-scale data was done in the context of molecular profiling studies, in which data points are vectors describing the expression levels of different mRNA \citep{anavy2014blind, trapnell2014dynamics, gupta2008extracting}.
 %
 At the same time, temporal ordering of imaging data sets was done with a significant amount of human supervision and using registered images as a starting point \citep{yuan2014automated, surkova2008characterization, fowlkes2008quantitative}, or using some {\em a priori} knowledge of the relevant developmental processes \citep{dubuis2013accurate}.
 %
@@ -693,7 +701,7 @@ Data which comes from several different genetic backgrounds can be clustered acc
 %
 Furthermore, images taken from different viewing directions can be analyzed, as the vector diffusion maps parametrization will organize the images according to the viewing angle \citep{singer2011viewing}.
 %
-Another direction for future work is related to the joint analysis of data sets provided by different imaging approaches, such as merging live imaging data of tissue morphogenesis with snapshots of cell signaling and gene expression from fixed embryos \citep{krzic2012multiview, ichikawa2014live, rubel2010coupling}.
+Another direction for future work is related to the joint analysis of data sets provided by different imaging approaches, such as merging live imaging data of tissue morphogenesis with snapshots of cell signaling and gene expression from fixed embryos \citep{krzic2012multiview, ichikawa2014live, rubel2010coupling, dsilva2013nonlinear}.
 %
 Given the rapidly increasing volumes of imaging data from studies of multiple developmental systems, we expect that dimensionality reduction approaches discussed in this work will be increasingly useful for biologists and motivate future applications and algorithmic advances.
 
@@ -734,7 +742,7 @@ Images were collected at the focal plane $\sim$90~$\mathrm{\mu m}$ from the post
 
 \subsection*{Image preprocessing}
 
-Images were subsampled, normalized, blurred, and centered prior to diffusion maps analysis to remove any variations due to the epxperimental and imaging framework.
+Images were subsampled, normalized, blurred, and centered prior to diffusion maps analysis to remove any variations due to the experimental and imaging framework.
 %
 Details about the preprocessing operations applied to each imging data set are given in \SI.
 
