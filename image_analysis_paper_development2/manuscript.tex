@@ -35,9 +35,9 @@
 \title{Temporal ordering and registration of images in studies of developmental dynamics}
 
 \author{Carmeline~J.~Dsilva \thanks{Department of Chemical and Biological Engineering, Princeton University, Princeton, New Jersey, USA},
-Bomyi~Lim \footnotemark[1],
+Bomyi~Lim \footnotemark[1], \\
 Hang~Lu \thanks{School of Chemical and Biomolecular Engineering, Georgia Institute of Technology, Atlanta, Georgia, USA},
-Amit~Singer \thanks{Department of Mathematics, Princeton University, Princeton, New Jersey, USA} \thanks{Program in Applied and Computational Mathematics, Princeton University, Princeton, New Jersey, USA}, Ioannis~G.~Kevrekidis \footnotemark[1] \footnotemark[4] ,\\ and
+Amit~Singer \thanks{Department of Mathematics, Princeton University, Princeton, New Jersey, USA} \thanks{Program in Applied and Computational Mathematics, Princeton University, Princeton, New Jersey, USA}, Ioannis~G.~Kevrekidis \footnotemark[1] \footnotemark[4] ,and
 Stanislav~Y.~Shvartsman \footnotemark[1] \thanks{Lewis-Sigler Institute for Integrative Genomics, Princeton University, Princeton, New Jersey, USA}}
 
 \date{}
@@ -275,6 +275,8 @@ With a small number of exceptions, the recovered ordering is consistent with the
 \fig~\ref{fig:drosophila_live_imaging}C and \fig~\ref{fig:drosophila_live_imaging}D  show the correlations between the recovered and true angles and rank orders, respectively, for the entire data set.
 %
 Both the angles and the ranks are recovered with a high degree of accuracy.
+%
+We note that determining which end of the trajectory corresponds to early in the developmental progression is a post-processing task that requires some {\em a priori} information. 
 
 To assess the robustness of the proposed methodology, we repeated this procedure with four additional data sets extracted from independent live imaging studies spanning the same developmental time period.
 %
@@ -705,7 +707,7 @@ Furthermore, images taken from different viewing directions can be analyzed, as 
 %
 Another direction for future work is related to the joint analysis of data sets provided by different imaging approaches, such as merging live imaging data of tissue morphogenesis with snapshots of cell signaling and gene expression from fixed embryos \citep{krzic2012multiview, ichikawa2014live, rubel2010coupling, dsilva2013nonlinear}.
 %
-In the future, it would also be interesting to explore the connections between our proposed approach and recently developed methods for ordering and classification of face images \citep{kemelmacher2011exploring, kemelmacher2014illumination}
+It would also be interesting to explore the connections between our proposed approach and recently developed methods for ordering and classification of face images \citep{kemelmacher2011exploring, kemelmacher2014illumination}
 %
 Given the rapidly increasing volumes of imaging data from studies of multiple developmental systems, we expect that dimensionality reduction approaches discussed in this work will be increasingly useful for biologists and motivate future applications and algorithmic advances.
 
@@ -748,7 +750,7 @@ Images were collected at the focal plane $\sim$90~$\mathrm{\mu m}$ from the post
 
 Images were subsampled, normalized, blurred, and centered prior to diffusion maps analysis to remove any variations due to the experimental and imaging framework.
 %
-Details about the preprocessing operations applied to each imging data set are given in \SI.
+Details about the specific preprocessing operations applied to each imging data set are given in \SI.
 
 
 \subsection*{Software and imaging data}
