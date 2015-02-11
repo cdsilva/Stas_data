@@ -511,35 +511,27 @@ See \citep{kemelmacher2011exploring} for a more detailed discussion.
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=8cm]{drosophila_live_eval_spectrum}
-
-\includegraphics[width=2.5cm]{drosophila_live_evec_corr1}
-\includegraphics[width=2.5cm]{drosophila_live_evec_corr2}
-\includegraphics[width=2.5cm]{drosophila_live_evec_corr3}
+\includegraphics{figS3}
 \caption{Eigenvalue spectra for the {\em Drosophila} live imaging data set presented in \fig~3. Note that there is a gap after the fourth eigenvalue product. Below are the second, third, and fourth embedding coordinate plotted versus the first embedding coordinate. Note that coordinates 2--4 are higher harmonics (and thus simple functions) of coordinate 1, and are therefore not informative about structure in the data set.  We can conclude that the data set is effectively one-dimensional and can be parameterized/ordered by coordinate 1.}
 \end{figure}
 
 
 \begin{figure}
-\includegraphics[width=8cm]{zebrafish_eval_spectrum}
-
-\includegraphics[width=2.5cm]{zebrafish_evec_corr1}
-\includegraphics[width=2.5cm]{zebrafish_evec_corr2}
-\includegraphics[width=2.5cm]{zebrafish_evec_corr3}
+\includegraphics{figS4}
 \caption{Eigenvalue spectra for the zebrafish data set presented in \fig~4. Note that there is a gap after the fourth eigenvalue product. Below are the second, third, and fourth embedding coordinate plotted versus the first embedding coordinate. Note that coordinates 2--4 are higher harmonics (and thus simple functions) of coordinate 1, and are therefore not informative about structure in the data set.  It is not immediately obvious that coordinate 3 is a harmonic of coordinate 1; the distortion in the plot is due to density effects in the data (the developmental changes are slower towards the beginning of the trajectory, and so there is a higher density of images in this portion of the one-dimensional curve), We can conclude that the data set is effectively one-dimensional and can be parameterized/ordered by coordinate 1.}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=8cm]{drosophila_fixed_eval_spectrum}
+\includegraphics{figS5}
 \caption{Eigenvalue spectra for the fixed {\em Drosophila} images presented in \fig~5. Note that there is a gap after the first eigenvalue product. We can conclude that the data set is effectively one-dimensional and can be parameterized/ordered by coordinate 1.}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=8cm]{wing_disc_eval_spectrum}
+\includegraphics{figS6}
 \caption{Eigenvalue spectra for the wing disc data set presented in \fig~6. Note that there is a gap after the first eigenvalue product. We can conclude that the data set is effectively one-dimensional and can be parameterized/ordered by coordinate 1.}
 \end{figure}
 
-\begin{figure}
+\begin{table*}
 \textsf{
 \begin{tabular}{| r | c | c |}
 \hline
@@ -553,7 +545,7 @@ Zebrafish epiboly & 0.9955 & 0.6351 \\
 \end{tabular}
 }
 \caption{Comparison between rank correlation coefficients when ordering using the first vector diffusion maps (VDM) embedding coordinate, and rank correlation coefficients when ordering by the first principal component analysis (PCA) \citep{shlens2005tutorial} projection coefficient. For ordering using PCA, we computed the first principal component of the registered images, and then ordered the images by the projection coefficients onto this first mode. The PCA ordering is always less accurate than the vector diffusion maps ordering. In the zebrafish data set, the ordering is much less accurate using PCA, as the dynamics of the morphing and spreading of the cell mass are highly nonlinear. The PCA and VDM orderings are comparable for the wing disc data; this is to be expected, as the tissue simply grows in time.  }
-\end{figure}
+\end{table*}
 
 
 
