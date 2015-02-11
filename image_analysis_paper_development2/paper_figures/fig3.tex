@@ -1,0 +1,42 @@
+\documentclass[10pt]{article}
+
+\usepackage[paperwidth=18cm, paperheight=8cm, margin=0cm]{geometry}
+\usepackage{graphicx}
+\hyphenpenalty=10000
+
+\begin{document}
+
+\raisebox{0.75cm}{\textsf{A}}
+\includegraphics[width=17cm]{drosophila_live_imaging_scrambled}
+
+\raisebox{0.75cm}{\textsf{B}}
+\includegraphics[width=17cm]{drosophila_live_imaging_ordered}
+
+\raisebox{4.25cm}{\textsf{C}}
+\includegraphics[width=5cm]{drosophila_live_imaging_angle_corr}
+%
+%\hfill
+%
+\raisebox{4.25cm}{\textsf{D}}
+\includegraphics[width=5cm]{drosophila_live_imaging_rank_corr}
+%
+%\hfill
+%
+\raisebox{4.25cm}{\textsf{E}}
+%
+\raisebox{2.5cm}{
+{ \textsf{
+\begin{tabular}{ |c | c| c| }
+\hline
+\parbox[c]{1.5cm}{ \centering Movie Index} & \parbox[c]{1.5cm}{ \vspace{.5\baselineskip} \centering Average Angle Error \vspace{.5\baselineskip}} & \parbox[c]{1.5cm}{ \centering Rank Correlation Coefficient} \\
+\hline
+1 & 8.37$^{\circ}$ & 0.9989 \\
+2 & 4.98$^{\circ}$ & 0.9994 \\
+3 & 6.47$^{\circ}$ & 0.9795 \\
+4 & 7.03$^{\circ}$ & 0.9953 \\
+5 & 3.04$^{\circ}$ & 0.9959 \\
+ \hline
+\end{tabular}}}}
+
+
+\end{document}
