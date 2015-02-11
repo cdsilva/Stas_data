@@ -20,7 +20,7 @@ resize_image = false;
 
 ang_dis = 10;
 
-eps_scale = 0.5;
+eps_scale = 0.25;
 
 [images_raw, nchannels] = read_images(image_dir, image_name, image_ext, stack_name, nimages, nstack, dim);
 plot_images(images_raw, dim)
@@ -29,11 +29,12 @@ images = apply_image_functions(images_raw, npixels, dim, channel_weight, channel
 plot_images(images, dim)
 
 [R, W] = compute_pairwise_alignments(squeeze(max(images, [], ndims(images)-1)), ang_dis);
+% [R, W] = compute_pairwise_alignments(reshape(images, npixels, npixels, [], nimages), ang_dis);
 
 % compute optimal rotations + embedding coordinates using vector diffusion maps
 ncomps = 1;
-% [R_opt, embed_coord, D2] = vdm(R, ones(nimages), eps_scale, ncomps);
 R_opt = ang_synch(R, 2);
+% [R_opt, embed_coord, D2] = vdm(R, W, eps_scale, ncomps);
 
 % register images using optimal rotations
 images_registered = register_all_images(images, R_opt);
@@ -61,6 +62,7 @@ plot_images(immultiply(images_analyzed, 1.5), dim)
 plot_images(immultiply(permute(images_analyzed, [2 4 3 1 5]), 1.5), dim)
 plot_images(immultiply(permute(images_analyzed, [4 1 3 2 5]), 1.5), dim)
 
+return
 %%
 
 fontsize = 6;

@@ -62,7 +62,7 @@ The approach is based on vector diffusion maps, a broadly applicable manifold le
 %
 We illustrate this approach by registering and ordering data from imaging studies of pattern formation and morphogenesis in three different model systems.
 %
-We also provide a software implementation of our methodology to aid in the application of our techniques to other experimental data sets.
+We also provide software to aid in the application of our methodology to other experimental data sets.
 \vspace{1em}
 
 \noindent
@@ -150,7 +150,7 @@ Vector diffusion maps combine two algorithms, {\em angular synchronization} \cit
 %
 We will use the algorithm to register images of developing tissues with respect to planar rotations, as well as uncover the main direction of variability {\it after} removing rotational symmetries.
 %
-Although in general, images may contain variations due to rotations, translations, and scaling, we will remove the relevant translational and/or scaling symmetries via relatively simple image preprocessing, and focus only on factoring out rotations using the vector diffusion maps algorithm.
+Although in general, images may contain variations due to rotations, translations, and scaling, we will remove the relevant translations and/or scaling via relatively simple image preprocessing, and focus only on factoring out rotations using the vector diffusion maps algorithm.
 %
 In the case that {\em all} relevant symmetries can be removed with straightforward preprocessing, our algorithms can be used simply to extract the main direction of variability within the imaging data set.
 %
@@ -172,7 +172,7 @@ We first compute the angles needed to align pairs of vectors (or images), which 
 %
 In this work, we aligned pairs of images with respect to rotations by exhaustively searching over a discretized space of rotation angles to minimize the Euclidean distance between the pixels.
 %
-However, pairwise alignments can be computed by aligning appropriate image landmarks or features \citep{ian1998statistical}.
+However, pairwise alignments can also be computed by aligning appropriate image landmarks or features \citep{ian1998statistical}.
 %
 When the data are noisy, these pairwise measurements may by inaccurate, and so we utilize {\em all} pairwise measurements to align the set of images robustly.
 %
@@ -531,13 +531,13 @@ We then used diffusion maps to order the registered three-dimensional data.
 %
 \fig~\ref{fig:wing_disc}B shows selected images from the data set ordered by diffusion maps.
 %
-In the original data set, each disc was assigned to 6 time classes (72--73~hr, 76.5--77.5~hr, 79--80~hr, 89--90~hr, 100--101~hr, and 110.5--111.5~hr after fertilization); these times are indicated in \fig~\ref{fig:wing_disc}B.
+In the original data set, each disc was assigned to one of six time classes (72--73~hr, 76.5--77.5~hr, 79--80~hr, 89--90~hr, 100--101~hr, and 110.5--111.5~hr after fertilization) by an expert; these times are indicated in \fig~\ref{fig:wing_disc}B.
 %
 In the ordered set, the size of wing disc grows, and the intensity of the Dad-GFP signal increases as a function of time.
 %
 The rank correlation coefficient based on the time class is 0.9436.
 %
-There are some registration errors in the early images, which are primarily due to some wing discs having extra tissue attached to them (such as the image in \fig~\ref{fig:wing_disc}A and the fourth image in \fig~\ref{fig:wing_disc}B).
+The registration errors are primarily due to some wing discs having extra tissue attached to them (such as the image in \fig~\ref{fig:wing_disc}A and the fourth image in \fig~\ref{fig:wing_disc}B).
 %
 Even with such obstructions, we can accurately order the images and extract a stereotypical developmental trajectory, shown in \fig~\ref{fig:wing_disc}C, by averaging (see \SI).
 %
@@ -649,7 +649,7 @@ The benefits of our approach to image data mining are twofold.
 %
 First, the algorithm can accomplish the tasks of registration and ordering in a single step.
 %
-Furthermore, because our methodology is nonlinear, it can successfully order data sets which contain complex dynamics (see \fig~\ref{fig:PCA_compare} for a comparison of ordering using linear principal component analysis \citep{shlens2005tutorial} versus vector diffusion maps for the data sets presented in this paper).
+Furthermore, because our methodology is nonlinear, it can successfully order data sets which contain complex dynamics (see \fig~\ref{fig:PCA_compare} for a comparison of ordering using linear principal component analysis versus vector diffusion maps for the data sets presented in this paper).
 %
 We expect nonlinear techniques to be necessary for larger data sets which span a wider dynamic range.
 %
