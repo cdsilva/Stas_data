@@ -11,7 +11,6 @@
 \usepackage{natbib}
 
 \renewcommand{\figurename}{Fig.}
-%\newcommand{\SI}[0]{\textit{SI Materials and Methods}}
 \newcommand{\SI}[0]{supplementary material}
 \newcommand{\fig}[0]{Fig.}
 
@@ -77,10 +76,7 @@ KEY WORDS: temporal ordering, image registration, vector diffusion maps
 \begin{figure}[t]
 \includegraphics{fig1}
 \caption{Caricature illustrating the tasks of image registration and temporal ordering. (A) Images of ``samples'', each in a different orientation and a different stage of development. (B) Registered and ordered samples. For this caricature, the registration and ordering is straightforward because the data set is small, the landmarks are visually apparent, and the developmental changes are easy to recognize.}
-%\label{fig:fish}
-\customlabel{fig:fish}{1}
-\customlabel{subfig:fish_unordered}{\ref{fig:fish}A}
-\customlabel{subfig:fish_ordered}{\ref{fig:fish}B}
+\label{fig:fish}
 \end{figure}
 
 In one of the common approaches to studies of developmental dynamics, a group of embryos is fixed and stained to visualize a particular biochemical or morphological process within a developing tissue.
@@ -95,8 +91,6 @@ a certain time window to which a collection of embryos belongs \citep{ng2012larg
 Furthermore, images are often collected in different spatial orientations.
 %
 In order to recover the developmental dynamics from such data sets, snapshots of different embryos must first be spatially aligned or {\em registered}, and then ordered in time.
-%
-%We show how recently developed dimensionality reduction algorithms can automate {\it and combine} both of these tasks.
 
 
 Temporal ordering and registration of images can be done manually
@@ -114,7 +108,6 @@ In general, the landmarks needed for registration, as well as the attributes whi
 %
 Additional challenges arise from embryo-to-embryo variability, sample size, and measurement noise.
 
-
 We present a robust algorithmic approach to simultaneous registration and temporal ordering.
 %
 In contrast to a number of previous methodologies \citep{zitova2003image, rowley1998rotation, hajnal2010medical, greenspan1994rotation, zhao2003face, dubuis2013accurate}, our methodology does not rely on the {\em a priori} knowledge of landmarks for registration or markers of developmental progression.
@@ -131,7 +124,6 @@ To illustrate our approach, we analyze four experimental data sets.
 Our first two data sets come from live imaging studies of {\em Drosophila} and zebrafish embryogenesis.
 %
 In both of these examples, the correct rotational orientation and temporal order are independently known, and these data sets will be used to validate our approach.
-%from a study of {\it Drosophila} embryogenesis, one of the best experimental models for studies of development \citep{jaeger2012drosophila}.
 %
 Our third data set consists of images from fixed {\em Drosophila} embryos where the correct orientation and order is unknown; here, we will show how the algorithm can help uncover developmental dynamics which are not readily apparent.
 %
@@ -204,8 +196,6 @@ In our working examples, each data point will be of much higher dimension (e.g.,
 Instead, we will use diffusion maps which automatically uncovers a parametrization of our high-dimensional data from the eigenvectors of the appropriate matrix (see \SI).
 %
 Furthermore, the corresponding eigenvalues will allow us to test our assumption that our data approximately lie on a one-dimensional manifold (see \fig~\ref{fig:eigenvalues_drosophila_live}--\ref{fig:eigenvalues_wing_disc}).
-%
-%Diffusion maps generalizes directly from one-dimensional nonlinear curves to higher-dimensional manifolds.
 
 
 \subsection*{Method validation using live imaging}
@@ -253,26 +243,7 @@ To assess the robustness of the proposed methodology, we repeated this procedure
 The results are shown in \fig~\ref{fig:drosophila_live_imaging}E.
 %
 The errors in the recovered angles are all less than 10$^\circ$, and the rank correlation coefficients are consistently greater than 95\%, indicating that our methodology can reproducibly order data of this type.
-%
-%In general, to accurately recover the temporal order, the vector diffusion maps algorithm requires a sufficient amount of data so that the underlying one-dimensional curve (i.e., the curve in \fig~\ref{fig:schematics}C) is well-sampled.
-%
-%At the same time, the accuracy of the recovered alignments is a function of the signal-to-noise ratio in the pairwise alignments of the images, as well as the size of the data set \citep{singer2011angular}.
-%
-%Clearly, $40$ images are sufficient to accurately recover the rotational orientation and temporal order in this specific developmental time frame.
-%%
-%To quantitatively assess how our methods perform as a function of sample size, we used bootstrap sampling to compute the rank correlation as a function of the size of the data set.
-%%
-%Subsets of images were randomly selected from the $40$-image data set, and then registered and ordered.
-%%
-%\fig~\ref{subfig:movie_bootstrap} shows the median rank correlation coefficient as a function of the number of images in the subset.
-%%
-%As expected, the accuracy in the recovered ordering increases with the number of images.
-%%
-%At the same time, we see that correct order is recovered even with a relatively small number of snapshots, which should make our approach applicable other studies of developmental processes.
-%%
-%Because our particular data set contains relatively low noise levels, few images were required to obtain accurate rotational alignment, and the high temporal resolution of our live imaging study allows us to order the images accurately.
-%
-%In summary, the algorithm accurately and robustly registers and orders a model data set where both the rotation angles and real times are independently known.
+
 
 \subsubsection*{Zebrafish epiboly}
 
@@ -319,9 +290,6 @@ Some errors in ordering images of the early embryo result from slow cell movemen
 During epiboly, cell movement is more dynamic and the recovered ordering is more consistent with the real dynamics.
 
 In summary, we have shown that our approach to temporal ordering performs very well on imaging data of two different developmental processes ({\em Drosophila} gastrulation and zebrafish epiboly), taken with two different imaging methods (fluorescent microscopy and DIC) where the true temporal order is known {\em a priori}.
-%image registration and ordering can correctly recover image orientation and  showed that our algorithm is not limited to a specific set of data.
-%
-%The algorithm works for different tissue types ({\em Drosophila} and zebrafish), and also for images taken with different imaging methods (fluorescent and phase contrast images).
 %
 Provided there exist significant dynamics within the data set and that the developmental trajectory is well-sampled, the developmental dynamics can be recovered.
 
@@ -359,17 +327,12 @@ Another signal is provided by the phosphorylated form of the extracellular signa
 %
 Registered and ordered images of individual embryos can then be used to construct a representative average trajectory. 
 %
-%However, because of interembryo variability, these selected images are not entirely representative of the developmental dynamics across the entire data set.
-%
-%To highlight the developmental dynamics revealed by vector diffusion maps, we computed an average developmental trajectory across the set of registered and ordered images (see \SI).
-%
 Each snapshot in the average trajectory is the (weighted) average of a group of successive images from the registered and ordered data set (see \SI).
 %
 Averaging successive images removes some of the interembryo variability, so that sequential snapshots of this averaged trajectory, shown in \fig~\ref{fig:drosophila_fixed_images}C, serve as a summary of the stereotypic developmental dynamics.
 
 \begin{figure*}[t!]
 \includegraphics{fig5}
-%
 \caption{Analysis of images of fixed \textit{Drosophila} embryos. {(A)} Images of \textit{ Drosophila} embryos, stained for nuclei (gray), Twi (green), and dpERK (red). Scale bar indicates approximately 50$\mu$m (images have been rescaled to remove slight interembryo size variations).  Each image is of a different embryo arrested at a different developmental time and in a different rotational orientation. {(B)} Data from {\it A}, registered and ordered using vector diffusion maps. The expert rank for each image is indicated. {(C)} A representative ``developmental trajectory'' obtained from local averaging of the entire set of registered and ordered images (see \SI). {(D)} Correlation between the image ranks calculated from the vector diffusion maps algorithm and the ranks obtained from ordering by an expert. The rank correlation coefficient is $0.9716$. }
 \label{fig:drosophila_fixed_images}
 \end{figure*}
@@ -386,7 +349,6 @@ The dorsal dpERK peak then disappears during germband extension as cells from th
 At the end of this process, similar ``omegas'' formed by Twi and dpERK appear on the dorsal side of the embryo; these patterns are most readily seen in the last image of \fig~\ref{fig:drosophila_fixed_images}C.
 %
 Thus, vector diffusion maps can accomplish the tasks presented in the caricature in \fig~\ref{fig:fish}, even in the absence of information about image landmarks and without {\it a priori} knowledge of developmental features.
-%
 
 To evaluate the quality of our registration and ordering, we can use prior knowledge about the developmental system.
 %
@@ -402,7 +364,6 @@ We compared the ordering obtained from vector diffusion maps to the ordering pro
 The ranks from the ordering provided by the embryologist, which we will refer to as the ``expert rank'', are indicated for the images in \fig~\ref{fig:drosophila_fixed_images}B , and the rank correlation (see \fig~\ref{fig:drosophila_fixed_images}D) shows that our ordering is consistent with the expert ordering.
 
 
-
 \subsubsection*{Fixed z-stacks of {\em Drosophila} wing discs}
 
 \begin{figure*}[t]
@@ -411,12 +372,6 @@ The ranks from the ordering provided by the embryologist, which we will refer to
 \label{fig:wing_disc}
 \end{figure*}
 
-%We have demonstrated that our algorithm can recover the underlying developmental dynamics in several different types of imaging data sets, including ones containing interembryo variability.
-%
-%Thus far, we have only looked at two-dimensional data sets where biological samples are imaged as a single confocal slice or as a phase contrast image at a fixed position within the sample.
-%
-%However, with advances in imaging techniques, taking multiple z-slices to visualize the three-dimensional structure of a sample will become more common, and it is important to validate that our algorithm can be applied to such data.
-
 In this section we show that the approach can readily be applied to three-dimensional data. 
 %
 We restrict ourselves to the case where an obvious fixed axis exists, so that only rotations of the three-dimensional data around this axis need be taken into account.  
@@ -424,12 +379,6 @@ We restrict ourselves to the case where an obvious fixed axis exists, so that on
 This does not constitute an inherent limitation for vector diffusion maps. 
 %
 While for simplicity here we will not discuss the general  case, incorporating general 3D symmetries is possible \citep{arie2012global, wang2013exact, cucuringu2012eigenvector}. 
-
-%Although the theory of vector diffusion maps readily extends to three-dimensional data with full three-dimensional rotations, calculation of the pairwise alignments rapidly becomes computationally prohibitive for such applications, as one must now search over all three-dimensional rotations (which are parameterized by three Euler angles), rather than over two-dimensional rotations (which are parameterized by a {\em single} rotation angle).
-%
-%However, ordering data via diffusion maps is readily possible for pre-registered three-dimensional data.
-%
-%Therefore, we can apply our methodology to three-dimensional data, such as a stack of confocal images taken at different depths within the sample, by first registering the data using an alternative method, and then ordering the registered data using diffusion maps.
 
 To demonstrate this approach, we used an existing three-dimensional data set of fixed {\em Drosophila} wing imaginal discs \citep{hamaratoglu2011dpp}.
 %
@@ -442,8 +391,6 @@ The data set is composed of 46 fixed wing discs whose developmental times range 
 Each disc contains 21 z-slices taken at 1~$\mu$m intervals.
 %
 The discs were dissected from larvae expressing the Dad-GFP reporter construct (green) and stained with antibodies that recognize Spalt (red), Wingless (gray), and Patched (gray), the factors that play important roles in disc patterning and growth (\fig~\ref{fig:wing_disc}A).
-%
-%The disc grows in time; at long times, the disc becomes too large to fit completely within the frame and only a partial disc is imaged.
 
 In the wing disc, the anterior-posterior and dorsal-ventral axes are significantly larger than the third principal axis (see \fig~\ref{fig:wing_disc}A). 
 %
@@ -456,8 +403,6 @@ We then used these rotations to register the full three-dimensional data in the 
 Because the maximum intensity projections are two-dimensional images, this step is no more computationally intensive than the previous examples.
 %
 Such an approach is possible when there are distinct major and minor axes within a three-dimensional sample, which reduces the rotational degrees of freedom.
-%
-%Other options for registering samples include using a specific localized signal (such as Twi in \fig~\ref{fig:drosophila_fixed_images}) as a marker for alignment, or using other {\em a priori} knowledge.
 
 We then used diffusion maps to order the registered three-dimensional data.
 %
@@ -474,16 +419,7 @@ The registration errors are primarily due to some wing discs having extra tissue
 Even with such obstructions, we can accurately order the images and extract a stereotypical developmental trajectory, shown in \fig~\ref{fig:wing_disc}C, by averaging (see \SI).
 %
 We can now clearly see the growth of the wing disc, even though averaging somewhat blurs some finer scale structures.
-%
-%Thus, this result shows that the algorithm can successfully order a three-dimensional data set.
 
-%The vector diffusion maps algorithm has been previously used for a different type of three-dimensional data: to reconstruct a three-dimensional object (in this case, a molecule) from two-dimensional (cryo-electron microscopy) pictures \citep{singer2011viewing}.
-%
-%In these applications, many two-dimensional pictures of (effectively) the same object are taken from different viewing directions.
-%
-%The vector diffusion maps algorithm then, instead of revealing the temporal order, reveals the viewing direction of each image, which can then be used to reconstruct the three-dimensional object.
-%
-%This is another approach to three-dimensional imaging which we hope to extend in the future to examples which also contain variability from the developmental progression.
 
 \subsection*{Computational requirements}
 
@@ -493,10 +429,7 @@ We can now clearly see the growth of the wing disc, even though averaging somewh
 \label{fig:cpu_time}
 \end{figure*}
 
-%Manually ordering the images is nontrivial for researchers who are unfamiliar with the relevant developmental progression, and can be tedious and time-consuming for those who are.
-%
-%In contrast, our method requires relatively little computational time.
-%
+
 The computational costs for our methodology are outlined in \fig~\ref{fig:cpu_time}.
 %
 The computational time is a function of the number of images in the data set, the number of pixels in each point, and the angular resolution to compute the pairwise rotations (see \SI).
@@ -521,25 +454,13 @@ We also provide some guidance on selecting these parameters, and found that the 
 %
 Overall, the tasks of image preprocessing and parameter selection are relatively simple compared to manual registration and ordering of images, and so this methodology is promising for much larger imaging data sets which are impractical to evaluate manually.
 
-
-
 \section*{Discussion}
 
-%Already at this point, the rate of collection of imaging data has surpassed the rate of manual image analysis.
-%
-%This necessitates the development of automated methodologies to organize such large data sets.
-%
-%To the best of our knowledge, algorithmic approaches to these two tasks have been explored largely independently of each other.
-%
 Temporal ordering of large-scale data was done in the context of molecular profiling studies, in which data points are vectors describing the expression levels of different mRNA \citep{anavy2014blind, trapnell2014dynamics, gupta2008extracting}.
 %
 At the same time, temporal ordering of imaging data sets was done with a significant amount of human supervision and using registered images as a starting point \citep{yuan2014automated, surkova2008characterization, fowlkes2008quantitative}, or using some {\em a priori} knowledge of the relevant developmental processes \citep{dubuis2013accurate}.
 %
-%The task of image registration has been widely studied \citep{zitova2003image}, for applications such as face recognition \citep{rowley1998rotation}, medical image registration \citep{hajnal2010medical}, and texture classification \citep{greenspan1994rotation}.
-%
 In contrast to most of the existing registration approaches which rely on the knowledge of appropriate landmarks in the images \citep{ian1998statistical} (such as the eyes in face recognition applications \citep{zhao2003face}), algorithms based on angular synchronization can register images even in the absence of such information, making them relevant for a wide variety of applications.
-%
-
 
 Angular synchronization and vector diffusion maps have been used to reconstruct molecular shapes from cryo-electron microscopy images \citep{singer2012vector, zhao2014rotationally, singer2011viewing}.
 %
@@ -549,7 +470,6 @@ Based on the presented results, we expect that much smaller data sets may be suf
 %
 In general, the size of the data set required for accurate registration and ordering is a function of the instrument noise, interembryo variability, and the complexity of the developmental dynamics.
 
-%
 The benefits of our approach to image data mining are twofold.
 %
 First, the algorithm can accomplish the tasks of registration and ordering in a single step.
@@ -571,27 +491,7 @@ Therefore, for very small and/or very noisy data sets, our algorithms may fail.
 Second, the pertinent image features need to be large compared to the noise and the image resolution.
 %
 In all of our examples, the relevant expression patterns and morphological structures span several pixels and are large compared to both the instrument noise and embryo-to-embryo variability, making the Euclidean distance between pixels a good measure of images similarity.
-%
-%The methodology we have presented here only addresses images taken in the same location and/or from the same viewing direction within the organism.
-%
-%However, for organisms with distinct major and minor axes (such as {\em Drosophila} embryos and wing discs), sample preparation will often fix one of the principal directions.
-%
-%Furthermore, as we have acknowledged, our methods as implemented cannot register three-dimensional data with respect to three-dimensional rotations due to computational limitations.
-%
-%In the future, the algorithms presented here could be used for three-dimensional voxel data given an alternative method for computing pairwise alignments more efficiently (such as using image features or landmarks).
-%
 
-%Our algorithms will fail for other imaging data sets which contain fine-scale structures,  as small perturbations in these structures will result in large changes in the Euclidean distances.
-%
-%In such cases, one requires a more sophisticated distance metric (such as the Earth Mover's Distance \citep{rubner2000earth}) and/or image description (such as scattering transform coefficients \citep{mallat2012group}) which is insensitive to such perturbations.
-%
-%Unlike traditional statistical methods, our algorithms do not provide confidence intervals on predicted orderings, but these could in principle be extracted from bootstrapping \citep{efron1979bootstrap}.
-%
-%Furthermore, although our methods provide a temporal ordering for images, they provide no information about the actual time, neither do they provide a direction for the proposed ordering.
-%
-%Determining the trajectory rate and direction are post-processing tasks which require {\em a priori} knowledge of the developmental processes or some assumptions about the temporal sampling of the data set (e.g., the data set uniformly samples some given time window).
-
-%
 Vector diffusion maps allow us to automatically register images, an essential task for many applications.
 %
 Simultaneously, the algorithm provides us with parameters to describe each image.
@@ -602,8 +502,6 @@ In general, we can recover several coordinates which concisely and comprehensive
 %
 This parametrization can then be used for typical data analysis tasks, such as outlier detection and model fitting.
 %
-%Data which comes from several different genetic backgrounds can be clustered according to their spatial expression patterns, and clustering can also be used to separate images into different developmental stages.
-%
 Furthermore, images taken from different viewing directions can be analyzed, as the vector diffusion maps parametrization will organize the images according to the viewing angle \citep{singer2011viewing}.
 %
 Another direction for future work is related to the joint analysis of data sets provided by different imaging approaches, such as merging live imaging data of tissue morphogenesis with snapshots of cell signaling and gene expression from fixed embryos \citep{krzic2012multiview, ichikawa2014live, rubel2010coupling, dsilva2013nonlinear}.
@@ -611,14 +509,6 @@ Another direction for future work is related to the joint analysis of data sets 
 It would also be interesting to explore the connections between our proposed approach and recently developed methods for ordering and classification of face images \citep{kemelmacher2011exploring, kemelmacher2014illumination}
 %
 Given the rapidly increasing volumes of imaging data from studies of multiple developmental systems, we expect that dimensionality reduction approaches discussed in this work will be increasingly useful for biologists and motivate future applications and algorithmic advances.
-
-
-%% == end of paper:
-
-%% Optional Materials and Methods Section
-%% The Materials and Methods section header will be added automatically.
-
-%% Enter any subheads and the Materials and Methods text below.
 
 
 \section*{Materials and Methods}

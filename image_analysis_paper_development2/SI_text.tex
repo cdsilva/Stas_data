@@ -108,28 +108,6 @@ Images were mean-centered using the Wingless/Patched signal to detect the edges 
 %
 Images were not rescaled for size, as changes in overall size are important. 
 
-
-%The original image resolution is $1024 \times 1024$ pixels for the fixed images, and $512 \times 512$ pixels for the live images; all images are subsampled to $100 \times 100$ pixels for vector diffusion maps analysis.
-%%
-%A scale bar for a representative image is shown in \fig~\ref{fig:ap_dv}.
-%%
-%When imaging, the laser settings are calibrated so that images have good dynamic range, while not saturating the detector.
-%%
-%The same laser settings are maintained within each experiment.
-%%
-%The intensity of each channel is integer-valued, and ranges from $0$ (no signal) to $255$ (saturated). 
-%%
-%The Canny method \citep{canny1986computational} is used to detect the edges of the nuclear signal in each image (using the \texttt{edge} function in MATLAB\textsuperscript{\textregistered}), and images are cropped to these edges to remove any size effects.
-%%
-%A constant $10$-pixel-wide border is then added to each image. 
-%%
-%Contrast-limited adaptive histogram equalization (using the \texttt{adapthisteq} function with an $8 \times 8$ tile grid, and a uniform distribution for the intensities with a clip limit of 0.01) is used to normalize the intensities of the nuclear signal.
-%%
-%The nuclear signal is blurred using a disc filter with a $5$~pixel radius (using the \texttt{imfilter} function).
-%%
-%For the multichannel images, the nuclear signal is scaled by half (after normalization and blurring) relative to the other signals, so that the total nuclear signal across the entire image is of a comparable magnitude to the other signals. 
-
-
 \subsection*{Algorithms}
 
 We demonstrate the algorithms for registration and temporal ordering using a synthetic data set.
@@ -154,9 +132,6 @@ Because the profiles are unregistered and unordered, the underlying dynamics (a 
 
 Let $ x_1, \dots, x_m$ denote the signals that we wish to align with respect to rotations;
 each signal is a function defined on the unit circle (on the plane).
-%
-%Practically, it is discretized in a $n$-long vector (the local intensity at $n$ equidistant points around the circle);
-%rotating the function by an angle $\theta$ then corresponds to cyclically shifting the elements of $x_i$ by $\frac{\theta_i}{2 \pi} n$ (rounded to the nearest integer to obtain a valid shift).
 %
 First assume that each signal $x_i$ is a {\it noisy} rotated copy of the underlying signal $x_{true}$
 (which we are {\it not} given), such that
@@ -348,13 +323,6 @@ to expect, as in angular synchronization, that the top (block) eigenvector of $S
 which can be computed in the same way from \eqref{eq:R_est}.
 %
 We then expect subsequent eigenvectors to contain information about the main direction(s) of data variability modulo the geometric symmetries.
-%%%
-%%% somewhere we need to talk about compact groups
-%%% discussion might be a good place because SCALING is obviously important and
-%%% it is not compact......
-%%%
-%However, the eigenvectors now also contain information about the embedding coordinates for our images.
-%
 
 In general, the embedding coordinates are given by
 \begin{equation} \label{eq:vdm_coord}
@@ -369,9 +337,7 @@ As the first diffusion maps coordinate is constant over the data, the first bloc
 The second block eigenvector (eigenvectors $d+1$ through $2d$) contains the optimal rotations, each multiplied by their second diffusion maps coordinate.
 %
 We can therefore recover this diffusion maps coordinate by taking inner products of the columns of the second block eigenvector with columns of the first block eigenvector.
-%%
-%%YGK just as a favor to me, tell me how consistent the three values are -- 
-%%
+%
 The $j^{th}$ embedding coordinate will be given by $\psi_{k,l}$, where $jd +1 < k \le (j+1)d$ and $1 \le l \le d$,
 and we select $k, l$ such that the coordinate $\psi_{k, l}$ has the largest variability, i.e., the $j^{th}$ coordinate is $\psi_{k,l}$, where $k, l$ is the solution to
 \begin{equation} \label{eq:first_embed_vdm}
@@ -441,11 +407,6 @@ The solution to \eqref{eq:opt_pairwise} is not easily computed, as the objective
 %
 Therefore, instead of using an optimization procedure, we discretize the search space and exhaustively search to find the solution (for the results presened, we use $10^\circ$ discretization steps).
 %
-%We discritize the search space of rotations into 20 possible rotations %($d\theta  \in \{0, \pi/10, \pi/5, \dots, 9 \pi/5, 19\pi/10 \}$),
-%and 11 possible translations in both . %($dx, dy \in \{-20, -16, -12, \dots, 12, 16, 20 \}$).
-%
-%We check all possible combinations for the rotation and translations that best align $I_j$ to $I_i$.
-%
 Although computationally demanding, this ``embarrassingly parallelizable" direct enumeration approach is not prohibitive here.
 %
 Once we have computed $\theta_{ij}$ for all image pairs, we can proceed with the vector diffusion maps procedure.
@@ -489,7 +450,23 @@ See \citep{kemelmacher2011exploring} for a more detailed discussion.
 \bibliography{references}
 
 
-\newpage
+\begin{table*}
+\textsf{
+\begin{tabular}{| r | c | c |}
+\hline
+Data set & \parbox[c]{4cm}{ \centering VDM Rank Correlation} & \parbox[c]{4cm}{ \centering PCA Rank Correlation} \\
+\hline
+{\em Drosophila} gastrulation (live) & 0.9989 & 0.8137 \\
+Zebrafish epiboly & 0.9955 & 0.6351 \\
+{\em Drosophila} gastrulation (fixed) & 0.9716 & 0.8658 \\
+{\em Drosophila} wing discs & 0.9436 & 0.9381 \\
+\hline
+\end{tabular}
+}
+\caption{Comparison between rank correlation coefficients when ordering using the first vector diffusion maps (VDM) embedding coordinate, and rank correlation coefficients when ordering by the first principal component analysis (PCA) \citep{shlens2005tutorial} projection coefficient. For ordering using PCA, we computed the first principal component of the registered images, and then ordered the images by the projection coefficients onto this first mode. The PCA ordering is always less accurate than the vector diffusion maps ordering. In the zebrafish data set, the ordering is much less accurate using PCA, as the dynamics of the morphing and spreading of the cell mass are highly nonlinear. The PCA and VDM orderings are comparable for the wing disc data; this is to be expected, as the tissue simply grows in time.  }
+\end{table*}
+
+\clearpage
 
 \begin{figure}
 \includegraphics{figS1}
@@ -501,7 +478,6 @@ See \citep{kemelmacher2011exploring} for a more detailed discussion.
 \includegraphics{figS2}
 \caption{Synthetic data set used to illustrate the data processing algorithms. {\it (A)} One-dimensional concentration profile on a ring (top), and the corresponding profile on a line (bottom). {\it (B)} Intensity corresponding to the profile in {\it A}. {\it (C)} An ensemble of concentration profiles, each of the form described in {\it A}. Each row in the array corresponds to a single profile. {\it (D)} The profiles in {\it C}, now registered using angular synchronization. {\it (E)} The profiles in {\it D}, now temporally ordered using diffusion maps. {\it (F)} The profiles in {\it C}, registered and temporally ordered in a single step using vector diffusion maps.}
 \label{fig:1d_demo}
-%\customlabel{fig:1d_demo}{3}
 \customlabel{subfig:1d_example}{\ref{fig:1d_demo}{\it A}}
 \customlabel{subfig:1d_intensity}{\ref{fig:1d_demo}{\it B}}
 \customlabel{subfig:1d_unaligned_unordered}{\ref{fig:1d_demo}{\it C}}
@@ -530,24 +506,5 @@ See \citep{kemelmacher2011exploring} for a more detailed discussion.
 \includegraphics{figS6}
 \caption{Eigenvalue spectra for the wing disc data set presented in \fig~6. Note that there is a gap after the first eigenvalue product. We can conclude that the data set is effectively one-dimensional and can be parameterized/ordered by coordinate 1.}
 \end{figure}
-
-\begin{table*}
-\textsf{
-\begin{tabular}{| r | c | c |}
-\hline
-Data set & \parbox[c]{4cm}{ \centering VDM Rank Correlation} & \parbox[c]{4cm}{ \centering PCA Rank Correlation} \\
-\hline
-{\em Drosophila} gastrulation (live) & 0.9989 & 0.8137 \\
-Zebrafish epiboly & 0.9955 & 0.6351 \\
-{\em Drosophila} gastrulation (fixed) & 0.9716 & 0.8658 \\
-{\em Drosophila} wing discs & 0.9436 & 0.9381 \\
-\hline
-\end{tabular}
-}
-\caption{Comparison between rank correlation coefficients when ordering using the first vector diffusion maps (VDM) embedding coordinate, and rank correlation coefficients when ordering by the first principal component analysis (PCA) \citep{shlens2005tutorial} projection coefficient. For ordering using PCA, we computed the first principal component of the registered images, and then ordered the images by the projection coefficients onto this first mode. The PCA ordering is always less accurate than the vector diffusion maps ordering. In the zebrafish data set, the ordering is much less accurate using PCA, as the dynamics of the morphing and spreading of the cell mass are highly nonlinear. The PCA and VDM orderings are comparable for the wing disc data; this is to be expected, as the tissue simply grows in time.  }
-\end{table*}
-
-
-
 
 \end{document} 
