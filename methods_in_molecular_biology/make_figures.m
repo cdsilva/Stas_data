@@ -78,13 +78,67 @@ end
 train_data = vertcat(PCA_data{:});
 train_times = vertcat(time_adjust{:});
 
+
+%%
+
+clim = [min(train_data(:)) max(train_data(:))];
+
+make_fig(2,2);
+for i=1:m
+    imagesc(reshape(train_data(i,:), npixels, npixels), clim)
+    colormap(gray)
+    
+    axis off
+    set(gca,'position',[0 0 1 1],'units','normalized')
+    
+    print(gcf, '-djpeg', sprintf('figures/images_raw/im%d', i), '-r600')
+
+    clf
+end
+
+%%
 [m, n] = size(train_data);
 
 mean_train_data = mean(train_data);
 
 train_data = train_data - repmat(mean_train_data, m, 1);
 
-[U, S, V_train] = svds(train_data, nmodes);
+% [U, S, V_train] = svds(train_data, nmodes);
+[U, S, V_train] = svds(train_data, m);
+
+
+%%
+
+clim = [min(train_data(:)) max(train_data(:))];
+
+make_fig(2,2);
+for i=1:m
+    imagesc(reshape(train_data(i,:), npixels, npixels), clim)
+    colormap(gray)
+    
+    axis off
+    set(gca,'position',[0 0 1 1],'units','normalized')
+    
+    print(gcf, '-djpeg', sprintf('figures/images_meancentered/im%d', i), '-r600')
+
+    clf
+end
+
+%%
+
+clim = [min(V_train(:)) max(V_train(:))];
+
+make_fig(2,2);
+for i=1:m
+    imagesc(reshape(V_train(:,i), npixels, npixels), clim)
+    colormap(gray)
+    
+    axis off
+    set(gca,'position',[0 0 1 1],'units','normalized')
+    print(gcf, '-djpeg', sprintf('figures/eigenimages/im%d', i), '-r600')
+
+    clf
+end
 
 
 %% store eigenimages
